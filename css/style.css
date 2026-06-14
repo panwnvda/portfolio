@@ -1,0 +1,1046 @@
+/**
+* Template Name: iPortfolio - v3.7.0
+* Template URL: https://bootstrapmade.com/iportfolio-bootstrap-portfolio-websites-template/
+* Author: BootstrapMade.com
+* License: https://bootstrapmade.com/license/
+*/
+
+/*--------------------------------------------------------------
+# General
+--------------------------------------------------------------*/
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: "Open Sans", sans-serif;
+  color: #272829;
+}
+
+a {
+  color: #e02424;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #f15a5a;
+  text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Raleway", sans-serif;
+}
+
+/*--------------------------------------------------------------
+# Buttons from Internet
+--------------------------------------------------------------*/
+.css-button-rounded--sand {
+  min-width: 130px;
+  height: 40px;
+  color: #fff;
+  padding: 5px 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+  outline: none;
+  border-radius: 5px;
+  border: 2px solid #bdadad;
+  background: #bdadad;
+}
+.css-button-rounded--sand:hover {
+  background: #fff;
+  color: #bdadad
+}
+
+/*--------------------------------------------------------------
+# Back to top button
+--------------------------------------------------------------*/
+.back-to-top {
+  position: fixed;
+  visibility: hidden;
+  opacity: 0;
+  right: 15px;
+  bottom: 15px;
+  z-index: 996;
+  background: #e02424;
+  width: 40px;
+  height: 40px;
+  border-radius: 50px;
+  transition: all 0.4s;
+}
+.back-to-top i {
+  font-size: 28px;
+  color: #fff;
+  line-height: 0;
+}
+.back-to-top:hover {
+  background: #f15a5a;
+  color: #fff;
+}
+.back-to-top.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+/*--------------------------------------------------------------
+# Header
+--------------------------------------------------------------*/
+/* Sidebar drawer: hidden off-screen by default, slides in when body.is-menu-open */
+#header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 300px;
+  height: auto;
+  z-index: 9997;
+  padding: 0 15px 24px 15px;
+  background: #040b14;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #555 #0a1422;
+  display: block;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-bottom: none;
+}
+body.is-menu-open #header {
+  transform: translateX(0);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+}
+#header::-webkit-scrollbar { width: 8px; }
+#header::-webkit-scrollbar-track { background: #0a1422; }
+#header::-webkit-scrollbar-thumb {
+  background-color: #555; border-radius: 4px; border: 1px solid #0a1422;
+}
+#header::-webkit-scrollbar-thumb:hover { background-color: #e02424; }
+#header > .d-flex {
+  flex-direction: column !important;
+  align-items: stretch;
+  width: 100%;
+  height: auto;
+  gap: 0;
+  min-height: 100%;
+}
+#header .profile {
+  display: block;
+  margin: 0;
+  text-align: center;
+  padding-top: 24px;
+}
+#header .profile h1 {
+  font-size: 24px;
+  margin: 0;
+  padding: 0;
+  font-weight: 600;
+  text-align: center;
+  -moz-text-align-last: center;
+  text-align-last: center;
+  font-family: "Poppins", sans-serif;
+}
+#header .profile h1 a, #header .profile h1 a:hover {
+  color: #fff;
+  text-decoration: none;
+}
+#header .profile .social-links {
+  margin: 14px 0 0 0 !important;
+  display: block;
+  text-align: center;
+}
+#header .profile .social-links a {
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #312121;
+  color: #fff;
+  line-height: 1;
+  padding: 0;
+  margin: 0 3px;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  transition: 0.3s;
+}
+#header .profile .social-links a:hover {
+  background: #e02424;
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Sidebar email circle (matches LinkedIn styling) + popup */
+.sidebar-email-wrap { position: relative; display: inline-block; margin: 0 3px; }
+.sidebar-email {
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #312121;
+  color: #fff;
+  line-height: 1;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.sidebar-email:hover { background: #e02424; color: #fff; }
+.sidebar-email-popup {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.30);
+  z-index: 9998;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+.sidebar-email-popup.is-open { display: inline-flex; }
+.sidebar-email-popup::before {
+  content: ""; position: absolute; top: -7px; left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #fff;
+}
+.sidebar-email-text { font-size: 13px; color: #1a1a1a; font-weight: 500; }
+.sidebar-email-copy {
+  width: 26px; height: 26px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid #e6e6e6; background: #fafafa;
+  border-radius: 6px; color: #6a6a6a;
+  font-size: 12px; cursor: pointer;
+  transition: all .15s ease;
+}
+.sidebar-email-copy:hover {
+  background: #fceeee; color: #e02424; border-color: #e02424;
+}
+.sidebar-email-copy.is-copied { background: #e6f4ea; color: #137333; border-color: #137333; }
+
+#main {
+  margin-left: 0;
+  margin-top: 72px;  /* room for the persistent #topbar */
+  min-height: calc(100vh - 72px);
+  background: #fff;
+}
+
+/* Persistent top bar (always visible — holds the brand) */
+#topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  background: #040b14;
+  z-index: 9995;
+  display: flex;
+  align-items: center;
+  padding: 0 24px 0 80px;  /* left padding leaves room for the hamburger */
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
+}
+#topbar .topbar-social { display: flex; gap: 8px; align-items: center; }
+#topbar .topbar-social a,
+#topbar .topbar-social .topbar-email {
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #312121;
+  color: #fff;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  transition: 0.2s;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+#topbar .topbar-social a:hover,
+#topbar .topbar-social .topbar-email:hover { background: #e02424; color: #fff; }
+
+/* Email popup attached to the Gmail circle */
+.topbar-email-wrap { position: relative; display: inline-flex; }
+.topbar-email-popup {
+  display: none;
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  z-index: 10000;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+.topbar-email-popup.is-open { display: inline-flex; }
+.topbar-email-popup::before {
+  content: ""; position: absolute; top: -7px; left: 12px;
+  width: 0; height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #fff;
+}
+.topbar-email-text { font-size: 13.5px; color: #1a1a1a; font-weight: 500; }
+.topbar-email-copy {
+  width: 26px; height: 26px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid #e6e6e6; background: #fafafa;
+  border-radius: 6px; color: #6a6a6a;
+  font-size: 12px; cursor: pointer;
+  transition: all .15s ease;
+}
+.topbar-email-copy:hover {
+  background: #fceeee; color: #e02424; border-color: #e02424;
+}
+.topbar-email-copy.is-copied { background: #e6f4ea; color: #137333; border-color: #137333; }
+
+/* Menu trigger: three transparent white bars, no background */
+.menu-trigger {
+  position: fixed;
+  top: 16px;
+  left: 18px;
+  z-index: 9999;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: #fff;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  font-size: 24px;
+  padding: 0;
+  transition: opacity 0.15s ease;
+}
+.menu-trigger:hover { opacity: 0.75; }
+.menu-trigger:focus { outline: none; }
+.menu-trigger .bi-x-lg { display: none; }
+.menu-trigger .bi-list { display: inline-block; }
+body.is-menu-open .menu-trigger .bi-list { display: none; }
+body.is-menu-open .menu-trigger .bi-x-lg { display: inline-block; }
+/* Trigger stays in the same spot — only the icon flips between bars and X.
+   Click in place toggles the drawer open/closed. */
+
+/* Backdrop behind the drawer */
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.42);
+  z-index: 9996;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+body.is-menu-open .menu-backdrop {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (max-width: 1199px) {
+  #header { width: min(300px, 86vw); }
+}
+@media (max-width: 575px) {
+  #topbar { padding-left: 70px; }
+}
+/*--------------------------------------------------------------
+# Navigation Menu
+--------------------------------------------------------------*/
+/* Sidebar nav menu (vertical) */
+.nav-menu {
+  padding: 30px 0 0 0;
+  flex: 1 1 auto;
+  display: block;
+  justify-content: initial;
+}
+.nav-menu * {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nav-menu > ul {
+  display: block;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+.nav-menu > ul > li {
+  position: relative;
+  white-space: nowrap;
+}
+.nav-menu a, .nav-menu a:focus {
+  display: flex;
+  align-items: center;
+  color: #b4a8a8;
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  transition: 0.3s;
+  font-size: 15px;
+  border-radius: 4px;
+}
+.nav-menu a i, .nav-menu a:focus i {
+  font-size: 24px;
+  padding-right: 8px;
+  color: #806f6f;
+}
+.nav-menu a:hover, .nav-menu .active, .nav-menu .active:focus, .nav-menu li:hover > a {
+  text-decoration: none;
+  color: #fff;
+  background-color: transparent;
+}
+.nav-menu a:hover i, .nav-menu .active i, .nav-menu .active:focus i, .nav-menu li:hover > a i {
+  color: #e02424;
+}
+
+/* Dropdown arrow (caret next to Projects / Notes) */
+.nav-menu .arrow {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  transition: transform 0.25s ease;
+}
+.nav-menu .arrow i {
+  font-size: 10px !important;
+  color: #9e8c8c;
+  padding: 0 !important;
+  line-height: 1;
+  transition: color 0.15s ease;
+}
+/* Hover / active: brand red */
+.nav-menu a:hover .arrow i,
+.nav-menu li:hover > a .arrow i,
+.nav-menu .active .arrow i {
+  color: #e02424;
+}
+
+.nav-menu .submenu {
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+  position: static;
+  top: auto;
+  right: auto;
+  margin-top: 0;
+  padding: 0;
+  min-width: auto;
+  z-index: auto;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  max-height: none;
+  overflow-y: visible;
+}
+
+.nav-menu .submenu a:hover, .nav-menu.nav-menu .submenu .active, .nav-menu .submenu .active:focus, .nav-menu .submenu li:hover > a {
+  text-decoration: none;
+  color: #fff;
+}
+.nav-menu .submenu a:hover i, .nav-menu .submenu .active i, .nav-menu .submenu .active:focus i, .nav-menu .submenu li:hover > a i {
+  color: #e02424;
+}
+
+/* Open state: capped-height scrollable panel inside the sidebar */
+.nav-menu .submenu.open {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  padding-left: 15px;
+  margin-left: 0;
+  background-color: #1f1f1f;
+  border-radius: 6px;
+  box-shadow: none;
+  max-height: 240px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #555 #1f1f1f;
+}
+.nav-menu .submenu.open::-webkit-scrollbar { width: 6px; }
+.nav-menu .submenu.open::-webkit-scrollbar-track { background: #1f1f1f; }
+.nav-menu .submenu.open::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 3px;
+}
+.nav-menu .submenu.open::-webkit-scrollbar-thumb:hover { background-color: #e02424; }
+
+.nav-menu .submenu li {
+  white-space: nowrap;
+}
+
+.nav-menu .submenu a {
+  padding: 10px 15px;
+  font-size: 14px;
+  color: #b4a8a8;
+}
+
+.nav-menu .submenu a:hover {
+  color: #fff;
+}
+
+/* (sidebar drawer handles all viewport sizes — no separate mobile rules needed) */
+
+/*--------------------------------------------------------------
+# Hero Section
+--------------------------------------------------------------*/
+#hero {
+  width: 100%;
+  height: 100vh;
+  background: radial-gradient(circle at 72% 28%, rgba(20, 157, 221, 0.20), rgba(20, 157, 221, 0) 55%),
+              radial-gradient(circle at 18% 82%, rgba(55, 179, 237, 0.12), rgba(55, 179, 237, 0) 50%),
+              linear-gradient(135deg, #040b14 0%, #0a1828 55%, #050d18 100%);
+  background-size: cover;
+}
+#hero:before {
+  content: "";
+  background: rgba(5, 13, 24, 0.3);
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+#hero .hero-container {
+  position: relative;
+  z-index: 2;
+  min-width: 300px;
+}
+#hero h1 {
+  margin: 0 0 10px 0;
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 56px;
+  color: #fff;
+}
+#hero p {
+  color: #fff;
+  margin-bottom: 50px;
+  font-size: 26px;
+  font-family: "Poppins", sans-serif;
+}
+#hero p span {
+  color: #fff;
+  padding-bottom: 4px;
+  letter-spacing: 1px;
+  border-bottom: 3px solid #e02424;
+}
+@media (min-width: 1024px) {
+  #hero {
+    background-attachment: fixed;
+  }
+}
+@media (max-width: 768px) {
+  #hero h1 {
+    font-size: 28px;
+    line-height: 36px;
+  }
+  #hero h2 {
+    font-size: 18px;
+    line-height: 24px;
+    margin-bottom: 30px;
+  }
+}
+
+/*--------------------------------------------------------------
+# Sections General
+--------------------------------------------------------------*/
+section {
+  padding: 60px 0;
+  overflow: hidden;
+}
+
+.section-bg {
+  background: #f5f8fd;
+}
+
+.section-title {
+  padding-bottom: 30px;
+}
+.section-title h2 {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  position: relative;
+  color: #6e1d1d;
+}
+.section-title h2::after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 50px;
+  height: 3px;
+  background: #e02424;
+  bottom: 0;
+  left: 0;
+}
+.section-title p {
+  margin-bottom: 0;
+}
+
+/*--------------------------------------------------------------
+# About
+--------------------------------------------------------------*/
+.about .content h3 {
+  font-weight: 700;
+  font-size: 26px;
+  color: #6e1d1d;
+}
+.about .content ul {
+  list-style: none;
+  padding: 0;
+}
+.about .content ul li {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+.about .content ul strong {
+  margin-right: 10px;
+}
+.about .content ul i {
+  font-size: 16px;
+  margin-right: 5px;
+  color: #e02424;
+  line-height: 0;
+}
+.about .content p:last-child {
+  margin-bottom: 0;
+}
+
+/*--------------------------------------------------------------
+# Portfolio
+--------------------------------------------------------------*/
+.portfolio .portfolio-item {
+  margin-bottom: 30px;
+}
+.portfolio .icon-box {
+  background: #fff;
+  border-radius: 10px;
+  padding: 26px 20px 22px 20px;
+  border: 1px solid #ececec;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  text-align: center;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.portfolio .icon-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  border-color: #e0e0e0;
+}
+.portfolio .icon-box .title {
+  font-size: 17px;
+  font-weight: 700;
+  margin-top: 12px;
+  margin-bottom: 10px;
+  color: #050d18;
+  font-family: "Poppins", sans-serif;
+}
+.portfolio .icon-box .title a {
+  color: inherit;
+  text-decoration: none;
+}
+.portfolio .icon-box .title a:hover {
+  color: #e02424;
+}
+.portfolio .icon-box .description {
+  color: #5a5a5a;
+  font-size: 13.5px;
+  line-height: 1.65;
+  margin-bottom: 0;
+}
+.work-box {
+  margin-bottom: 3rem;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background-color: #fff;
+}
+.work-box:hover img {
+  transform: scale(1.3);
+}
+
+.work-img {
+  display: block;
+  overflow: hidden;
+}
+.work-img img {
+  transition: all 1s;
+}
+
+.work-content {
+  padding: 2rem 3% 1rem 4%;
+}
+.work-content .w-more {
+  color: #4e4e4e;
+  font-size: 0.8rem;
+}
+.work-content .w-more .w-ctegory {
+  color: #d12222;
+}
+.work-content .w-like {
+  font-size: 2.5rem;
+  color: #d12222;
+  float: right;
+}
+.work-content .w-like a {
+  color: #d12222;
+}
+.work-content .w-like .num-like {
+  font-size: 0.7rem;
+}
+
+.w-title {
+  font-size: 1.2rem;
+}
+
+/*--------------------------------------------------------------
+# Breadcrumbs
+--------------------------------------------------------------*/
+.breadcrumbs {
+  padding: 20px 0;
+  background: #f9f9f9;
+}
+.breadcrumbs h2 {
+  font-size: 26px;
+  font-weight: 300;
+}
+.breadcrumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 15px;
+}
+.breadcrumbs ol li + li {
+  padding-left: 10px;
+}
+.breadcrumbs ol li + li::before {
+  display: inline-block;
+  padding-right: 10px;
+  color: #0e2442;
+  content: "/";
+}
+@media (max-width: 768px) {
+  .breadcrumbs .d-flex {
+    display: block !important;
+  }
+  .breadcrumbs ol {
+    display: block;
+  }
+  .breadcrumbs ol li {
+    display: inline-block;
+  }
+}
+
+/*--------------------------------------------------------------
+# Custom styling for checked checkboxes
+--------------------------------------------------------------*/
+ul li.checked {
+  text-decoration: line-through;
+  color: #888; /* Optional: Change color for checked items */
+}
+
+/*--------------------------------------------------------------
+# Footer
+--------------------------------------------------------------*/
+#footer { display: none; }
+
+/*--------------------------------------------------------------
+# Right Menu Bar (Index) - Pastel and Vibrant
+--------------------------------------------------------------*/
+.index-btn {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  z-index: 1000;
+  background-color: #3d3d3d; /* Neutral dark grey */
+  color: #fafafa; /* Almost white for clear contrast */
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px 0 0 5px;
+}
+
+.index {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  height: 100%;
+  width: 300px;
+  background-color: #f8f9fa; /* Very light grey */
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2); /* Softer shadow */
+  z-index: 999;
+  transition: right 0.3s;
+  padding-top: 60px;
+  overflow-y: auto;
+}
+
+.index.open {
+  right: 0;
+}
+
+.index a {
+  display: block;
+  padding: 10px 20px;
+  color: #2f2f2f; /* Dark grey for text */
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.index a:hover {
+  background-color: #eaeaea; /* Light hover effect */
+  text-decoration: none;
+}
+
+.dropdown-btn {
+  display: block;
+  padding: 10px 20px;
+  color: #2f2f2f;
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.dropdown-btn:hover {
+  background-color: #eaeaea;
+}
+
+.dropdown-container {
+  display: none;
+  padding-left: 15px;
+}
+
+.nested-dropdown {
+  padding-left: 0px;
+}
+
+.nested-dropdown-btn {
+  display: block;
+  padding: 10px 20px;
+  color: #2f2f2f;
+  font-weight: 600;
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.nested-dropdown-btn:hover {
+  background-color: #eaeaea;
+}
+
+.nested-dropdown-container {
+  display: none;
+  padding-left: 15px;
+}
+
+.expand-collapse-btn {
+  display: block;
+  padding: 10px 20px;
+  color: #2f2f2f;
+  font-weight: 600;
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.expand-collapse-btn:hover {
+  background-color: #eaeaea;
+}
+
+/* Per-page gradient colors live inline in each cheatsheet's <style> block as
+   .section-flow-N rules. The old fixed-palette .section-rose/.section-mint
+   etc. classes are unused and were removed. */
+
+@media (max-width: 767px) {
+  .index {
+    width: 250px;
+    right: -250px;
+  }
+
+  .index.open {
+    right: 0;
+  }
+
+  .index-btn {
+    padding: 8px;
+  }
+}
+
+@media (max-width: 575px) {
+  .index {
+    width: 220px;
+    right: -220px;
+  }
+
+  .index.open {
+    right: 0;
+  }
+
+  .index-btn {
+    padding: 6px;
+  }
+}
+
+/*--------------------------------------------------------------
+# Custom Table
+--------------------------------------------------------------*/
+.table {
+  width: 100%;
+}
+
+.table th, .table td {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.table td {
+  word-break: break-all;
+}
+
+.custom-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px 0; /* Adds 20px space above and below the table */
+}
+
+.custom-table th, .custom-table td {
+  border: 1px solid black;
+  padding: 8px;
+}
+
+.custom-table th {
+  background-color: #f8f9fa; /* Bootstrap's light gray for table headers */
+  text-align: left;
+}
+
+.custom-table td {
+  background-color: #ffffff; /* White background for table cells */
+}
+
+/* Responsiveness for small screens */
+@media (max-width: 575px) {
+  .table {
+    table-layout: fixed;
+  }
+
+  .table th, .table td {
+    text-overflow: ellipsis;
+  }
+
+  .custom-table {
+    table-layout: fixed;
+    overflow-x: auto; /* Allows horizontal scrolling on smaller screens */
+  }
+
+  .custom-table th, .custom-table td {
+    padding: 4px; /* Reduced padding for better visibility on small screens */
+    text-overflow: ellipsis;
+    word-wrap: break-word; /* Forces long words to break and wrap */
+    white-space: normal; /* Allows wrapping of text in cells */
+  }
+}
+
+/*--------------------------------------------------------------
+# Code Blocks
+--------------------------------------------------------------*/
+/* General styling for code blocks */
+pre code {
+  background-color: #f4f4f4; /* Light gray background for less contrast */
+  color: #2d2d2d; /* Dark gray for text instead of black */
+  font-family: 'Courier New', Courier, monospace;
+  padding: 1rem;
+  border-radius: 4px;
+  display: block;
+  overflow-x: auto;
+  white-space: pre; /* Preserve whitespace */
+  line-height: 1.5;
+  border: 1px solid #dcdcdc; /* Subtle border to define code block area */
+}
+
+/* Styling for inline code */
+code {
+  background-color: #eaeaea; /* Light gray for inline code */
+  color: #007acc; /* Blue for inline code */
+  border-radius: 4px;
+  padding: 0.1rem 0.3rem;
+  white-space: pre-wrap; /* Allows wrapping of inline code */
+  word-break: break-word; /* Prevents long inline code from overflowing */
+}
+
+/* Responsiveness for code blocks on small screens */
+@media (max-width: 575px) {
+  pre code {
+    font-size: 0.9rem; /* Slightly smaller font for smaller screens */
+    padding: 0.5rem;
+  }
+}
+
+/* Syntax highlighting adjustments */
+.token.comment, .token.prolog, .token.doctype, .token.cdata {
+  color: #50be62; /* Soft gray for comments */
+}
+
+.token.punctuation {
+  color: #d4d4d4; /* Dark gray for punctuation */
+}
+
+.token.property, .token.tag, .token.constant, .token.symbol, .token.deleted {
+  color: #d63384; /* Dark pink for properties and tags */
+}
+
+.token.selector, .token.attr-name, .token.string, .token.char, .token.builtin, .token.inserted {
+  color: #28a745; /* Green for strings and inserted elements */
+}
+
+.token.operator, .token.entity, .token.url, .token.variable {
+  color: #e36209; /* Orange for operators and variables */
+}
+
+.token.function {
+  color: #2588f8; /* Blue for functions */
+}
+
+.token.keyword {
+  color: #e36209; /* Orange for keywords */
+}
+
+/* Bash/Shell-specific styles */
+.language-bash .token.function,
+.language-sh .token.function {
+  color: #007bff; /* Blue for bash functions */
+}
+
+/* PowerShell-specific styles */
+.language-powershell .token.operator {
+  color: #e36209; /* Orange for operators */
+}
+.language-powershell .token.string {
+  color: #28a745; /* Green for strings */
+}
+.language-powershell .token.keyword {
+  color: #007bff; /* Blue for keywords */
+}
