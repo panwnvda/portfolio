@@ -144,7 +144,7 @@
 <h2 id="overview">1. Overview</h2>
           <p>The Sliver C2 Evasion Suite is a modular set of three operator kits that bring Cobalt Strike-style evasion tradecraft to the open-source <strong>Sliver</strong> C2 framework. Each kit targets a different surface that EDRs scan: on-disk artefacts during tool execution, sleeping shellcode in memory, and shellcode loader fingerprints with importable APIs and PE structure.</p>
           <p>The suite is written in <strong>Go</strong> (operator CLIs) and <strong>C</strong> (target-side shellcode and DLL extensions). All four kits are self-contained.</p>
-          <p><strong>Source:</strong> <a href="https://github.com/panwnvda/Sliver-Evasion-Suite" target="_blank" rel="noopener noreferrer" style="color:#6f42c1;font-weight:600;"><i class="bi bi-github"></i> github.com/panwnvda/Sliver-Evasion-Suite</a></p>
+          <p><strong>Source:</strong> <a href="https://github.com/panwnvda/SliverC2-Evasion-Suite" target="_blank" rel="noopener noreferrer" style="color:#6f42c1;font-weight:600;"><i class="bi bi-github"></i> github.com/panwnvda/SliverC2-Evasion-Suite</a></p>
 
           <h2 id="kits-at-a-glance">2. The Four Kits</h2>
           <table class="custom-table">
@@ -1250,19 +1250,19 @@ cd /home/kali/Sliver-Evasion-Suite/Inject-Kit/injectkit
 
           <h2 id="docs">9. Full Documentation</h2>
           <p>The canonical source for the suite &mdash; code, docs, and build artifacts &mdash; is on GitHub:</p>
-          <p style="margin:14px 0 18px 0;"><a href="https://github.com/panwnvda/Sliver-Evasion-Suite" target="_blank" rel="noopener noreferrer" style="display:inline-block;background:#24292f;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;"><i class="bi bi-github"></i> &nbsp;github.com/panwnvda/Sliver-Evasion-Suite</a></p>
+          <p style="margin:14px 0 18px 0;"><a href="https://github.com/panwnvda/SliverC2-Evasion-Suite" target="_blank" rel="noopener noreferrer" style="display:inline-block;background:#24292f;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;"><i class="bi bi-github"></i> &nbsp;github.com/panwnvda/SliverC2-Evasion-Suite</a></p>
 
           <h3>9.1 Clone the Repo</h3>
-<pre><code class="language-bash">git clone https://github.com/panwnvda/Sliver-Evasion-Suite.git
+<pre><code class="language-bash">git clone https://github.com/panwnvda/SliverC2-Evasion-Suite.git
 cd Sliver-Evasion-Suite</code></pre>
 
           <h3>9.2 Per-Kit Long-Form Documentation</h3>
           <p>Each kit ships with a long-form <code>DOCUMENTATION.md</code> in its directory. They cover architecture, command reference, troubleshooting, and step-by-step usage:</p>
           <ul>
-            <li><a href="https://github.com/panwnvda/Sliver-Evasion-Suite/blob/main/Loader-Kit/DOCUMENTATION.md" target="_blank" rel="noopener noreferrer"><code>Loader-Kit/DOCUMENTATION.md</code></a> &mdash; 785 lines: pipeline diagrams, extension mechanism, Donut internals, supported binary matrix, operational notes</li>
-            <li><a href="https://github.com/panwnvda/Sliver-Evasion-Suite/blob/main/Sleep-Mask-Kit/DOCUMENTATION.md" target="_blank" rel="noopener noreferrer"><code>Sleep-Mask-Kit/DOCUMENTATION.md</code></a> &mdash; 954 lines: scan-window theory, CS vs Sliver runtime analysis, MaskKit + SleepKit deep-dives, threshold tuning, payload layout</li>
-            <li><a href="https://github.com/panwnvda/Sliver-Evasion-Suite/blob/main/Crystal-Palace-Kit/DOCUMENTATION.md" target="_blank" rel="noopener noreferrer"><code>Crystal-Palace-Kit/DOCUMENTATION.md</code></a> &mdash; 1015 lines: COFF linking internals, spec DSL reference, file-by-file C source breakdown, runtime memory layout, hash verification</li>
-            <li><a href="https://github.com/panwnvda/Sliver-Evasion-Suite/blob/main/Inject-Kit/DOCUMENTATION.md" target="_blank" rel="noopener noreferrer"><code>Inject-Kit/DOCUMENTATION.md</code></a> &mdash; Injection modes, PPID spoofing internals, AMSI/ETW bypass, anti-sandbox, architecture diagram, operator workflow, command reference, troubleshooting</li>
+            <li><a href="https://github.com/panwnvda/SliverC2-Evasion-Suite/blob/main/Loader-Kit/DOCUMENTATION.md" target="_blank" rel="noopener noreferrer"><code>Loader-Kit/DOCUMENTATION.md</code></a> &mdash; 785 lines: pipeline diagrams, extension mechanism, Donut internals, supported binary matrix, operational notes</li>
+            <li><a href="https://github.com/panwnvda/SliverC2-Evasion-Suite/blob/main/Sleep-Mask-Kit/DOCUMENTATION.md" target="_blank" rel="noopener noreferrer"><code>Sleep-Mask-Kit/DOCUMENTATION.md</code></a> &mdash; 954 lines: scan-window theory, CS vs Sliver runtime analysis, MaskKit + SleepKit deep-dives, threshold tuning, payload layout</li>
+            <li><a href="https://github.com/panwnvda/SliverC2-Evasion-Suite/blob/main/Crystal-Palace-Kit/DOCUMENTATION.md" target="_blank" rel="noopener noreferrer"><code>Crystal-Palace-Kit/DOCUMENTATION.md</code></a> &mdash; 1015 lines: COFF linking internals, spec DSL reference, file-by-file C source breakdown, runtime memory layout, hash verification</li>
+            <li><a href="https://github.com/panwnvda/SliverC2-Evasion-Suite/blob/main/Inject-Kit/DOCUMENTATION.md" target="_blank" rel="noopener noreferrer"><code>Inject-Kit/DOCUMENTATION.md</code></a> &mdash; Injection modes, PPID spoofing internals, AMSI/ETW bypass, anti-sandbox, architecture diagram, operator workflow, command reference, troubleshooting</li>
           </ul>
           <p>Each kit&rsquo;s tool subdirectories (<code>loadkit/</code>, <code>maskkit/</code>, <code>sleepkit/</code>, <code>palacekit/</code>, <code>crystalkit/</code>, <code>injectkit/</code>) also contain shorter <code>README.md</code> files focused on quickstart build and run.</p>
 
