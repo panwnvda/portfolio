@@ -121,11 +121,7 @@
           <li class="dropdown">
             <a href="./oscp.html" class="nav-link scrollto active" onclick="toggleSubmenu(event)"><i
                 class="bi bi-laptop navicon"></i>Notes <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
-            <ul id="submenu" class="submenu open">
-              <li><a href="./ejpt.html" class="nav-link scrollto"><img src="./img/ejpt.png" alt="eJPT Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">eJPT</a></li>
-              <li><a href="./oswp.html" class="nav-link scrollto"><img src="./img/oswp_icon.png" alt="OSWP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSWP</a></li>
-              <li><a href="./oscp.html" class="nav-link scrollto"><img src="./img/oscp_icon.png" alt="OSCP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSCP</a></li>
-              <li><a href="./osep.html" class="nav-link scrollto"><img src="./img/osep_icon.png" alt="OSEP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSEP</a></li>
+            <ul id="submenu" class="submenu open">              <li><a href="./oscp.html" class="nav-link scrollto"><img src="./img/oscp_icon.png" alt="OSCP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSCP</a></li>              <li><a href="./osep.html" class="nav-link scrollto"><img src="./img/osep_icon.png" alt="OSEP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSEP</a></li>
               <li><a href="./oswe.html" class="nav-link scrollto active"><img src="./img/oswe_icon.svg" alt="OSWE Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSWE</a></li>
               <li><a href="./osed.html" class="nav-link scrollto"><img src="./img/osed_icon.svg" alt="OSED Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSED</a></li>
               <li><a href="#" class="nav-link scrollto" onclick="return false;" style="opacity:0.65;cursor:default;"><img src="./img/osai_icon.svg" alt="OSAI Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSAI <span style="font-size:10px;background:#e02424;color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:middle;font-weight:600;">Coming Soon</span></a></li>
@@ -138,7 +134,7 @@
             <a href="./projects.html" class="nav-link scrollto" onclick="toggleSubmenu(event)"><i
                 class="bi bi-code-square navicon"></i>Projects <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
             <ul class="submenu">
-              <li><a href="./sliver-c2-evasion-suite.html" class="nav-link scrollto"><i class="bi bi-shield-shaded" style="font-size: 18px; vertical-align: middle; margin-right: 6px; color: #6f42c1;"></i>Sliver C2 Evasion Suite <span style="font-size:10px;background:#e02424;color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:middle;font-weight:600;">Coming Soon</span></a></li>
+              <li><a href="./sliver-c2-evasion-suite.html" class="nav-link scrollto"><i class="bi bi-shield-shaded" style="font-size: 18px; vertical-align: middle; margin-right: 6px; color: #6f42c1;"></i>Sliver C2 Evasion Suite</a></li>
             </ul>
           </li>
         </ul>
@@ -172,7 +168,7 @@
             <div class="cheatsheet-content">
 
               <h2 id="oswe-tools-setup">1. Tools &amp; Setup</h2>
-              <p>OSWE is a white-box exam: you receive the application source code and must produce a working, automated exploit for each target. The toolchain centers on Burp Suite Pro for traffic inspection, Python for scripted exploitation, a per-language IDE/debugger for stepping through source, and decompilers for closed binaries.</p>
+              <p>This is a white-box exam: you receive the application source code and must produce a working, automated exploit for each target. The toolchain centers on Burp Suite Pro for traffic inspection, Python for scripted exploitation, a per-language IDE/debugger for stepping through source, and decompilers for closed binaries.</p>
               <h3 id="oswe-lab-setup">1.1 Lab Environment</h3>
               <p>Build one project folder per target with the source tree, your exploit script, captured Burp requests, and notes. Use a <code>requests.Session()</code> across the chain so cookies and tokens propagate automatically. Disable TLS verification (<code>s.verify = False</code>) since exam labs use self-signed certs.</p>
               <table class="custom-table">
@@ -195,7 +191,7 @@
               <h3 id="oswe-script-skeleton">1.2 Exploit Script Skeleton</h3>
               <p>Every exam exploit follows the same shape: a <code>Session</code>, one function per stage of the chain (auth bypass &rarr; primitive &rarr; RCE trigger), arguments at the top for retargeting, and a <code>main</code> that runs them in order.</p>
               <pre><code class="language-python">#!/usr/bin/env python3
-"""OSWE Exploit - target: &lt;app&gt;  chain: SQLi auth bypass -&gt; RCE"""
+"""Exploit - target: &lt;app&gt;  chain: SQLi auth bypass -&gt; RCE"""
 import requests, sys, re, argparse
 
 TARGET  = "http://192.168.X.Y"
@@ -319,9 +315,8 @@ JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
 # Python (Flask) -&gt; debugpy / VS Code
 python3 -m debugpy --listen 0.0.0.0:5678 --wait-for-client app.py</code></pre>
 
-
               <h2 id="oswe-auth-bypass">3. Authentication Bypass</h2>
-              <p>Auth bypass is the first move in almost every OSWE chain. It comes from logic flaws, type confusion, JWT weaknesses, or injection in the login/reset path &mdash; rarely from guessing credentials.</p>
+              <p>Auth bypass is the first move in almost every white-box chain. It comes from logic flaws, type confusion, JWT weaknesses, or injection in the login/reset path &mdash; rarely from guessing credentials.</p>
               <h3 id="oswe-sqli-auth">3.1 SQL Injection Auth Bypass</h3>
               <p>When a login query is string-concatenated, inject a comment that makes the WHERE clause always true, or inject a valid second user. White-box is a gift: read the exact query and craft the precise payload that satisfies its column types and quoting.</p>
               <pre><code class="language-sql">-- Classic (MySQL, MSSQL, SQLite, PostgreSQL)
@@ -476,7 +471,7 @@ print()
 # For PostgreSQL: pg_sleep(2); for MSSQL: WAITFOR DELAY '0:0:2'</code></pre>
 
               <h2 id="oswe-xss">5. Cross-Site Scripting &rarr; Account Takeover</h2>
-              <p>OSWE rarely cares about <code>alert(1)</code>. The chains the course teaches use stored or DOM-based XSS to fetch the admin&rsquo;s CSRF token and exfiltrate data, create a backdoor account, or trigger an authenticated RCE endpoint.</p>
+              <p>The chains here rarely care about <code>alert(1)</code>. Stored or DOM-based XSS is used to fetch the admin&rsquo;s CSRF token and exfiltrate data, create a backdoor account, or trigger an authenticated RCE endpoint.</p>
               <h3 id="oswe-xss-recon">5.1 Finding &amp; Confirming XSS</h3>
               <p>Send a canary and grep the response for it unescaped. Different contexts demand different breakouts: closing a quoted attribute, escaping a <code>&lt;script&gt;</code> block, or hopping out of a JS string literal. A polyglot probes several at once.</p>
               <pre><code class="language-bash"># Basic reflection canary - look for it unescaped in the response
@@ -556,9 +551,8 @@ ws.onopen = () =&gt; {
   };
 };</code></pre>
 
-
               <h2 id="oswe-csrf-cors">6. CSRF, CORS &amp; SameSite Bypass</h2>
-              <p>The Concord chapter in WEB-300 chains CSRF + permissive CORS into a pre-auth account takeover. The pieces &mdash; Same-Origin Policy, CORS, and SameSite cookies &mdash; need to be reasoned about together.</p>
+              <p>A canonical chain here combines CSRF + permissive CORS into a pre-auth account takeover. The pieces &mdash; Same-Origin Policy, CORS, and SameSite cookies &mdash; need to be reasoned about together.</p>
               <h3 id="oswe-sop">6.1 Same-Origin Policy (SOP)</h3>
               <p>SOP prevents scripts on origin A from reading responses from origin B. &ldquo;Origin&rdquo; = scheme + host + port. SOP does <em>not</em> block requests being sent (CSRF still works); it blocks <em>reading the response</em>. Anything that bypasses or relaxes SOP &mdash; CORS misconfig, postMessage misuse, JSONP &mdash; can flip a CSRF into a full read-and-write attack.</p>
               <h3 id="oswe-cors">6.2 CORS Misconfiguration</h3>
@@ -729,7 +723,6 @@ request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
 &lt;!-- openCRX chain: XXE reads JDBC config, attacker connects to HSQLDB,
      invokes a stored Java function to write a web shell to disk --&gt;</code></pre>
 
-
               <h2 id="oswe-deserialization">9. Insecure Deserialization</h2>
               <p>The DotNetNuke chapter exploits .NET cookie deserialization end-to-end; the same patterns appear in Java, PHP, and Node.js. A deserializer that runs magic methods (or instantiates arbitrary classes) on attacker-controlled bytes is RCE when a gadget chain exists in the classpath.</p>
               <h3 id="oswe-deser-java">9.1 Java Deserialization</h3>
@@ -811,7 +804,7 @@ const payload = '{"rce":"_$$ND_FUNC$$_function(){require(\'child_process\').exec
 // serialize-javascript / vm2 escapes - check for eval(data) on deserialized properties</code></pre>
 
               <h2 id="oswe-ssrf">10. Server-Side Request Forgery (SSRF)</h2>
-              <p>The WEB-300 SSRF chapter covers blind SSRF, internal port scanning, headless Chrome JS injection, and the Kong Admin API takeover. Anywhere a parameter takes a URL or hostname is a candidate.</p>
+              <p>SSRF coverage here includes blind SSRF, internal port scanning, headless Chrome JS injection, and the Kong Admin API takeover. Anywhere a parameter takes a URL or hostname is a candidate.</p>
               <h3 id="oswe-ssrf-basics">10.1 Finding &amp; Exploiting SSRF</h3>
               <p>Any URL-accepting parameter is a candidate: <code>url</code>, <code>host</code>, <code>callback</code>, <code>fetch</code>, <code>webhook</code>, <code>redirect</code>, <code>imageurl</code>, <code>proxy</code>, <code>src</code>. Common targets are cloud metadata (AWS IMDSv1 at 169.254.169.254), internal admin panels, Redis, Consul, and the Docker socket.</p>
               <pre><code class="language-bash"># Cloud metadata (AWS IMDSv1)
@@ -925,7 +918,6 @@ grep -rn "merge\|assign\|extend\|clone\|deepCopy" src/ | grep -v "Object.assign"
 
 # Handlebars: pending content -&gt; inserted into the compiled template body
 {"__proto__":{"pendingContent":"&lt;%= global.process.mainModule.require('child_process').execSync('id') %&gt;"}}</code></pre>
-
 
               <h2 id="oswe-rce-eval">12. Command Injection &amp; Eval/Filter Bypass</h2>
               <p>The Dolibarr chapter shows a real-world filter bypass against PHP <code>eval()</code>: a blocklist of dangerous keywords is defeated with reflection, alternate encodings, and string-construction tricks. The same patterns apply to <code>eval</code> in Python and Node.js.</p>
@@ -1093,7 +1085,6 @@ getattr(target, 'attr')  via |attr() filter
 ['__cl'+'ass__']
 # Hex-encode attribute names
 request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
-
 
               <h2 id="methodology">15. Methodology</h2>
               <p>A repeatable, exam-ready workflow from receiving the source tree to delivering a single automated exploit script per target. Complete each stage fully before advancing &mdash; an unverified assumption here causes silent failure two stages later. Keep a running PoC Python script that you extend at each stage.</p>
@@ -1432,13 +1423,20 @@ request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-bash.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-powershell.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-csharp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-c.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-markup-templating.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-php.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-ruby.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
 
   <!-- Template Main JS File -->
   <script src="./js/main.js"></script>
 
   <!-- Prism JS Additional Keywords-->
   <script src="js/prism-langs.js"></script>
-  
 
   <script src="js/site.js"></script>
   <script src="js/cheatsheet-index.js"></script>

