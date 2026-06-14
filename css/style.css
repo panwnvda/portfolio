@@ -1043,4 +1043,6 @@ code {
 }
 .language-powershell .token.keyword {
   color: #007bff; /* Blue for keywords */
-}
+}.nav-icon-img{width:28px;height:auto;vertical-align:middle;margin-right:4px;}
+.coming-soon-badge{font-size:10px;background:#e02424;color:#fff;border-radius:8px;padding:1px 6px;margin-left:4px;vertical-align:middle;font-weight:600;}
+.nav-disabled{opacity:0.65;cursor:default;}
