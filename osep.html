@@ -161,7 +161,7 @@
               <h2 id="osep-tools-setup">1. Tools &amp; Setup</h2>
               <p>This cheatsheet is about defeating modern enterprise defenses &mdash; AV, AppLocker, AMSI, restricted PowerShell, and locked-down Windows configurations. Your toolkit centers on a Windows VM for payload development, a Kali VM for orchestration, and a habit of writing your own shellcode loaders and obfuscation rather than relying on detectable defaults.</p>
               <h3 id="osep-lab-setup">1.1 Lab &amp; Toolchain Setup</h3>
-              <p>Spin up a Windows 10/11 development VM with Visual Studio (or VS Code with the C++/C# workloads) and a Kali VM for HTTP/SMB delivery, listeners, and post-exploitation. Snapshot both before touching the exam network.</p>
+              <p>Spin up a Windows 10/11 development VM with Visual Studio (or VS Code with the C++/C# workloads) and a Kali VM for HTTP/SMB delivery, listeners, and post-exploitation.</p>
               <pre><code class="language-bash"># Kali side: install commonly used tooling
 sudo apt install -y impacket-scripts crackmapexec evil-winrm responder \
   bloodhound neo4j proxychains4 mingw-w64 mono-mcs
