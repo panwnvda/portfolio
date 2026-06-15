@@ -185,8 +185,7 @@
               <p>This is a 24-hour hands-on exam over a hybrid network (standalone hosts + Active Directory set). You operate from a Kali jumpbox over VPN, working from external recon to internal pivots. Stage your toolkit, listeners, and reverse-shell payloads before the timer starts; lose 10 minutes hunting a one-liner and that&rsquo;s a flag you didn&rsquo;t get.</p>
               <h3 id="oscp-lab-setup">1.1 Lab &amp; Kali Setup</h3>
               <p>Bring up Kali, connect to the exam VPN, sanity-check connectivity, and lay out a workspace that&rsquo;s easy to grep later. Snapshot the VM so you can roll back if anything breaks at hour 18.</p>
-              <pre><code class="language-bash"># Connect to the exam VPN profile downloaded from OffSec
-sudo openvpn ~/Downloads/universal.ovpn
+              <pre><code class="language-bash">sudo openvpn ~/Downloads/universal.ovpn
 
 # Confirm tunnel + DNS to the exam range
 ip a show tun0
