@@ -1417,7 +1417,7 @@ truncate-undo
 version</code></pre>
 
               <h3 id="information-gathering-mysql">2.21 3306: MYSQL</h3>
-              <p>Enumerate MySQL databases and user privileges, then leverage FILE privileges to read or write files for escalation.</p>
+              <p>Enumerate MySQL databases and user privileges, then abuse FILE privileges to read or write files for escalation.</p>
 
               <ul>
                 <li><code>SELECT ... INTO OUTFILE '/var/www/html/shell.php'</code> drops a webshell if the MySQL user has FILE privilege and the web root is writable by the MySQL process.</li>
@@ -7096,7 +7096,7 @@ smbclient -p [local_port] -L //127.0.0.1 -U [username] --password=[password]</co
                 <li><strong>Constrained Delegation (S4U)</strong> — Control an account with <code>msDS-AllowedToDelegateTo</code>; forge a service ticket impersonating any user to the configured target service.</li>
                 <li><strong>RBCD</strong> — Write <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> on a target computer (requires GenericWrite); gives S4U2Proxy delegation without SeEnableDelegationPrivilege on the DC.</li>
                 <li><strong>DCSync</strong> — Requires <code>DS-Replication-Get-Changes</code> + <code>DS-Replication-Get-Changes-All</code>; impersonates a DC to pull NT hashes for any account without touching the DC's disk. Modern SIEMs and MDI flag replication traffic — minimise accounts requested.</li>
-                <li><strong>NTLM Relay</strong> — Intercept NTLM auth via LLMNR/NBT-NS poisoning or coercion; relay to SMB/LDAP/HTTP; LDAP relay to DC is especially powerful when LDAP signing is not enforced (allows RBCD config or new account creation). Identify signing-disabled targets first: <code>crackmapexec smb &lt;subnet&gt; --gen-relay-list targets.txt</code>.</li>
+                <li><strong>NTLM Relay</strong> — Intercept NTLM auth via LLMNR/NBT-NS poisoning or coercion; relay to SMB/LDAP/HTTP; LDAP relay to DC is most effective when LDAP signing is not enforced (allows RBCD config or new account creation). Identify signing-disabled targets first: <code>crackmapexec smb &lt;subnet&gt; --gen-relay-list targets.txt</code>.</li>
               </ul>
 
               <!-- AD attack overview table -->

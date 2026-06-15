@@ -4703,7 +4703,7 @@ Get-WinEvent -LogName System | Where-Object {$_.Message -like "*&lt;ServiceName&
 Get-WindowsUpdateLog
 </code></pre>
 <h4 id="privilege-escalation-kiosk-breakouts">5.1.7 Kiosk Breakouts</h4>
-<p>Kiosks and thin clients are a restrictive veneer over a full OS; escape the guided experience by misusing native functionality, then leverage back-end access. Live off the land — <a href="https://lolbas-project.github.io" target="_blank" rel="noopener noreferrer">LOLBAS</a> (Windows) and <a href="https://gtfobins.github.io" target="_blank" rel="noopener noreferrer">GTFOBins</a> (Linux).</p>
+<p>Kiosks and thin clients are a restrictive veneer over a full OS; escape the guided experience by misusing native functionality, then use that back-end access. Live off the land — <a href="https://lolbas-project.github.io" target="_blank" rel="noopener noreferrer">LOLBAS</a> (Windows) and <a href="https://gtfobins.github.io" target="_blank" rel="noopener noreferrer">GTFOBins</a> (Linux).</p>
 
 <h5 id="privilege-escalation-kiosk-enumeration">4.1.7.1 Kiosk Enumeration</h5>
 <p>Map the locked-down interface first: what app is exposed, which inputs accept text, and which keyboard/mouse combinations are not blocked.</p>
@@ -7802,7 +7802,7 @@ bloodhound-cli ingest *.zip
       <td>Shortest Paths to Unconstrained Delegation Systems</td>
     </tr>
     <tr>
-      <td>Leverage compromised principals</td>
+      <td>Move from compromised principals</td>
       <td>Shortest Paths from Owned Principals / to Domain Admins from Owned Principals</td>
     </tr>
     <tr>
@@ -10433,7 +10433,7 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
   <li><input type="checkbox" data-id="osep-ki-enum"> Enumerate the restriction mechanism (kiosk app, Citrix/RDS published app, browser lockdown, GPO restrictions)</li>
   <li><input type="checkbox" data-id="osep-ki-dialogs"> Abuse common dialogs (File &rarr; Open/Save, Print, Help) to reach a file browser or address bar</li>
   <li><input type="checkbox" data-id="osep-ki-uri"> Use URI handlers, UNC paths, and <code>file://</code>/<code>\\server\share</code> navigation to escape the application sandbox</li>
-  <li><input type="checkbox" data-id="osep-ki-shortcut"> Leverage keyboard shortcuts and accessibility features (Sticky Keys, Win+R, Ctrl+Shift+Esc) to spawn a shell</li>
+  <li><input type="checkbox" data-id="osep-ki-shortcut"> Abuse keyboard shortcuts and accessibility features (Sticky Keys, Win+R, Ctrl+Shift+Esc) to spawn a shell</li>
   <li><input type="checkbox" data-id="osep-ki-browser"> Break out of locked browsers via address bar, downloads, dev tools, or external protocol handlers</li>
   <li><input type="checkbox" data-id="osep-ki-explorer"> Reach explorer.exe / cmd.exe / powershell.exe through embedded controls or LOLBAS launchers</li>
   <li><input type="checkbox" data-id="osep-ki-applocker"> Identify and bypass AppLocker/WDAC policy in the kiosk to run arbitrary tooling</li>
