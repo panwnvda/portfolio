@@ -14,6 +14,9 @@
   <link href="./img/profile-img.svg" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
@@ -99,8 +102,8 @@
               <li><a href="./oswe.html" class="nav-link scrollto"><img src="./img/oswe_icon.svg" alt="OSWE Icon" class="nav-icon-img">OSWE</a></li>
               <li><a href="./osed.html" class="nav-link scrollto"><img src="./img/osed_icon.svg" alt="OSED Icon" class="nav-icon-img">OSED</a></li>
               <li><a href="#" class="nav-link scrollto nav-disabled" onclick="return false;"><img src="./img/osai_icon.svg" alt="OSAI Icon" class="nav-icon-img">OSAI <span class="coming-soon-badge">Coming Soon</span></a></li>
-              <li><a href="#" class="nav-link scrollto nav-disabled" onclick="return false;"><img src="./img/crto_icon.png" alt="CRTO Icon" class="nav-icon-img">CRTO <span class="coming-soon-badge">Coming Soon</span></a></li>
-              <li><a href="#" class="nav-link scrollto nav-disabled" onclick="return false;"><img src="./img/crtl_icon.png" alt="CRTL Icon" class="nav-icon-img">CRTL <span class="coming-soon-badge">Coming Soon</span></a></li>
+              <li><a href="./crto.html" class="nav-link scrollto"><img src="./img/crto_icon.png" alt="CRTO Icon" class="nav-icon-img">CRTO</a></li>
+              <li><a href="./crtl.html" class="nav-link scrollto"><img src="./img/crtl_icon.png" alt="CRTL Icon" class="nav-icon-img">CRTL</a></li>
             </ul>
           </li>
           <li><a href="./portfolio.html" class="nav-link scrollto"><i class="bi bi-folder-fill navicon"></i><span>Portfolio</span></a></li>
@@ -632,7 +635,9 @@ cd Crystal-Palace-Kit/palacekit
             <li>Merges multiple COFF objects into a single code image</li>
             <li>Applies all relocations (REL32, ADDR64, etc.) at link time</li>
             <li>Evaluates a Crystal Kit <code>.spec</code> file (the DSL)</li>
-            <li>Fills named COFF sections (<code>dll</code>, <code>mask</code>, <code>pico</code>) with runtime data</li>
+            <li>Fills named COFF sections (<code>dll</code>, <code>mask</code>, <code>nonce</code>, <code>pico</code>) with runtime data</li>
+            <li>Implements Crystal Palace's <strong>DFR (Dynamic Function Resolution)</strong> system &mdash; <code>attach</code> rewrites unresolved <code>MODULE$FUNC</code> externs to local hooks at link time, <code>preserve</code> scopes exemptions by containing function, and unattached DFR symbols get a generated PEB-resolver thunk that calls <code>patch_resolve(ror13_hash)</code> at runtime</li>
+            <li>Emits a runtime hook table from <code>addhook</code> directives that the PICO's <code>__resolve_hook</code> intrinsic consults</li>
             <li>Outputs a flat PIC shellcode blob</li>
           </ol>
           <p>What it does <em>not</em> need: Java, the <code>libtcg.x64.zip</code> TCG runtime, or the Crystal Palace distribution itself.</p>
@@ -661,19 +666,40 @@ char _PICO_[0] __attribute__((section("pico")));</code></pre>
           <p>So when <code>go()</code> runs, the encrypted Sliver shellcode and the XOR key are read directly from the loader&rsquo;s own memory &mdash; no file I/O, no network request, no separate stage.</p>
 
           <h3>5.4 The Spec DSL</h3>
-          <p>The C sources are compiled as a <strong>unity build</strong>: <code>unity.c</code> includes all main loader sources into one translation unit, producing a single <code>loader.x64.o</code>. This eliminates the cross-TU global pointer indirection that MinGW generates, which is incompatible with PIC shellcode. Stub files (<code>pico.c</code>, <code>hooks.c</code>, <code>spoof.c</code>, <code>cfg.c</code>, <code>cleanup.c</code>) are compiled as separate objects because they need to remain swappable.</p>
+          <p>The C loader uses Crystal Palace&rsquo;s <strong>DFR convention</strong>: API calls are written as <code>NTDLL$NtAllocateVirtualMemory(...)</code>, which compiles to an unresolved external. PalaceKit resolves these at link time either to a local hook (via <code>attach</code>) or to a generated PEB-resolver thunk that calls <code>patch_resolve(ror13_hash)</code> at runtime. The C sources are still compiled as a <strong>unity build</strong> (<code>unity.c</code> includes every loader source into one TU) which keeps cross-TU references local and avoids MinGW&rsquo;s <code>.refptr</code> / <code>ADDR64</code> indirections.</p>
 <pre><code class="language-bash">x64:
     load "bin/loader.x64.o"
         make pic +gofirst +optimize
         # unity build: loader.c + services.c + all stubs compiled via unity.c
         # +optimize is a Crystal Palace hint; PalaceKit accepts and ignores it
 
-    generate $MASK 128                    ← random 128-byte XOR key
+    ; ── DFR rewriting (optional) ──────────────────────────────────────
+    attach   "NTDLL$NtAllocateVirtualMemory" "_HookedNtAllocateVirtualMemory"
+    preserve "NTDLL$NtAllocateVirtualMemory" "_HookedNtAllocateVirtualMemory"
+    ;   attach   → all callsites of the DFR symbol redirect to _Hooked…
+    ;   preserve → the hook&rsquo;s own forward-call uses the default thunk
+    ;              instead of looping back into itself
 
-    push $DLL                             ← Sliver shellcode bytes
-        xor $MASK                         ← XOR-encrypt with key
-        preplen                           ← prepend uint32_t length
-        link "dll"                        ← store as "dll" section
+    ; ── Encryption choice ─────────────────────────────────────────────
+    ; XOR (default — small, no auth):
+    generate $MASK 128
+    push $DLL
+        xor $MASK
+        preplen
+        link "dll"
+    push $MASK
+        preplen
+        link "mask"
+
+    ; ChaCha20 (stronger, defeats brute-force on the embedded blob):
+    ;   generate $KEY   32
+    ;   generate $NONCE 12
+    ;   push $DLL
+    ;       chacha20 $KEY $NONCE
+    ;       preplen
+    ;       link "dll"
+    ;   push $KEY    preplen   link "mask"
+    ;   push $NONCE  preplen   link "nonce"
 
     run "pico.spec"
         link "pico"
@@ -685,24 +711,50 @@ char _PICO_[0] __attribute__((section("pico")));</code></pre>
             <tbody>
               <tr><td><code>load "f.o"</code> + <code>make pic +gofirst</code></td><td>Parse COFF, merge into image, rotate so <code>go</code> is at offset 0</td></tr>
               <tr><td><code>merge</code></td><td>Append a COFF without rotation</td></tr>
+              <tr><td><code>attach "EXT" "_local"</code></td><td><strong>DFR rewrite.</strong> Any unresolved <code>MODULE$FUNC</code> external matching <code>EXT</code> is resolved to the local hook symbol <code>_local</code> at link time. Crystal Palace&rsquo;s headline feature, now functional.</td></tr>
+              <tr><td><code>preserve "EXT" "fn"</code></td><td>Scope exemption: calls to <code>EXT</code> originating inside function <code>fn</code> bypass the <code>attach</code> redirect and use the default PEB-resolver thunk instead. Lets the hook reach the real API.</td></tr>
+              <tr><td><code>addhook "EXT" "_local"</code></td><td>Append a <code>{ror13(EXT), _local}</code> entry to the PICO&rsquo;s runtime hash table. The PICO&rsquo;s <code>__resolve_hook(hash)</code> intrinsic walks the table for dispatch-time hooking.</td></tr>
               <tr><td><code>generate $VAR N</code></td><td>N cryptographically random bytes &rarr; <code>$VAR</code></td></tr>
               <tr><td><code>push $VAR</code></td><td>Push variable bytes onto the processing stack</td></tr>
               <tr><td><code>xor $MASK</code></td><td>XOR-encrypt top of stack with key bytes (cycles)</td></tr>
+              <tr><td><code>chacha20 $KEY $NONCE</code></td><td><strong>New.</strong> ChaCha20-IETF stream cipher on top of stack. <code>$KEY</code> must be 32 bytes, <code>$NONCE</code> must be 12 bytes. Output length equals input length; loader detects ChaCha20 mode by the presence of a <code>nonce</code> named section.</td></tr>
               <tr><td><code>preplen</code></td><td>Prepend uint32 little-endian length &rarr; forms a RESOURCE</td></tr>
-              <tr><td><code>link "name"</code></td><td>Pop stack &rarr; store as named COFF section</td></tr>
+              <tr><td><code>link "name"</code></td><td>Pop stack &rarr; store as named COFF section (<code>dll</code>, <code>mask</code>, <code>nonce</code>, or <code>pico</code>)</td></tr>
               <tr><td><code>run "sub.spec"</code></td><td>Evaluate sub-spec, push its output blob</td></tr>
               <tr><td><code>exportfunc "f" "__tag_f"</code></td><td>Assign a numeric tag ID for PICO export</td></tr>
               <tr><td><code>export</code></td><td>End of spec &mdash; triggers final assembly</td></tr>
             </tbody>
           </table>
 
-          <h3>5.5 The PICO System and Why Three Files Are Stubs</h3>
-          <p>Crystal Palace ships a TCG (Tiny Code Generator) library that compiles a mini execution environment called the PICO. For Cobalt Strike it hosts hook functions for <code>GetProcAddress</code>, <code>LoadLibraryW</code>, and <code>ExitThread</code>. For Sliver, PalaceKit replaces TCG with a simplified stub: two exported functions (<code>setup_hooks</code>, <code>setup_memory</code>), both no-ops. The loader still calls through the PICO for API compatibility; the calls return immediately.</p>
-          <p>Three Crystal Kit C files are deliberately disabled for Sliver because the Go runtime makes the original techniques unsafe:</p>
+          <h3>5.5 DFR and the PICO Hash Table</h3>
+          <p>Crystal Palace&rsquo;s defining feature is the <strong>DFR</strong> (Dynamic Function Resolution) system. PalaceKit now implements it end-to-end:</p>
+          <table class="custom-table">
+            <thead><tr><th>Stage</th><th>Mechanism</th></tr></thead>
+            <tbody>
+              <tr><td>1. Author the C</td><td>Call APIs using the <code>MODULE$FUNCTION</code> convention &mdash; e.g. <code>NTDLL$NtAllocateVirtualMemory(...)</code>. mingw emits an unresolved external symbol with a REL32 relocation at each callsite.</td></tr>
+              <tr><td>2. Spec directive</td><td>An <code>attach "NTDLL$NtAllocateVirtualMemory" "_HookedNtAllocateVirtualMemory"</code> line records the redirect.</td></tr>
+              <tr><td>3. Linker resolution</td><td>During <code>Finish()</code>, PalaceKit walks pending relocations: each unresolved DFR external with an attach maps to the local hook&rsquo;s offset; the rest get a freshly-emitted 22-byte thunk appended to <code>.text</code> that calls <code>patch_resolve(ror13_hash)</code> and tail-jumps to the resolved API.</td></tr>
+              <tr><td>4. Preserve exemption</td><td>For each pending reloc inside a preserved containing function, the attach rewrite is bypassed and the thunk is used instead. This lets the hook&rsquo;s own forward-call reach the real API without infinite recursion.</td></tr>
+              <tr><td>5. Runtime</td><td>The default thunk has no cache &mdash; every call walks the PEB. Per-call cost is ~3 ms; replace with a cached variant if hot loops use DFR.</td></tr>
+            </tbody>
+          </table>
+          <p><code>addhook</code> populates a separate runtime table embedded at the end of the PICO blob:</p>
+<pre><code class="language-bash">PICO blob v2:
+  [4]  total_size
+  [4]  num_exports
+  [4]  num_hooks
+  [4]  hooks_table_offset
+  [num_exports × {[4]tag [4]code_offset}]
+  [code bytes]
+  [num_hooks × {[4]ror13_hash [4]hook_code_offset}]   ← addhook table</code></pre>
+          <p>The PICO&rsquo;s <code>__resolve_hook(uint32_t hash)</code> intrinsic walks this table and returns the matching hook pointer, or NULL. Operators wire it to a custom <code>GetProcAddress</code>-style proxy that consults the table before falling through to the real API resolver. The default Sliver loader doesn&rsquo;t need this (Beacon-style IAT hooking is unsafe under the Go runtime &mdash; see below), but the machinery is in place for downstream components that do.</p>
+
+          <h3>5.5.1 Why Three Files Stay Stubbed</h3>
+          <p>Three Crystal Kit C files remain stubs for the Sliver loader because the Go runtime makes the original techniques unsafe. The DFR machinery is independent of these &mdash; <code>attach</code>/<code>preserve</code>/<code>addhook</code> all work even with the stubbed files:</p>
           <table class="custom-table">
             <thead><tr><th>File</th><th>CS purpose</th><th>Disabled because</th></tr></thead>
             <tbody>
-              <tr><td><code>hooks.c</code></td><td>IAT hooks inside Beacon</td><td>Go scheduler preempts every 10ms; hook state corrupted between preemptions</td></tr>
+              <tr><td><code>hooks.c</code></td><td>IAT hooks inside Beacon</td><td>Go scheduler preempts every 10ms; hook state corrupted between preemptions. (DFR-style <code>attach</code> hooks are <em>not</em> affected &mdash; they&rsquo;re link-time symbol rewrites, no IAT poking.)</td></tr>
               <tr><td><code>mask.c</code></td><td>Sleep mask Beacon&rsquo;s own memory</td><td>Goroutines run during XOR &rarr; read encrypted code &rarr; crash. <strong>Replaced by Sleep Mask Kit</strong></td></tr>
               <tr><td><code>spoof.c</code></td><td>Stack spoof during sleep</td><td>Go&rsquo;s runtime manages stacks; spoofing breaks the unwinder and GC</td></tr>
             </tbody>
@@ -750,21 +802,25 @@ PalaceKit build
        ▼
 Deliver palace.bin via any method (or chain through MaskKit/SleepKit first)
   • go() entry at offset 0 — no relocation, no PE loader
-  • resolve_all() — ROR13 PEB walk for every NT/Win32 function
-  • PICO setup (no-op stubs called for API compatibility)
-  • XOR-decrypt Sliver shellcode from "dll" section
+  • Every API call goes through a DFR thunk (per-call PEB walk via patch_resolve)
+    or a directly-attached local hook — no runtime resolve_all() needed
+  • PICO setup: pico_set_bases() makes the embedded hash table visible to
+    __resolve_hook(hash) for any post-load runtime dispatch
+  • XOR or ChaCha20 decrypt Sliver shellcode from "dll" section (mode chosen
+    by presence of a "nonce" section)
   • Allocate RW → copy → mark RX → NtCreateThreadEx</code></pre>
 
           <h3>5.8 C Source Files at a Glance</h3>
           <table class="custom-table">
             <thead><tr><th>File</th><th>Role</th></tr></thead>
             <tbody>
-              <tr><td><code>loader.c</code></td><td>Entry point <code>go()</code>: resolve APIs, set up PICO, decrypt shellcode, NtCreateThreadEx</td></tr>
-              <tr><td><code>services.c</code></td><td>ROR13 PEB walk, global function pointer table</td></tr>
-              <tr><td><code>pico.c</code></td><td>PICO runtime: <code>PicoLoad</code>, <code>PicoGetExport</code>, size queries</td></tr>
+              <tr><td><code>loader.c</code></td><td>Entry point <code>go()</code>: DFR-call APIs, set up PICO, decrypt shellcode (XOR or ChaCha20), <code>NtCreateThreadEx</code></td></tr>
+              <tr><td><code>services.c</code></td><td>ROR13 PEB walk (<code>patch_resolve</code>) called by every DFR thunk PalaceKit emits</td></tr>
+              <tr><td><code>pico.c</code></td><td>PICO runtime: <code>PicoLoad</code>, <code>PicoGetExport</code>, and <code>__resolve_hook(hash)</code> intrinsic that walks the embedded addhook table</td></tr>
+              <tr><td><code>hooks.c</code></td><td>Sample DFR hook (<code>_HookedNtAllocateVirtualMemory</code>) demonstrating <code>attach</code>/<code>preserve</code> end-to-end. Operators replace the body with real evasion logic.</td></tr>
               <tr><td><code>cfg.c</code></td><td>CFG bypass via <code>SetProcessValidCallTargets</code> &mdash; registers PICO region as valid</td></tr>
               <tr><td><code>cleanup.c</code></td><td>Zero the shellcode region before <code>NtFreeVirtualMemory</code> &mdash; forensic noise reduction</td></tr>
-              <tr><td><code>hooks.c</code> / <code>mask.c</code> / <code>spoof.c</code></td><td>Stubs &mdash; see 5.5</td></tr>
+              <tr><td><code>mask.c</code> / <code>spoof.c</code></td><td>Stubs &mdash; see 5.5.1</td></tr>
             </tbody>
           </table>
 
@@ -787,8 +843,21 @@ Deliver palace.bin via any method (or chain through MaskKit/SleepKit first)
     --spec loader/loader.spec \
     --output build/palace.bin</code></pre>
 <pre><code class="language-bash">[*] Shellcode: 589824 bytes
-[+] Loader: 4218 bytes → build/palace.bin</code></pre>
-          <p>The build runs the full pipeline: evaluate <code>loader.spec</code>, merge the 6 COFF loader objects (<code>loader.x64.o</code> is a unity build of all main C sources; the remaining 5 are stub objects), generate a fresh 128-byte XOR key, XOR-encrypt the Sliver shellcode and embed it in the <code>dll</code> section, assemble the PICO blob (two no-op stubs) in the <code>pico</code> section, and emit a flat ~4 KB PIC shellcode.</p>
+[+] Loader: 595943 bytes → build/palace.bin</code></pre>
+          <p>The build runs the full pipeline: evaluate <code>loader.spec</code>, merge the 6 COFF loader objects, resolve every unresolved <code>MODULE$FUNC</code> external (attach &rarr; local hook, or default &rarr; emit a 22-byte PEB-resolver thunk), apply <code>+gofirst</code> rotation, generate a fresh 128-byte XOR key (or 32-byte ChaCha20 key + 12-byte nonce), encrypt the Sliver shellcode and embed it in the <code>dll</code> section, assemble the PICO blob with its addhook hash table, and emit a flat ~6 KB PIC shellcode that wraps the implant.</p>
+          <p>Verbose mode (<code>-v</code>) prints every DFR decision so you can verify <code>attach</code>/<code>preserve</code> are wiring correctly:</p>
+<pre><code class="language-bash">$ ./palacekit build --shellcode implant.bin --spec loader/loader.spec -v
+[*] Shellcode: 589824 bytes
+[dfr] NTDLL$NtAllocateVirtualMemory @ _HookedNtAllocateVirtualMemory → thunk (preserved)
+[dfr] NTDLL$NtProtectVirtualMemory @ go → thunk
+[dfr] NTDLL$NtAllocateVirtualMemory @ go → attach _HookedNtAllocateVirtualMemory
+[dfr] NTDLL$NtAllocateVirtualMemory @ go → attach _HookedNtAllocateVirtualMemory
+[dfr] NTDLL$NtCreateThreadEx @ go → thunk
+[dfr] NTDLL$NtWaitForSingleObject @ go → thunk
+[dfr] NTDLL$NtFreeVirtualMemory @ go → thunk
+[dfr] KERNEL32$LoadLibraryA @ go → thunk
+[pico] buildPICO: 2 exports, 3 hooks
+[+] Loader: 595943 bytes → build/palace.bin</code></pre>
 
           <h4>5.9.3 Compile-and-Build in One Command</h4>
 <pre><code class="language-bash">./palacekit make-loader \
@@ -1473,10 +1542,10 @@ make all          # operator CLI + injectkit.exe + inject.x64.dll + extension ta
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
-  <script src="./vendor/aos/aos.js"></script>
-  <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="./vendor/isotope-layout/isotope.pkgd.min.js"></script>
-  <script src="./vendor/typed.js/typed.min.js"></script>
+  <script defer src="./vendor/aos/aos.js"></script>
+  <script defer src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script defer src="./vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script defer src="./vendor/typed.js/typed.min.js"></script>
 
   <!-- Prism JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
@@ -1485,10 +1554,10 @@ make all          # operator CLI + injectkit.exe + inject.x64.dll + extension ta
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-go.min.js"></script>
 
   <!-- Template Main JS File -->
-  <script src="./js/main.js"></script>
+  <script defer src="./js/main.js"></script>
 
-  <script src="js/site.js"></script>
-  <script src="js/cheatsheet-index.js"></script>
+  <script defer src="js/site.js"></script>
+  <script defer src="js/cheatsheet-index.js"></script>
 
 </body>
 

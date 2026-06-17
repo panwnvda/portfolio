@@ -10,12 +10,11 @@
 function toggleSubmenu(event) {
   event.preventDefault();
   const submenu = event.currentTarget.nextElementSibling;
+  if (!submenu) return;
   const arrow = event.currentTarget.querySelector('.arrow');
-  submenu.classList.toggle('open');
+  const isOpen = submenu.classList.toggle('open');
   if (arrow) {
-    arrow.style.transform = submenu.classList.contains('open')
-      ? 'rotate(90deg)'      // open: chevron points down
-      : 'rotate(0deg)';      // closed: chevron points right
+    arrow.style.transform = isOpen ? 'rotate(90deg)' : 'rotate(0deg)';
   }
 }
 
@@ -58,18 +57,25 @@ function copyTopbarEmail(e)   { e.stopPropagation(); _copyEmail(e.currentTarget)
 function toggleSidebarEmail(e) { e.stopPropagation(); _toggleEmailPopup('sidebar-email-popup', e.currentTarget); }
 function copySidebarEmail(e)   { e.stopPropagation(); _copyEmail(e.currentTarget); }
 
-/* ── Global handlers: click-outside closes popups; Esc closes drawer ─ */
+/* ── Global handlers: click-outside closes popups; Esc closes drawer ─
+ * Popup descriptors are hoisted to module scope so we don't rebuild the
+ * array on every click event.                                          */
+const _emailPopups = [
+  ['topbar-email-popup',  '.topbar-email'],
+  ['sidebar-email-popup', '.sidebar-email'],
+];
+
 document.addEventListener('click', (e) => {
-  [['topbar-email-popup', '.topbar-email'],
-   ['sidebar-email-popup', '.sidebar-email']
-  ].forEach(([popupId, triggerSel]) => {
+  for (let i = 0; i < _emailPopups.length; i++) {
+    const popupId = _emailPopups[i][0];
+    const triggerSel = _emailPopups[i][1];
     const popup = document.getElementById(popupId);
-    if (!popup || !popup.classList.contains('is-open')) return;
+    if (!popup || !popup.classList.contains('is-open')) continue;
     const trigger = document.querySelector(triggerSel);
-    if (popup.contains(e.target) || (trigger && trigger.contains(e.target))) return;
+    if (popup.contains(e.target) || (trigger && trigger.contains(e.target))) continue;
     popup.classList.remove('is-open');
     if (trigger) trigger.setAttribute('aria-expanded', 'false');
-  });
+  }
 });
 
 document.addEventListener('keydown', (e) => {
