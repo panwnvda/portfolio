@@ -63,24 +63,21 @@
   <button type="button" class="menu-trigger" onclick="toggleMenu()" aria-label="Toggle menu" aria-expanded="false"><i class="bi bi-list"></i><i class="bi bi-x-lg"></i></button>
   <div class="menu-backdrop" onclick="closeMenu()" aria-hidden="true"></div>
 
-  <div id="topbar">
-    <div class="topbar-social">
-      <a href="https://www.linkedin.com/in/wencheng-xue5aa52631b/" target="_blank" rel="noopener noreferrer" class="linkedin" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
-      <div class="topbar-email-wrap">
-        <button type="button" class="topbar-email" onclick="toggleTopbarEmail(event)" aria-label="Email" aria-haspopup="dialog" aria-expanded="false"><i class="bi bi-envelope-fill"></i></button>
-        <div id="topbar-email-popup" class="topbar-email-popup" role="dialog" aria-label="Contact email">
-          <span class="topbar-email-text">xuewencheng156@gmail.com</span>
-          <button type="button" class="topbar-email-copy" onclick="copyTopbarEmail(event)" title="Copy"><i class="bi bi-clipboard"></i></button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <header id="header">
     <div class="d-flex flex-column">
-      <div class="profile">
-        <div class="social-links mt-3 text-center">
-          <a href="https://www.linkedin.com/in/wencheng-xue5aa52631b/" target="_blank" class="linkedin"><i class="bi bi-linkedin"></i></a>
+      <nav id="navbar" class="nav-menu navbar">
+        <ul>
+          <li><a href="./index.html" class="nav-link scrollto"><i class="bi bi-house navicon"></i>Home</a></li>
+          <li><a href="./certifications.html" class="nav-link scrollto active"><i class="bi bi-patch-check-fill navicon"></i>Certifications</a></li>
+          <li><a href="./development.html" class="nav-link scrollto"><i class="bi bi-terminal-fill navicon"></i>Development</a></li>
+          <li><a href="./disclosure.html" class="nav-link scrollto"><i class="bi bi-shield-exclamation navicon"></i>Disclosures</a></li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-contact">
+        <div class="sidebar-contact-label">Contact</div>
+        <div class="sidebar-contact-links">
+          <a href="https://www.linkedin.com/in/wencheng-xue5aa52631b/" target="_blank" rel="noopener noreferrer" class="linkedin" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
           <div class="sidebar-email-wrap">
             <button type="button" class="sidebar-email" onclick="toggleSidebarEmail(event)" aria-label="Email" aria-haspopup="dialog" aria-expanded="false"><i class="bi bi-envelope-fill"></i></button>
             <div id="sidebar-email-popup" class="sidebar-email-popup" role="dialog" aria-label="Contact email">
@@ -90,15 +87,6 @@
           </div>
         </div>
       </div>
-
-      <nav id="navbar" class="nav-menu navbar">
-        <ul>
-          <li><a href="./index.html" class="nav-link scrollto"><i class="bi bi-house navicon"></i>Home</a></li>
-          <li><a href="./certifications.html" class="nav-link scrollto active"><i class="bi bi-patch-check-fill navicon"></i>Certifications</a></li>
-          <li><a href="./development.html" class="nav-link scrollto"><i class="bi bi-terminal-fill navicon"></i>Development</a></li>
-          <li><a href="./disclosure.html" class="nav-link scrollto"><i class="bi bi-shield-exclamation navicon"></i>Disclosures</a></li>
-        </ul>
-      </nav>
     </div>
   </header>
 
