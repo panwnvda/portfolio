@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250" width="250" height="250" role="img" aria-label="Wencheng Xue monogram">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a1828"/>
+      <stop offset="100%" stop-color="#040b14"/>
+    </linearGradient>
+    <linearGradient id="mono" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#37b3ed"/>
+      <stop offset="100%" stop-color="#149ddd"/>
+    </linearGradient>
+  </defs>
+  <circle cx="125" cy="125" r="125" fill="url(#bg)"/>
+  <circle cx="125" cy="125" r="116" fill="none" stroke="#149ddd" stroke-width="3" stroke-opacity="0.55"/>
+  <text x="125" y="128" text-anchor="middle" dominant-baseline="central"
+        font-family="'Poppins','Raleway',Arial,sans-serif" font-size="118" font-weight="700"
+        fill="url(#mono)" letter-spacing="-4">WX</text>
+</svg>

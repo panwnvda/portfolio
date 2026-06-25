@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Wencheng Xue | Offensive Security</title>
+  <meta content="Wencheng Xue. Penetration tester, bug bounty hunter, and vulnerability researcher." name="description">
+  <meta content="Wencheng Xue, penetration testing, bug bounty, vulnerability research, OSCP, OSEP, OSWE, OSED, cybersecurity" name="keywords">
+
+  <link href="./img/favicon-home.svg" rel="icon" type="image/svg+xml">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="./vendor/aos/aos.css" rel="stylesheet">
+  <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="./vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <!-- Template Main CSS File -->
+  <link href="./css/style.css" rel="stylesheet">
+
+  <!-- Open Graph meta tags -->
+  <meta property="og:title" content="Wencheng Xue | Offensive Security">
+  <meta property="og:description" content="Wencheng Xue. Penetration tester, bug bounty hunter, and vulnerability researcher.">
+  <meta property="og:image" content="./img/profile-img.svg">
+  <meta property="og:type" content="website">
+  <style>
+    #main { background: #ffffff; }
+    /* About: left-aligned, full-width layout */
+    .about-content-col { max-width: 100%; margin: 0; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ======= Mobile nav toggle button ======= -->
+  <button type="button" class="menu-trigger" onclick="toggleMenu()" aria-label="Toggle menu" aria-expanded="false"><i class="bi bi-list"></i><i class="bi bi-x-lg"></i></button>
+  <div class="menu-backdrop" onclick="closeMenu()" aria-hidden="true"></div>
+
+  <!-- ======= Header ======= -->
+  <!-- ======= Top Bar (brand strip; always visible) ======= -->
+  <div id="topbar">
+    <div class="topbar-social">
+      <a href="https://www.linkedin.com/in/wencheng-xue5aa52631b/" target="_blank" rel="noopener noreferrer" class="linkedin" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+      <div class="topbar-email-wrap">
+        <button type="button" class="topbar-email" onclick="toggleTopbarEmail(event)" aria-label="Email" aria-haspopup="dialog" aria-expanded="false"><i class="bi bi-envelope-fill"></i></button>
+        <div id="topbar-email-popup" class="topbar-email-popup" role="dialog" aria-label="Contact email">
+          <span class="topbar-email-text">xuewencheng156@gmail.com</span>
+          <button type="button" class="topbar-email-copy" onclick="copyTopbarEmail(event)" title="Copy"><i class="bi bi-clipboard"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <header id="header">
+    <div class="d-flex flex-column">
+
+      <div class="profile">
+        <div class="social-links mt-3 text-center">
+          <a href="https://www.linkedin.com/in/wencheng-xue5aa52631b/" target="_blank" class="linkedin"><i class="bi bi-linkedin"></i></a>
+          <div class="sidebar-email-wrap">
+            <button type="button" class="sidebar-email" onclick="toggleSidebarEmail(event)" aria-label="Email" aria-haspopup="dialog" aria-expanded="false"><i class="bi bi-envelope-fill"></i></button>
+            <div id="sidebar-email-popup" class="sidebar-email-popup" role="dialog" aria-label="Contact email">
+              <span class="sidebar-email-text">xuewencheng156@gmail.com</span>
+              <button type="button" class="sidebar-email-copy" onclick="copySidebarEmail(event)" title="Copy"><i class="bi bi-clipboard"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav id="navbar" class="nav-menu navbar">
+        <ul>
+          <li><a href="./index.html" class="nav-link scrollto active"><i class="bi bi-house navicon"></i>Home</a></li>
+          <li><a href="./certifications.html" class="nav-link scrollto"><i class="bi bi-patch-check-fill navicon"></i>Certifications</a></li>
+          <li><a href="./development.html" class="nav-link scrollto"><i class="bi bi-terminal-fill navicon"></i>Development</a></li>
+          <li><a href="./disclosure.html" class="nav-link scrollto"><i class="bi bi-shield-exclamation navicon"></i>Disclosures</a></li>
+        </ul>
+      </nav><!-- .nav-menu -->
+    </div>
+  </header><!-- End Header -->
+
+  <!-- ======= Hero Section ======= -->
+  <section id="hero" class="d-flex flex-column justify-content-center align-items-center">
+    <div class="hero-container">
+      <h1>Wencheng Xue</h1>
+      <p><span class="typed" data-typed-items="Student, Offensive Security Specialist, Vulnerability Researcher, Bug Bounty Hunter"></span></p>
+    </div>
+  </section><!-- End Hero -->
+
+  <main id="main">
+
+    <!-- ======= About Section ======= -->
+    <section id="about" class="about">
+      <div class="container">
+
+        <div class="section-title">
+          <h2>About</h2>
+        </div>
+
+        <div class="row">
+          <div class="col-12 content about-content-col" data-aos="fade-up">
+<p>
+              Hi, I'm Wencheng Xue.
+            </p>
+
+            <p>
+              I'm an offensive security engineer, vulnerability researcher, and red team operator with a focus on building tools, understanding complex systems, and continuously improving my craft. My primary interests include offensive security engineering, adversary simulation, and vulnerability research.
+            </p>
+
+            <p>
+              I enjoy developing tools that help operators work more effectively, studying how modern defenses detect malicious activity, and exploring the tradecraft used in real-world operations. Most of my projects focus on C2 development, offensive tooling, automation, and Windows internals. I have contributed vulnerability research to open-source security projects and have a strong interest in both discovering and responsibly disclosing security issues. Beyond finding vulnerabilities, I enjoy understanding why they exist, how they can be exploited, and how they can ultimately be fixed.
+            </p>
+
+            <p>
+              This site is where I keep my research, notes, projects, and tools.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End About Section -->
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+    <div class="container">
+      <div class="credits">
+        <p>
+          &copy; Wencheng Xue<br>
+          Penetration Tester &amp; Vulnerability Researcher
+        </p>
+      </div>
+    </div>
+  </footer><!-- End  Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script defer src="./vendor/aos/aos.js"></script>
+  <script defer src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script defer src="./vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script defer src="./vendor/typed.js/typed.min.js"></script>
+  <!-- Template Main JS File -->
+  <script defer src="./js/main.js"></script>
+
+  <script defer src="js/site.js"></script>
+
+</body>
+
+</html>
