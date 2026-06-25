@@ -410,7 +410,7 @@ body.is-menu-open .menu-backdrop {
 --------------------------------------------------------------*/
 /* Sidebar nav menu (vertical) */
 .nav-menu {
-  padding: 30px 0 0 0;
+  padding: 58px 0 0 0;
   flex: 1 1 auto;
   display: block;
   justify-content: initial;
