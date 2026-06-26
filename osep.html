@@ -8705,16 +8705,6 @@ Invoke-SQLOSCmd -Instance [sql-server] -Command "powershell -enc [base64-cradle]
 </tbody>
 </table>
 
-<div class="ad-mindmap-reference" aria-label="Active Directory mindmap reference">
-<p class="reference-title">Active Directory Mindmap</p>
-<figure>
-  <a href="https://orange-cyberdefense.github.io/ocd-mindmaps/img/mindmap_ad_dark_classic_2025.03.excalidraw.svg" target="_blank" rel="noopener noreferrer">
-    <img src="https://orange-cyberdefense.github.io/ocd-mindmaps/img/mindmap_ad_dark_classic_2025.03.excalidraw.svg" alt="Orange Cyberdefense Active Directory pentest mindmap">
-  </a>
-  <figcaption>Orange Cyberdefense AD Mindmap. Click to open full size.</figcaption>
-</figure>
-</div>
-
 <h2 id="active-directory-enumeration">19. Active Directory Enumeration</h2>
 
 <p>Active Directory enumeration is an assumed-breach workflow: start with the identity and host you control, map the domain through LDAP, SMB, Kerberos, DNS, and RPC, then repeat enumeration after every new credential, token, host, or group membership. The goal is to identify users, groups, computers, sessions, shares, ACLs, delegation, trusts, and credential exposure that can become an attack path.</p>
@@ -8982,6 +8972,16 @@ Get-DomainSID -Domain [root-domain]</code></pre>
 
 <h3 id="ad-enum-workflow">19.9 Enumeration Workflow</h3>
 <p>The enumeration loop is the important part: enumerate, identify an edge, exploit or pivot, then enumerate again from the new perspective. A new user may have different group memberships, ACL rights, LAPS read access, GPO scope, sessions, or trust visibility.</p>
+
+<div class="ad-mindmap-reference" aria-label="Active Directory mindmap reference">
+<p class="reference-title">Active Directory Mindmap</p>
+<figure>
+  <a href="https://orange-cyberdefense.github.io/ocd-mindmaps/img/mindmap_ad_dark_classic_2025.03.excalidraw.svg" target="_blank" rel="noopener noreferrer">
+    <img src="https://orange-cyberdefense.github.io/ocd-mindmaps/img/mindmap_ad_dark_classic_2025.03.excalidraw.svg" alt="Orange Cyberdefense Active Directory pentest mindmap">
+  </a>
+  <figcaption>Orange Cyberdefense AD Mindmap. Click to open full size.</figcaption>
+</figure>
+</div>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
