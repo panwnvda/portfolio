@@ -629,7 +629,7 @@ sliver (SESSION) > jump-wmiexec [target] 'powershell -enc [base64-cradle]'</code
 
 <p>A dropper is malware that delivers and executes a payload on a victim machine. Non-staged payloads embed all shellcode in a single self-contained file. Staged payloads contain only a compact first-stage callback that retrieves the full payload from the C2 server and executes it in memory, reducing the on-disk footprint and detection surface.</p>
 
-<p>Sliver supports both approaches. A Sliver beacon executable is effectively a fully self-contained implant, while using a shellcode profile with a <code>stage-listener</code> produces a compact first-stage stager that fetches the remaining implant code over the network.</p>
+<p>Both Sliver and <code>msfvenom</code> support staged and non-staged payloads. In Sliver, a beacon executable is effectively a fully self-contained implant, while using a shellcode profile with a <code>stage-listener</code> produces a compact first-stage stager that fetches the remaining implant code over the network.</p>
 
 <table class="custom-table">
 <thead><tr><th>Type</th><th>Characteristics</th><th>Sliver Equivalent</th></tr></thead>
