@@ -490,7 +490,7 @@ sliver ([session-name]) > sharpsh -t 20 -- '-c "$ExecutionContext.SessionState.L
 </ul>
 
 <h3 id="sliver-nim-stager">2.6 Nim Stager</h3>
-<p>A Nim stager is a small loader that requests raw shellcode from a Sliver stage listener and runs it in memory. The workflow is straightforward: fetch the staged payload, convert the response into bytes, allocate memory in the current process, copy the shellcode into that region, mark it executable, and start execution with a new thread.</p>
+<p>Stagers are small loaders that request raw shellcode from a stage listener and run it in memory. The workflow is straightforward: fetch the staged payload, convert the response into bytes, allocate memory in the current process, copy the shellcode into that region, mark it executable, and start execution with a new thread.</p>
 <ul class="methodology-checklist">
   <li>
     <label><input type="checkbox"> Compile a Nim HTTP stager that downloads shellcode and executes it in memory</label>
