@@ -344,19 +344,19 @@ call MessageBoxA  ; callee cleans stack internally with RET 10h</code></pre>
 dd esp L8</code></pre>
     <ul class="methodology-checklist">
     <li><label><input type="checkbox"> Before CALL (after args pushed):</label></li>
-    <li><label><input type="checkbox"> [ESP+0]  = last arg pushed (first parameter)</label></li>
-    <li><label><input type="checkbox"> [ESP+4]  = second parameter</label></li>
-    <li><label><input type="checkbox"> [ESP+8]  = ...</label></li>
+    <li><label><input type="checkbox"> <code>[ESP+0]</code> = last arg pushed (first parameter)</label></li>
+    <li><label><input type="checkbox"> <code>[ESP+4]</code> = second parameter</label></li>
+    <li><label><input type="checkbox"> <code>[ESP+8]</code> = next parameter, if present</label></li>
     <li><label><input type="checkbox"> After CALL (inside callee, after prologue):</label></li>
-    <li><label><input type="checkbox"> [ESP+0]  = saved EBP</label></li>
-    <li><label><input type="checkbox"> [ESP+4]  = return address</label></li>
-    <li><label><input type="checkbox"> [ESP+8]  = first parameter</label></li>
-    <li><label><input type="checkbox"> [ESP+C]  = second parameter</label></li>
+    <li><label><input type="checkbox"> <code>[ESP+0]</code> = saved EBP</label></li>
+    <li><label><input type="checkbox"> <code>[ESP+4]</code> = return address</label></li>
+    <li><label><input type="checkbox"> <code>[ESP+8]</code> = first parameter</label></li>
+    <li><label><input type="checkbox"> <code>[ESP+C]</code> = second parameter</label></li>
     <li><label><input type="checkbox"> Or reference from EBP:</label></li>
-    <li><label><input type="checkbox"> [EBP+0]  = saved EBP</label></li>
-    <li><label><input type="checkbox"> [EBP+4]  = return address</label></li>
-    <li><label><input type="checkbox"> [EBP+8]  = first parameter</label></li>
-    <li><label><input type="checkbox"> [EBP-4]  = first local variable</label></li>
+    <li><label><input type="checkbox"> <code>[EBP+0]</code> = saved EBP</label></li>
+    <li><label><input type="checkbox"> <code>[EBP+4]</code> = return address</label></li>
+    <li><label><input type="checkbox"> <code>[EBP+8]</code> = first parameter</label></li>
+    <li><label><input type="checkbox"> <code>[EBP-4]</code> = first local variable</label></li>
     </ul>
   </li>
 </ul>
@@ -717,7 +717,7 @@ dd ebp-100 L50
 <thead><tr><th>Function</th><th>Risk</th><th>Safe Alternative</th></tr></thead>
 <tbody>
 <tr><td>strcpy(dst, src)</td><td>No length limit — copies until null terminator</td><td>strncpy, strcpy_s</td></tr>
-<tr><td>sprintf(buf, fmt, ...)</td><td>No output length limit</td><td>snprintf, sprintf_s</td></tr>
+<tr><td><code>sprintf(buf, fmt, ...)</code></td><td>No output length limit</td><td><code>snprintf</code>, <code>sprintf_s</code></td></tr>
 <tr><td>gets(buf)</td><td>No length limit — reads until newline</td><td>fgets</td></tr>
 <tr><td>memcpy(dst, src, n)</td><td>Safe if n is validated — dangerous if n comes from user input</td><td>memcpy_s</td></tr>
 <tr><td>strcat(dst, src)</td><td>Appends without checking remaining dst capacity</td><td>strncat, strcat_s</td></tr>
@@ -937,9 +937,9 @@ s.close()</code></pre>
     <label><input type="checkbox"> In WinDbg, compare memory at ESP against the expected sequence</label>
     <pre><code class="language-bash">db esp L100</code></pre>
     <ul class="methodology-checklist">
-    <li><label><input type="checkbox"> Look for the sequence: 01 02 03 04 05 06 07 08 09 ...</label></li>
+    <li><label><input type="checkbox"> Look for the byte sequence continuing in order, starting with <code>01 02 03 04 05 06 07 08 09</code></label></li>
     <li><label><input type="checkbox"> If a byte is missing, replaced, or followed by unexpected values, that byte is a bad character</label></li>
-    <li><label><input type="checkbox"> Example: if you see 01 02 03 04 05 06 07 08 09 0b 0c ... then 0x0a is a bad character (it was skipped)</label></li>
+    <li><label><input type="checkbox"> Example: if the sequence jumps from <code>09</code> to <code>0b 0c</code>, then <code>0x0a</code> is a bad character because it was skipped</label></li>
     </ul>
   </li>
   <li>
@@ -1146,7 +1146,7 @@ python3 exploit.py</code></pre>
     <ul class="methodology-checklist">
     <li><label><input type="checkbox"> Increase NOP sled if decoder needs more room:</label></li>
     <li><label><input type="checkbox"> If process crashes after shell, try EXITFUNC=process:</label></li>
-    <li><label><input type="checkbox"> msfvenom ... EXITFUNC=process ...</label></li>
+    <li><label><input type="checkbox"> Add <code>EXITFUNC=process</code> to the relevant <code>msfvenom</code> payload command</label></li>
     </ul>
   </li>
 </ul>
@@ -1585,7 +1585,7 @@ t   # step through JMP — should land in NOP sled
   <li>
     <label><input type="checkbox"> Load PDB symbols if available (improves function and variable names)</label>
     <ul class="methodology-checklist">
-    <li><label><input type="checkbox"> File &gt; Load File &gt; PDB File...</label></li>
+    <li><label><input type="checkbox"> <code>File &gt; Load File &gt; PDB File...</code></label></li>
     <li><label><input type="checkbox"> Or set the symbol server path:</label></li>
     <li><label><input type="checkbox"> Options &gt; General &gt; Analysis &gt; PDB &gt; Symbol path:</label></li>
     <li><label><input type="checkbox"> srv*C:\symbols*https://msdl.microsoft.com/download/symbols</label></li>
@@ -1694,7 +1694,7 @@ t   # step through JMP — should land in NOP sled
   <li>
     <label><input type="checkbox"> Generate a call graph from recv() to the vulnerable function</label>
     <ul class="methodology-checklist">
-    <li><label><input type="checkbox"> Right-click the target function &gt; Xrefs graph from...</label></li>
+    <li><label><input type="checkbox"> <code>Right-click the target function &gt; Xrefs graph from...</code></label></li>
     <li><label><input type="checkbox"> Or: View &gt; Graphs &gt; Xrefs from</label></li>
     <li><label><input type="checkbox"> This shows all functions called transitively</label></li>
     <li><label><input type="checkbox"> Look for paths: recv → parse_command → handle_input → strcpy</label></li>
@@ -1703,7 +1703,7 @@ t   # step through JMP — should land in NOP sled
   <li>
     <label><input type="checkbox"> Generate a callers graph to see which higher-level functions invoke the vulnerable routine</label>
     <ul class="methodology-checklist">
-    <li><label><input type="checkbox"> Right-click the function &gt; Xrefs graph to...</label></li>
+    <li><label><input type="checkbox"> <code>Right-click the function &gt; Xrefs graph to...</code></label></li>
     <li><label><input type="checkbox"> Or: View &gt; Graphs &gt; Xrefs to</label></li>
     <li><label><input type="checkbox"> Shows all callers up to the specified depth</label></li>
     <li><label><input type="checkbox"> Identify the entry point that an attacker can reach via network input</label></li>
@@ -1736,7 +1736,7 @@ lm m [module-name]
 <tbody>
 <tr><td>strcpy(dst, src)</td><td>No length check on src</td><td>strncpy / strcpy_s</td></tr>
 <tr><td>strcat(dst, src)</td><td>No remaining-space check</td><td>strncat / strcat_s</td></tr>
-<tr><td>sprintf(buf, fmt, ...)</td><td>No output length limit</td><td>snprintf / sprintf_s</td></tr>
+<tr><td><code>sprintf(buf, fmt, ...)</code></td><td>No output length limit</td><td><code>snprintf</code> / <code>sprintf_s</code></td></tr>
 <tr><td>gets(buf)</td><td>No length limit at all</td><td>fgets</td></tr>
 <tr><td>memcpy(dst, src, n)</td><td>Safe only if n is validated</td><td>memcpy_s</td></tr>
 <tr><td>vsprintf(buf, fmt, va)</td><td>No output length limit</td><td>vsnprintf</td></tr>
@@ -2439,7 +2439,7 @@ next_page:
 <thead><tr><th>Technique</th><th>Instructions</th><th>Purpose</th></tr></thead>
 <tbody>
 <tr><td>CALL/POP</td><td><code>call label; label: pop reg</code></td><td>Get EIP into a register</td></tr>
-<tr><td>JMP-CALL-POP</td><td><code>jmp fwd; code: pop reg; ...; fwd: call code; db "data"</code></td><td>Reference data at known offset from EIP</td></tr>
+<tr><td>JMP-CALL-POP</td><td><code>jmp fwd; code: pop reg; instructions; fwd: call code; db "data"</code></td><td>Reference data at known offset from EIP</td></tr>
 <tr><td>Relative LEA</td><td><code>call delta; delta: pop ebx; lea eax, [ebx+offset]</code></td><td>Compute address of a label relative to current position</td></tr>
 <tr><td>FSTENV</td><td><code>fldz; fstenv [esp-0x0c]; pop reg</code></td><td>Get EIP via FPU environment save (alternative to CALL/POP)</td></tr>
 </tbody>
@@ -2688,7 +2688,7 @@ hash_done:
 <thead><tr><th>API Call</th><th>Parameters</th><th>Purpose</th></tr></thead>
 <tbody>
 <tr><td>WSAStartup</td><td>wVersionRequested=0x0202, lpWSAData=stack buffer</td><td>Initialize Winsock</td></tr>
-<tr><td>WSASocketA</td><td>af=AF_INET(2), type=SOCK_STREAM(1), protocol=0, ..., dwFlags=0</td><td>Create TCP socket</td></tr>
+<tr><td>WSASocketA</td><td><code>af=AF_INET(2), type=SOCK_STREAM(1), protocol=0, dwFlags=0</code> plus default/null values for the remaining parameters</td><td>Create TCP socket</td></tr>
 <tr><td>connect</td><td>s=socket, addr=sockaddr_in(IP,port), namelen=16</td><td>Connect to attacker</td></tr>
 <tr><td>CreateProcessA</td><td>lpCommandLine="cmd.exe", STARTUPINFO with redirected handles</td><td>Spawn shell with I/O over socket</td></tr>
 <tr><td>ExitProcess</td><td>uExitCode=0</td><td>Clean exit</td></tr>
@@ -3299,7 +3299,7 @@ ida.exe [target-binary].exe
 <tr><td>Other locals (var_108)</td><td>[ebp-108h]</td><td>Overwritten during overflow</td></tr>
 <tr><td>Saved EBP</td><td>[ebp+0]</td><td>Previous frame pointer — overwritten</td></tr>
 <tr><td>Saved EIP (return address)</td><td>[ebp+4]</td><td>Primary target — hijack control flow</td></tr>
-<tr><td>Function arguments</td><td>[ebp+8], [ebp+Ch], ...</td><td>Caller's arguments — may also be overwritten</td></tr>
+<tr><td>Function arguments</td><td><code>[ebp+8]</code>, <code>[ebp+Ch]</code>, and higher positive offsets</td><td>Caller's arguments — may also be overwritten</td></tr>
 </tbody>
 </table>
 
@@ -3701,7 +3701,7 @@ bcdedit /enum | findstr "nx"</code></pre>
 <thead><tr><th>Concept</th><th>Description</th><th>Example</th></tr></thead>
 <tbody>
 <tr><td>Gadget</td><td>Short instruction sequence ending in RET</td><td><code>pop eax; ret</code></td></tr>
-<tr><td>Chain</td><td>Sequence of gadget addresses on the stack</td><td>addr1, arg1, addr2, arg2, ...</td></tr>
+<tr><td>Chain</td><td>Sequence of gadget addresses on the stack</td><td><code>addr1, arg1, addr2, arg2</code>, then additional gadget/argument pairs as needed</td></tr>
 <tr><td>Stack pivot</td><td>Move ESP to attacker-controlled memory</td><td><code>xchg eax, esp; ret</code></td></tr>
 <tr><td>API call via ROP</td><td>Set up parameters and call Win32 API</td><td>VirtualProtect(addr, size, 0x40, &old)</td></tr>
 <tr><td>RET sled</td><td>Series of RET gadgets to align execution</td><td>Fills gaps in the chain</td></tr>
@@ -3714,19 +3714,19 @@ bcdedit /enum | findstr "nx"</code></pre>
     <label><input type="checkbox"> Understand the stack layout during ROP chain execution</label>
     <ul class="methodology-checklist">
     <li><label><input type="checkbox"> Stack layout after EIP overwrite:</label></li>
-    <li><label><input type="checkbox"> ESP →  [gadget_1 address]    ← RET jumps here</label></li>
-    <li><label><input type="checkbox"> [gadget_1 argument]   ← gadget_1 pops this into a register</label></li>
-    <li><label><input type="checkbox"> [gadget_2 address]    ← gadget_1's RET jumps here</label></li>
-    <li><label><input type="checkbox"> [gadget_2 argument]</label></li>
-    <li><label><input type="checkbox"> [gadget_3 address]</label></li>
-    <li><label><input type="checkbox"> ...</label></li>
-    <li><label><input type="checkbox"> [VirtualProtect addr]</label></li>
-    <li><label><input type="checkbox"> [shellcode return]</label></li>
-    <li><label><input type="checkbox"> [VP arg1: lpAddress]</label></li>
-    <li><label><input type="checkbox"> [VP arg2: dwSize]</label></li>
-    <li><label><input type="checkbox"> [VP arg3: flNewProtect = 0x40]</label></li>
-    <li><label><input type="checkbox"> [VP arg4: lpflOldProtect]</label></li>
-    <li><label><input type="checkbox"> [shellcode bytes...]</label></li>
+    <li><label><input type="checkbox"> <code>ESP -&gt; [gadget_1 address]</code> - the first <code>RET</code> jumps here</label></li>
+    <li><label><input type="checkbox"> <code>[gadget_1 argument]</code> - consumed by <code>gadget_1</code>, for example through a <code>POP</code></label></li>
+    <li><label><input type="checkbox"> <code>[gadget_2 address]</code> - <code>gadget_1</code>'s <code>RET</code> jumps here</label></li>
+    <li><label><input type="checkbox"> <code>[gadget_2 argument]</code></label></li>
+    <li><label><input type="checkbox"> <code>[gadget_3 address]</code></label></li>
+    <li><label><input type="checkbox"> Additional gadget addresses and arguments may appear here depending on the chain</label></li>
+    <li><label><input type="checkbox"> <code>[VirtualProtect addr]</code></label></li>
+    <li><label><input type="checkbox"> <code>[shellcode return]</code></label></li>
+    <li><label><input type="checkbox"> <code>[VP arg1: lpAddress]</code></label></li>
+    <li><label><input type="checkbox"> <code>[VP arg2: dwSize]</code></label></li>
+    <li><label><input type="checkbox"> <code>[VP arg3: flNewProtect = 0x40]</code></label></li>
+    <li><label><input type="checkbox"> <code>[VP arg4: lpflOldProtect]</code></label></li>
+    <li><label><input type="checkbox"> <code>[shellcode bytes follow]</code></label></li>
     </ul>
   </li>
   <li>
