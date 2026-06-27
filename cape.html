@@ -4664,7 +4664,7 @@ RETURN p</code></pre></li>
 <li><strong>Custom Reporting:</strong> Create custom Cypher-based dashboards without coding</li>
 </ul>
 
-<p>Installation and usage:</p>
+<p>After installation, launch BlueHound and authenticate to Neo4j before running collections or dashboards:</p>
 
 <pre><code class="language-powershell"># Extract BlueHound
 Expand-Archive .\BlueHound-win32-x64-1.1.0.zip .
@@ -7675,7 +7675,7 @@ proxychains4 -q crackmapexec smb [dc-ip] -u 'DC01$' -p '' --ntds</code></pre>
 
 <p>Prerequisites: Only the target username is needed. No domain credentials are required if a username list is available. This is one of the few Kerberos attacks that can be performed without prior authentication.</p>
 
-<p>Red Team usage:</p>
+<p>In offensive workflows, AS-REPRoasting is most useful when it supports persistence or controlled privilege escalation:</p>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> <strong>Persistence:</strong> Setting the <code>DONT_REQ_PREAUTH</code> flag on accounts allows attackers to regain access after password changes by cracking the new AS-REP.</label></li>
 <li><label><input type="checkbox"> <strong>Privilege Escalation:</strong> If an attacker has <code>GenericWrite</code> or <code>GenericAll</code> over an account, they can enable the flag, request the AS-REP, crack the hash, and disable the flag again (targeted AS-REPRoasting). This avoids the risky password-reset approach.</label></li>
