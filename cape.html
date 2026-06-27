@@ -18612,14 +18612,8 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 
 <div class="index-btn" onclick="toggleIndex()">Index</div>
 <div id="index" class="index">
-<div class="container mt-3">
-<div class="input-group mb-3">
-<input type="text" id="search-input" class="form-control" placeholder="Search sections...">
-<button class="btn btn-primary" type="button" id="search-button"><i class="bi bi-search"></i></button>
-</div>
-</div>
 <button class="expand-collapse-btn" onclick="toggleAll()">Show/Hide All</button>
-<button class="dropdown-btn section-flow-1" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">1. Active Directory Enumeration and Exploitation<i class="bi bi-chevron-down"></i></button>
+<button class="dropdown-btn section-flow-1">1. Active Directory Enumeration and Exploitation<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-1">
 <a class="dropdown-link" href="#ad-overview">1.1 Active Directory Overview &amp; Engagement Setup</a>
 <div class="nested-dropdown">
@@ -18796,7 +18790,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 </div>
-<button class="dropdown-btn section-flow-2" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">2. Active Directory LDAP<i class="bi bi-chevron-down"></i></button>
+<button class="dropdown-btn section-flow-2">2. Active Directory LDAP<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-2">
 <div class="nested-dropdown">
 <button class="nested-dropdown-btn">2.1 Active Directory Overview<i class="bi bi-caret-down-fill"></i></button>
@@ -18888,7 +18882,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 </div>
-<button class="dropdown-btn section-flow-3" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">3. Active Directory PowerView<i class="bi bi-chevron-down"></i></button>
+<button class="dropdown-btn section-flow-3">3. Active Directory PowerView<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-3">
 <div class="nested-dropdown">
 <button class="nested-dropdown-btn">3.1 PowerView / SharpView Overview and Usage<i class="bi bi-caret-down-fill"></i></button>
@@ -18955,7 +18949,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 </div>
-<button class="dropdown-btn section-flow-4" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">4. Active Directory BloodHound<i class="bi bi-chevron-down"></i></button>
+<button class="dropdown-btn section-flow-4">4. Active Directory BloodHound<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-4">
 <div class="nested-dropdown">
 <button class="nested-dropdown-btn">4.1 BloodHound Setup and Installation<i class="bi bi-caret-down-fill"></i></button>
@@ -19057,7 +19051,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 </div>
-<button class="dropdown-btn section-flow-5" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">5. Windows Lateral Movement<i class="bi bi-chevron-down"></i></button>
+<button class="dropdown-btn section-flow-5">5. Windows Lateral Movement<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-5">
 <div class="nested-dropdown">
 <button class="nested-dropdown-btn">5.1 Introduction and Core Concepts<i class="bi bi-caret-down-fill"></i></button>
@@ -19173,7 +19167,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 </div>
-<button class="dropdown-btn section-flow-6" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">6. Using CrackMapExec<i class="bi bi-chevron-down"></i></button>
+<button class="dropdown-btn section-flow-6">6. Using CrackMapExec<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-6">
 <div class="nested-dropdown">
 <button class="nested-dropdown-btn">6.1 Installation, Targets, and Protocols<i class="bi bi-caret-down-fill"></i></button>
@@ -19317,7 +19311,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 </div>
-<button class="dropdown-btn section-flow-7" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">7. Kerberos Attacks<i class="bi bi-chevron-down"></i></button>
+<button class="dropdown-btn section-flow-7">7. Kerberos Attacks<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-7">
 <div class="nested-dropdown">
 <button class="nested-dropdown-btn">7.1 Kerberos Overview and Authentication Process<i class="bi bi-caret-down-fill"></i></button>
@@ -19412,7 +19406,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 <a class="dropdown-link" href="#kerb-hardening-summary">7.13 Hardening and Mitigation Summary</a>
 </div>
-<button class="dropdown-btn section-flow-8" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">8. DACL Attacks I<i class="bi bi-chevron-down"></i></button>
+<button class="dropdown-btn section-flow-8">8. DACL Attacks I<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-8">
 <div class="nested-dropdown">
 <button class="nested-dropdown-btn">8.1 DACLs Overview<i class="bi bi-caret-down-fill"></i></button>
@@ -19479,7 +19473,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 <a class="dropdown-link" href="#dacl-attacks-summary">8.7 DACL Attacks Summary and Detection</a>
 </div>
-<button class="dropdown-btn section-flow-9" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">9. DACL Attacks II<i class="bi bi-chevron-down"></i></button>
+<button class="dropdown-btn section-flow-9">9. DACL Attacks II<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-9">
 <div class="nested-dropdown">
 <button class="nested-dropdown-btn">9.1 Shadow Credentials<i class="bi bi-caret-down-fill"></i></button>
@@ -19555,7 +19549,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 </div>
-<button class="dropdown-btn section-flow-10" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">10. NTLM Relay Attacks<i class="bi bi-chevron-down"></i></button>
+<button class="dropdown-btn section-flow-10">10. NTLM Relay Attacks<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-10">
 <div class="nested-dropdown">
 <button class="nested-dropdown-btn">10.1 The NTLM Authentication Protocol<i class="bi bi-caret-down-fill"></i></button>
@@ -19658,7 +19652,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 </div>
-<button class="dropdown-btn section-flow-11" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">11. ADCS Attacks<i class="bi bi-chevron-down"></i></button>
+<button class="dropdown-btn section-flow-11">11. ADCS Attacks<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-11">
 <div class="nested-dropdown">
 <button class="nested-dropdown-btn">11.1 ADCS Introduction<i class="bi bi-caret-down-fill"></i></button>
@@ -19802,7 +19796,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 <a class="dropdown-link" href="#adcs-summary">11.18 ADCS Attack Summary</a>
 </div>
-<button class="dropdown-btn section-flow-12" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">12. Active Directory Trust Attacks<i class="bi bi-chevron-down"></i></button>
+<button class="dropdown-btn section-flow-12">12. Active Directory Trust Attacks<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-12">
 <div class="nested-dropdown">
 <button class="nested-dropdown-btn">12.1 Trust Types and Enumeration<i class="bi bi-caret-down-fill"></i></button>
@@ -19904,7 +19898,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 </div>
-<button class="dropdown-btn section-flow-13" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">13. C2 Operations with Sliver<i class="bi bi-chevron-down"></i></button>
+<button class="dropdown-btn section-flow-13">13. C2 Operations with Sliver<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-13">
 <div class="nested-dropdown">
 <button class="nested-dropdown-btn">13.1 Introduction to C2s and Sliver<i class="bi bi-caret-down-fill"></i></button>
@@ -20037,7 +20031,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 <a class="dropdown-link" href="#reference-summary">13.17 Quick Reference</a>
 </div>
-<button class="dropdown-btn section-flow-14" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">14. Windows Evasion Techniques<i class="bi bi-chevron-down"></i></button>
+<button class="dropdown-btn section-flow-14">14. Windows Evasion Techniques<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-14">
 <div class="nested-dropdown">
 <button class="nested-dropdown-btn">14.1 Microsoft Defender Antivirus<i class="bi bi-caret-down-fill"></i></button>
@@ -20141,7 +20135,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 </div>
-<button class="dropdown-btn section-flow-15" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">15. MSSQL, Exchange, and SCCM Attacks<i class="bi bi-chevron-down"></i></button>
+<button class="dropdown-btn section-flow-15">15. MSSQL, Exchange, and SCCM Attacks<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-15">
 <div class="nested-dropdown">
 <button class="nested-dropdown-btn">15.1 Introduction to MSSQL Server<i class="bi bi-caret-down-fill"></i></button>
