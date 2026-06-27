@@ -59,7 +59,7 @@
     /* Portfolio card layout via Isotope (no filter UI) */
     const container = $('.portfolio-container');
     if (container && typeof Isotope !== 'undefined') {
-      new Isotope(container, { itemSelector: '.portfolio-item' });
+      new Isotope(container, { itemSelector: '.portfolio-item', layoutMode: 'fitRows' });
     }
 
     /* AOS scroll-reveal animations */
