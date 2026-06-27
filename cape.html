@@ -154,14 +154,19 @@
 
 <h4 id="external-recon-tools">1.2.2 Google Dorks</h4>
 
-<ul>
-  <li><code>filetype:pdf inurl:domain.com</code> — exposed PDF documents</li>
-  <li><code>intext:"@domain.com" inurl:domain.com</code> — email addresses</li>
-  <li><code>filetype:xlsx OR filetype:csv inurl:domain.com</code> — spreadsheets with potential data</li>
-  <li><code>intitle:"index of" inurl:domain.com</code> — directory listings</li>
-  <li><code>filetype:xml inurl:domain.com</code> — configuration files</li>
-  <li><code>site:domain.com filetype:log</code> — exposed log files</li>
-</ul>
+<table class="custom-table">
+<thead>
+  <tr><th>Dork</th><th>Finds</th></tr>
+</thead>
+<tbody>
+  <tr><td><code>filetype:pdf inurl:domain.com</code></td><td>Exposed PDF documents</td></tr>
+  <tr><td><code>intext:"@domain.com" inurl:domain.com</code></td><td>Email addresses</td></tr>
+  <tr><td><code>filetype:xlsx OR filetype:csv inurl:domain.com</code></td><td>Spreadsheets with potential data</td></tr>
+  <tr><td><code>intitle:"index of" inurl:domain.com</code></td><td>Directory listings</td></tr>
+  <tr><td><code>filetype:xml inurl:domain.com</code></td><td>Configuration files</td></tr>
+  <tr><td><code>site:domain.com filetype:log</code></td><td>Exposed log files</td></tr>
+</tbody>
+</table>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
