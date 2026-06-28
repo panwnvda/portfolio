@@ -739,6 +739,12 @@ section {
   line-height: 1.65;
   margin-bottom: 0;
 }
+.portfolio .portfolio-card-link {
+  width: 100%;
+  display: flex;
+  color: inherit;
+  text-decoration: none;
+}
 .portfolio .portfolio-card-large {
   width: 100%;
   min-height: 198px;
