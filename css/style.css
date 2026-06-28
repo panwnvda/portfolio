@@ -739,6 +739,33 @@ section {
   line-height: 1.65;
   margin-bottom: 0;
 }
+.portfolio .portfolio-card-large {
+  width: 100%;
+  min-height: 198px;
+  padding: 42px 24px 30px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.portfolio .portfolio-card-large .icon {
+  min-height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.portfolio .portfolio-card-large .icon img {
+  max-width: 190px;
+  max-height: 72px;
+  width: auto;
+  height: auto;
+  display: block;
+}
+.portfolio .portfolio-card-large .title {
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 19px;
+}
 .work-box {
   margin-bottom: 3rem;
   -webkit-backface-visibility: hidden;
