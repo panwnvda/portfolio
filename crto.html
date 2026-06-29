@@ -4161,45 +4161,6 @@ powershell Get-DomainPolicyData | select -expand SystemAccess</code></pre>
   </li>
 </ul>
 
-<h3 id="crto-discovery-external-recon">11.8 External Reconnaissance</h3>
-<p>External reconnaissance gathers intelligence from publicly available sources before or during an engagement. DNS records, search engine dorking, and social media all feed into target profiling.</p>
-
-<h4 id="crto-discovery-external-recon-dns">11.8.1 DNS Enumeration</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox" data-id="crto-11-8-0"> Resolve A records for the target domain:
-    <pre><code class="language-bash">dig [domain]</code></pre>
-  </li>
-  <li><input type="checkbox" data-id="crto-11-8-1"> Identify IP ownership:
-    <pre><code class="language-bash">whois 172.67.205.143</code></pre>
-  </li>
-  <li><input type="checkbox" data-id="crto-11-8-2"> Enumerate subdomains:
-    <pre><code class="language-bash">./dnscan.py -d [domain] -w subdomains-100.txt</code></pre>
-  </li>
-  <li><input type="checkbox" data-id="crto-11-8-3"> Check email security (SPF, DMARC, DKIM) for spoofing potential:
-    <pre><code class="language-bash">python3 spoofy.py -d [domain] -o stdout</code></pre>
-  </li>
-</ul>
-
-<p>If the target uses services like Cloudflare, the actual hosting infrastructure may be obscured. Confirm whether the backend is on-premise or in a cloud provider (AWS, Azure) that requires explicit pentest authorization. SaaS services like Office 365 often appear as <code>autodiscover.target-domain</code> DNS records.</p>
-
-<h4 id="crto-discovery-external-recon-dorking">11.8.2 Google Dorking</h4>
-<p>Advanced search operators target specific information indexed by Google. Combine operators for precision.</p>
-
-<table class="custom-table">
-<thead><tr><th>Operator</th><th>Example</th><th>Purpose</th></tr></thead>
-<tbody>
-<tr><td><code>site:</code></td><td><code>site:apple.com</code></td><td>Limit results to a specific domain</td></tr>
-<tr><td><code>intitle:</code></td><td><code>intitle:admin</code></td><td>Pages with a word in the title</td></tr>
-<tr><td><code>inurl:</code></td><td><code>inurl:login</code></td><td>Pages with a word in the URL</td></tr>
-<tr><td><code>intext:</code></td><td><code>intext:password</code></td><td>Pages containing a word in the body</td></tr>
-<tr><td><code>filetype:</code></td><td><code>site:apple.com filetype:pdf</code></td><td>Find specific file types (pdf, docx, xlsx)</td></tr>
-<tr><td><code>#..#</code></td><td><code>filetype:pdf 2020..2022</code></td><td>Number range filter</td></tr>
-<tr><td><code>-</code></td><td><code>site:apple.com -www -support</code></td><td>Exclude terms (useful for finding subdomains)</td></tr>
-</tbody>
-</table>
-
-<h4 id="crto-discovery-external-recon-social">11.8.3 Social Media and Email</h4>
-<p>LinkedIn profiles reveal technology stacks, job roles, and internal processes. Tools like <code>hunter.io</code> identify email address patterns (e.g., <code>{f}{last}@company.com</code>). Scrape employee names from LinkedIn and transform them into email addresses based on the discovered pattern. These feed into phishing and password spraying campaigns.</p>
 <h2 id="crto-lateral-movement">12. Lateral Movement</h2>
 
 <p><strong>Lateral movement</strong> (MITRE TA0008) is the process of gaining access to additional computers on the network using legitimate remote management protocols and administrative credentials. The general pattern is: upload a payload to the target, execute it remotely, and connect to the resulting session.</p>
@@ -6663,7 +6624,6 @@ Remove-Item -Path 'HKCU:Software\Classes\AppLocker.Bypass' -Recurse</code></pre>
         <a href="#crto-discovery-wmi-filters">11.5 WMI Filters on GPOs</a>
         <a href="#crto-discovery-powerview">11.6 PowerView and SharpView</a>
         <a href="#crto-discovery-adsearch">11.7 ADSearch</a>
-        <a href="#crto-discovery-external-recon">11.8 External Reconnaissance</a>
       </div>
     </div>
     <div class="section-flow-12">
