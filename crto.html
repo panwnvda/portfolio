@@ -4090,7 +4090,7 @@ MERGE (y)-[:AdminTo]->(x)</code></pre>
   <li>Failure to check WMI filters can lead to incorrect assumptions about which computers a GPO applies to — you may target a machine where the expected local admin edge does not exist.</li>
 </ul>
 
-<h3 id="crto-discovery-powerview">11.6 PowerView and SharpView</h3>
+<h3 id="crto-discovery-powerview">11.6 PowerView</h3>
 <p><strong>PowerView</strong> is the classic PowerShell tool for domain enumeration. Its strength is proper PowerShell object output, enabling command chaining and piping. <strong>SharpView</strong> is a C# port with the same functionality but without PowerShell's piping capability. Both are heavily signatured and best suited for less mature environments.</p>
 
 <table class="custom-table">
@@ -6622,7 +6622,7 @@ Remove-Item -Path 'HKCU:Software\Classes\AppLocker.Bypass' -Recurse</code></pre>
         <a href="#crto-discovery-bofhound">11.3 BOFHound and BloodHound Ingestion</a>
         <a href="#crto-discovery-restricted-groups">11.4 Restricted Groups and GPO Local Group Mapping</a>
         <a href="#crto-discovery-wmi-filters">11.5 WMI Filters on GPOs</a>
-        <a href="#crto-discovery-powerview">11.6 PowerView and SharpView</a>
+        <a href="#crto-discovery-powerview">11.6 PowerView</a>
         <a href="#crto-discovery-adsearch">11.7 ADSearch</a>
       </div>
     </div>
