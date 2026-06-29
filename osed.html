@@ -5,8 +5,8 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>OSED Notes</title>
-  <meta content="Windows User Mode Exploit Development study notes." name="description">
-  <meta content="OSED, EXP-301, exploit development, Windows" name="keywords">
+  <meta content="Windows exploit development notes." name="description">
+  <meta content="exploit development, Windows" name="keywords">
   <link href="./img/osed_icon.svg" rel="icon">
   <link href="./img/osed_icon.svg" rel="apple-touch-icon">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -16,13 +16,13 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
   <link href="./css/style.css" rel="stylesheet">
   <meta property="og:title" content="OSED Notes">
-  <meta property="og:description" content="Windows User Mode Exploit Development study notes.">
+  <meta property="og:description" content="Windows exploit development notes.">
   <meta property="og:image" content="./img/osed_icon.svg">
   <meta property="og:url" content="./osed.html">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="OSED Notes">
-  <meta name="twitter:description" content="Windows User Mode Exploit Development study notes.">
+  <meta name="twitter:description" content="Windows exploit development notes.">
   <meta name="twitter:image" content="./img/osed_icon.svg">
   <style>
   .index .section-flow-1,.index .section-flow-2,.index .section-flow-3,.index .section-flow-4,.index .section-flow-5,.index .section-flow-6,.index .section-flow-7,.index .section-flow-8,.index .section-flow-9,.index .section-flow-10,.index .section-flow-11{background-color:#008080;}
@@ -354,7 +354,7 @@ dd esp L8</code></pre>
 
 <h3 id="windbg-setup">1.5 WinDbg Setup and Configuration</h3>
 
-<p>WinDbg is Microsoft's primary user-mode and kernel-mode debugger. For OSED, it is the tool of choice for all exploit development tasks - crash analysis, breakpoint-based flow tracing, and memory inspection during payload development. Install WinDbg Preview from the Microsoft Store or download the classic version from the Windows SDK installer. The debugger must be configured with a symbol path so that it can resolve function names for system DLLs.</p>
+<p>WinDbg is Microsoft's primary user-mode and kernel-mode debugger. For exploit development work, it is the tool of choice for crash analysis, breakpoint-based flow tracing, and memory inspection during payload development. Install WinDbg Preview from the Microsoft Store or download the classic version from the Windows SDK installer. The debugger must be configured with a symbol path so that it can resolve function names for system DLLs.</p>
 
 <p>The Microsoft symbol server provides PDB files for all Windows system libraries. Configuring the symbol path with <code>srv*</code> syntax tells WinDbg to download symbols on demand and cache them locally. Set the <code>_NT_SYMBOL_PATH</code> environment variable system-wide so that every WinDbg session inherits the configuration. When debugging a target application, attach to an existing process (noninvasive or invasive) or launch it directly under the debugger.</p>
 
@@ -654,7 +654,7 @@ bp ws2_32!recv ".if (poi(esp+0xc) > 0x200) {} .else {gc}"</code></pre>
 
 <h2 id="stack-overflows">2. Stack Buffer Overflows</h2>
 
-<p>Modern Windows binaries may be compiled with Data Execution Prevention (DEP), Address Space Layout Randomization (ASLR), and Control Flow Guard (CFG). DEP marks the stack and heap as non-executable, ASLR randomizes module and stack base addresses, and CFG validates indirect call targets at runtime. The course starts with applications that have these protections disabled, then progressively enables DEP (Module 8) and ASLR (Module 9) to teach bypass techniques.</p>
+<p>Modern Windows binaries may be compiled with Data Execution Prevention (DEP), Address Space Layout Randomization (ASLR), and Control Flow Guard (CFG). DEP marks the stack and heap as non-executable, ASLR randomizes module and stack base addresses, and CFG validates indirect call targets at runtime. Initial examples often use applications with these protections disabled, then progressively enable DEP and ASLR to demonstrate bypass techniques.</p>
 
 <h3 id="stack-frame">2.1 Understanding the Stack Frame</h3>
 
@@ -1346,7 +1346,7 @@ dd esp L3
 
 <p>If space after the SEH handler is too small for the full shellcode, a reverse jump can be used instead. Place the shellcode before the nSEH field in the padding area, and use a negative short jump (<code>\xEB\x80</code> for -128 bytes) or a near jump to reach it. The available jump range for a short jump is -128 to +127 bytes from the end of the instruction.</p>
 
-<p>The EXP-301 course calls this technique "Island-Hopping" - using a chain of short jumps, conditional jumps, and near jumps to navigate through constrained or fragmented buffer space to reach the shellcode. When the overflow splits the payload across non-contiguous regions, island-hopping connects the gaps: a short JMP in nSEH leaps to a small island of controlled space, which contains another JMP (forward or backward) to the next island, eventually reaching a region large enough for the full shellcode. Conditional jumps (JZ, JNZ) can also be used by setting flags with a preceding CMP or TEST instruction.</p>
+<p>Island-hopping uses a chain of short jumps, conditional jumps, and near jumps to navigate through constrained or fragmented buffer space to reach the shellcode. When the overflow splits the payload across non-contiguous regions, island-hopping connects the gaps: a short JMP in nSEH leaps to a small island of controlled space, which contains another JMP (forward or backward) to the next island, eventually reaching a region large enough for the full shellcode. Conditional jumps (JZ, JNZ) can also be used by setting flags with a preceding CMP or TEST instruction.</p>
 
 <table class="custom-table">
 <thead><tr><th>Payload Offset</th><th>Content</th><th>Size</th><th>Purpose</th></tr></thead>
@@ -2198,7 +2198,7 @@ print(f"[+] Keystone assembled {count} instructions, {len(egghunter)} bytes")</c
   </li>
 </ul>
 
-<p>Keystone Engine is a lightweight multi-architecture assembler framework with Python bindings (<code>pip install keystone-engine</code>). It assembles x86 instructions at runtime, allowing the exploit script to generate egghunter and shellcode bytes without external tools like NASM. The EXP-301 course uses Keystone throughout for programmatic shellcode assembly within Python exploit scripts.</p>
+<p>Keystone Engine is a lightweight multi-architecture assembler framework with Python bindings (<code>pip install keystone-engine</code>). It assembles x86 instructions at runtime, allowing the exploit script to generate egghunter and shellcode bytes without external tools like NASM. Keystone is useful for programmatic shellcode assembly within Python exploit scripts.</p>
 
 <h3 id="egghunter-stack">5.5 Egghunter in Stack Overflow Exploits</h3>
 
@@ -3436,7 +3436,7 @@ db eip               # Verify EIP points to our pattern</code></pre>
 
 <h3 id="protocol-fuzzing">7.6 Protocol Analysis and Fuzzing</h3>
 
-<p>Many EXP-301 targets implement custom network protocols. Protocol analysis means capturing traffic (with Wireshark or by reading the binary's parsing code in IDA) and identifying the message format: header fields, length fields, command identifiers, and data payloads. Once the protocol structure is understood, a fuzzer can systematically send malformed messages that violate expected constraints - oversized fields, missing delimiters, negative lengths, and unexpected command codes.</p>
+<p>Many exploit development targets implement custom network protocols. Protocol analysis means capturing traffic (with Wireshark or by reading the binary's parsing code in IDA) and identifying the message format: header fields, length fields, command identifiers, and data payloads. Once the protocol structure is understood, a fuzzer can systematically send malformed messages that violate expected constraints - oversized fields, missing delimiters, negative lengths, and unexpected command codes.</p>
 
 <p>Targeted fuzzing is more effective than blind fuzzing. Instead of randomly mutating bytes, the fuzzer should exercise specific code paths identified during static analysis. For each input field that reaches a dangerous function, the fuzzer generates inputs designed to overflow that specific buffer while keeping the rest of the protocol structure valid so the parser does not reject the message before it reaches the vulnerable code.</p>
 
@@ -3474,7 +3474,7 @@ def proxy(src, dst):
     <ul class="methodology-checklist">
     <li><label><input type="checkbox"> Example protocol structure identified:</label></li>
     <li><label><input type="checkbox"> [4 bytes: magic]  [2 bytes: cmd]  [2 bytes: length]  [N bytes: data]</label></li>
-    <li><label><input type="checkbox"> Magic:  0x4F534544 ("OSED")</label></li>
+    <li><label><input type="checkbox"> Magic:  0x4D414749 ("MAGI")</label></li>
     <li><label><input type="checkbox"> Cmd:    0x0001 = AUTH, 0x0002 = READ, 0x0003 = WRITE</label></li>
     <li><label><input type="checkbox"> Length: size of data field</label></li>
     <li><label><input type="checkbox"> Data:   command-specific payload</label></li>
@@ -3548,17 +3548,17 @@ for size in range(1900, 2001, 10):
 
 <h3 id="vuln-classification">7.7 Vulnerability Classification</h3>
 
-<p>After identifying a crash, classify the vulnerability to determine the appropriate exploitation technique. A stack buffer overflow with EIP control is the most straightforward - it leads directly to Module 2 (basic overflow) or Module 8 (DEP bypass). An SEH overwrite requires the Module 3 technique. Format string vulnerabilities require Module 10/11 techniques. Integer overflows that lead to heap corruption are generally not exploitable within the EXP-301 scope but should be noted.</p>
+<p>After identifying a crash, classify the vulnerability to determine the appropriate exploitation technique. A stack buffer overflow with EIP control is the most straightforward - it leads directly to basic overflow or DEP bypass techniques. An SEH overwrite requires SEH-specific exploitation. Format string vulnerabilities require dedicated read/write primitive techniques. Integer overflows that lead to heap corruption are generally more complex and should be noted separately.</p>
 
 <p>Mitigation assessment determines which bypass techniques are needed. Check for DEP (NX bit), ASLR, stack cookies (GS), SafeSEH, and SEHOP. Each mitigation narrows the exploitation path but does not make the vulnerability unexploitable - it changes which module's technique applies.</p>
 
 <table class="custom-table">
 <thead><tr><th>Crash Indicator</th><th>Vulnerability Type</th><th>Exploitation Module</th></tr></thead>
 <tbody>
-<tr><td>EIP = 0x41414141</td><td>Stack buffer overflow</td><td>Module 2 (basic) or Module 8 (DEP bypass)</td></tr>
-<tr><td>SEH handler = 0x41414141</td><td>SEH overflow</td><td>Module 3</td></tr>
-<tr><td>EIP = pointer to format-controlled data</td><td>Format string</td><td>Module 10/11</td></tr>
-<tr><td>Crash in heap management</td><td>Heap overflow</td><td>Out of EXP-301 scope</td></tr>
+<tr><td>EIP = 0x41414141</td><td>Stack buffer overflow</td><td>Basic overflow or DEP bypass</td></tr>
+<tr><td>SEH handler = 0x41414141</td><td>SEH overflow</td><td>SEH overwrite</td></tr>
+<tr><td>EIP = pointer to format-controlled data</td><td>Format string</td><td>Format string read/write primitives</td></tr>
+<tr><td>Crash in heap management</td><td>Heap overflow</td><td>Heap-focused analysis</td></tr>
 <tr><td>Stack cookie check failure</td><td>Stack overflow (GS protected)</td><td>SEH overwrite may bypass GS</td></tr>
 </tbody>
 </table>
@@ -5176,7 +5176,7 @@ payload = specifier + padding + target_addr + b"\n"</code></pre>
   </li>
 </ul>
 
-<p>In practice, the read primitive often works through an application feature that processes and returns user-controlled strings. In the EXP-301 lab, IBM Tivoli FastBackServer exposes an event log function that accepts protocol commands containing format specifiers, evaluates them through a <code>printf</code>-family call, and returns the formatted result to the client. The attacker sends <code>%p</code> or <code>%x</code> specifiers embedded in a protocol command, and the server's event log handler processes them - leaking stack contents, module base addresses, and return pointers in the response. Any application feature that echoes processed strings (debug output, error messages, logging responses) can serve as a format string read channel.</p>
+<p>In practice, the read primitive often works through an application feature that processes and returns user-controlled strings. A vulnerable service may expose an event log function that accepts protocol commands containing format specifiers, evaluates them through a <code>printf</code>-family call, and returns the formatted result to the client. The attacker sends <code>%p</code> or <code>%x</code> specifiers embedded in a protocol command, and the server's event log handler processes them - leaking stack contents, module base addresses, and return pointers in the response. Any application feature that echoes processed strings (debug output, error messages, logging responses) can serve as a format string read channel.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
