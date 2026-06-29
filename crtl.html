@@ -138,10 +138,10 @@
 </ul>
 
 <h4 id="crtl-c2-redirectors-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Dumb redirectors forward everything - defenders can probe the team server through them. Always prefer smart or SaaS redirectors.</li>
-  <li><input type="checkbox"> A single C2 profile across all team servers means one discovery exposes the entire infrastructure.</li>
-  <li><input type="checkbox"> SaaS redirectors (cloud functions) inherit the cloud provider's domain reputation, making domain-based blocking harder for defenders.</li>
+<ul>
+  <li>Dumb redirectors forward everything - defenders can probe the team server through them. Always prefer smart or SaaS redirectors.</li>
+  <li>A single C2 profile across all team servers means one discovery exposes the entire infrastructure.</li>
+  <li>SaaS redirectors (cloud functions) inherit the cloud provider's domain reputation, making domain-based blocking harder for defenders.</li>
 </ul>
 
 <h3 id="crtl-c2-apache">1.2 Apache</h3>
@@ -258,10 +258,10 @@ RewriteRule ^.*$ - [R=404,L]</code></pre>
 </ul>
 
 <h4 id="crtl-c2-apache-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> A blanket <code>RewriteRule ^.*$</code> with no conditions forwards all traffic, including probes from defenders and sandboxes - always filter by URI, method, and query string.</li>
-  <li><input type="checkbox"> Static query-string parameters in the profile are fingerprints. If a defender extracts them from a captured payload, they can craft requests that pass the redirector's filters.</li>
-  <li><input type="checkbox"> <code>.htaccess</code> changes are live immediately - a syntax error will break Beacon check-in with no restart warning.</li>
+<ul>
+  <li>A blanket <code>RewriteRule ^.*$</code> with no conditions forwards all traffic, including probes from defenders and sandboxes - always filter by URI, method, and query string.</li>
+  <li>Static query-string parameters in the profile are fingerprints. If a defender extracts them from a captured payload, they can craft requests that pass the redirector's filters.</li>
+  <li><code>.htaccess</code> changes are live immediately - a syntax error will break Beacon check-in with no restart warning.</li>
 </ul>
 
 <h3 id="crtl-c2-nginx">1.3 NGINX</h3>
@@ -375,11 +375,11 @@ location /payload {
 </ul>
 
 <h4 id="crtl-c2-nginx-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> NGINX config changes require a service restart - unlike Apache's <code>.htaccess</code>, a syntax error caught at restart time prevents the service from starting.</li>
-  <li><input type="checkbox"> Payload URIs without IP filtering are accessible to anyone who discovers the redirector, including sandboxes and threat intel crawlers.</li>
-  <li><input type="checkbox"> A bare 404 response with default NGINX headers leaks the server software. Use a custom error page or strip the <code>Server</code> header.</li>
-  <li><input type="checkbox"> Block known sandbox and AV vendor IP ranges at the redirector to prevent payload detonation by automated analysis.</li>
+<ul>
+  <li>NGINX config changes require a service restart - unlike Apache's <code>.htaccess</code>, a syntax error caught at restart time prevents the service from starting.</li>
+  <li>Payload URIs without IP filtering are accessible to anyone who discovers the redirector, including sandboxes and threat intel crawlers.</li>
+  <li>A bare 404 response with default NGINX headers leaks the server software. Use a custom error page or strip the <code>Server</code> header.</li>
+  <li>Block known sandbox and AV vendor IP ranges at the redirector to prevent payload detonation by automated analysis.</li>
 </ul>
 
 </div>
@@ -399,9 +399,9 @@ location /payload {
 <figure><img src="./img/crtl/api-flow.png" alt="API call flow from user mode through ntdll to kernel"></figure>
 
 <h4 id="crtl-edr-apis-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox" data-id="crtl-2-1-0"> Every user-mode API call passes through DLLs the EDR can hook -- assume calls to <code>ntdll.dll</code> and <code>KernelBase.dll</code> exports are monitored.</li>
-  <li><input type="checkbox" data-id="crtl-2-1-1"> High-risk APIs (<code>NtAllocateVirtualMemory</code>, <code>NtWriteVirtualMemory</code>, <code>NtCreateThreadEx</code>) receive extra scrutiny from both inline hooks and ETW-TI.</li>
+<ul>
+  <li>Every user-mode API call passes through DLLs the EDR can hook -- assume calls to <code>ntdll.dll</code> and <code>KernelBase.dll</code> exports are monitored.</li>
+  <li>High-risk APIs (<code>NtAllocateVirtualMemory</code>, <code>NtWriteVirtualMemory</code>, <code>NtCreateThreadEx</code>) receive extra scrutiny from both inline hooks and ETW-TI.</li>
 </ul>
 
 <h3 id="crtl-edr-system-service-descriptor-table">2.2 System Service Descriptor Table</h3>
@@ -447,9 +447,9 @@ F000 [     270] address [size] of Import Address Table Directory</code></pre>
 <p>The IAT entry at <code>00007ff6`f3daf260</code> points at <code>USER32!MessageBoxW</code> - the resolved function in <code>User32.dll</code>.</p>
 
 <h4 id="crtl-edr-api-hooking-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox" data-id="crtl-2-4-0"> IAT entries are populated by the loader before your code runs -- an EDR DLL injected at process start can overwrite them before you get control.</li>
-  <li><input type="checkbox" data-id="crtl-2-4-1"> Inspecting the IAT with <code>dps</code> in a debugger reveals whether pointers target the expected DLL or a detour -- useful for confirming hook presence during development.</li>
+<ul>
+  <li>IAT entries are populated by the loader before your code runs -- an EDR DLL injected at process start can overwrite them before you get control.</li>
+  <li>Inspecting the IAT with <code>dps</code> in a debugger reveals whether pointers target the expected DLL or a detour -- useful for confirming hook presence during development.</li>
 </ul>
 
 <h3 id="crtl-edr-iat-hooking">2.5 IAT Hooking</h3>
@@ -462,9 +462,9 @@ F000 [     270] address [size] of Import Address Table Directory</code></pre>
 <p>The hooking logic typically backs up the original pointers so it can chain through to the real function when needed.</p>
 
 <h4 id="crtl-edr-iat-hooking-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox" data-id="crtl-2-5-0"> IAT hooks only intercept statically imported functions -- runtime resolution via <code>GetProcAddress</code> bypasses them entirely.</li>
-  <li><input type="checkbox" data-id="crtl-2-5-1"> Most EDRs prefer inline hooks over IAT hooks for broader coverage -- but some products layer both.</li>
+<ul>
+  <li>IAT hooks only intercept statically imported functions -- runtime resolution via <code>GetProcAddress</code> bypasses them entirely.</li>
+  <li>Most EDRs prefer inline hooks over IAT hooks for broader coverage -- but some products layer both.</li>
 </ul>
 
 <h3 id="crtl-edr-inline-hooking">2.6 Inline Hooking</h3>
@@ -515,10 +515,10 @@ xor     eax,eax</code></pre>
 <p>This is one flavour of inline hooking. Implementations vary - most use <code>jmp</code> or <code>call</code> instructions to hardcoded or indirect addresses.</p>
 
 <h4 id="crtl-edr-inline-hooking-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox" data-id="crtl-2-6-0"> Inline hooks modify the <code>.text</code> section of loaded DLLs -- comparing in-memory bytes against the on-disk copy reveals every hooked function.</li>
-  <li><input type="checkbox" data-id="crtl-2-6-1"> The trampoline preserves original instructions and chains to the real function, so hooked calls still succeed -- the hook is transparent to the caller.</li>
-  <li><input type="checkbox" data-id="crtl-2-6-2"> Some EDRs periodically verify hook integrity and re-install hooks that have been removed.</li>
+<ul>
+  <li>Inline hooks modify the <code>.text</code> section of loaded DLLs -- comparing in-memory bytes against the on-disk copy reveals every hooked function.</li>
+  <li>The trampoline preserves original instructions and chains to the real function, so hooked calls still succeed -- the hook is transparent to the caller.</li>
+  <li>Some EDRs periodically verify hook integrity and re-install hooks that have been removed.</li>
 </ul>
 
 <h3 id="crtl-edr-manual-syscalls">2.7 Manual syscalls</h3>
@@ -808,11 +808,11 @@ NtAllocateVirtualMemory ENDP</code></pre>
 </ul>
 
 <h4 id="crtl-edr-syscalls-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox" data-id="crtl-2-7-5"> Direct syscalls produce a call stack showing your module as the syscall caller -- stack-walking EDRs flag this immediately.</li>
-  <li><input type="checkbox" data-id="crtl-2-7-6"> The byte pattern <code>b8 ?? 00 00 00 0f 05</code> (<code>mov eax, SSN; syscall</code>) in non-ntdll memory is a signature some AVs scan for.</li>
-  <li><input type="checkbox" data-id="crtl-2-7-7"> Indirect syscalls fix the stack anomaly but still require runtime resolution of ntdll addresses -- <code>GetModuleHandle</code>/<code>GetProcAddress</code> calls to ntdll may themselves be monitored.</li>
-  <li><input type="checkbox" data-id="crtl-2-7-8"> Jumping to the <code>syscall</code> instruction of a different <code>Nt*</code> function can further obscure intent, since EAX (the SSN) controls kernel routing regardless of which ntdll stub executes the instruction.</li>
+<ul>
+  <li>Direct syscalls produce a call stack showing your module as the syscall caller -- stack-walking EDRs flag this immediately.</li>
+  <li>The byte pattern <code>b8 ?? 00 00 00 0f 05</code> (<code>mov eax, SSN; syscall</code>) in non-ntdll memory is a signature some AVs scan for.</li>
+  <li>Indirect syscalls fix the stack anomaly but still require runtime resolution of ntdll addresses -- <code>GetModuleHandle</code>/<code>GetProcAddress</code> calls to ntdll may themselves be monitored.</li>
+  <li>Jumping to the <code>syscall</code> instruction of a different <code>Nt*</code> function can further obscure intent, since EAX (the SSN) controls kernel routing regardless of which ntdll stub executes the instruction.</li>
 </ul>
 
 <h3 id="crtl-edr-api-unhooking">2.8 API unhooking</h3>
@@ -963,10 +963,10 @@ FlushInstructionCache(GetCurrentProcess(), NULL, 0);</code></pre>
 </ul>
 
 <h4 id="crtl-edr-unhooking-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox" data-id="crtl-2-8-4"> The unhook itself uses user-mode APIs (<code>CreateFile</code>, <code>MapViewOfFile</code>, <code>VirtualProtect</code>) that may be hooked -- consider using syscalls for the unhook operation itself.</li>
-  <li><input type="checkbox" data-id="crtl-2-8-5"> Some EDRs detect reads of <code>ntdll.dll</code> from disk, or periodically verify hook integrity and re-install removed hooks.</li>
-  <li><input type="checkbox" data-id="crtl-2-8-6"> Overwriting the entire <code>.text</code> section is noisy -- per-function unhooking reduces the footprint but requires tracking which functions are hooked.</li>
+<ul>
+  <li>The unhook itself uses user-mode APIs (<code>CreateFile</code>, <code>MapViewOfFile</code>, <code>VirtualProtect</code>) that may be hooked -- consider using syscalls for the unhook operation itself.</li>
+  <li>Some EDRs detect reads of <code>ntdll.dll</code> from disk, or periodically verify hook integrity and re-install removed hooks.</li>
+  <li>Overwriting the entire <code>.text</code> section is noisy -- per-function unhooking reduces the footprint but requires tracking which functions are hooked.</li>
 </ul>
 
 <h3 id="crtl-edr-call-stacks">2.9 Call Stacks</h3>
@@ -1161,10 +1161,10 @@ Breakpoint 0 hit
 </ul>
 
 <h4 id="crtl-edr-callstacks-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox" data-id="crtl-2-9-4"> API calls from unbacked memory (reflective DLLs, BOFs) produce stacks with NULL or garbage return addresses -- EDRs flag this as a high-confidence indicator.</li>
-  <li><input type="checkbox" data-id="crtl-2-9-5"> Sleeping threads whose stacks lead to unbacked memory are detectable even when idle -- the stack signature persists between Beacon check-ins.</li>
-  <li><input type="checkbox" data-id="crtl-2-9-6"> The <code>RtlUserThreadStart+0x2c</code> offset is Windows-version specific -- using the wrong value won't crash but may stand out to manual analysis.</li>
+<ul>
+  <li>API calls from unbacked memory (reflective DLLs, BOFs) produce stacks with NULL or garbage return addresses -- EDRs flag this as a high-confidence indicator.</li>
+  <li>Sleeping threads whose stacks lead to unbacked memory are detectable even when idle -- the stack signature persists between Beacon check-ins.</li>
+  <li>The <code>RtlUserThreadStart+0x2c</code> offset is Windows-version specific -- using the wrong value won't crash but may stand out to manual analysis.</li>
 </ul>
 
 <h3 id="crtl-edr-kernel-callbacks">2.10 Kernel Callbacks</h3>
@@ -1424,10 +1424,10 @@ fffff806`25240000 fffff806`252db000   WdFilter   (deferred)</code></pre>
 </ul>
 
 <h4 id="crtl-edr-callbacks-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox" data-id="crtl-2-10-5"> Manipulating kernel callback tables requires a kernel driver -- loading an unsigned driver requires test signing or a BYOVD (Bring Your Own Vulnerable Driver) approach.</li>
-  <li><input type="checkbox" data-id="crtl-2-10-6"> Zeroing callback entries is detectable by integrity checks -- some EDRs monitor their own callback registrations and alert on removal.</li>
-  <li><input type="checkbox" data-id="crtl-2-10-7"> Process callbacks can block process creation outright by setting <code>CreationStatus = STATUS_ACCESS_DENIED</code> -- failed creates generate their own telemetry.</li>
+<ul>
+  <li>Manipulating kernel callback tables requires a kernel driver -- loading an unsigned driver requires test signing or a BYOVD (Bring Your Own Vulnerable Driver) approach.</li>
+  <li>Zeroing callback entries is detectable by integrity checks -- some EDRs monitor their own callback registrations and alert on removal.</li>
+  <li>Process callbacks can block process creation outright by setting <code>CreationStatus = STATUS_ACCESS_DENIED</code> -- failed creates generate their own telemetry.</li>
 </ul>
 
 <h3 id="crtl-edr-etw-ti">2.11 ETW-TI</h3>
@@ -1625,10 +1625,10 @@ lkd&gt; dt nt!_ETW_GUID_ENTRY 0xffffb30ecc9989c0
 </ul>
 
 <h4 id="crtl-edr-etwti-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox" data-id="crtl-2-11-4"> ETW-TI consumers must run as <code>PS_PROTECTED_ANTIMALWARE_LIGHT</code> -- only processes launched from an ELAM driver can subscribe, making this a high-privilege telemetry source.</li>
-  <li><input type="checkbox" data-id="crtl-2-11-5"> Patching <code>ProviderEnableInfo</code> requires a kernel driver -- the same BYOVD considerations as kernel callback manipulation apply.</li>
-  <li><input type="checkbox" data-id="crtl-2-11-6"> ETW-TI events are generated directly in kernel routines (<code>MiReadWriteVirtualMemory</code>, <code>PsImpersonateClient</code>, etc.) -- they cannot be evaded from user mode without kernel intervention.</li>
+<ul>
+  <li>ETW-TI consumers must run as <code>PS_PROTECTED_ANTIMALWARE_LIGHT</code> -- only processes launched from an ELAM driver can subscribe, making this a high-privilege telemetry source.</li>
+  <li>Patching <code>ProviderEnableInfo</code> requires a kernel driver -- the same BYOVD considerations as kernel callback manipulation apply.</li>
+  <li>ETW-TI events are generated directly in kernel routines (<code>MiReadWriteVirtualMemory</code>, <code>PsImpersonateClient</code>, etc.) -- they cannot be evaded from user mode without kernel intervention.</li>
 </ul>
 
 <h4 id="crtl-edr-quick-reference">EDR Telemetry Sources - Quick Reference</h4>
@@ -1973,10 +1973,10 @@ java -jar crystalpalace.jar build loader.spec /tmp/sliver.bin /tmp/loader.bin</c
 </ul>
 
 <h4 id="crtl-loadtime-simple-loader-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Returning <code>$null</code> from <code>BEACON_RDLL_GENERATE</code> falls back to Cobalt Strike's default loader - always return a valid PIC blob in production.</li>
-  <li><input type="checkbox"> Beacon's entry point must be called twice (<code>DLL_PROCESS_ATTACH</code> then <code>fdwReason = 4</code>) - skipping the second call breaks <code>stage.cleanup</code>.</li>
-  <li><input type="checkbox"> PIC loaders cannot reference <code>.data</code>, <code>.rdata</code>, or <code>.bss</code> - string constants or globals in the loader will crash at runtime.</li>
+<ul>
+  <li>Returning <code>$null</code> from <code>BEACON_RDLL_GENERATE</code> falls back to Cobalt Strike's default loader - always return a valid PIC blob in production.</li>
+  <li>Beacon's entry point must be called twice (<code>DLL_PROCESS_ATTACH</code> then <code>fdwReason = 4</code>) - skipping the second call breaks <code>stage.cleanup</code>.</li>
+  <li>PIC loaders cannot reference <code>.data</code>, <code>.rdata</code>, or <code>.bss</code> - string constants or globals in the loader will crash at runtime.</li>
 </ul>
 
 <h3 id="crtl-loadtime-loader-modularity">3.5 Loader Modularity</h3>
@@ -2145,9 +2145,9 @@ fix_section_permissions ( &amp;dll_data, dll_src, dll_dst );</code></pre>
 </ul>
 
 <h4 id="crtl-loadtime-rwx-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> <code>PAGE_EXECUTE_READWRITE</code> allocations are a high-confidence indicator for memory scanners - most legitimate processes never allocate RWX outside of JIT runtimes.</li>
-  <li><input type="checkbox"> Multiple <code>VirtualProtect</code> calls during loading may trigger sequential-protection-change heuristics in some EDRs.</li>
+<ul>
+  <li><code>PAGE_EXECUTE_READWRITE</code> allocations are a high-confidence indicator for memory scanners - most legitimate processes never allocate RWX outside of JIT runtimes.</li>
+  <li>Multiple <code>VirtualProtect</code> calls during loading may trigger sequential-protection-change heuristics in some EDRs.</li>
 </ul>
 
 <h3 id="crtl-loadtime-optimizations-obfuscations">3.7 Optimizations &amp; Obfuscations</h3>
@@ -2268,10 +2268,10 @@ fix_section_permissions ( &amp;dll_data, dll_src, dll_dst );</code></pre>
 <p><strong>Output varies each build</strong>, defeating static signatures. PIC grows 20&ndash;90%, and mutation can break code that depends on specific instruction sequences.</p>
 
 <h4 id="crtl-loadtime-optimizations-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> <code>+mutate</code> inflates PIC size by 20&ndash;90% - larger payloads may exceed size constraints for certain delivery channels.</li>
-  <li><input type="checkbox"> Mutation can break code that depends on specific instruction sequences (e.g. inline assembly or hand-tuned gadgets).</li>
-  <li><input type="checkbox"> Without <code>+optimize</code>, unused library functions inflate the detection surface - always strip dead code.</li>
+<ul>
+  <li><code>+mutate</code> inflates PIC size by 20&ndash;90% - larger payloads may exceed size constraints for certain delivery channels.</li>
+  <li>Mutation can break code that depends on specific instruction sequences (e.g. inline assembly or hand-tuned gadgets).</li>
+  <li>Without <code>+optimize</code>, unused library functions inflate the detection surface - always strip dead code.</li>
 </ul>
 
 <h3 id="crtl-loadtime-resource-masking">3.8 Resource Masking</h3>
@@ -2377,10 +2377,10 @@ push $KEY
 </ul>
 
 <h4 id="crtl-loadtime-resource-masking-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> On-disk PE artifacts (<code>MZ</code> header, DOS stub, Rich header) are trivial signatures - any unmasked DLL appended to a PIC blob is immediately flagged.</li>
-  <li><input type="checkbox"> The temporary unmasked buffer must be freed before the entry point - leaving it allocated doubles the in-memory footprint and exposes the raw DLL to memory scanners.</li>
-  <li><input type="checkbox"> XOR with a short key is reversible by any analyst with the binary - RC4 or AES with a derived key is stronger for high-value payloads.</li>
+<ul>
+  <li>On-disk PE artifacts (<code>MZ</code> header, DOS stub, Rich header) are trivial signatures - any unmasked DLL appended to a PIC blob is immediately flagged.</li>
+  <li>The temporary unmasked buffer must be freed before the entry point - leaving it allocated doubles the in-memory footprint and exposes the raw DLL to memory scanners.</li>
+  <li>XOR with a short key is reversible by any analyst with the binary - RC4 or AES with a derived key is stronger for high-value payloads.</li>
 </ul>
 
 <h3 id="crtl-loadtime-static-signatures">3.9 Static Signatures</h3>
@@ -2483,10 +2483,10 @@ $ yara -r ~/rules/sliver/ /tmp/implant.exe</code></pre>
 </ul>
 
 <h4 id="crtl-loadtime-static-signatures-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Never submit payloads to VirusTotal - samples are shared with vendors and burned permanently.</li>
-  <li><input type="checkbox"> Replacement strings must be the same length or shorter than the original - longer strings corrupt PE offsets.</li>
-  <li><input type="checkbox"> Re-scan after every Malleable C2 profile or kit change - new builds may reintroduce signatured bytes.</li>
+<ul>
+  <li>Never submit payloads to VirusTotal - samples are shared with vendors and burned permanently.</li>
+  <li>Replacement strings must be the same length or shorter than the original - longer strings corrupt PE offsets.</li>
+  <li>Re-scan after every Malleable C2 profile or kit change - new builds may reintroduce signatured bytes.</li>
 </ul>
 
 <h3 id="crtl-loadtime-applying-evasive-tradecraft">3.10 Applying Evasive Tradecraft</h3>
@@ -3341,11 +3341,11 @@ attach "KERNEL32$LoadLibraryA"   "_LoadLibraryA"</code></pre>
 </ul>
 
 <h4 id="crtl-loadtime-tradecraft-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Random gadget selection from <code>KernelBase.dll</code> does not guarantee a legitimate call chain - EDRs that disassemble backwards from the gadget will detect <code>cmp/jne</code> instead of <code>call</code>.</li>
-  <li><input type="checkbox"> Prefer <code>GetModuleHandleA</code> over <code>LoadLibraryA</code> when the gadget module is already loaded - <code>LoadLibraryA</code> generates <code>LdrLoadDll</code> telemetry.</li>
-  <li><input type="checkbox"> The gadget must have a <code>call</code> instruction (<code>0xE8</code>) five bytes before it to survive backward disassembly validation.</li>
-  <li><input type="checkbox"> Static seed (<code>0x1337</code>) in <code>RtlRandomEx</code> produces deterministic gadget selection across runs - consider seeding from a less predictable source.</li>
+<ul>
+  <li>Random gadget selection from <code>KernelBase.dll</code> does not guarantee a legitimate call chain - EDRs that disassemble backwards from the gadget will detect <code>cmp/jne</code> instead of <code>call</code>.</li>
+  <li>Prefer <code>GetModuleHandleA</code> over <code>LoadLibraryA</code> when the gadget module is already loaded - <code>LoadLibraryA</code> generates <code>LdrLoadDll</code> telemetry.</li>
+  <li>The gadget must have a <code>call</code> instruction (<code>0xE8</code>) five bytes before it to survive backward disassembly validation.</li>
+  <li>Static seed (<code>0x1337</code>) in <code>RtlRandomEx</code> produces deterministic gadget selection across runs - consider seeding from a less predictable source.</li>
 </ul>
 </div>
 
@@ -3567,10 +3567,10 @@ addhook "OLE32$CoCreateInstance"      "_CoCreateInstance"</code></pre>
 </ul>
 
 <h4 id="crtl-runtime-call-stacks-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Hooking <code>GetProcAddress</code> is visible to any tool that inspects the IAT or function pointer table -- if EDR checks the pointer value, the redirect is exposed.</li>
-  <li><input type="checkbox"> Missing a hook for a monitored API leaves that call's return address pointing at unbacked memory -- audit the full API surface Beacon uses.</li>
-  <li><input type="checkbox"> The PICO itself is unbacked memory -- its presence can be detected by scanning for executable private regions that don't map to a file on disk.</li>
+<ul>
+  <li>Hooking <code>GetProcAddress</code> is visible to any tool that inspects the IAT or function pointer table -- if EDR checks the pointer value, the redirect is exposed.</li>
+  <li>Missing a hook for a monitored API leaves that call's return address pointing at unbacked memory -- audit the full API surface Beacon uses.</li>
+  <li>The PICO itself is unbacked memory -- its presence can be detected by scanning for executable private regions that don't map to a file on disk.</li>
 </ul>
 
 <h3 id="crtl-runtime-indirect-syscalls">4.2 Indirect Syscalls</h3>
@@ -3900,10 +3900,10 @@ if ( ssn ) {
 </ul>
 
 <h4 id="crtl-runtime-indirect-syscalls-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Indirect syscalls bypass user-mode hooks but not kernel-mode ETW telemetry -- the syscall itself is still logged by the kernel.</li>
-  <li><input type="checkbox"> Scanning ntdll for <code>syscall; ret</code> gadgets at startup can trigger in-memory integrity checks if EDR monitors reads against ntdll's <code>.text</code> section.</li>
-  <li><input type="checkbox"> Standalone indirect syscalls (without Draugr) leave the return address pointing at unbacked memory -- always combine with stack spoofing in production.</li>
+<ul>
+  <li>Indirect syscalls bypass user-mode hooks but not kernel-mode ETW telemetry -- the syscall itself is still logged by the kernel.</li>
+  <li>Scanning ntdll for <code>syscall; ret</code> gadgets at startup can trigger in-memory integrity checks if EDR monitors reads against ntdll's <code>.text</code> section.</li>
+  <li>Standalone indirect syscalls (without Draugr) leave the return address pointing at unbacked memory -- always combine with stack spoofing in production.</li>
 </ul>
 
 <h3 id="crtl-runtime-memory-obfuscation">4.3 Memory Obfuscation</h3>
@@ -4230,10 +4230,10 @@ addhook "KERNEL32$Sleep" "_Sleep"</code></pre>
 </ul>
 
 <h4 id="crtl-runtime-memory-obfuscation-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> The XOR key is static for the implant's lifetime -- if an analyst recovers it from the PICO's data section, they can decrypt every sleep cycle. Consider rotating keys per cycle.</li>
-  <li><input type="checkbox"> Flipping RX to RW and back on every sleep creates <code>VirtualProtect</code> ETW events -- high-frequency permission changes on the same regions are anomalous.</li>
-  <li><input type="checkbox"> Beacon is fully decrypted and executable between check-ins -- keep execution time between sleeps as short as possible to minimize the scan window.</li>
+<ul>
+  <li>The XOR key is static for the implant's lifetime -- if an analyst recovers it from the PICO's data section, they can decrypt every sleep cycle. Consider rotating keys per cycle.</li>
+  <li>Flipping RX to RW and back on every sleep creates <code>VirtualProtect</code> ETW events -- high-frequency permission changes on the same regions are anomalous.</li>
+  <li>Beacon is fully decrypted and executable between check-ins -- keep execution time between sleeps as short as possible to minimize the scan window.</li>
 </ul>
 
 <h3 id="crtl-runtime-memory-cleanup">4.4 Memory Cleanup</h3>
@@ -4345,10 +4345,10 @@ addhook "KERNEL32$Sleep"            "_Sleep"</code></pre>
 </ul>
 
 <h4 id="crtl-runtime-memory-cleanup-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> The 100ms sleep for <code>RtlCaptureContext</code> and 500ms timer delay create a window where the memory is still present and unmasked.</li>
-  <li><input type="checkbox"> <code>CreateTimerQueueTimer</code> with <code>WT_EXECUTEINTIMERTHREAD</code> is a known cleanup pattern -- EDR may flag timer creation targeting <code>NtContinue</code> as a callback.</li>
-  <li><input type="checkbox"> Heap-allocated <code>CONTEXT</code> structures with <code>Rip</code> set to <code>VirtualFree</code> are a forensic artifact -- if the timer fails, the contexts remain on the heap.</li>
+<ul>
+  <li>The 100ms sleep for <code>RtlCaptureContext</code> and 500ms timer delay create a window where the memory is still present and unmasked.</li>
+  <li><code>CreateTimerQueueTimer</code> with <code>WT_EXECUTEINTIMERTHREAD</code> is a known cleanup pattern -- EDR may flag timer creation targeting <code>NtContinue</code> as a callback.</li>
+  <li>Heap-allocated <code>CONTEXT</code> structures with <code>Rip</code> set to <code>VirtualFree</code> are a forensic artifact -- if the timer fails, the contexts remain on the heap.</li>
 </ul>
 
 <h3 id="crtl-runtime-control-flow-guard">4.5 Control Flow Guard</h3>
@@ -4509,10 +4509,10 @@ BOOL bypass_cfg ( PVOID address )
 </ul>
 
 <h4 id="crtl-runtime-control-flow-guard-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Calling <code>NtSetInformationVirtualMemory</code> with <code>VmCfgCallTargetInformation</code> is a known CFG bypass primitive -- EDR may monitor this specific call class.</li>
-  <li><input type="checkbox"> The <code>STATUS_INVALID_PAGE_PROTECTION</code> fallback assumes CFG is disabled, which is safe -- but the failed call itself generates ETW telemetry.</li>
-  <li><input type="checkbox"> If injecting into a CFG-protected process, the <code>bypass_cfg</code> call must succeed before any timer fires -- race conditions between the bypass and timer execution can still cause a crash.</li>
+<ul>
+  <li>Calling <code>NtSetInformationVirtualMemory</code> with <code>VmCfgCallTargetInformation</code> is a known CFG bypass primitive -- EDR may monitor this specific call class.</li>
+  <li>The <code>STATUS_INVALID_PAGE_PROTECTION</code> fallback assumes CFG is disabled, which is safe -- but the failed call itself generates ETW telemetry.</li>
+  <li>If injecting into a CFG-protected process, the <code>bypass_cfg</code> call must succeed before any timer fires -- race conditions between the bypass and timer execution can still cause a crash.</li>
 </ul>
 </div>
 
@@ -4633,11 +4633,11 @@ process-inject {
 </ul>
 
 <h4 id="crtl-postex-bof-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> A crashing BOF crashes the entire Beacon process - test thoroughly before deploying against live targets.</li>
-  <li><input type="checkbox"> BOF dependency resolution via <code>LoadLibraryA</code> triggers image-load events from unbacked memory - EDRs correlate the loading module's backing with the library load.</li>
-  <li><input type="checkbox"> BOFs block Beacon's main thread while running - long-running BOFs cause missed check-ins, which can itself be an indicator.</li>
-  <li><input type="checkbox"> Without <code>GetProcAddress</code> hooking, BOF API calls bypass the PICO's call-stack spoofing entirely.</li>
+<ul>
+  <li>A crashing BOF crashes the entire Beacon process - test thoroughly before deploying against live targets.</li>
+  <li>BOF dependency resolution via <code>LoadLibraryA</code> triggers image-load events from unbacked memory - EDRs correlate the loading module's backing with the library load.</li>
+  <li>BOFs block Beacon's main thread while running - long-running BOFs cause missed check-ins, which can itself be an indicator.</li>
+  <li>Without <code>GetProcAddress</code> hooking, BOF API calls bypass the PICO's call-stack spoofing entirely.</li>
 </ul>
 
 <h3 id="crtl-postex-fork-run">5.3 Fork &amp; Run</h3>
@@ -4675,11 +4675,11 @@ process-inject {
 <p><strong>The <code>--in-process</code> flag</strong> on <code>execute-assembly</code> avoids the sacrificial spawn entirely (no <code>CreateProcessA</code> event), at the cost of host-process stability. Sleep-mask / call-stack tradecraft for the spawned helper has to come from BOFs or a forked implant - there's no postex-kit hook to wedge it into.</p>
 
 <h4 id="crtl-postex-forkrun-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Every fork-and-run command spawns a child process - EDRs log the parent-child relationship and flag unusual spawn trees.</li>
-  <li><input type="checkbox"> Remote injection into the sacrificial process generates <code>VirtualAllocEx</code> / <code>WriteProcessMemory</code> / <code>CreateRemoteThread</code> telemetry - all monitored by ETW and kernel callbacks.</li>
-  <li><input type="checkbox"> The named pipe between Beacon and the postex DLL uses a default naming pattern that can be signatured - customize <code>post-ex.pipename</code> in Malleable C2.</li>
-  <li><input type="checkbox"> Short-lived processes that load the CLR, execute, and die within seconds are a strong behavioral indicator.</li>
+<ul>
+  <li>Every fork-and-run command spawns a child process - EDRs log the parent-child relationship and flag unusual spawn trees.</li>
+  <li>Remote injection into the sacrificial process generates <code>VirtualAllocEx</code> / <code>WriteProcessMemory</code> / <code>CreateRemoteThread</code> telemetry - all monitored by ETW and kernel callbacks.</li>
+  <li>The named pipe between Beacon and the postex DLL uses a default naming pattern that can be signatured - customize <code>post-ex.pipename</code> in Malleable C2.</li>
+  <li>Short-lived processes that load the CLR, execute, and die within seconds are a strong behavioral indicator.</li>
 </ul>
 
 <h3 id="crtl-postex-process-inject-kit">5.4 Process Inject Kit</h3>
@@ -5046,11 +5046,11 @@ void gox64 ( char * args, int alen ) {
 </ul>
 
 <h4 id="crtl-postex-injection-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> <code>NtCreateSection</code> + <code>NtMapViewOfSection</code> with RWX section attributes is logged by ETW - some EDRs correlate the section creation with the subsequent cross-process map.</li>
-  <li><input type="checkbox"> <code>RtlCreateUserThread</code> bypasses <code>CreateRemoteThread</code> hooks but is itself monitored by newer EDR kernel callbacks.</li>
-  <li><input type="checkbox"> Cross-process handle requests with <code>PROCESS_ALL_ACCESS</code> or broad access masks trigger Sysmon Event ID 10 - request only the minimum rights needed.</li>
-  <li><input type="checkbox"> The explicit variant leaves the postex DLL in the target process after <code>ExitThread</code> - memory scanners can find it post-execution.</li>
+<ul>
+  <li><code>NtCreateSection</code> + <code>NtMapViewOfSection</code> with RWX section attributes is logged by ETW - some EDRs correlate the section creation with the subsequent cross-process map.</li>
+  <li><code>RtlCreateUserThread</code> bypasses <code>CreateRemoteThread</code> hooks but is itself monitored by newer EDR kernel callbacks.</li>
+  <li>Cross-process handle requests with <code>PROCESS_ALL_ACCESS</code> or broad access masks trigger Sysmon Event ID 10 - request only the minimum rights needed.</li>
+  <li>The explicit variant leaves the postex DLL in the target process after <code>ExitThread</code> - memory scanners can find it post-execution.</li>
 </ul>
 
 <h3 id="crtl-postex-bof-apis">5.7 BOF APIs</h3>
@@ -5144,10 +5144,10 @@ C:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscoreei.dll!CreateInterface+0x4
 Unbacked+0x2444</code></pre>
 
 <h4 id="crtl-postex-imageloads-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> CLR image loads (<code>mscoree.dll</code> &rarr; <code>mscoreei.dll</code> &rarr; <code>clr.dll</code>) originating from unbacked memory are a primary detection vector for .NET post-exploitation.</li>
-  <li><input type="checkbox"> EDRs correlate the call stack of the <code>LoadLibrary</code> call with the backing of the calling module - if the caller has no on-disk image, it's flagged.</li>
-  <li><input type="checkbox"> Hooking <code>LoadLibraryW</code> and <code>LoadLibraryExW</code> through the PICO's IAT-walk technique forces the load through a spoofed call stack, breaking this correlation.</li>
+<ul>
+  <li>CLR image loads (<code>mscoree.dll</code> &rarr; <code>mscoreei.dll</code> &rarr; <code>clr.dll</code>) originating from unbacked memory are a primary detection vector for .NET post-exploitation.</li>
+  <li>EDRs correlate the call stack of the <code>LoadLibrary</code> call with the backing of the calling module - if the caller has no on-disk image, it's flagged.</li>
+  <li>Hooking <code>LoadLibraryW</code> and <code>LoadLibraryExW</code> through the PICO's IAT-walk technique forces the load through a spoofed call stack, breaking this correlation.</li>
 </ul>
 
 <h3 id="crtl-postex-more-hooking">5.13 More hooking</h3>
@@ -5339,10 +5339,10 @@ sliver (SESSION) &gt; execute-assembly --in-process --amsi-bypass --etw-bypass \
 <p><strong>These flags</strong> use the same patch-<code>AmsiScanBuffer</code> approach as CS. For the load-blocking variant (intercept <code>LoadLibraryExW</code> and refuse <code>amsi.dll</code>), write a BOF and load it before <code>execute-assembly</code> - community implementations like <code>BOF.NET</code> include an "AMSI patchless" mode using hardware breakpoints.</p>
 
 <h4 id="crtl-postex-amsi-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Patching <code>AmsiScanBuffer</code> in memory is well-signatured - EDRs monitor for byte-pattern writes to <code>amsi.dll</code>'s <code>.text</code> section.</li>
-  <li><input type="checkbox"> Hardware-breakpoint AMSI bypasses avoid memory writes but consume debug registers - some EDRs check <code>DR0</code>&ndash;<code>DR3</code> via <code>GetThreadContext</code>.</li>
-  <li><input type="checkbox"> The load-blocking approach (returning NULL for <code>amsi.dll</code>) leaves no patch artefact, but some EDRs detect the absence of <code>amsi.dll</code> in processes that should have loaded it.</li>
+<ul>
+  <li>Patching <code>AmsiScanBuffer</code> in memory is well-signatured - EDRs monitor for byte-pattern writes to <code>amsi.dll</code>'s <code>.text</code> section.</li>
+  <li>Hardware-breakpoint AMSI bypasses avoid memory writes but consume debug registers - some EDRs check <code>DR0</code>&ndash;<code>DR3</code> via <code>GetThreadContext</code>.</li>
+  <li>The load-blocking approach (returning NULL for <code>amsi.dll</code>) leaves no patch artefact, but some EDRs detect the absence of <code>amsi.dll</code> in processes that should have loaded it.</li>
 </ul>
 
 <h3 id="crtl-postex-postex-kit">5.15 Postex Kit</h3>
@@ -5607,11 +5607,11 @@ beacon_execute_postex_job ( $bid, $null, $dll, $null, $callback );</code></pre>
 }</code></pre>
 
 <h4 id="crtl-postex-quickfire-opsec-summary">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Spawning <code>spawnto</code> processes without command-line arguments is a behavioral anomaly - always include representative arguments matching the binary's normal use.</li>
-  <li><input type="checkbox"> RWX memory allocations in remote processes are a high-confidence indicator regardless of call-stack spoofing - use RW&rarr;RX transitions.</li>
-  <li><input type="checkbox"> Thread start addresses pointing into unbacked memory trigger Sysmon Event ID 8 and EDR kernel callbacks - use <code>ObfSetThreadContext</code> to point at a legitimate module offset.</li>
-  <li><input type="checkbox"> CLR and PowerShell automation DLLs loading into processes that don't normally host them (e.g. <code>rundll32.exe</code>) are flagged by image-load heuristics.</li>
+<ul>
+  <li>Spawning <code>spawnto</code> processes without command-line arguments is a behavioral anomaly - always include representative arguments matching the binary's normal use.</li>
+  <li>RWX memory allocations in remote processes are a high-confidence indicator regardless of call-stack spoofing - use RW&rarr;RX transitions.</li>
+  <li>Thread start addresses pointing into unbacked memory trigger Sysmon Event ID 8 and EDR kernel callbacks - use <code>ObfSetThreadContext</code> to point at a legitimate module offset.</li>
+  <li>CLR and PowerShell automation DLLs loading into processes that don't normally host them (e.g. <code>rundll32.exe</code>) are flagged by image-load heuristics.</li>
 </ul>
 
 <h3 id="crtl-postex-postex-signatures">5.24 Postex signatures</h3>
@@ -5678,10 +5678,10 @@ Guid
 </ul>
 
 <h4 id="crtl-postex-signatures-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Default postex DLL strings (<code>"ReflectiveLoader"</code>, <code>"powershell.x64.dll"</code>, CLR error format strings) are static signatures that YARA rules and in-memory scanners match on.</li>
-  <li><input type="checkbox"> .NET typelib GUIDs persist across builds - public tools like Rubeus and Seatbelt ship with well-known GUIDs that EDRs fingerprint.</li>
-  <li><input type="checkbox"> <code>strrep_pad</code> replacements must be equal or shorter than the original to avoid breaking PE section alignment.</li>
+<ul>
+  <li>Default postex DLL strings (<code>"ReflectiveLoader"</code>, <code>"powershell.x64.dll"</code>, CLR error format strings) are static signatures that YARA rules and in-memory scanners match on.</li>
+  <li>.NET typelib GUIDs persist across builds - public tools like Rubeus and Seatbelt ship with well-known GUIDs that EDRs fingerprint.</li>
+  <li><code>strrep_pad</code> replacements must be equal or shorter than the original to avoid breaking PE section alignment.</li>
 </ul>
 </div>
 
@@ -5729,10 +5729,10 @@ rev2self                                  # revert when done</code></pre>
 </ul>
 
 <h4 id="crtl-lateral-make-token-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> <code>make_token</code> from a non-standard directory (outside <code>System32</code> / <code>Program Files</code>) stands out in logon event source fields.</li>
-  <li><input type="checkbox"> Both commands produce Event ID 4624 type 9 logon events -- high-volume environments may not alert, but targeted monitoring will flag unusual source processes.</li>
-  <li><input type="checkbox"> <code>createnetonly</code> spawns a child process -- parent-child lineage is visible to EDRs.</li>
+<ul>
+  <li><code>make_token</code> from a non-standard directory (outside <code>System32</code> / <code>Program Files</code>) stands out in logon event source fields.</li>
+  <li>Both commands produce Event ID 4624 type 9 logon events -- high-volume environments may not alert, but targeted monitoring will flag unusual source processes.</li>
+  <li><code>createnetonly</code> spawns a child process -- parent-child lineage is visible to EDRs.</li>
 </ul>
 
 <h3 id="crtl-lateral-steal-token">6.2 steal_token</h3>
@@ -5756,10 +5756,10 @@ rev2self                                  # revert</code></pre>
 </ul>
 
 <h4 id="crtl-lateral-steal-token-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> <code>OpenProcess</code> with <code>PROCESS_QUERY_INFORMATION</code> on SYSTEM or high-integrity processes triggers kernel callbacks and Sysmon Event ID 10.</li>
-  <li><input type="checkbox"> Duplicating tokens across integrity levels may fail under Mandatory Integrity Control -- match or exceed the target's integrity level.</li>
-  <li><input type="checkbox"> Frequent token theft across many PIDs looks like enumeration -- target specific processes rather than sweeping.</li>
+<ul>
+  <li><code>OpenProcess</code> with <code>PROCESS_QUERY_INFORMATION</code> on SYSTEM or high-integrity processes triggers kernel callbacks and Sysmon Event ID 10.</li>
+  <li>Duplicating tokens across integrity levels may fail under Mandatory Integrity Control -- match or exceed the target's integrity level.</li>
+  <li>Frequent token theft across many PIDs looks like enumeration -- target specific processes rather than sweeping.</li>
 </ul>
 
 <h3 id="crtl-lateral-kerberos">6.3 Kerberos</h3>
@@ -5799,10 +5799,10 @@ kill 5412</code></pre>
 </ul>
 
 <h4 id="crtl-lateral-kerberos-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Raw Kerberos traffic (AS-REQ/TGS-REQ) from any process other than <code>lsass.exe</code> is a high-fidelity detection -- prefer PTT over building your own packets.</li>
-  <li><input type="checkbox"> EDRs correlate port 88 traffic source with process identity -- Rubeus <code>asktgt</code>/<code>asktgs</code> from userland will trigger.</li>
-  <li><input type="checkbox"> Leaving tickets in orphaned logon sessions provides forensic evidence -- always purge and kill the sacrificial process.</li>
+<ul>
+  <li>Raw Kerberos traffic (AS-REQ/TGS-REQ) from any process other than <code>lsass.exe</code> is a high-fidelity detection -- prefer PTT over building your own packets.</li>
+  <li>EDRs correlate port 88 traffic source with process identity -- Rubeus <code>asktgt</code>/<code>asktgs</code> from userland will trigger.</li>
+  <li>Leaving tickets in orphaned logon sessions provides forensic evidence -- always purge and kill the sacrificial process.</li>
 </ul>
 
 <p><strong>What is lateral movement?</strong> Once you have a foothold on one machine and credentials (or tokens) for another user, lateral movement is executing code on a different machine in the network - moving from workstation to server, from server to domain controller.</p>
@@ -5885,10 +5885,10 @@ sliver (SESSION) &gt; psexec -s "MyService" -d "Update Service" -c \\\\lon-dc-1\
 </ul>
 
 <h4 id="crtl-lateral-wmi-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> <code>CoCreateInstance</code> from unbacked memory exposes the BOF loader in the call stack -- PICO hook with spoof_call is required.</li>
-  <li><input type="checkbox"> WMI process creation generates Event ID 4688 on the target with <code>WmiPrvSE.exe</code> as the parent -- unusual child processes (e.g. custom EXEs) stand out.</li>
-  <li><input type="checkbox"> Executing a file within seconds of its SMB write is a high-fidelity lateral movement indicator -- introduce a delay or use an indirect launcher.</li>
+<ul>
+  <li><code>CoCreateInstance</code> from unbacked memory exposes the BOF loader in the call stack -- PICO hook with spoof_call is required.</li>
+  <li>WMI process creation generates Event ID 4688 on the target with <code>WmiPrvSE.exe</code> as the parent -- unusual child processes (e.g. custom EXEs) stand out.</li>
+  <li>Executing a file within seconds of its SMB write is a high-fidelity lateral movement indicator -- introduce a delay or use an indirect launcher.</li>
 </ul>
 
 <h3 id="crtl-lateral-psexec">6.5 PsExec</h3>
@@ -5930,10 +5930,10 @@ del \\TARGET\C$\Windows\System32\svcmon.exe</code></pre>
 </ul>
 
 <h4 id="crtl-lateral-psexec-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> UNC path in service <code>binPath</code> (e.g. <code>\\target\ADMIN$\foo.exe</code>) is a high-fidelity PsExec signature -- always use a local path.</li>
-  <li><input type="checkbox"> New service creation generates Event ID 7045 -- SCShell avoids this by modifying an existing service (Event ID 7040 only).</li>
-  <li><input type="checkbox"> The service payload performs remote injection -- load the Artifact Kit to control the <code>spawnto</code> and injection method.</li>
+<ul>
+  <li>UNC path in service <code>binPath</code> (e.g. <code>\\target\ADMIN$\foo.exe</code>) is a high-fidelity PsExec signature -- always use a local path.</li>
+  <li>New service creation generates Event ID 7045 -- SCShell avoids this by modifying an existing service (Event ID 7040 only).</li>
+  <li>The service payload performs remote injection -- load the Artifact Kit to control the <code>spawnto</code> and injection method.</li>
 </ul>
 
 <h3 id="crtl-lateral-beacon-rdll-generate-local">6.6 BEACON_RDLL_GENERATE_LOCAL</h3>
@@ -6010,10 +6010,10 @@ del \\TARGET\C$\Windows\System32\svcmon.exe</code></pre>
 </ul>
 
 <h4 id="crtl-lateral-beacon-rdll-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Without <code>BEACON_RDLL_GENERATE_LOCAL</code>, spawned Beacons use the default loader -- they will be detected immediately by any EDR.</li>
-  <li><input type="checkbox"> The <code>$5</code>/<code>$6</code> pointers from the parent Beacon resolve to PICO hooks, not real APIs -- using them in the loader causes crashes in Crystal Kit.</li>
-  <li><input type="checkbox"> Unsigned payloads on WDAC-enforced targets will be blocked at load time -- sign before staging.</li>
+<ul>
+  <li>Without <code>BEACON_RDLL_GENERATE_LOCAL</code>, spawned Beacons use the default loader -- they will be detected immediately by any EDR.</li>
+  <li>The <code>$5</code>/<code>$6</code> pointers from the parent Beacon resolve to PICO hooks, not real APIs -- using them in the loader causes crashes in Crystal Kit.</li>
+  <li>Unsigned payloads on WDAC-enforced targets will be blocked at load time -- sign before staging.</li>
 </ul>
 
 <h5>Evasion Layer Decision Table</h5>
@@ -6191,11 +6191,11 @@ beacon&gt; rm C:\Windows\System32\drivers\RTCore64.sys</code></pre>
 </ul>
 
 <h4 id="crtl-vulndrv-loading-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Driver load generates Sysmon Event ID 6 (Driver Loaded) and kernel ETW events - minimize the window between load and cleanup.</li>
-  <li><input type="checkbox"> <code>sc create</code> writes a persistent service registry key under <code>HKLM\SYSTEM\CurrentControlSet\Services</code> - delete it promptly.</li>
-  <li><input type="checkbox"> Microsoft's Vulnerable Driver Blocklist (<code>DriverSiPolicy.p7b</code>) may block known-vulnerable drivers from loading - check the target's HVCI and block-list status first.</li>
-  <li><input type="checkbox"> Loading <code>ntoskrnl.exe</code> into user-mode for offset resolution can trigger image-load alerts - use pre-calculated offsets per kernel build when possible.</li>
+<ul>
+  <li>Driver load generates Sysmon Event ID 6 (Driver Loaded) and kernel ETW events - minimize the window between load and cleanup.</li>
+  <li><code>sc create</code> writes a persistent service registry key under <code>HKLM\SYSTEM\CurrentControlSet\Services</code> - delete it promptly.</li>
+  <li>Microsoft's Vulnerable Driver Blocklist (<code>DriverSiPolicy.p7b</code>) may block known-vulnerable drivers from loading - check the target's HVCI and block-list status first.</li>
+  <li>Loading <code>ntoskrnl.exe</code> into user-mode for offset resolution can trigger image-load alerts - use pre-calculated offsets per kernel build when possible.</li>
 </ul>
 
 <h3 id="crtl-vulndrv-kernel-callbacks">7.3 Kernel Callbacks</h3>
@@ -6351,10 +6351,10 @@ Process Callbacks
 </ul>
 
 <h4 id="crtl-vulndrv-callbacks-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Zeroing a callback does not unregister it - the kernel still holds the slot. A crash dump or live forensic tool can detect the nulled pointer.</li>
-  <li><input type="checkbox"> Some EDRs have self-protection that detects their own callbacks being removed and trigger an alert or re-register them.</li>
-  <li><input type="checkbox"> Removing only the callbacks you need (not all of them) reduces the forensic footprint and avoids destabilizing the system.</li>
+<ul>
+  <li>Zeroing a callback does not unregister it - the kernel still holds the slot. A crash dump or live forensic tool can detect the nulled pointer.</li>
+  <li>Some EDRs have self-protection that detects their own callbacks being removed and trigger an alert or re-register them.</li>
+  <li>Removing only the callbacks you need (not all of them) reduces the forensic footprint and avoids destabilizing the system.</li>
 </ul>
 
 <h3 id="crtl-vulndrv-etw-ti">7.4 ETW-TI</h3>
@@ -6389,10 +6389,10 @@ ProviderEnableInfo.IsEnabled == 0</code></pre>
 </ul>
 
 <h4 id="crtl-vulndrv-etwti-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> The ETW-TI provider GUID is well-known - defenders can monitor for its <code>IsEnabled</code> field being zeroed via periodic integrity checks.</li>
-  <li><input type="checkbox"> Disabling ETW-TI does not retroactively suppress events already in the pipeline - disable it before performing detectable actions.</li>
-  <li><input type="checkbox"> Some EDRs consume multiple ETW providers beyond TI - disabling TI alone may not fully blind them.</li>
+<ul>
+  <li>The ETW-TI provider GUID is well-known - defenders can monitor for its <code>IsEnabled</code> field being zeroed via periodic integrity checks.</li>
+  <li>Disabling ETW-TI does not retroactively suppress events already in the pipeline - disable it before performing detectable actions.</li>
+  <li>Some EDRs consume multiple ETW providers beyond TI - disabling TI alone may not fully blind them.</li>
 </ul>
 
 <h3 id="crtl-vulndrv-protected-processes">7.5 Protected Processes</h3>
@@ -6457,10 +6457,10 @@ Signer : PsProtectedSignerNone</code></pre>
 </ul>
 
 <h4 id="crtl-vulndrv-ppl-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Patching <code>EPROCESS-&gt;Protection</code> modifies a kernel structure that integrity-checking tools can audit - some EDRs periodically verify LSASS PPL status.</li>
-  <li><input type="checkbox"> Credential Guard (VBS-backed) protects secrets in a separate hypervisor-isolated enclave - PPL removal alone does not bypass it.</li>
-  <li><input type="checkbox"> Dumping LSASS after stripping PPL still generates the usual Sysmon Event ID 10 (ProcessAccess) - pair with callback removal to suppress that telemetry.</li>
+<ul>
+  <li>Patching <code>EPROCESS-&gt;Protection</code> modifies a kernel structure that integrity-checking tools can audit - some EDRs periodically verify LSASS PPL status.</li>
+  <li>Credential Guard (VBS-backed) protects secrets in a separate hypervisor-isolated enclave - PPL removal alone does not bypass it.</li>
+  <li>Dumping LSASS after stripping PPL still generates the usual Sysmon Event ID 10 (ProcessAccess) - pair with callback removal to suppress that telemetry.</li>
 </ul>
 
 </div>
@@ -6604,9 +6604,9 @@ ConvertTo-WDACCodeIntegrityPolicy -BinaryFilePath '.\policy.cip' -XmlFilePath '.
 <p>Microsoft recommends deploying policies in audit mode first to gauge business impact, then switching to enforce. The default for newly-authored policies is audit, and admins regularly forget to flip the switch. You'll find environments running real policies in audit only - activity is logged, but nothing is blocked.</p>
 
 <h4 id="crtl-appcontrol-auditonly-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Audit-mode policies still generate Event ID 3076 (audit block) in the CodeIntegrity log - defenders reviewing these events will see your execution attempts.</li>
-  <li><input type="checkbox"> An environment with only audit-mode policies may be preparing for enforcement - tools that run today may be blocked after the next policy push.</li>
+<ul>
+  <li>Audit-mode policies still generate Event ID 3076 (audit block) in the CodeIntegrity log - defenders reviewing these events will see your execution attempts.</li>
+  <li>An environment with only audit-mode policies may be preparing for enforcement - tools that run today may be blocked after the next policy push.</li>
 </ul>
 
 <h3 id="crtl-appcontrol-file-attributes">8.9 File attributes</h3>
@@ -6687,9 +6687,9 @@ IDI_ICON1               ICON                    "src-main/7zip.ico"</code></pre>
 </ul>
 
 <h4 id="crtl-appcontrol-fileattribs-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> File attribute spoofing only works against attribute-based rules - hash or signer rules will still block execution.</li>
-  <li><input type="checkbox"> Defenders correlating file attribute values with signer identity will notice unsigned binaries claiming to be known-good software.</li>
+<ul>
+  <li>File attribute spoofing only works against attribute-based rules - hash or signer rules will still block execution.</li>
+  <li>Defenders correlating file attribute values with signer identity will notice unsigned binaries claiming to be known-good software.</li>
 </ul>
 
 <h3 id="crtl-appcontrol-path-wildcards">8.10 Path wildcards</h3>
@@ -6788,9 +6788,9 @@ Hello World</code></pre>
 </ul>
 
 <h4 id="crtl-appcontrol-lotl-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> <code>Microsoft.Workflow.Compiler.exe</code> spawning child processes or making network connections is anomalous - EDR rules commonly flag this binary.</li>
-  <li><input type="checkbox"> Modifying ASAR bundles in Electron apps changes file hashes - application update mechanisms or integrity checks may detect the tampering.</li>
+<ul>
+  <li><code>Microsoft.Workflow.Compiler.exe</code> spawning child processes or making network connections is anomalous - EDR rules commonly flag this binary.</li>
+  <li>Modifying ASAR bundles in Electron apps changes file hashes - application update mechanisms or integrity checks may detect the tampering.</li>
 </ul>
 
 <h3 id="crtl-appcontrol-trusted-cas">8.12 Trusted CAs</h3>
@@ -6873,9 +6873,9 @@ Certificate reply was installed in keystore</code></pre>
 </ul>
 
 <h4 id="crtl-appcontrol-trustedcas-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Certificate enrollment generates CA audit events - administrators monitoring ADCS may notice unexpected code-signing requests.</li>
-  <li><input type="checkbox"> Signed payloads carry the certificate's serial number and issuer chain - incident responders can trace the signing cert back to the enrollment event.</li>
+<ul>
+  <li>Certificate enrollment generates CA audit events - administrators monitoring ADCS may notice unexpected code-signing requests.</li>
+  <li>Signed payloads carry the certificate's serial number and issuer chain - incident responders can trace the signing cert back to the enrollment event.</li>
 </ul>
 
 <h3 id="crtl-appcontrol-weaponising-app-control">8.13 Weaponising App Control</h3>
@@ -6941,9 +6941,9 @@ Press Enter to Continue</code></pre>
 </ul>
 
 <h4 id="crtl-appcontrol-denyonly-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Deploying a new base policy generates Event ID 3099 in the CodeIntegrity log - SIEM rules often alert on policy changes.</li>
-  <li><input type="checkbox"> If the denied process is already running, it continues until reboot - the deny only applies to new process launches.</li>
+<ul>
+  <li>Deploying a new base policy generates Event ID 3099 in the CodeIntegrity log - SIEM rules often alert on policy changes.</li>
+  <li>If the denied process is already running, it continues until reboot - the deny only applies to new process launches.</li>
 </ul>
 </div>
 
@@ -6990,9 +6990,9 @@ Press Enter to Continue</code></pre>
 </table>
 
 <h4 id="crtl-cg-no-tgts-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Attempting to use a <code>*_credguard</code>-typed TGT will fail silently - do not waste time trying to pass-the-ticket with protected TGTs.</li>
-  <li><input type="checkbox"> Rubeus sends raw Kerberos traffic to port 88 - anomalous AS-REQ/TGS-REQ patterns from non-LSASS processes can trigger network-level detection.</li>
+<ul>
+  <li>Attempting to use a <code>*_credguard</code>-typed TGT will fail silently - do not waste time trying to pass-the-ticket with protected TGTs.</li>
+  <li>Rubeus sends raw Kerberos traffic to port 88 - anomalous AS-REQ/TGS-REQ patterns from non-LSASS processes can trigger network-level detection.</li>
 </ul>
 
 <h3 id="crtl-cg-service-tickets">9.3 Extracting Service Tickets</h3>
@@ -7140,9 +7140,9 @@ beacon> execute-assembly C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe asktgs /s
 </ul>
 
 <h4 id="crtl-cg-service-tickets-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> <code>Rubeus triage</code> and <code>dump</code> enumerate logon sessions via LSA - Sysmon Event ID 10 (process access) may fire if LSASS access is monitored.</li>
-  <li><input type="checkbox"> Importing tickets into a session that did not originally request them creates a mismatch detectable by correlation of ticket issuance logs (Event ID 4769) with logon session origins.</li>
+<ul>
+  <li><code>Rubeus triage</code> and <code>dump</code> enumerate logon sessions via LSA - Sysmon Event ID 10 (process access) may fire if LSASS access is monitored.</li>
+  <li>Importing tickets into a session that did not originally request them creates a mismatch detectable by correlation of ticket issuance logs (Event ID 4769) with logon session origins.</li>
 </ul>
 
 <h3 id="crtl-cg-plaintext-tgt">9.4 TGTs from Plaintext Password</h3>
@@ -7195,9 +7195,9 @@ reg save HKLM\SYSTEM sys.bak</code></pre>
 </ul>
 
 <h4 id="crtl-cg-plaintext-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Rubeus <code>asktgt</code> sends AS-REQ directly to port 88 from a non-LSASS process - network sensors can flag Kerberos traffic originating from unexpected sources.</li>
-  <li><input type="checkbox"> Registry saves of the SAM and SYSTEM hives generate Event ID 4657 (registry value modification) and can trigger EDR alerts on sensitive key access.</li>
+<ul>
+  <li>Rubeus <code>asktgt</code> sends AS-REQ directly to port 88 from a non-LSASS process - network sensors can flag Kerberos traffic originating from unexpected sources.</li>
+  <li>Registry saves of the SAM and SYSTEM hives generate Event ID 4657 (registry value modification) and can trigger EDR alerts on sensitive key access.</li>
 </ul>
 
 <h3 id="crtl-cg-pkinit">9.5 PKINIT Certificates</h3>
@@ -7291,9 +7291,9 @@ MIINX[...snip...]CCAA=</code></pre>
 </ul>
 
 <h4 id="crtl-cg-pkinit-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> PKINIT AS-REQs with certificate authentication generate Event ID 4768 with a pre-authentication type of 16 (PKINIT) - uncommon for user accounts and easily flagged.</li>
-  <li><input type="checkbox"> SharpDPAPI accesses the DPAPI master keys and certificate private key files - file access auditing on <code>%APPDATA%\Microsoft\Crypto</code> can detect this.</li>
+<ul>
+  <li>PKINIT AS-REQs with certificate authentication generate Event ID 4768 with a pre-authentication type of 16 (PKINIT) - uncommon for user accounts and easily flagged.</li>
+  <li>SharpDPAPI accesses the DPAPI master keys and certificate private key files - file access auditing on <code>%APPDATA%\Microsoft\Crypto</code> can detect this.</li>
 </ul>
 </div>
 

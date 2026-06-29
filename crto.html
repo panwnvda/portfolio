@@ -373,10 +373,10 @@ WaitForSingleObject(hThread, INFINITE);</code></pre>
 </ul>
 
 <h4 id="crto-malware-essentials-injection-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> <code>PAGE_EXECUTE_READWRITE</code> (RWX) memory is a strong indicator of injection; allocate as RW, write shellcode, then <code>VirtualProtect</code> to RX.</li>
-  <li><input type="checkbox"> <code>CreateRemoteThread</code> targeting cross-process handles triggers ETW events and Sysmon Event ID 8; prefer APC or callback-based execution.</li>
-  <li><input type="checkbox"> AV can scan new thread start addresses at creation time; suspended-thread + context swap adds a layer of indirection.</li>
+<ul>
+  <li><code>PAGE_EXECUTE_READWRITE</code> (RWX) memory is a strong indicator of injection; allocate as RW, write shellcode, then <code>VirtualProtect</code> to RX.</li>
+  <li><code>CreateRemoteThread</code> targeting cross-process handles triggers ETW events and Sysmon Event ID 8; prefer APC or callback-based execution.</li>
+  <li>AV can scan new thread start addresses at creation time; suspended-thread + context swap adds a layer of indirection.</li>
 </ul>
 
 <h3 id="crto-malware-essentials-apc-injection">1.7 APC Injection</h3>
@@ -440,10 +440,10 @@ ResumeThread(pi.hThread);</code></pre>
 </ul>
 
 <h4 id="crto-malware-essentials-apc-injection-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Standard APC injection has no guarantee the target thread will become alertable; the shellcode may never run.</li>
-  <li><input type="checkbox"> Queuing APCs on every thread in a process will crash it; use the Early Bird technique for reliability.</li>
-  <li><input type="checkbox"> Spawning a suspended process from an unusual parent can trigger parent-child process heuristics; choose a plausible child process for the context.</li>
+<ul>
+  <li>Standard APC injection has no guarantee the target thread will become alertable; the shellcode may never run.</li>
+  <li>Queuing APCs on every thread in a process will crash it; use the Early Bird technique for reliability.</li>
+  <li>Spawning a suspended process from an unusual parent can trigger parent-child process heuristics; choose a plausible child process for the context.</li>
 </ul>
 
 <h3 id="crto-malware-essentials-process-hollowing">1.8 Process Hollowing</h3>
@@ -519,10 +519,10 @@ ResumeThread(pi.hThread);</code></pre>
 </ul>
 
 <h4 id="crto-malware-essentials-process-hollowing-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> EDR hooks on <code>NtQueryInformationProcess</code> and <code>WriteProcessMemory</code> can detect the PE-parsing pattern; consider direct syscalls.</li>
-  <li><input type="checkbox"> The suspended process may appear in process listings with zero CPU time; resume promptly.</li>
-  <li><input type="checkbox"> Full hollowing (unmapping + remapping) changes the image section, which some EDRs detect by comparing in-memory vs on-disk PE content.</li>
+<ul>
+  <li>EDR hooks on <code>NtQueryInformationProcess</code> and <code>WriteProcessMemory</code> can detect the PE-parsing pattern; consider direct syscalls.</li>
+  <li>The suspended process may appear in process listings with zero CPU time; resume promptly.</li>
+  <li>Full hollowing (unmapping + remapping) changes the image section, which some EDRs detect by comparing in-memory vs on-disk PE content.</li>
 </ul>
 <h2 id="crto-cobalt-strike-primer">2. Cobalt Strike Primer</h2>
 
@@ -663,10 +663,10 @@ ResumeThread(pi.hThread);</code></pre>
 </table>
 
 <h4 id="crto-cobalt-strike-primer-staged-vs-stageless-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> RWX memory in stagers is anomalous in most processes — prefer stageless payloads when size permits.</li>
-  <li><input type="checkbox"> Stagers lack server authentication — an adversary on the network can intercept and replace the stage.</li>
-  <li><input type="checkbox"> Stageless payloads support guardrails that prevent execution outside the target environment, reducing risk of payload analysis in sandboxes.</li>
+<ul>
+  <li>RWX memory in stagers is anomalous in most processes — prefer stageless payloads when size permits.</li>
+  <li>Stagers lack server authentication — an adversary on the network can intercept and replace the stage.</li>
+  <li>Stageless payloads support guardrails that prevent execution outside the target environment, reducing risk of payload analysis in sandboxes.</li>
 </ul>
 
 <h3 id="crto-cobalt-strike-primer-payload-generation">2.8 Payload Generation</h3>
@@ -931,11 +931,11 @@ set host_stage "false";         # Stage payloads via a separate listener, not th
 </ul>
 
 <h4 id="crto-cobalt-strike-primer-malleable-c2-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Always run <code>c2lint</code> on every profile change — a malformed profile crashes the team server on startup.</li>
-  <li><input type="checkbox"> Verify Beacon traffic with Wireshark after deployment — confirm no default Cobalt Strike headers appear on the wire.</li>
-  <li><input type="checkbox"> For production engagements, replace the self-signed HTTPS certificate with a valid Let's Encrypt cert on a plausible Microsoft-adjacent domain.</li>
-  <li><input type="checkbox"> Set <code>host_stage</code> to <code>false</code> — an exposed staging endpoint reveals the full Beacon payload to anyone who connects.</li>
+<ul>
+  <li>Always run <code>c2lint</code> on every profile change — a malformed profile crashes the team server on startup.</li>
+  <li>Verify Beacon traffic with Wireshark after deployment — confirm no default Cobalt Strike headers appear on the wire.</li>
+  <li>For production engagements, replace the self-signed HTTPS certificate with a valid Let's Encrypt cert on a plausible Microsoft-adjacent domain.</li>
+  <li>Set <code>host_stage</code> to <code>false</code> — an exposed staging endpoint reveals the full Beacon payload to anyone who connects.</li>
 </ul>
 
 <h3 id="crto-cobalt-strike-primer-bofs">2.11 Beacon Object Files</h3>
@@ -986,9 +986,9 @@ beacon_inline_execute($1, $bof, "go", $args);</code></pre>
 </ul>
 
 <h4 id="crto-cobalt-strike-primer-bofs-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> BOF crashes kill the hosting Beacon process — test in Debug mode or on an expendable Beacon first.</li>
-  <li><input type="checkbox"> BOFs run in-process, avoiding the fork-and-run injection pattern that EDR products monitor heavily.</li>
+<ul>
+  <li>BOF crashes kill the hosting Beacon process — test in Debug mode or on an expendable Beacon first.</li>
+  <li>BOFs run in-process, avoiding the fork-and-run injection pattern that EDR products monitor heavily.</li>
 </ul>
 
 <h3 id="crto-cobalt-strike-primer-aggressor">2.12 Extending with Aggressor Script</h3>
@@ -1108,10 +1108,10 @@ while ( x-- ) {
 </ul>
 
 <h4 id="crto-defense-evasion-artifact-kit-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Never upload artifacts to VirusTotal — you hand your custom templates directly to AV vendors.</li>
-  <li><input type="checkbox"> Renaming variables alone does nothing in compiled C; the compiler strips names in release builds. You must change control flow or logic.</li>
-  <li><input type="checkbox"> Each artifact type (EXE, DLL, service EXE) may trigger different signatures — work through all of them.</li>
+<ul>
+  <li>Never upload artifacts to VirusTotal — you hand your custom templates directly to AV vendors.</li>
+  <li>Renaming variables alone does nothing in compiled C; the compiler strips names in release builds. You must change control flow or logic.</li>
+  <li>Each artifact type (EXE, DLL, service EXE) may trigger different signatures — work through all of them.</li>
 </ul>
 
 <h3 id="crto-defense-evasion-resource-kit">3.3 Resource Kit (Script Payloads)</h3>
@@ -1165,9 +1165,9 @@ SET SCRIPTBLOCK '&lt;compress.ps1 content&gt;'</code></pre>
 </ul>
 
 <h4 id="crto-defense-evasion-resource-kit-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> ThreatCheck cannot replicate multi-layer AMSI evaluation — always test payloads end-to-end in a controlled environment.</li>
-  <li><input type="checkbox"> Defender engine and signature versions may differ between your dev machine and the target. A "clean" scan locally does not guarantee evasion remotely.</li>
+<ul>
+  <li>ThreatCheck cannot replicate multi-layer AMSI evaluation — always test payloads end-to-end in a controlled environment.</li>
+  <li>Defender engine and signature versions may differ between your dev machine and the target. A "clean" scan locally does not guarantee evasion remotely.</li>
 </ul>
 
 <h3 id="crto-defense-evasion-beacon-memory">3.4 Beacon Memory Evasion</h3>
@@ -1216,12 +1216,12 @@ artifact_payload("http", "raw", "x64", "thread", "None");</code></pre>
 </ul>
 
 <h4 id="crto-defense-evasion-beacon-memory-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Replacement strings must be shorter than or equal in length to the original. They cannot be longer.</li>
-  <li><input type="checkbox"> Keep format strings valid (preserve <code>%s</code>, <code>%d</code>, etc.) or Beacon output will break.</li>
-  <li><input type="checkbox"> Do not replace HTTP response strings like <code>HTTP/1.1 200 OK</code> — Beacon's internal web server uses them for <code>powershell-import</code>, <code>powerpick</code>, and <code>execute-assembly</code> workflows. Breaking HTTP compliance breaks post-ex.</li>
-  <li><input type="checkbox"> The module chosen for stomping must be at least 512 KB and must not already be loaded by the host process.</li>
-  <li><input type="checkbox"> No tool exists to force a file through a memory scan. String replacement is trial and error — deploy, observe, adjust.</li>
+<ul>
+  <li>Replacement strings must be shorter than or equal in length to the original. They cannot be longer.</li>
+  <li>Keep format strings valid (preserve <code>%s</code>, <code>%d</code>, etc.) or Beacon output will break.</li>
+  <li>Do not replace HTTP response strings like <code>HTTP/1.1 200 OK</code> — Beacon's internal web server uses them for <code>powershell-import</code>, <code>powerpick</code>, and <code>execute-assembly</code> workflows. Breaking HTTP compliance breaks post-ex.</li>
+  <li>The module chosen for stomping must be at least 512 KB and must not already be loaded by the host process.</li>
+  <li>No tool exists to force a file through a memory scan. String replacement is trial and error — deploy, observe, adjust.</li>
 </ul>
 
 <h3 id="crto-defense-evasion-command-classes">3.5 Beacon Command Classes</h3>
@@ -1343,10 +1343,10 @@ powerpick Start-Sleep -s 60</code></pre>
 </ul>
 
 <h4 id="crto-defense-evasion-blending-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Word spawning PowerShell or cmd is a well-known phishing indicator. Use COM objects (e.g. <code>ShellWindows</code>, <code>ShellBrowserWindow</code>) to launch processes under <code>explorer.exe</code> instead.</li>
-  <li><input type="checkbox"> Match the spawnto process to the action: database queries from a SQL-related process, browsing from a browser process, etc.</li>
-  <li><input type="checkbox"> Every command you run must be evaluated against the current Beacon's host process — there is no universal safe setting.</li>
+<ul>
+  <li>Word spawning PowerShell or cmd is a well-known phishing indicator. Use COM objects (e.g. <code>ShellWindows</code>, <code>ShellBrowserWindow</code>) to launch processes under <code>explorer.exe</code> instead.</li>
+  <li>Match the spawnto process to the action: database queries from a SQL-related process, browsing from a browser process, etc.</li>
+  <li>Every command you run must be evaluated against the current Beacon's host process — there is no universal safe setting.</li>
 </ul>
 
 <h3 id="crto-defense-evasion-cmdline">3.9 Command-Line Detections</h3>
@@ -1378,10 +1378,10 @@ ls \\web.[domain]\c$</code></pre>
 <p>UAC bypass techniques from the Elevate Kit (e.g. <code>uac-schtasks</code>) run tools like <code>schtasks.exe</code> with well-known arguments (<code>/Run /TN \Microsoft\Windows\DiskCleanup\SilentCleanup /I</code>). Defender's kernel callback blocks these command lines. The bypass is to achieve the same outcome through a different mechanism — an API call, a COM object, or an alternative scheduled task trigger that avoids the signatured arguments.</p>
 
 <h4 id="crto-defense-evasion-cmdline-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Command-line detections surface as generic <code>ERROR_ACCESS_DENIED</code> (error code 5) — not an explicit Defender warning. Always check Defender alerts via <code>Get-MpThreatDetection</code> to confirm the source.</li>
-  <li><input type="checkbox"> The PowerShell command line can be modified via the <code>POWERSHELL_COMMAND</code> Aggressor hook.</li>
-  <li><input type="checkbox"> Disabling kernel-level callbacks requires kernel code execution (vulnerable driver exploitation) — well outside normal red team scope. Find alternative procedures instead.</li>
+<ul>
+  <li>Command-line detections surface as generic <code>ERROR_ACCESS_DENIED</code> (error code 5) — not an explicit Defender warning. Always check Defender alerts via <code>Get-MpThreatDetection</code> to confirm the source.</li>
+  <li>The PowerShell command line can be modified via the <code>POWERSHELL_COMMAND</code> Aggressor hook.</li>
+  <li>Disabling kernel-level callbacks requires kernel code execution (vulnerable driver exploitation) — well outside normal red team scope. Find alternative procedures instead.</li>
 </ul>
 
 <h3 id="crto-defense-evasion-amsi-manual">3.10 Manual AMSI Bypasses</h3>
@@ -1396,10 +1396,10 @@ ls \\web.[domain]\c$</code></pre>
 </ul>
 
 <h4 id="crto-defense-evasion-amsi-manual-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> AMSI bypasses themselves are signatured. The bypass script must also pass AMSI scanning on the target.</li>
-  <li><input type="checkbox"> Hardware breakpoint bypasses set a vectored exception handler and use debug registers — these are detectable by EDR products monitoring <code>AddVectoredExceptionHandler</code> and thread context manipulation.</li>
-  <li><input type="checkbox"> Memory patching bypasses (e.g. patching <code>AmsiScanBuffer</code>) leave forensic artifacts. Prefer techniques that produce fewer residual indicators.</li>
+<ul>
+  <li>AMSI bypasses themselves are signatured. The bypass script must also pass AMSI scanning on the target.</li>
+  <li>Hardware breakpoint bypasses set a vectored exception handler and use debug registers — these are detectable by EDR products monitoring <code>AddVectoredExceptionHandler</code> and thread context manipulation.</li>
+  <li>Memory patching bypasses (e.g. patching <code>AmsiScanBuffer</code>) leave forensic artifacts. Prefer techniques that produce fewer residual indicators.</li>
 </ul>
 <h2 id="crto-initial-access">4. Initial Access</h2>
 <p><strong>Initial Access</strong> (TA0001) covers techniques for gaining a foothold inside a target network. While options include exploiting public-facing services and supply-chain compromise, the most common vector is social engineering via phishing. This chapter covers the construction of phishing payloads using Mariusz Banach's taxonomy: <code>DELIVERY(CONTAINER(TRIGGER + PAYLOAD + DECOY))</code>.</p>
@@ -1468,9 +1468,9 @@ ls \\web.[domain]\c$</code></pre>
 </ul>
 
 <h4 id="crto-initial-access-dll-sideloading-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Dropping DLLs into user-writable directories is noisy — EDR products monitor <code>LoadLibrary</code> calls from non-standard paths.</li>
-  <li><input type="checkbox"> Use a legitimate-looking directory name under <code>C:\ProgramData</code> rather than temp or home directories.</li>
+<ul>
+  <li>Dropping DLLs into user-writable directories is noisy — EDR products monitor <code>LoadLibrary</code> calls from non-standard paths.</li>
+  <li>Use a legitimate-looking directory name under <code>C:\ProgramData</code> rather than temp or home directories.</li>
 </ul>
 
 <h3 id="crto-initial-access-appdomainmanager">4.4 AppDomainManager Hijack</h3>
@@ -1522,9 +1522,9 @@ $env:APPDOMAIN_MANAGER_TYPE = 'AppDomainHijack.DomainManager'</code></pre>
 </ul>
 
 <h4 id="crto-initial-access-msi-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> MSI installations create entries in Programs and Features — plan for cleanup.</li>
-  <li><input type="checkbox"> Custom action command-line arguments should look plausible (e.g. <code>/install /quiet</code>).</li>
+<ul>
+  <li>MSI installations create entries in Programs and Features — plan for cleanup.</li>
+  <li>Custom action command-line arguments should look plausible (e.g. <code>/install /quiet</code>).</li>
 </ul>
 
 <h3 id="crto-initial-access-excel-addin">4.6 Excel Add-In (XLAM)</h3>
@@ -1605,9 +1605,9 @@ using (var rs = assembly.GetManifestResourceStream("MyDropper.http_x64.exe"))
 </table>
 
 <h4 id="crto-initial-access-droppers-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Drop payloads into standard program directories (<code>C:\ProgramData</code>) rather than temp or home folders — execution from user-writable temp paths raises EDR alerts.</li>
-  <li><input type="checkbox"> The embedded resource name must be prefixed with the project namespace (e.g. <code>MyDropper.http_x64.exe</code>).</li>
+<ul>
+  <li>Drop payloads into standard program directories (<code>C:\ProgramData</code>) rather than temp or home folders — execution from user-writable temp paths raises EDR alerts.</li>
+  <li>The embedded resource name must be prefixed with the project namespace (e.g. <code>MyDropper.http_x64.exe</code>).</li>
 </ul>
 
 <h3 id="crto-initial-access-triggers">4.9 Triggers</h3>
@@ -1715,9 +1715,9 @@ $lnk.Save()</code></pre>
 </ul>
 
 <h4 id="crto-initial-access-containers-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> ISO/IMG mounting creates a visible drive letter in Explorer — use realistic volume labels.</li>
-  <li><input type="checkbox"> Hide all files except the trigger inside the container using the <code>-H</code> flag so the user only sees the LNK or BAT.</li>
+<ul>
+  <li>ISO/IMG mounting creates a visible drive letter in Explorer — use realistic volume labels.</li>
+  <li>Hide all files except the trigger inside the container using the <code>-H</code> flag so the user only sees the LNK or BAT.</li>
 </ul>
 
 <h3 id="crto-initial-access-vba-macros">4.11 VBA Macros</h3>
@@ -1737,9 +1737,9 @@ End Sub</code></pre>
 </ul>
 
 <h4 id="crto-initial-access-vba-macros-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Documents attached directly to internal email do not carry MotW and skip Protected View entirely.</li>
-  <li><input type="checkbox"> Macro-enabled documents downloaded via browser will trigger both SmartScreen and Protected View unless MotW is stripped first.</li>
+<ul>
+  <li>Documents attached directly to internal email do not carry MotW and skip Protected View entirely.</li>
+  <li>Macro-enabled documents downloaded via browser will trigger both SmartScreen and Protected View unless MotW is stripped first.</li>
 </ul>
 
 <h3 id="crto-initial-access-remote-template">4.12 Remote Template Injection</h3>
@@ -1757,9 +1757,9 @@ End Sub</code></pre>
 </ul>
 
 <h4 id="crto-initial-access-remote-template-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> The template URL is visible in the XML — use a domain that blends with the pretext.</li>
-  <li><input type="checkbox"> The victim still sees a macro warning prompt when the remote template loads.</li>
+<ul>
+  <li>The template URL is visible in the XML — use a domain that blends with the pretext.</li>
+  <li>The victim still sees a macro warning prompt when the remote template loads.</li>
 </ul>
 
 <h3 id="crto-initial-access-html-smuggling">4.13 HTML Smuggling</h3>
@@ -1832,9 +1832,9 @@ Invoke-DomainHarvestOWA -ExchHostname mail.target.com</code></pre>
 </ul>
 
 <h4 id="crto-initial-access-password-spraying-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Spray one password per lockout window to avoid triggering account lockout policies.</li>
-  <li><input type="checkbox"> MailSniper supports OWA, EWS, and EAS endpoints — choose whichever is exposed and least monitored.</li>
+<ul>
+  <li>Spray one password per lockout window to avoid triggering account lockout policies.</li>
+  <li>MailSniper supports OWA, EWS, and EAS endpoints — choose whichever is exposed and least monitored.</li>
 </ul>
 
 <h3 id="crto-initial-access-internal-phishing">4.16 Internal Phishing</h3>
@@ -1848,9 +1848,9 @@ Invoke-DomainHarvestOWA -ExchHostname mail.target.com</code></pre>
 </ul>
 
 <h4 id="crto-initial-access-internal-phishing-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Sending from a compromised mailbox is logged in Exchange — limit volume and timing to match normal behavior.</li>
-  <li><input type="checkbox"> Delete sent items to reduce the chance the compromised user notices the activity.</li>
+<ul>
+  <li>Sending from a compromised mailbox is logged in Exchange — limit volume and timing to match normal behavior.</li>
+  <li>Delete sent items to reduce the chance the compromised user notices the activity.</li>
 </ul>
 <h2 id="crto-persistence">5. Persistence</h2>
 <p><strong>Persistence</strong> (MITRE TA0003) maintains access to a compromised system across reboots, logoffs, and other interruptions. Techniques modify system configuration so a payload re-executes on a predefined trigger. This chapter covers userland persistence only; elevated techniques appear in a separate chapter.</p>
@@ -1900,10 +1900,10 @@ mv http_x64.exe updater.exe</code></pre>
 </ul>
 
 <h4 id="crto-persistence-registry-run-keys-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Registry modifications generate event logs (Sysmon Event ID 13) — use inconspicuous value names and plausible file paths.</li>
-  <li><input type="checkbox"> Autorun entries are trivially enumerable by defenders via <code>Autoruns.exe</code> or <code>reg query</code> — blend with legitimate software naming conventions.</li>
-  <li><input type="checkbox"> Payload on disk is subject to AV scanning at write time and at execution — consider signed binaries or DLL side-loading.</li>
+<ul>
+  <li>Registry modifications generate event logs (Sysmon Event ID 13) — use inconspicuous value names and plausible file paths.</li>
+  <li>Autorun entries are trivially enumerable by defenders via <code>Autoruns.exe</code> or <code>reg query</code> — blend with legitimate software naming conventions.</li>
+  <li>Payload on disk is subject to AV scanning at write time and at execution — consider signed binaries or DLL side-loading.</li>
 </ul>
 
 <h3 id="crto-persistence-startup-folder">5.2 Startup Folder</h3>
@@ -1922,9 +1922,9 @@ mv http_x64.exe updater.exe</code></pre>
 </ul>
 
 <h4 id="crto-persistence-startup-folder-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Files in the startup folder are visible to the user if they browse to the directory — use a plausible filename.</li>
-  <li><input type="checkbox"> Dropping an unsigned EXE triggers Windows Defender scans — consider a signed loader or LNK shortcut pointing to a payload elsewhere.</li>
+<ul>
+  <li>Files in the startup folder are visible to the user if they browse to the directory — use a plausible filename.</li>
+  <li>Dropping an unsigned EXE triggers Windows Defender scans — consider a signed loader or LNK shortcut pointing to a payload elsewhere.</li>
 </ul>
 
 <h3 id="crto-persistence-logon-script">5.3 Logon Script</h3>
@@ -1942,9 +1942,9 @@ mv http_x64.exe updater.exe</code></pre>
 </ul>
 
 <h4 id="crto-persistence-logon-script-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> The <code>Environment</code> key is not checked by many autorun scanners — this provides better stealth than standard Run keys.</li>
-  <li><input type="checkbox"> The script executes before the desktop loads, so the user may notice a delay if the payload blocks — use an asynchronous execution method.</li>
+<ul>
+  <li>The <code>Environment</code> key is not checked by many autorun scanners — this provides better stealth than standard Run keys.</li>
+  <li>The script executes before the desktop loads, so the user may notice a delay if the payload blocks — use an asynchronous execution method.</li>
 </ul>
 
 <h3 id="crto-persistence-powershell-profile">5.4 PowerShell Profile</h3>
@@ -1977,10 +1977,10 @@ mv http_x64.exe updater.exe</code></pre>
 </ul>
 
 <h4 id="crto-persistence-powershell-profile-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Only triggers when the user opens PowerShell — unreliable if the target rarely uses it.</li>
-  <li><input type="checkbox"> Script Block Logging (Event ID 4104) records the profile contents — the payload will be logged in plaintext if SBL is enabled.</li>
-  <li><input type="checkbox"> AMSI scans profile scripts at load time — obfuscation or a download cradle may be needed to bypass it.</li>
+<ul>
+  <li>Only triggers when the user opens PowerShell — unreliable if the target rarely uses it.</li>
+  <li>Script Block Logging (Event ID 4104) records the profile contents — the payload will be logged in plaintext if SBL is enabled.</li>
+  <li>AMSI scans profile scripts at load time — obfuscation or a download cradle may be needed to bypass it.</li>
 </ul>
 
 <h3 id="crto-persistence-scheduled-tasks">5.5 Scheduled Tasks</h3>
@@ -2032,10 +2032,10 @@ mv http_x64.exe updater.exe</code></pre>
 </ul>
 
 <h4 id="crto-persistence-scheduled-tasks-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Task creation generates Event ID 4698 (Security) and Event ID 106 (Task Scheduler Operational) — use a plausible task name in a subfolder.</li>
-  <li><input type="checkbox"> Scheduled tasks are visible in <code>taskschd.msc</code> and via <code>schtasks /query</code> — defenders routinely audit these.</li>
-  <li><input type="checkbox"> XML-based creation via BOF avoids spawning <code>schtasks.exe</code>, which reduces command-line logging artifacts.</li>
+<ul>
+  <li>Task creation generates Event ID 4698 (Security) and Event ID 106 (Task Scheduler Operational) — use a plausible task name in a subfolder.</li>
+  <li>Scheduled tasks are visible in <code>taskschd.msc</code> and via <code>schtasks /query</code> — defenders routinely audit these.</li>
+  <li>XML-based creation via BOF avoids spawning <code>schtasks.exe</code>, which reduces command-line logging artifacts.</li>
 </ul>
 
 <h3 id="crto-persistence-com-hijacking">5.6 COM Hijacking</h3>
@@ -2102,11 +2102,11 @@ New-ItemProperty -Path "HKCU:Software\Classes\CLSID\{AB8902B4-09CA-4bb6-B78D-A8F
 </ul>
 
 <h4 id="crto-persistence-com-hijacking-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> COM hijacks do not appear in standard autorun checks unless the defender specifically enumerates <code>HKCU\Software\Classes\CLSID</code> — this makes them stealthier than Run keys.</li>
-  <li><input type="checkbox"> Hijacking a high-frequency CLSID spawns repeated callbacks and may crash the host — always profile load frequency in a lab first.</li>
-  <li><input type="checkbox"> The DLL must export <code>DllGetClassObject</code> or proxy to the original COM server to avoid breaking application functionality.</li>
-  <li><input type="checkbox"> Sysmon Event ID 13 (registry value set) captures the hijack if monitoring covers <code>HKCU\Software\Classes\CLSID</code>.</li>
+<ul>
+  <li>COM hijacks do not appear in standard autorun checks unless the defender specifically enumerates <code>HKCU\Software\Classes\CLSID</code> — this makes them stealthier than Run keys.</li>
+  <li>Hijacking a high-frequency CLSID spawns repeated callbacks and may crash the host — always profile load frequency in a lab first.</li>
+  <li>The DLL must export <code>DllGetClassObject</code> or proxy to the original COM server to avoid breaking application functionality.</li>
+  <li>Sysmon Event ID 13 (registry value set) captures the hijack if monitoring covers <code>HKCU\Software\Classes\CLSID</code>.</li>
 </ul>
 <h2 id="crto-post-exploitation">6. Post-Exploitation</h2>
 <p>Post-exploitation begins immediately after gaining initial access. The operator must map the host, locate objectives, identify privileged users, and plan a path forward; all without triggering defensive controls. This chapter covers situational awareness, command execution patterns, session management, host reconnaissance primitives, and data hunting.</p>
@@ -2176,10 +2176,10 @@ $PSVersionTable</code></pre>
 </table>
 
 <h4 id="crto-post-exploitation-command-behavior-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Fork &amp; run creates a new process and performs cross-process injection; both generate telemetry (process creation, remote thread, named pipe). Prefer BOF or API-only alternatives when available.</li>
-  <li><input type="checkbox"> The explicit variant avoids spawning a new process but still injects into a remote one. Use it against processes you own to reduce suspicion.</li>
-  <li><input type="checkbox"> A crashing BOF kills the entire Beacon. Test BOFs in a lab before running on production targets.</li>
+<ul>
+  <li>Fork &amp; run creates a new process and performs cross-process injection; both generate telemetry (process creation, remote thread, named pipe). Prefer BOF or API-only alternatives when available.</li>
+  <li>The explicit variant avoids spawning a new process but still injects into a remote one. Use it against processes you own to reduce suspicion.</li>
+  <li>A crashing BOF kills the entire Beacon. Test BOFs in a lab before running on production targets.</li>
 </ul>
 
 <h3 id="crto-post-exploitation-session-passing">6.3 Session Passing</h3>
@@ -2224,10 +2224,10 @@ run</code></pre>
 </ul>
 
 <h4 id="crto-post-exploitation-session-passing-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> <code>spawnas</code> fails from a SYSTEM context; use <code>make_token</code> instead to create a token with the target credentials.</li>
-  <li><input type="checkbox"> Foreign listeners only support x86 staged payloads. For x64 or stageless, generate raw shellcode with <code>msfvenom</code> and inject with <code>shspawn</code>/<code>shinject</code>.</li>
-  <li><input type="checkbox"> Every <code>spawn</code> creates a new process. Batch session passes during expected activity windows.</li>
+<ul>
+  <li><code>spawnas</code> fails from a SYSTEM context; use <code>make_token</code> instead to create a token with the target credentials.</li>
+  <li>Foreign listeners only support x86 staged payloads. For x64 or stageless, generate raw shellcode with <code>msfvenom</code> and inject with <code>shspawn</code>/<code>shinject</code>.</li>
+  <li>Every <code>spawn</code> creates a new process. Batch session passes during expected activity windows.</li>
 </ul>
 
 <h3 id="crto-post-exploitation-file-system">6.4 File System</h3>
@@ -2283,9 +2283,9 @@ run</code></pre>
 </ul>
 
 <h4 id="crto-post-exploitation-downloading-files-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Large file downloads over slow channels (DNS) take a long time and generate sustained traffic patterns. Use an HTTP Beacon for bulk transfers.</li>
-  <li><input type="checkbox"> Downloaded files land on the team server first, not the operator workstation. Sync manually via the UI.</li>
+<ul>
+  <li>Large file downloads over slow channels (DNS) take a long time and generate sustained traffic patterns. Use an HTTP Beacon for bulk transfers.</li>
+  <li>Downloaded files land on the team server first, not the operator workstation. Sync manually via the UI.</li>
 </ul>
 
 <h3 id="crto-post-exploitation-processes">6.6 Processes</h3>
@@ -2331,9 +2331,9 @@ jobkill [JID]</code></pre>
 </ul>
 
 <h4 id="crto-post-exploitation-keylogger-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> The spawn variant creates a temporary process; visible in process listings. Prefer the explicit variant to inject into an existing user-owned process.</li>
-  <li><input type="checkbox"> Keylogger output accumulates on the team server. Delete entries after review to limit exposure.</li>
+<ul>
+  <li>The spawn variant creates a temporary process; visible in process listings. Prefer the explicit variant to inject into an existing user-owned process.</li>
+  <li>Keylogger output accumulates on the team server. Delete entries after review to limit exposure.</li>
 </ul>
 
 <h3 id="crto-post-exploitation-clipboard">6.9 Clipboard</h3>
@@ -2417,10 +2417,10 @@ jobkill [JID]</code></pre>
 </ul>
 
 <h4 id="crto-post-exploitation-vnc-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> VNC creates a reverse port forward binding on a local port; visible via <code>netstat</code>.</li>
-  <li><input type="checkbox"> Closing the VNC tab automatically tears down the port bindings.</li>
-  <li><input type="checkbox"> High-quality mode generates more network traffic. Use <code>low</code> over slow channels.</li>
+<ul>
+  <li>VNC creates a reverse port forward binding on a local port; visible via <code>netstat</code>.</li>
+  <li>Closing the VNC tab automatically tears down the port bindings.</li>
+  <li>High-quality mode generates more network traffic. Use <code>low</code> over slow channels.</li>
 </ul>
 
 <h3 id="crto-post-exploitation-execution-commands">6.13 Execution Commands</h3>
@@ -2437,9 +2437,9 @@ jobkill [JID]</code></pre>
 <p>Commands like <code>dir</code> only exist inside <code>cmd.exe</code> and require <code>shell</code>. Programs like <code>whoami.exe</code> work with either command.</p>
 
 <h4 id="crto-post-exploitation-execution-commands-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Both commands spawn child processes; generating process creation events. Prefer API-only Beacon alternatives: <code>ls</code> over <code>dir</code>, <code>getuid</code> over <code>whoami</code>.</li>
-  <li><input type="checkbox"> <code>shell</code> spawns <code>cmd.exe</code> as an additional child process, doubling the telemetry. Use <code>run</code> when possible.</li>
+<ul>
+  <li>Both commands spawn child processes; generating process creation events. Prefer API-only Beacon alternatives: <code>ls</code> over <code>dir</code>, <code>getuid</code> over <code>whoami</code>.</li>
+  <li><code>shell</code> spawns <code>cmd.exe</code> as an additional child process, doubling the telemetry. Use <code>run</code> when possible.</li>
 </ul>
 
 <h3 id="crto-post-exploitation-custom-tools">6.14 Executing Custom Tools</h3>
@@ -2492,11 +2492,11 @@ jobkill [JID]</code></pre>
 </ul>
 
 <h4 id="crto-post-exploitation-custom-tools-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> <code>powershell</code> spawns <code>powershell.exe</code>: heavily monitored. Prefer <code>powerpick</code> or BOF alternatives.</li>
-  <li><input type="checkbox"> <code>execute-assembly</code> is fork &amp; run: it spawns a process and loads the CLR, which is detectable via <code>.NET assembly load</code> ETW events.</li>
-  <li><input type="checkbox"> BOFs run inline and produce no child process, but a crash kills the Beacon. Validate BOFs in a lab first.</li>
-  <li><input type="checkbox"> Imported PowerShell scripts are hosted on a built-in web server and fetched during execution; this generates a network request from the target to the team server.</li>
+<ul>
+  <li><code>powershell</code> spawns <code>powershell.exe</code>: heavily monitored. Prefer <code>powerpick</code> or BOF alternatives.</li>
+  <li><code>execute-assembly</code> is fork &amp; run: it spawns a process and loads the CLR, which is detectable via <code>.NET assembly load</code> ETW events.</li>
+  <li>BOFs run inline and produce no child process, but a crash kills the Beacon. Validate BOFs in a lab first.</li>
+  <li>Imported PowerShell scripts are hosted on a built-in web server and fetched during execution; this generates a network request from the target to the team server.</li>
 </ul>
 
 <h3 id="crto-post-exploitation-seatbelt">6.15 Host Enumeration with Seatbelt</h3>
@@ -2558,10 +2558,10 @@ jobkill [JID]</code></pre>
 </ul>
 
 <h4 id="crto-post-exploitation-data-hunting-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Never extract multiple correlatable columns together (e.g., name + SSN + credit card). Sample individual columns that are meaningless in isolation.</li>
-  <li><input type="checkbox"> <code>Get-SQLColumnSampleDataThreaded</code> only searches directly accessible instances; it does not traverse SQL links. Use <code>Get-SQLQuery</code> with <code>openquery</code> for linked servers.</li>
-  <li><input type="checkbox"> File share enumeration generates SMB traffic to many hosts. Run during business hours to blend with normal activity.</li>
+<ul>
+  <li>Never extract multiple correlatable columns together (e.g., name + SSN + credit card). Sample individual columns that are meaningless in isolation.</li>
+  <li><code>Get-SQLColumnSampleDataThreaded</code> only searches directly accessible instances; it does not traverse SQL links. Use <code>Get-SQLQuery</code> with <code>openquery</code> for linked servers.</li>
+  <li>File share enumeration generates SMB traffic to many hosts. Run during business hours to blend with normal activity.</li>
 </ul>
 <h2 id="crto-privilege-escalation">7. Privilege Escalation</h2>
 
@@ -2632,9 +2632,9 @@ jobkill [JID]</code></pre>
 </ul>
 
 <h4 id="crto-privilege-escalation-windows-services-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Stopping/starting services generates event logs (7036, 7045) — avoid unnecessary service restarts; prefer waiting for a reboot when possible.</li>
-  <li><input type="checkbox"> Standard users cannot stop or start services by default — exploitation may require waiting for a system reboot.</li>
+<ul>
+  <li>Stopping/starting services generates event logs (7036, 7045) — avoid unnecessary service restarts; prefer waiting for a reboot when possible.</li>
+  <li>Standard users cannot stop or start services by default — exploitation may require waiting for a system reboot.</li>
 </ul>
 
 <h3 id="crto-privilege-escalation-unquoted-paths">7.3 Unquoted Service Paths</h3>
@@ -2677,10 +2677,10 @@ beacon> sc_start BadWindowsService</code></pre>
 </ul>
 
 <h4 id="crto-privilege-escalation-unquoted-paths-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Service payloads must be <code>.svc.exe</code> binaries — they need to interact with the Service Control Manager or the service will crash.</li>
-  <li><input type="checkbox"> Overwriting a path like <code>C:\Program.exe</code> is highly visible — prefer deeper path candidates closer to the legitimate binary.</li>
-  <li><input type="checkbox"> Clean up by deleting the dropped binary and restarting the service with its legitimate executable after obtaining access.</li>
+<ul>
+  <li>Service payloads must be <code>.svc.exe</code> binaries — they need to interact with the Service Control Manager or the service will crash.</li>
+  <li>Overwriting a path like <code>C:\Program.exe</code> is highly visible — prefer deeper path candidates closer to the legitimate binary.</li>
+  <li>Clean up by deleting the dropped binary and restarting the service with its legitimate executable after obtaining access.</li>
 </ul>
 
 <h3 id="crto-privilege-escalation-path-interception">7.4 PATH Environment Variable Hijacking</h3>
@@ -2724,9 +2724,9 @@ beacon> mv dns_x64.exe timeout.exe</code></pre>
 </table>
 
 <h4 id="crto-privilege-escalation-path-interception-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Dropping executables into shared directories affects all users on the system — scope the impact and clean up promptly.</li>
-  <li><input type="checkbox"> Hijacking common binaries (e.g., <code>cmd.exe</code>) via PATH alone may not work because <code>CreateProcess</code> searches the current working directory and <code>System32</code> before PATH entries.</li>
+<ul>
+  <li>Dropping executables into shared directories affects all users on the system — scope the impact and clean up promptly.</li>
+  <li>Hijacking common binaries (e.g., <code>cmd.exe</code>) via PATH alone may not work because <code>CreateProcess</code> searches the current working directory and <code>System32</code> before PATH entries.</li>
 </ul>
 
 <h3 id="crto-privilege-escalation-search-order-hijacking">7.5 Search Order Hijacking</h3>
@@ -2762,9 +2762,9 @@ beacon> mv dns_x64.exe cmd.exe</code></pre>
 </ul>
 
 <h4 id="crto-privilege-escalation-search-order-hijacking-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Dropping <code>cmd.exe</code> in an application directory will intercept all calls from that binary — verify the application's behavior before deploying.</li>
-  <li><input type="checkbox"> The executing directory takes precedence over System32, making it the strongest hijack point if writable.</li>
+<ul>
+  <li>Dropping <code>cmd.exe</code> in an application directory will intercept all calls from that binary — verify the application's behavior before deploying.</li>
+  <li>The executing directory takes precedence over System32, making it the strongest hijack point if writable.</li>
 </ul>
 
 <h3 id="crto-privilege-escalation-weak-service-permissions">7.6 Weak Service Permissions</h3>
@@ -2807,10 +2807,10 @@ beacon> sc_start BadWindowsService</code></pre>
 </ul>
 
 <h4 id="crto-privilege-escalation-weak-service-permissions-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> The space after <code>binPath=</code> in <code>sc config</code> is mandatory — omitting it causes a silent failure.</li>
-  <li><input type="checkbox"> Changing a service binary path is logged (event ID 7040) — restore the original path immediately after exploitation.</li>
-  <li><input type="checkbox"> When restoring a quoted path, escape the quotes properly to avoid introducing an unquoted service path vulnerability.</li>
+<ul>
+  <li>The space after <code>binPath=</code> in <code>sc config</code> is mandatory — omitting it causes a silent failure.</li>
+  <li>Changing a service binary path is logged (event ID 7040) — restore the original path immediately after exploitation.</li>
+  <li>When restoring a quoted path, escape the quotes properly to avoid introducing an unquoted service path vulnerability.</li>
 </ul>
 
 <h3 id="crto-privilege-escalation-weak-binary-permissions">7.7 Weak Service Binary Permissions</h3>
@@ -2837,9 +2837,9 @@ beacon> connect localhost 4444</code></pre>
 </ul>
 
 <h4 id="crto-privilege-escalation-weak-binary-permissions-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> This is destructive — the original binary is completely replaced. Always download a backup first.</li>
-  <li><input type="checkbox"> The binary cannot be replaced while the service is running (error 32: file in use). The service must be stopped first, which requires appropriate permissions or a reboot.</li>
+<ul>
+  <li>This is destructive — the original binary is completely replaced. Always download a backup first.</li>
+  <li>The binary cannot be replaced while the service is running (error 32: file in use). The service must be stopped first, which requires appropriate permissions or a reboot.</li>
 </ul>
 
 <h3 id="crto-privilege-escalation-dll-hijacking">7.8 DLL Search Order Hijacking</h3>
@@ -2878,10 +2878,10 @@ beacon> mv dns_x64.dll BadDll.dll</code></pre>
 </ul>
 
 <h4 id="crto-privilege-escalation-dll-hijacking-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> DLL hijacking does not require stopping the service if the DLL is loaded dynamically on a loop — the hijacked DLL is picked up on the next <code>LoadLibrary</code> call.</li>
-  <li><input type="checkbox"> Use Process Monitor (procmon) or API Monitor during reconnaissance to identify which DLLs a process attempts to load and from where.</li>
-  <li><input type="checkbox"> Reverse the target application with Ghidra, IDA Free, dotPeek, or dnSpy to understand its DLL loading behavior before deploying.</li>
+<ul>
+  <li>DLL hijacking does not require stopping the service if the DLL is loaded dynamically on a loop — the hijacked DLL is picked up on the next <code>LoadLibrary</code> call.</li>
+  <li>Use Process Monitor (procmon) or API Monitor during reconnaissance to identify which DLLs a process attempts to load and from where.</li>
+  <li>Reverse the target application with Ghidra, IDA Free, dotPeek, or dnSpy to understand its DLL loading behavior before deploying.</li>
 </ul>
 
 <h3 id="crto-privilege-escalation-software-vulnerabilities">7.9 Software Vulnerabilities</h3>
@@ -2900,9 +2900,9 @@ beacon> upload C:\Payloads\data.bin</code></pre>
 </ul>
 
 <h4 id="crto-privilege-escalation-software-vulnerabilities-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Deserialization exploits execute code inline within the vulnerable process — a crash may alert defenders.</li>
-  <li><input type="checkbox"> Review the application binary with Ghidra, IDA Free, dotPeek, or dnSpy to confirm the vulnerability before deploying a payload.</li>
+<ul>
+  <li>Deserialization exploits execute code inline within the vulnerable process — a crash may alert defenders.</li>
+  <li>Review the application binary with Ghidra, IDA Free, dotPeek, or dnSpy to confirm the vulnerability before deploying a payload.</li>
 </ul>
 
 <h3 id="crto-privilege-escalation-uac-bypass">7.10 UAC Bypass</h3>
@@ -2965,10 +2965,10 @@ beacon> upload C:\Payloads\data.bin</code></pre>
 </ul>
 
 <h4 id="crto-privilege-escalation-uac-bypass-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> UAC bypasses that write to disk (e.g., schtasks-based) leave artifacts — prefer COM-based bypasses like <code>uac-cmstplua</code> when available.</li>
-  <li><input type="checkbox"> High integrity is required for credential dumping, so a UAC bypass is often the first step after gaining local admin group membership.</li>
-  <li><input type="checkbox"> Operators can add custom UAC bypasses via Aggressor scripts, supporting PowerShell, .NET, reflective DLL, and BOF implementations.</li>
+<ul>
+  <li>UAC bypasses that write to disk (e.g., schtasks-based) leave artifacts — prefer COM-based bypasses like <code>uac-cmstplua</code> when available.</li>
+  <li>High integrity is required for credential dumping, so a UAC bypass is often the first step after gaining local admin group membership.</li>
+  <li>Operators can add custom UAC bypasses via Aggressor scripts, supporting PowerShell, .NET, reflective DLL, and BOF implementations.</li>
 </ul>
 <h2 id="crto-elevated-persistence">8. Elevated Persistence</h2>
 <p>After achieving privileged access on a host, a second round of persistence ensures that level of access survives reboots, patches, or mitigation of the original elevation vector. These techniques run payloads as SYSTEM without requiring re-exploitation.</p>
@@ -3024,9 +3024,9 @@ upload C:\Payloads\beacon_x64.exe</code></pre>
 </ul>
 
 <h4 id="crto-elevated-persistence-scheduled-tasks-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Scheduled task creation generates event ID <code>4698</code> in the Security log — use a task name that blends with legitimate system tasks.</li>
-  <li><input type="checkbox"> Dropping an EXE into <code>C:\Windows\System32</code> is noisy — consider using a less-monitored directory or a DLL-based payload loaded by a legitimate binary.</li>
+<ul>
+  <li>Scheduled task creation generates event ID <code>4698</code> in the Security log — use a task name that blends with legitimate system tasks.</li>
+  <li>Dropping an EXE into <code>C:\Windows\System32</code> is noisy — consider using a less-monitored directory or a DLL-based payload loaded by a legitimate binary.</li>
 </ul>
 
 <h3 id="crto-elevated-persistence-windows-services">8.2 Windows Services</h3>
@@ -3071,10 +3071,10 @@ mv beacon_x64.svc.exe debug_svc.exe</code></pre>
 </ul>
 
 <h4 id="crto-elevated-persistence-windows-services-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Service creation generates event IDs <code>7045</code> (System) and <code>4697</code> (Security) — use a display name and description that matches the environment.</li>
-  <li><input type="checkbox"> Services running from <code>System32</code> may receive extra scrutiny — consider placing the binary in a path used by legitimate third-party software.</li>
-  <li><input type="checkbox"> A service that immediately stops after boot may appear suspicious — bind payloads (TCP/SMB) that wait for connections behave more like real services.</li>
+<ul>
+  <li>Service creation generates event IDs <code>7045</code> (System) and <code>4697</code> (Security) — use a display name and description that matches the environment.</li>
+  <li>Services running from <code>System32</code> may receive extra scrutiny — consider placing the binary in a path used by legitimate third-party software.</li>
+  <li>A service that immediately stops after boot may appear suspicious — bind payloads (TCP/SMB) that wait for connections behave more like real services.</li>
 </ul>
 
 <h3 id="crto-elevated-persistence-wmi-event-subscriptions">8.3 WMI Event Subscriptions</h3>
@@ -3197,11 +3197,11 @@ Get-WmiEvent -Name "Test Filter" | Remove-WmiObject</code></pre>
 </ul>
 
 <h4 id="crto-elevated-persistence-wmi-event-subscriptions-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Permanent WMI subscriptions are stored in <code>C:\Windows\System32\wbem\Repository</code> — defenders can enumerate them with <code>Get-WMIObject -Namespace root\subscription -Class __FilterToConsumerBinding</code>.</li>
-  <li><input type="checkbox"> Sysmon event ID <code>19/20/21</code> detects WMI filter, consumer, and binding creation respectively.</li>
-  <li><input type="checkbox"> PowerLurk uses <code>Win32_ProcessStartTrace</code> which is an intrinsic event class — it does not require a <code>WITHIN</code> polling interval and triggers faster than extrinsic queries.</li>
-  <li><input type="checkbox"> Temporary event registrations (<code>Register-WmiEvent</code>) are process-scoped and do not persist — they are useful only for testing filters before deploying permanent subscriptions.</li>
+<ul>
+  <li>Permanent WMI subscriptions are stored in <code>C:\Windows\System32\wbem\Repository</code> — defenders can enumerate them with <code>Get-WMIObject -Namespace root\subscription -Class __FilterToConsumerBinding</code>.</li>
+  <li>Sysmon event ID <code>19/20/21</code> detects WMI filter, consumer, and binding creation respectively.</li>
+  <li>PowerLurk uses <code>Win32_ProcessStartTrace</code> which is an intrinsic event class — it does not require a <code>WITHIN</code> polling interval and triggers faster than extrinsic queries.</li>
+  <li>Temporary event registrations (<code>Register-WmiEvent</code>) are process-scoped and do not persist — they are useful only for testing filters before deploying permanent subscriptions.</li>
 </ul>
 <h2 id="crto-credential-access">9. Credential Access</h2>
 <p><strong>Credential Access</strong> [TA0006] covers techniques for stealing authentication material: plaintext passwords, NTLM hashes, Kerberos keys, and tickets. Legitimate credentials are less suspicious than exploits and often grant broader access across the domain.</p>
@@ -3227,9 +3227,9 @@ Get-WmiEvent -Name "Test Filter" | Remove-WmiObject</code></pre>
 </ul>
 
 <h4 id="crto-credential-access-browser-credentials-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> SharpChrome reads the SQLite database directly on disk; no handle to LSASS required.</li>
-  <li><input type="checkbox"> Executes in the context of the current user; no elevation needed.</li>
+<ul>
+  <li>SharpChrome reads the SQLite database directly on disk; no handle to LSASS required.</li>
+  <li>Executes in the context of the current user; no elevation needed.</li>
 </ul>
 
 <h3 id="crto-credential-access-credential-manager">9.2 Windows Credential Manager</h3>
@@ -3251,9 +3251,9 @@ Get-WmiEvent -Name "Test Filter" | Remove-WmiObject</code></pre>
 <p>The <code>/rpc</code> flag uses the Microsoft BackupKey Remote Protocol to have the domain controller decrypt the AES master key. This works because DCs retain a backup copy of each user's DPAPI master key. If cached keys are already available, <code>/rpc</code> is not needed.</p>
 
 <h4 id="crto-credential-access-credential-manager-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Works from medium integrity; no elevation required.</li>
-  <li><input type="checkbox"> The <code>/rpc</code> method generates network traffic to the DC but avoids touching LSASS.</li>
+<ul>
+  <li>Works from medium integrity; no elevation required.</li>
+  <li>The <code>/rpc</code> method generates network traffic to the DC but avoids touching LSASS.</li>
 </ul>
 
 <h3 id="crto-credential-access-scheduled-task-credentials">9.3 Scheduled Task Credentials</h3>
@@ -3276,9 +3276,9 @@ Get-WmiEvent -Name "Test Filter" | Remove-WmiObject</code></pre>
 </ul>
 
 <h4 id="crto-credential-access-scheduled-task-credentials-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> <code>sekurlsa::dpapi</code> opens a read handle to LSASS; generates event 4656.</li>
-  <li><input type="checkbox"> Requires SYSTEM privileges on the target host.</li>
+<ul>
+  <li><code>sekurlsa::dpapi</code> opens a read handle to LSASS; generates event 4656.</li>
+  <li>Requires SYSTEM privileges on the target host.</li>
 </ul>
 
 <h3 id="crto-credential-access-lsass-memory">9.4 LSASS Memory</h3>
@@ -3324,11 +3324,11 @@ Get-WmiEvent -Name "Test Filter" | Remove-WmiObject</code></pre>
 <p>Mimikatz incorrectly labels all hashes as <code>des_cbc_md4</code>. Identify types by length: 64 characters = AES256, 32 characters = AES128 or RC4. AES256 cracking is far slower than NTLM (approximately 1375 kH/s vs 140 GH/s on a 4070 GPU) because AES keys are salted.</p>
 
 <h4 id="crto-credential-access-lsass-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Both modules open a read handle to LSASS; logged via event 4656 and Sysmon event 10.</li>
-  <li><input type="checkbox"> The <code>GrantedAccess</code> mask <code>0x1010</code> (<code>PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_VM_READ</code>) is a well-known indicator.</li>
-  <li><input type="checkbox"> Security drivers using <code>ObRegisterCallbacks</code> receive notifications when processes open handles to LSASS.</li>
-  <li><input type="checkbox"> Prefer Kerberos ticket extraction (section 9.8) over LSASS dumping when possible.</li>
+<ul>
+  <li>Both modules open a read handle to LSASS; logged via event 4656 and Sysmon event 10.</li>
+  <li>The <code>GrantedAccess</code> mask <code>0x1010</code> (<code>PROCESS_QUERY_LIMITED_INFORMATION | PROCESS_VM_READ</code>) is a well-known indicator.</li>
+  <li>Security drivers using <code>ObRegisterCallbacks</code> receive notifications when processes open handles to LSASS.</li>
+  <li>Prefer Kerberos ticket extraction (section 9.8) over LSASS dumping when possible.</li>
 </ul>
 
 <h3 id="crto-credential-access-sam">9.5 Security Account Manager</h3>
@@ -3342,9 +3342,9 @@ Get-WmiEvent -Name "Test Filter" | Remove-WmiObject</code></pre>
 </ul>
 
 <h4 id="crto-credential-access-sam-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Opens a handle to the SAM registry hive; generates detectable events.</li>
-  <li><input type="checkbox"> The local RID-500 Administrator is not the domain admin account and is often disabled, but check for password reuse across machines.</li>
+<ul>
+  <li>Opens a handle to the SAM registry hive; generates detectable events.</li>
+  <li>The local RID-500 Administrator is not the domain admin account and is often disabled, but check for password reuse across machines.</li>
 </ul>
 
 <h3 id="crto-credential-access-lsa-secrets">9.6 LSA Secrets</h3>
@@ -3358,8 +3358,8 @@ Get-WmiEvent -Name "Test Filter" | Remove-WmiObject</code></pre>
 </ul>
 
 <h4 id="crto-credential-access-lsa-secrets-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Opens a handle to the SECURITY registry hive; logged and detectable.</li>
+<ul>
+  <li>Opens a handle to the SECURITY registry hive; logged and detectable.</li>
 </ul>
 
 <h3 id="crto-credential-access-cached-credentials">9.7 Cached Domain Credentials</h3>
@@ -3378,8 +3378,8 @@ Get-WmiEvent -Name "Test Filter" | Remove-WmiObject</code></pre>
 <p>The Hashcat format is <code>$DCC2$&lt;iterations&gt;#&lt;username&gt;#&lt;hash&gt;</code>. DCC2 is extremely slow to crack compared to NTLM (approximately 1085 kH/s on a 4070).</p>
 
 <h4 id="crto-credential-access-cached-credentials-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Opens a handle to the SECURITY registry hive.</li>
+<ul>
+  <li>Opens a handle to the SECURITY registry hive.</li>
 </ul>
 
 <h3 id="crto-credential-access-kerberos-tickets">9.8 Kerberos Ticket Extraction</h3>
@@ -3426,10 +3426,10 @@ Get-WmiEvent -Name "Test Filter" | Remove-WmiObject</code></pre>
 </ul>
 
 <h4 id="crto-credential-access-kerberos-tickets-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Ticket extraction via LSA APIs does not open a handle to LSASS and is not logged via kernel callbacks; significantly stealthier than <code>sekurlsa</code> modules.</li>
-  <li><input type="checkbox"> Tickets have limited lifetimes; hashes remain valid until the password changes.</li>
-  <li><input type="checkbox"> Must be in a high-integrity session to triage and dump tickets from other users' logon sessions.</li>
+<ul>
+  <li>Ticket extraction via LSA APIs does not open a handle to LSASS and is not logged via kernel callbacks; significantly stealthier than <code>sekurlsa</code> modules.</li>
+  <li>Tickets have limited lifetimes; hashes remain valid until the password changes.</li>
+  <li>Must be in a high-integrity session to triage and dump tickets from other users' logon sessions.</li>
 </ul>
 
 <h3 id="crto-credential-access-kerberoasting">9.9 Kerberoasting</h3>
@@ -3452,10 +3452,10 @@ Get-WmiEvent -Name "Test Filter" | Remove-WmiObject</code></pre>
 </ul>
 
 <h4 id="crto-credential-access-kerberoasting-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Each TGS-REP generates a 4769 event; a single user requesting many tickets in a short window is suspicious.</li>
-  <li><input type="checkbox"> Rubeus requests RC4-encrypted tickets by default; modern environments use AES, making RC4 requests anomalous.</li>
-  <li><input type="checkbox"> Defenders may deploy honeypot SPNs backed by no real service; any TGS request for them is a high-fidelity alert. Enumerate and triage targets first rather than blindly roasting every SPN.</li>
+<ul>
+  <li>Each TGS-REP generates a 4769 event; a single user requesting many tickets in a short window is suspicious.</li>
+  <li>Rubeus requests RC4-encrypted tickets by default; modern environments use AES, making RC4 requests anomalous.</li>
+  <li>Defenders may deploy honeypot SPNs backed by no real service; any TGS request for them is a high-fidelity alert. Enumerate and triage targets first rather than blindly roasting every SPN.</li>
 </ul>
 
 <h3 id="crto-credential-access-asrep-roasting">9.10 AS-REP Roasting</h3>
@@ -3474,9 +3474,9 @@ Get-WmiEvent -Name "Test Filter" | Remove-WmiObject</code></pre>
 <p>Use <code>/format:hashcat</code> to output in Hashcat format (Rubeus defaults to John the Ripper format).</p>
 
 <h4 id="crto-credential-access-asrep-roasting-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Each AS-REP generates a 4768 event; multiple AS-REQs from a single user in rapid succession should trigger investigation.</li>
-  <li><input type="checkbox"> Rubeus requests RC4-encrypted tickets by default; modern Windows environments prefer AES, making RC4 requests stand out.</li>
+<ul>
+  <li>Each AS-REP generates a 4768 event; multiple AS-REQs from a single user in rapid succession should trigger investigation.</li>
+  <li>Rubeus requests RC4-encrypted tickets by default; modern Windows environments prefer AES, making RC4 requests stand out.</li>
 </ul>
 
 <h3 id="crto-credential-access-password-cracking">9.11 Password Cracking</h3>
@@ -3608,9 +3608,9 @@ powershell Find-LAPSDelegatedGroups</code></pre>
 </ul>
 
 <h4 id="crto-credential-access-laps-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> The modified expiration date is visible to admins and a manual password reset restores it.</li>
-  <li><input type="checkbox"> If expiration protection is enabled, setting the date beyond the policy window triggers an immediate password reset.</li>
+<ul>
+  <li>The modified expiration date is visible to admins and a manual password reset restores it.</li>
+  <li>If expiration protection is enabled, setting the date beyond the policy window triggers an immediate password reset.</li>
 </ul>
 <h2 id="crto-user-impersonation">10. User Impersonation</h2>
 <p>User Impersonation (<a href="https://attack.mitre.org/techniques/T1550/">T1550</a>) covers techniques for using credential material obtained during Credential Access to assume another user's identity. Once an adversary holds plaintext passwords, NTLM hashes, AES keys, or Kerberos tickets, they must apply that material to authenticate as the target user.</p>
@@ -3661,9 +3661,9 @@ powershell Find-LAPSDelegatedGroups</code></pre>
 </ul>
 
 <h4 id="crto-user-impersonation-make-token-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Generates Event ID <strong>4624</strong> with LogonType <strong>9</strong> (<code>LOGON32_LOGON_NEW_CREDENTIALS</code>) — same as <code>runas /netonly</code>, making it hard to distinguish from legitimate use.</li>
-  <li><input type="checkbox"> Only affects network authentication — local actions still run under the original token, so <code>whoami</code> returns the original user.</li>
+<ul>
+  <li>Generates Event ID <strong>4624</strong> with LogonType <strong>9</strong> (<code>LOGON32_LOGON_NEW_CREDENTIALS</code>) — same as <code>runas /netonly</code>, making it hard to distinguish from legitimate use.</li>
+  <li>Only affects network authentication — local actions still run under the original token, so <code>whoami</code> returns the original user.</li>
 </ul>
 
 <h3 id="crto-user-impersonation-token-theft">10.3 Token Theft</h3>
@@ -3696,9 +3696,9 @@ powershell Find-LAPSDelegatedGroups</code></pre>
 </ul>
 
 <h4 id="crto-user-impersonation-token-theft-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Opens a handle to the target process and its token — repeated handle operations increase detection surface.</li>
-  <li><input type="checkbox"> If the user closes the process, the stolen token becomes unusable (unless stored in the token store).</li>
+<ul>
+  <li>Opens a handle to the target process and its token — repeated handle operations increase detection surface.</li>
+  <li>If the user closes the process, the stolen token becomes unusable (unless stored in the token store).</li>
 </ul>
 
 <h3 id="crto-user-impersonation-token-store">10.4 Token Store</h3>
@@ -3735,9 +3735,9 @@ powershell Find-LAPSDelegatedGroups</code></pre>
 </ul>
 
 <h4 id="crto-user-impersonation-token-store-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Fewer repeated handle operations compared to calling <code>steal_token</code> multiple times — steal once, reuse from store.</li>
-  <li><input type="checkbox"> Maintains an open handle to the duplicated token for the lifetime of the Beacon, which may appear in handle auditing.</li>
+<ul>
+  <li>Fewer repeated handle operations compared to calling <code>steal_token</code> multiple times — steal once, reuse from store.</li>
+  <li>Maintains an open handle to the duplicated token for the lifetime of the Beacon, which may appear in handle auditing.</li>
 </ul>
 
 <h3 id="crto-user-impersonation-pass-the-hash">10.5 Pass the Hash</h3>
@@ -3772,11 +3772,11 @@ powershell Find-LAPSDelegatedGroups</code></pre>
 </ul>
 
 <h4 id="crto-user-impersonation-pass-the-hash-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> R/W handle to LSASS with access mask <code>0x1038</code> (PROCESS_VM_WRITE + PROCESS_VM_READ + PROCESS_VM_OPERATION + PROCESS_QUERY_LIMITED_INFORMATION) — detected by handle auditing rules.</li>
-  <li><input type="checkbox"> Named pipe pattern <code>echo &lt;data&gt; &gt; \\.\pipe\&lt;name&gt;</code> in command-line logs is a known indicator.</li>
-  <li><input type="checkbox"> Blocked by LSASS PPL since it requires patching LSASS memory.</li>
-  <li><input type="checkbox"> NTLM authentication is increasingly anomalous — prefer Kerberos-based techniques.</li>
+<ul>
+  <li>R/W handle to LSASS with access mask <code>0x1038</code> (PROCESS_VM_WRITE + PROCESS_VM_READ + PROCESS_VM_OPERATION + PROCESS_QUERY_LIMITED_INFORMATION) — detected by handle auditing rules.</li>
+  <li>Named pipe pattern <code>echo &lt;data&gt; &gt; \\.\pipe\&lt;name&gt;</code> in command-line logs is a known indicator.</li>
+  <li>Blocked by LSASS PPL since it requires patching LSASS memory.</li>
+  <li>NTLM authentication is increasingly anomalous — prefer Kerberos-based techniques.</li>
 </ul>
 
 <h3 id="crto-user-impersonation-overpass-the-hash">10.6 Overpass the Hash</h3>
@@ -3791,12 +3791,12 @@ powershell Find-LAPSDelegatedGroups</code></pre>
 </ul>
 
 <h4 id="crto-user-impersonation-overpass-the-hash-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Using an NTLM hash returns RC4-encrypted tickets (etype <code>0x17</code>) — this is a legacy encryption type and stands out in Event ID <strong>4768</strong> logs.</li>
-  <li><input type="checkbox"> Always use AES256 keys (etype <code>0x12</code>) to blend with normal Kerberos traffic.</li>
-  <li><input type="checkbox"> Without <code>/domain:NETBIOS</code>, Rubeus sends the FQDN as the realm name — legitimate clients send the NetBIOS name. Use <code>/domain:DEV</code> to match.</li>
-  <li><input type="checkbox"> Without <code>/opsec</code>, ticket options are <code>0x40800010</code> instead of the normal <code>0x40810010</code> — the <code>/opsec</code> flag corrects this.</li>
-  <li><input type="checkbox"> Rubeus generates Kerberos traffic from a non-LSASS process — detectable via process-level network monitoring. Mimikatz avoids this but writes to LSASS. Pick your poison.</li>
+<ul>
+  <li>Using an NTLM hash returns RC4-encrypted tickets (etype <code>0x17</code>) — this is a legacy encryption type and stands out in Event ID <strong>4768</strong> logs.</li>
+  <li>Always use AES256 keys (etype <code>0x12</code>) to blend with normal Kerberos traffic.</li>
+  <li>Without <code>/domain:NETBIOS</code>, Rubeus sends the FQDN as the realm name — legitimate clients send the NetBIOS name. Use <code>/domain:DEV</code> to match.</li>
+  <li>Without <code>/opsec</code>, ticket options are <code>0x40800010</code> instead of the normal <code>0x40810010</code> — the <code>/opsec</code> flag corrects this.</li>
+  <li>Rubeus generates Kerberos traffic from a non-LSASS process — detectable via process-level network monitoring. Mimikatz avoids this but writes to LSASS. Pick your poison.</li>
 </ul>
 
 <h3 id="crto-user-impersonation-pass-the-ticket">10.7 Pass the Ticket</h3>
@@ -3856,10 +3856,10 @@ powershell Find-LAPSDelegatedGroups</code></pre>
 <p>After <code>steal_token</code> on a <code>createnetonly</code> process, <code>getuid</code> returns the user who spawned the process, not the user whose ticket was injected. This is because <code>getuid</code> reads the primary access token, which is unaffected by credential material patched into the logon session. The Kerberos ticket determines network identity; the token determines the reported username.</p>
 
 <h4 id="crto-user-impersonation-pass-the-ticket-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Default <code>createnetonly</code> uses random username/domain/password — this appears in the Event ID <strong>4624</strong> logon event. Supply realistic values via <code>/domain</code>, <code>/username</code>, and <code>/password</code>.</li>
-  <li><input type="checkbox"> Rubeus <code>ptt</code> can also accept a path to a <code>.kirbi</code> on the target machine's disk, not just base64.</li>
-  <li><input type="checkbox"> Creating a new logon session requires elevated privileges.</li>
+<ul>
+  <li>Default <code>createnetonly</code> uses random username/domain/password — this appears in the Event ID <strong>4624</strong> logon event. Supply realistic values via <code>/domain</code>, <code>/username</code>, and <code>/password</code>.</li>
+  <li>Rubeus <code>ptt</code> can also accept a path to a <code>.kirbi</code> on the target machine's disk, not just base64.</li>
+  <li>Creating a new logon session requires elevated privileges.</li>
 </ul>
 
 <h3 id="crto-user-impersonation-process-injection">10.8 Process Injection</h3>
@@ -3885,11 +3885,11 @@ powershell Find-LAPSDelegatedGroups</code></pre>
 </ul>
 
 <h4 id="crto-user-impersonation-process-injection-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Requires a handle with write access to the target process memory — high-integrity needed for cross-user injection.</li>
-  <li><input type="checkbox"> If the user closes the process, the Beacon session dies. Injected shellcode uses <code>ExitThread</code>, so exiting the Beacon does not kill the host process.</li>
-  <li><input type="checkbox"> Cross-process memory allocation and write operations are high-fidelity detection signals for EDR.</li>
-  <li><input type="checkbox"> Extracting credentials (hashes or tickets) and using PtH/PtT is more durable than relying on a single injected process.</li>
+<ul>
+  <li>Requires a handle with write access to the target process memory — high-integrity needed for cross-user injection.</li>
+  <li>If the user closes the process, the Beacon session dies. Injected shellcode uses <code>ExitThread</code>, so exiting the Beacon does not kill the host process.</li>
+  <li>Cross-process memory allocation and write operations are high-fidelity detection signals for EDR.</li>
+  <li>Extracting credentials (hashes or tickets) and using PtH/PtT is more durable than relying on a single injected process.</li>
 </ul>
 <h2 id="crto-discovery">11. Discovery</h2>
 <p><strong>Discovery</strong> (MITRE TA0007) is where an adversary enumerates the environment after gaining access. It feeds directly into lateral movement by identifying systems, privileges, misconfigurations, and attack paths. Most domain enumeration relies on <strong>LDAP</strong> (TCP 389/636) or <strong>ADWS</strong> (Active Directory Web Services), both queryable by any authenticated domain user.</p>
@@ -3909,10 +3909,10 @@ powershell Find-LAPSDelegatedGroups</code></pre>
 </table>
 
 <h4 id="crto-discovery-bloodhound-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> LDAP queries are logged client-side via the <strong>LDAP Client ETW provider</strong> and server-side via performance events.</li>
-  <li><input type="checkbox"> Running default collectors against a mature SOC will almost certainly generate alerts. Use targeted, manual LDAP queries instead.</li>
-  <li><input type="checkbox"> Build your BloodHound dataset incrementally over days or weeks rather than pulling everything at once.</li>
+<ul>
+  <li>LDAP queries are logged client-side via the <strong>LDAP Client ETW provider</strong> and server-side via performance events.</li>
+  <li>Running default collectors against a mature SOC will almost certainly generate alerts. Use targeted, manual LDAP queries instead.</li>
+  <li>Build your BloodHound dataset incrementally over days or weeks rather than pulling everything at once.</li>
 </ul>
 
 <h3 id="crto-discovery-ldap">11.2 LDAP Enumeration</h3>
@@ -4086,8 +4086,8 @@ MERGE (y)-[:AdminTo]->(x)</code></pre>
 <p>The <code>msWMI-Parm2</code> format: <code>1;3;10;{length};WQL;{namespace};{query};</code>. For example, a filter targeting Windows 10+ uses <code>SELECT * from Win32_OperatingSystem WHERE Version like "10.%"</code>. Any computer not matching the WQL query is excluded from the GPO, even if it resides in the linked OU.</p>
 
 <h4 id="crto-discovery-wmi-filters-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Failure to check WMI filters can lead to incorrect assumptions about which computers a GPO applies to — you may target a machine where the expected local admin edge does not exist.</li>
+<ul>
+  <li>Failure to check WMI filters can lead to incorrect assumptions about which computers a GPO applies to — you may target a machine where the expected local admin edge does not exist.</li>
 </ul>
 
 <h3 id="crto-discovery-powerview">11.6 PowerView and SharpView</h3>
@@ -4139,10 +4139,10 @@ powershell Get-DomainPolicyData | select -expand SystemAccess</code></pre>
 </ul>
 
 <h4 id="crto-discovery-powerview-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> PowerView requires <code>powershell-import</code> which loads the script into the Beacon process — triggers Script Block Logging and AMSI.</li>
-  <li><input type="checkbox"> SharpView runs as a .NET assembly via <code>execute-assembly</code> — avoids PowerShell logging but is signatured by most EDR.</li>
-  <li><input type="checkbox"> Prefer <code>ldapsearch</code> BOF for production engagements; reserve PowerView/SharpView for less-defended environments.</li>
+<ul>
+  <li>PowerView requires <code>powershell-import</code> which loads the script into the Beacon process — triggers Script Block Logging and AMSI.</li>
+  <li>SharpView runs as a .NET assembly via <code>execute-assembly</code> — avoids PowerShell logging but is signatured by most EDR.</li>
+  <li>Prefer <code>ldapsearch</code> BOF for production engagements; reserve PowerView/SharpView for less-defended environments.</li>
 </ul>
 
 <h3 id="crto-discovery-adsearch">11.7 ADSearch</h3>
@@ -4251,10 +4251,10 @@ powershell Get-DomainPolicyData | select -expand SystemAccess</code></pre>
 </ul>
 
 <h4 id="crto-lateral-movement-winrm-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Beacon runs inside <code>wsmprovhost.exe</code> — this is normal when WinRM is used legitimately, producing false positives in detection</li>
-  <li><input type="checkbox"> PowerShell script block logs (Event ID 4104) can reveal payload artifacts, which is the most reliable detection vector</li>
-  <li><input type="checkbox"> WinRM uses Network logon type — no credentials are cached in LSASS on the target</li>
+<ul>
+  <li>Beacon runs inside <code>wsmprovhost.exe</code> — this is normal when WinRM is used legitimately, producing false positives in detection</li>
+  <li>PowerShell script block logs (Event ID 4104) can reveal payload artifacts, which is the most reliable detection vector</li>
+  <li>WinRM uses Network logon type — no credentials are cached in LSASS on the target</li>
 </ul>
 
 <h3 id="crto-lateral-movement-psexec">12.3 PsExec</h3>
@@ -4279,11 +4279,11 @@ powershell Get-DomainPolicyData | select -expand SystemAccess</code></pre>
 </ul>
 
 <h4 id="crto-lateral-movement-psexec-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> New service creation (Event ID 4697) is relatively rare day-to-day and easy to detect</li>
-  <li><input type="checkbox"> Cobalt Strike uses a random 7-character alphanumeric string for both the service name and binary filename</li>
-  <li><input type="checkbox"> The <code>binPath</code> uses a UNC path to <code>ADMIN$</code> — defenders can search for <code>\\*\ADMIN$\*.exe</code> in 4697 events</li>
-  <li><input type="checkbox"> PsExec is considered one of the loudest lateral movement techniques</li>
+<ul>
+  <li>New service creation (Event ID 4697) is relatively rare day-to-day and easy to detect</li>
+  <li>Cobalt Strike uses a random 7-character alphanumeric string for both the service name and binary filename</li>
+  <li>The <code>binPath</code> uses a UNC path to <code>ADMIN$</code> — defenders can search for <code>\\*\ADMIN$\*.exe</code> in 4697 events</li>
+  <li>PsExec is considered one of the loudest lateral movement techniques</li>
 </ul>
 
 <h3 id="crto-lateral-movement-wmi">12.4 Windows Management Instrumentation (WMI)</h3>
@@ -4304,9 +4304,9 @@ upload C:\Payloads\smb_x64.exe</code></pre>
 </ul>
 
 <h4 id="crto-lateral-movement-wmi-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Processes started via WMI are children of <code>WmiPrvSE.exe</code> — defenders hunt for unusual child processes under this parent</li>
-  <li><input type="checkbox"> Requires dropping a payload to disk (unlike WinRM)</li>
+<ul>
+  <li>Processes started via WMI are children of <code>WmiPrvSE.exe</code> — defenders hunt for unusual child processes under this parent</li>
+  <li>Requires dropping a payload to disk (unlike WinRM)</li>
 </ul>
 
 <h3 id="crto-lateral-movement-coinitializesecurity">12.5 CoInitializeSecurity Caveat</h3>
@@ -4338,10 +4338,10 @@ powershell Invoke-DCOM -ComputerName TARGET -Method MMC20.Application -Command C
 </ul>
 
 <h4 id="crto-lateral-movement-dcom-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> With <code>MMC20.Application</code>, the spawned process is a child of <code>mmc.exe</code></li>
-  <li><input type="checkbox"> Other DCOM methods may appear as children of <code>svchost.exe -k DcomLaunch</code></li>
-  <li><input type="checkbox"> DCOM is harder to detect than PsExec because each method behaves differently</li>
+<ul>
+  <li>With <code>MMC20.Application</code>, the spawned process is a child of <code>mmc.exe</code></li>
+  <li>Other DCOM methods may appear as children of <code>svchost.exe -k DcomLaunch</code></li>
+  <li>DCOM is harder to detect than PsExec because each method behaves differently</li>
 </ul>
 
 <h3 id="crto-lateral-movement-custom-techniques">12.7 Custom Techniques</h3>
@@ -4382,10 +4382,10 @@ upload C:\Payloads\smb_x64.dll</code></pre>
 </ul>
 
 <h4 id="crto-lateral-movement-lolbas-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Most mature organizations block LOLBAS via AppLocker or WDAC</li>
-  <li><input type="checkbox"> Process creation events from Sysmon easily flag known LOLBAS abuse</li>
-  <li><input type="checkbox"> LOLBAS techniques are more applicable to adversary emulation than simulation</li>
+<ul>
+  <li>Most mature organizations block LOLBAS via AppLocker or WDAC</li>
+  <li>Process creation events from Sysmon easily flag known LOLBAS abuse</li>
+  <li>LOLBAS techniques are more applicable to adversary emulation than simulation</li>
 </ul>
 
 <h3 id="crto-lateral-movement-logon-types">12.9 Security Logon Types</h3>
@@ -4465,10 +4465,10 @@ powershell Get-DomainComputer -SearchBase "OU=TARGET_OU,DC=DOMAIN,DC=COM" | sele
 </ul>
 
 <h4 id="crto-lateral-movement-gpo-abuse-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> HKLM autorun keys require a reboot to execute</li>
-  <li><input type="checkbox"> GPO modifications in SYSVOL can be monitored via file integrity checks</li>
-  <li><input type="checkbox"> Immediate scheduled tasks via SharpGPOAbuse execute faster but generate additional event logs</li>
+<ul>
+  <li>HKLM autorun keys require a reboot to execute</li>
+  <li>GPO modifications in SYSVOL can be monitored via file integrity checks</li>
+  <li>Immediate scheduled tasks via SharpGPOAbuse execute faster but generate additional event logs</li>
 </ul>
 
 <h3 id="crto-lateral-movement-sccm">12.11 SCCM / Configuration Manager</h3>
@@ -4537,10 +4537,10 @@ ls \\DC\c$</code></pre>
 </ul>
 
 <h4 id="crto-lateral-movement-sccm-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> SharpSCCM hides deployments from the GUI, but they remain visible until completion</li>
-  <li><input type="checkbox"> SCCM deployments are logged in Configuration Manager — SOC teams monitoring SCCM will see unexpected application deployments</li>
-  <li><input type="checkbox"> NAA credentials should only have read access to SDPs, but are often domain admin level</li>
+<ul>
+  <li>SharpSCCM hides deployments from the GUI, but they remain visible until completion</li>
+  <li>SCCM deployments are logged in Configuration Manager — SOC teams monitoring SCCM will see unexpected application deployments</li>
+  <li>NAA credentials should only have read access to SDPs, but are often domain admin level</li>
 </ul>
 <h2 id="crto-pivoting">13. Pivoting</h2>
 <p><strong>Pivoting</strong> (MITRE T1090) proxies traffic through a compromised host to reach network segments that are otherwise inaccessible from the attacker's machine. The two primary techniques are SOCKS proxies (tunnel traffic inbound) and reverse port forwards (tunnel traffic outbound). Both rely on the Beacon's C2 channel as the transport, so sleep time directly affects throughput.</p>
@@ -4570,9 +4570,9 @@ ls \\DC\c$</code></pre>
 </ul>
 
 <h4 id="crto-pivoting-socks-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> The SOCKS port binds on all interfaces of the team server; any host with network access can interact with it. Use SOCKS5 with authentication to mitigate.</li>
-  <li><input type="checkbox"> Setting <code>sleep 0</code> makes the Beacon check in continuously, which is loud on the wire. Balance speed against stealth by using the lowest sleep time your tools can tolerate.</li>
+<ul>
+  <li>The SOCKS port binds on all interfaces of the team server; any host with network access can interact with it. Use SOCKS5 with authentication to mitigate.</li>
+  <li>Setting <code>sleep 0</code> makes the Beacon check in continuously, which is loud on the wire. Balance speed against stealth by using the lowest sleep time your tools can tolerate.</li>
 </ul>
 
 <h3 id="crto-pivoting-proxychains">13.2 Proxychains (Linux)</h3>
@@ -4692,10 +4692,10 @@ run netsh advfirewall firewall delete rule name="Debug"</code></pre>
 </ul>
 
 <h4 id="crto-pivoting-rportfwd-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> If the Windows firewall is enabled and no allow rule exists, binding a port triggers a visible alert to the logged-in user. Always create the firewall rule before starting <code>rportfwd</code>.</li>
-  <li><input type="checkbox"> Standard users can bind to high ports (&gt;1023). Binding to common ports (80, 443, 8080) requires local admin.</li>
-  <li><input type="checkbox"> Delete firewall rules and stop port forwards immediately after use to reduce the window of exposure.</li>
+<ul>
+  <li>If the Windows firewall is enabled and no allow rule exists, binding a port triggers a visible alert to the logged-in user. Always create the firewall rule before starting <code>rportfwd</code>.</li>
+  <li>Standard users can bind to high ports (&gt;1023). Binding to common ports (80, 443, 8080) requires local admin.</li>
+  <li>Delete firewall rules and stop port forwards immediately after use to reduce the window of exposure.</li>
 </ul>
 
 <h3 id="crto-pivoting-ntlm-relay">13.7 NTLM Relaying</h3>
@@ -4743,9 +4743,9 @@ upload C:\Tools\PortBender\WinDivert64.sys</code></pre>
 </ul>
 
 <h4 id="crto-pivoting-ntlm-relay-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> The WinDivert driver load generates a driver load event (Sysmon Event ID 6). Defenders hunt for unsigned or unusual drivers in <code>C:\Windows\system32\drivers</code>.</li>
-  <li><input type="checkbox"> Port 445 redirection is a high-fidelity indicator; restrict the duration of the attack to minimize exposure.</li>
+<ul>
+  <li>The WinDivert driver load generates a driver load event (Sysmon Event ID 6). Defenders hunt for unsigned or unusual drivers in <code>C:\Windows\system32\drivers</code>.</li>
+  <li>Port 445 redirection is a high-fidelity indicator; restrict the duration of the attack to minimize exposure.</li>
 </ul>
 
 <h3 id="crto-pivoting-forcing-auth">13.8 Forcing NTLM Authentication</h3>
@@ -4803,9 +4803,9 @@ $shortcut.Save()</code></pre>
 </ul>
 
 <h4 id="crto-pivoting-webdav-relay-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> The WebClient service is <code>DEMAND_START</code> by default; it may not be running on all targets. Enumerate first with the <code>DAV RPC SERVICE</code> pipe check.</li>
-  <li><input type="checkbox"> Both RBCD and shadow credential attacks leave artifacts (machine accounts, msDS-KeyCredentialLink entries). Remove them immediately after the operation.</li>
+<ul>
+  <li>The WebClient service is <code>DEMAND_START</code> by default; it may not be running on all targets. Enumerate first with the <code>DAV RPC SERVICE</code> pipe check.</li>
+  <li>Both RBCD and shadow credential attacks leave artifacts (machine accounts, msDS-KeyCredentialLink entries). Remove them immediately after the operation.</li>
 </ul>
 <h2 id="crto-kerberos">14. Kerberos</h2>
 
@@ -4856,9 +4856,9 @@ $shortcut.Save()</code></pre>
 </ul>
 
 <h4 id="crto-kerberos-kerberoasting-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Roasting all SPNs hits honeypot accounts — generates <code>4769</code> events for fake services that are never legitimately accessed.</li>
-  <li><input type="checkbox"> Enumerate candidates first and roast selectively by <code>/user</code> parameter to minimize detection surface.</li>
+<ul>
+  <li>Roasting all SPNs hits honeypot accounts — generates <code>4769</code> events for fake services that are never legitimately accessed.</li>
+  <li>Enumerate candidates first and roast selectively by <code>/user</code> parameter to minimize detection surface.</li>
 </ul>
 
 <h3 id="crto-kerberos-asrep-roasting">14.3 AS-REP Roasting</h3>
@@ -4878,8 +4878,8 @@ $shortcut.Save()</code></pre>
 </ul>
 
 <h4 id="crto-kerberos-asrep-roasting-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Generates event <code>4768</code> with RC4 encryption (<code>0x17</code>) and pre-auth type <code>0</code> — both anomalous in modern environments.</li>
+<ul>
+  <li>Generates event <code>4768</code> with RC4 encryption (<code>0x17</code>) and pre-auth type <code>0</code> — both anomalous in modern environments.</li>
 </ul>
 
 <h3 id="crto-kerberos-unconstrained-delegation">14.4 Unconstrained Delegation</h3>
@@ -4914,9 +4914,9 @@ beacon&gt; jobkill &lt;JID&gt;</code></pre>
 </ul>
 
 <h4 id="crto-kerberos-unconstrained-delegation-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Remote auth triggers (SpoolSample, PetitPotam) generate authentication traffic from the target to the listener host — run the trigger as a standard domain user in a medium-integrity context.</li>
-  <li><input type="checkbox"> Computer account TGTs cannot directly access <code>C$</code> because machine accounts lack remote local admin to themselves — use the S4U2self computer takeover technique (section 14.7) instead.</li>
+<ul>
+  <li>Remote auth triggers (SpoolSample, PetitPotam) generate authentication traffic from the target to the listener host — run the trigger as a standard domain user in a medium-integrity context.</li>
+  <li>Computer account TGTs cannot directly access <code>C$</code> because machine accounts lack remote local admin to themselves — use the S4U2self computer takeover technique (section 14.7) instead.</li>
 </ul>
 
 <h3 id="crto-kerberos-constrained-delegation">14.5 Constrained Delegation</h3>
@@ -4957,9 +4957,9 @@ beacon&gt; ls \\[file-server]\c$</code></pre>
 </ul>
 
 <h4 id="crto-kerberos-constrained-delegation-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Always use the FQDN in <code>/msdsspn</code> — short names cause <code>ERROR_LOGON_FAILURE</code> (1326).</li>
-  <li><input type="checkbox"> Without protocol transition, you are limited to users who have cached service tickets on the front-end service — you cannot freely impersonate arbitrary users.</li>
+<ul>
+  <li>Always use the FQDN in <code>/msdsspn</code> — short names cause <code>ERROR_LOGON_FAILURE</code> (1326).</li>
+  <li>Without protocol transition, you are limited to users who have cached service tickets on the front-end service — you cannot freely impersonate arbitrary users.</li>
 </ul>
 
 <h3 id="crto-kerberos-sname-substitution">14.6 Service Name Substitution</h3>
@@ -4983,9 +4983,9 @@ beacon&gt; ls \\[dc]\c$</code></pre>
 </ul>
 
 <h4 id="crto-kerberos-sname-substitution-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Substitution only works when both the original and target SPN run under the same principal — you cannot cross account boundaries (e.g., <code>HTTP/PC1</code> to <code>CIFS/PC2</code>).</li>
-  <li><input type="checkbox"> Use <code>/altservice:cifs,host,http</code> to generate multiple tickets for different services in one pass.</li>
+<ul>
+  <li>Substitution only works when both the original and target SPN run under the same principal — you cannot cross account boundaries (e.g., <code>HTTP/PC1</code> to <code>CIFS/PC2</code>).</li>
+  <li>Use <code>/altservice:cifs,host,http</code> to generate multiple tickets for different services in one pass.</li>
 </ul>
 
 <h3 id="crto-kerberos-s4u2self-takeover">14.7 S4U2self Computer Takeover</h3>
@@ -5012,9 +5012,9 @@ beacon&gt; ls \\[dc]\c$</code></pre>
 </ul>
 
 <h4 id="crto-kerberos-s4u2self-takeover-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> The S4U2self request appears as a legitimate Kerberos operation from the computer account — blends with normal domain traffic.</li>
-  <li><input type="checkbox"> The <code>/altservice</code> swap works because CIFS runs as the computer account (SYSTEM), sharing the same key as the S4U2self ticket.</li>
+<ul>
+  <li>The S4U2self request appears as a legitimate Kerberos operation from the computer account — blends with normal domain traffic.</li>
+  <li>The <code>/altservice</code> swap works because CIFS runs as the computer account (SYSTEM), sharing the same key as the S4U2self ticket.</li>
 </ul>
 
 <h3 id="crto-kerberos-rbcd">14.8 Resource-Based Constrained Delegation</h3>
@@ -5073,10 +5073,10 @@ execute-assembly C:\Tools\Rubeus\Rubeus\bin\Release\Rubeus.exe asktgt /user:Evil
 </ul>
 
 <h4 id="crto-kerberos-rbcd-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Adding RBCD entries modifies the target's AD object — revert changes immediately after use.</li>
-  <li><input type="checkbox"> Also check for <code>GenericWrite</code> and <code>GenericAll</code> on computer objects, not only the specific <code>WriteProperty</code> on <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code>.</li>
-  <li><input type="checkbox"> The <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> attribute stores raw binary security descriptors — property collection types must match (all computer or all user accounts).</li>
+<ul>
+  <li>Adding RBCD entries modifies the target's AD object — revert changes immediately after use.</li>
+  <li>Also check for <code>GenericWrite</code> and <code>GenericAll</code> on computer objects, not only the specific <code>WriteProperty</code> on <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code>.</li>
+  <li>The <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> attribute stores raw binary security descriptors — property collection types must match (all computer or all user accounts).</li>
 </ul>
 
 <h3 id="crto-kerberos-shadow-credentials">14.9 Shadow Credentials</h3>
@@ -5103,10 +5103,10 @@ execute-assembly C:\Tools\Whisker\Whisker\bin\Release\Whisker.exe remove /target
 </ul>
 
 <h4 id="crto-kerberos-shadow-credentials-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Do not use Whisker's <code>clear</code> command if keys already existed — it removes all entries and breaks legitimate passwordless authentication.</li>
-  <li><input type="checkbox"> Shadow credentials do not require creating a fake computer account, making them less noisy than RBCD in environments with <code>msDS-MachineAccountQuota</code> monitoring.</li>
-  <li><input type="checkbox"> Requires AD CS or Key Trust to be configured in the environment for PKINIT to function.</li>
+<ul>
+  <li>Do not use Whisker's <code>clear</code> command if keys already existed — it removes all entries and breaks legitimate passwordless authentication.</li>
+  <li>Shadow credentials do not require creating a fake computer account, making them less noisy than RBCD in environments with <code>msDS-MachineAccountQuota</code> monitoring.</li>
+  <li>Requires AD CS or Key Trust to be configured in the environment for PKINIT to function.</li>
 </ul>
 
 <h3 id="crto-kerberos-relay">14.10 Kerberos Relay Attacks</h3>
@@ -5149,10 +5149,10 @@ elevate svc-exe-krb tcp-local</code></pre>
 </ul>
 
 <h4 id="crto-kerberos-relay-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> KrbRelay uses the BouncyCastle Crypto package, making the assembly exceed Beacon's default task size (1 MB). Increase with <code>set tasks_max_size "2097152";</code> in the C2 profile, then restart the team server and regenerate payloads.</li>
-  <li><input type="checkbox"> If running RBCD and shadow credential attacks back-to-back, allow time for clock sync or reboot the target to avoid <code>0x800706D3</code> errors.</li>
-  <li><input type="checkbox"> Shadow credentials via relay do not require a fake computer account — fewer artifacts to clean up.</li>
+<ul>
+  <li>KrbRelay uses the BouncyCastle Crypto package, making the assembly exceed Beacon's default task size (1 MB). Increase with <code>set tasks_max_size "2097152";</code> in the C2 profile, then restart the team server and regenerate payloads.</li>
+  <li>If running RBCD and shadow credential attacks back-to-back, allow time for clock sync or reboot the target to avoid <code>0x800706D3</code> errors.</li>
+  <li>Shadow credentials via relay do not require a fake computer account — fewer artifacts to clean up.</li>
 </ul>
 
 <h3 id="crto-kerberos-lateral-services">14.11 Lateral Movement Service Tickets</h3>
@@ -5210,9 +5210,9 @@ elevate svc-exe-krb tcp-local</code></pre>
 </ul>
 
 <h4 id="crto-microsoft-sql-server-enumeration-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> SPN queries generate LDAP traffic to the DC — normal for domain-joined hosts, anomalous from workstations that do not typically query for SQL SPNs.</li>
-  <li><input type="checkbox"> Port scanning is noisy — use targeted scans against known subnets rather than broad sweeps.</li>
+<ul>
+  <li>SPN queries generate LDAP traffic to the DC — normal for domain-joined hosts, anomalous from workstations that do not typically query for SQL SPNs.</li>
+  <li>Port scanning is noisy — use targeted scans against known subnets rather than broad sweeps.</li>
 </ul>
 
 <h3 id="crto-microsoft-sql-server-data-hunting">15.2 Data Hunting</h3>
@@ -5264,8 +5264,8 @@ EXECUTE AS login = '[DOMAIN]\[svc-account]'; SELECT IS_SRVROLEMEMBER('sysadmin')
 </ul>
 
 <h4 id="crto-microsoft-sql-server-impersonation-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> <code>EXECUTE AS</code> generates audit events if SQL Server Audit is enabled — check audit configuration before use.</li>
+<ul>
+  <li><code>EXECUTE AS</code> generates audit events if SQL Server Audit is enabled — check audit configuration before use.</li>
 </ul>
 
 <h3 id="crto-microsoft-sql-server-code-execution">15.4 Code Execution</h3>
@@ -5380,11 +5380,11 @@ EXECUTE AS login = '[DOMAIN]\[svc-account]'; SELECT IS_SRVROLEMEMBER('sysadmin')
 </ul>
 
 <h4 id="crto-microsoft-sql-server-code-execution-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Enabling <code>xp_cmdshell</code>, OLE, or CLR changes <code>sys.configurations</code> — always restore the original value after use.</li>
-  <li><input type="checkbox"> <code>xp_cmdshell</code> spawns <code>cmd.exe</code> as a child of <code>sqlservr.exe</code> — highly detectable by EDR process-tree analysis.</li>
-  <li><input type="checkbox"> CLR assemblies are registered in <code>sys.trusted_assemblies</code> and <code>sys.assemblies</code> — forensic artifacts persist until cleaned up.</li>
-  <li><input type="checkbox"> OLE creates and destroys COM objects with randomized names — less visible than <code>xp_cmdshell</code> but still generates process creation events.</li>
+<ul>
+  <li>Enabling <code>xp_cmdshell</code>, OLE, or CLR changes <code>sys.configurations</code> — always restore the original value after use.</li>
+  <li><code>xp_cmdshell</code> spawns <code>cmd.exe</code> as a child of <code>sqlservr.exe</code> — highly detectable by EDR process-tree analysis.</li>
+  <li>CLR assemblies are registered in <code>sys.trusted_assemblies</code> and <code>sys.assemblies</code> — forensic artifacts persist until cleaned up.</li>
+  <li>OLE creates and destroys COM objects with randomized names — less visible than <code>xp_cmdshell</code> but still generates process creation events.</li>
 </ul>
 
 <h3 id="crto-microsoft-sql-server-linked-servers">15.5 Linked Servers</h3>
@@ -5434,10 +5434,10 @@ EXEC('sp_configure ''xp_cmdshell'', 1; reconfigure;') AT [[sql-target]]</code></
 </ul>
 
 <h4 id="crto-microsoft-sql-server-linked-servers-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Enabling RPC Out modifies the link configuration — revert after use.</li>
-  <li><input type="checkbox"> Link traversal may cross domain or forest boundaries — the target may have different monitoring controls.</li>
-  <li><input type="checkbox"> A user with only <code>public</code> on the first server can inherit <code>sysadmin</code> on a linked server if the link is configured with privileged credentials — this is a common misconfiguration to look for.</li>
+<ul>
+  <li>Enabling RPC Out modifies the link configuration — revert after use.</li>
+  <li>Link traversal may cross domain or forest boundaries — the target may have different monitoring controls.</li>
+  <li>A user with only <code>public</code> on the first server can inherit <code>sysadmin</code> on a linked server if the link is configured with privileged credentials — this is a common misconfiguration to look for.</li>
 </ul>
 
 <h3 id="crto-microsoft-sql-server-privilege-escalation">15.6 Privilege Escalation</h3>
@@ -5473,10 +5473,10 @@ beacon> upload C:\Payloads\tcp-local_x64.exe</code></pre>
 </ul>
 
 <h4 id="crto-microsoft-sql-server-privilege-escalation-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> SweetPotato creates a named pipe and triggers SYSTEM authentication — generates Windows Security event 4624 (logon type 9).</li>
-  <li><input type="checkbox"> Dropping an executable to disk risks AV/EDR detection — consider writable directories that are excluded from scanning.</li>
-  <li><input type="checkbox"> The <code>PrintSpoofer</code> technique (default in SweetPotato) may be patched on fully updated servers — test before relying on it.</li>
+<ul>
+  <li>SweetPotato creates a named pipe and triggers SYSTEM authentication — generates Windows Security event 4624 (logon type 9).</li>
+  <li>Dropping an executable to disk risks AV/EDR detection — consider writable directories that are excluded from scanning.</li>
+  <li>The <code>PrintSpoofer</code> technique (default in SweetPotato) may be patched on fully updated servers — test before relying on it.</li>
 </ul>
 <h2 id="crto-domain-dominance">16. Domain Dominance</h2>
 <p>Once domain admin privileges are obtained, an adversary extracts high-value authentication material to maintain that level of access almost indefinitely. This chapter covers DCSync, ticket forgery (silver, golden, and diamond tickets), forged certificates, and DPAPI backup key extraction.</p>
@@ -5507,9 +5507,9 @@ beacon> upload C:\Payloads\tcp-local_x64.exe</code></pre>
 </table>
 
 <h4 id="crto-domain-dominance-dcsync-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Replication traffic from a non-DC source is anomalous — only run DCSync from hosts that blend with normal replication patterns, or accept the detection risk.</li>
-  <li><input type="checkbox"> Event 4662 with the replication GUIDs logged when Directory Service Access auditing is enabled — monitor for these when validating blue team coverage.</li>
+<ul>
+  <li>Replication traffic from a non-DC source is anomalous — only run DCSync from hosts that blend with normal replication patterns, or accept the detection risk.</li>
+  <li>Event 4662 with the replication GUIDs logged when Directory Service Access auditing is enabled — monitor for these when validating blue team coverage.</li>
 </ul>
 
 <h3 id="crto-domain-dominance-silver-tickets">16.2 Silver Tickets</h3>
@@ -5571,10 +5571,10 @@ beacon> upload C:\Payloads\tcp-local_x64.exe</code></pre>
 </ul>
 
 <h4 id="crto-domain-dominance-silver-tickets-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> PAC validation — when enabled on the target computer, the service validates the PAC signature with the KDC; since a silver ticket is signed with the computer hash (not the krbtgt hash), validation fails and access is denied.</li>
-  <li><input type="checkbox"> Missing 4769 event — legitimate service ticket use produces a 4769 (TGS-REQ) on the DC before a 4624 on the target; a silver ticket produces a 4624 with no corresponding 4769.</li>
-  <li><input type="checkbox"> Anomalous ticket data — realm name in lowercase, unusual lifetime values, or incorrect group memberships can flag a forged ticket.</li>
+<ul>
+  <li>PAC validation — when enabled on the target computer, the service validates the PAC signature with the KDC; since a silver ticket is signed with the computer hash (not the krbtgt hash), validation fails and access is denied.</li>
+  <li>Missing 4769 event — legitimate service ticket use produces a 4769 (TGS-REQ) on the DC before a 4624 on the target; a silver ticket produces a 4624 with no corresponding 4769.</li>
+  <li>Anomalous ticket data — realm name in lowercase, unusual lifetime values, or incorrect group memberships can flag a forged ticket.</li>
 </ul>
 
 <h3 id="crto-domain-dominance-golden-tickets">16.3 Golden Tickets</h3>
@@ -5598,10 +5598,10 @@ ls \\[dc]\c$</code></pre>
 </ul>
 
 <h4 id="crto-domain-dominance-golden-tickets-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Missing AS-REQ — a golden ticket produces TGS-REQs (event 4769) without a preceding AS-REQ (event 4768) for the impersonated user.</li>
-  <li><input type="checkbox"> Anomalous ticket lifetime — Mimikatz sets forged ticket lifetimes to 10 years by default; the standard domain policy is 10 hours with 7-day renewal. Rubeus handles this better but always verify.</li>
-  <li><input type="checkbox"> The <code>krbtgt</code> password should be rotated twice (to invalidate cached tickets) as part of breach remediation.</li>
+<ul>
+  <li>Missing AS-REQ — a golden ticket produces TGS-REQs (event 4769) without a preceding AS-REQ (event 4768) for the impersonated user.</li>
+  <li>Anomalous ticket lifetime — Mimikatz sets forged ticket lifetimes to 10 years by default; the standard domain policy is 10 hours with 7-day renewal. Rubeus handles this better but always verify.</li>
+  <li>The <code>krbtgt</code> password should be rotated twice (to invalidate cached tickets) as part of breach remediation.</li>
 </ul>
 
 <h3 id="crto-domain-dominance-diamond-tickets">16.4 Diamond Tickets</h3>
@@ -5633,10 +5633,10 @@ ls \\[dc]\c$</code></pre>
 </ul>
 
 <h4 id="crto-domain-dominance-diamond-tickets-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Peripheral metadata matches legitimate tickets — ticket lifetimes, flags, and encryption types all conform to domain policy.</li>
-  <li><input type="checkbox"> Some fields (e.g., <code>FullName</code>) may still reflect the original user, not the impersonated one — a potential detection point for defenders inspecting PAC contents.</li>
-  <li><input type="checkbox"> Requires the <code>krbtgt</code> AES256 hash, same as a golden ticket.</li>
+<ul>
+  <li>Peripheral metadata matches legitimate tickets — ticket lifetimes, flags, and encryption types all conform to domain policy.</li>
+  <li>Some fields (e.g., <code>FullName</code>) may still reflect the original user, not the impersonated one — a potential detection point for defenders inspecting PAC contents.</li>
+  <li>Requires the <code>krbtgt</code> AES256 hash, same as a golden ticket.</li>
 </ul>
 
 <h3 id="crto-domain-dominance-forged-certificates">16.5 Forged Certificates</h3>
@@ -5665,10 +5665,10 @@ ls \\[dc]\c$</code></pre>
 </ul>
 
 <h4 id="crto-domain-dominance-forged-certificates-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Machine certificates can also be forged — combine with S4U2self to gain access to any machine or service in the domain.</li>
-  <li><input type="checkbox"> CA key validity outlasts most other persistence mechanisms — the forged certificate remains valid until the CA key expires or is revoked.</li>
-  <li><input type="checkbox"> No officially supported way to rotate the CA private key without rebuilding the PKI hierarchy.</li>
+<ul>
+  <li>Machine certificates can also be forged — combine with S4U2self to gain access to any machine or service in the domain.</li>
+  <li>CA key validity outlasts most other persistence mechanisms — the forged certificate remains valid until the CA key expires or is revoked.</li>
+  <li>No officially supported way to rotate the CA private key without rebuilding the PKI hierarchy.</li>
 </ul>
 
 <h3 id="crto-domain-dominance-dpapi-backup-keys">16.6 DPAPI Backup Keys</h3>
@@ -5689,10 +5689,10 @@ ls \\[dc]\c$</code></pre>
 </ul>
 
 <h4 id="crto-domain-dominance-dpapi-backup-keys-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> The <code>/rpc</code> method only works when the current user owns the masterkey — for cross-user decryption, the domain backup key (<code>/pvk</code>) is required.</li>
-  <li><input type="checkbox"> Backup key extraction uses the BackupKey Remote Protocol (MS-BKRP) — monitor RPC calls to the domain controller on the associated named pipe.</li>
-  <li><input type="checkbox"> No rotation mechanism exists — if the backup key is compromised, all historical and future DPAPI secrets remain at risk until AD is rebuilt.</li>
+<ul>
+  <li>The <code>/rpc</code> method only works when the current user owns the masterkey — for cross-user decryption, the domain backup key (<code>/pvk</code>) is required.</li>
+  <li>Backup key extraction uses the BackupKey Remote Protocol (MS-BKRP) — monitor RPC calls to the domain controller on the associated named pipe.</li>
+  <li>No rotation mechanism exists — if the backup key is compromised, all historical and future DPAPI secrets remain at risk until AD is rebuilt.</li>
 </ul>
 
 <h3 id="crto-domain-dominance-ticket-comparison">16.7 Ticket Forgery Comparison</h3>
@@ -5803,9 +5803,9 @@ ls \\[dc]\c$</code></pre>
 </ul>
 
 <h4 id="crto-active-directory-certificate-services-esc1-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Certificate requests generate Event ID 4887 on the CA — the SAN field in the event reveals the impersonated identity.</li>
-  <li><input type="checkbox"> Always use <code>/enctype:aes256</code> with Rubeus to avoid requesting RC4 tickets, which stand out in logs.</li>
+<ul>
+  <li>Certificate requests generate Event ID 4887 on the CA — the SAN field in the event reveals the impersonated identity.</li>
+  <li>Always use <code>/enctype:aes256</code> with Rubeus to avoid requesting RC4 tickets, which stand out in logs.</li>
 </ul>
 
 <h3 id="crto-active-directory-certificate-services-esc2">17.5 ESC2 — Any Purpose / No EKU</h3>
@@ -5878,9 +5878,9 @@ ls \\[dc]\c$</code></pre>
 </table>
 
 <h4 id="crto-active-directory-certificate-services-esc4-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Template modifications generate directory change events — revert changes immediately after obtaining the certificate.</li>
-  <li><input type="checkbox"> Modifying a production template can break legitimate enrollment workflows.</li>
+<ul>
+  <li>Template modifications generate directory change events — revert changes immediately after obtaining the certificate.</li>
+  <li>Modifying a production template can break legitimate enrollment workflows.</li>
 </ul>
 
 <h3 id="crto-active-directory-certificate-services-esc8">17.8 ESC8 — NTLM Relay to HTTP Enrollment</h3>
@@ -5919,11 +5919,11 @@ sc_stop srvnet</code></pre>
 </ul>
 
 <h4 id="crto-active-directory-certificate-services-esc8-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Unbinding port 445 breaks all SMB services (file shares, SMB Beacons) on the compromised host — avoid doing this on critical servers.</li>
-  <li><input type="checkbox"> Re-enable <code>lanmanserver</code> and restart the service stack after the attack to restore normal operations.</li>
-  <li><input type="checkbox"> If the host is a workstation, a firewall rule allowing inbound 445 may be required.</li>
-  <li><input type="checkbox"> The coerced authentication and relay generate events on both the target machine and the CA.</li>
+<ul>
+  <li>Unbinding port 445 breaks all SMB services (file shares, SMB Beacons) on the compromised host — avoid doing this on critical servers.</li>
+  <li>Re-enable <code>lanmanserver</code> and restart the service stack after the attack to restore normal operations.</li>
+  <li>If the host is a workstation, a firewall rule allowing inbound 445 may be required.</li>
+  <li>The coerced authentication and relay generate events on both the target machine and the CA.</li>
 </ul>
 
 <h3 id="crto-active-directory-certificate-services-persistence">17.9 Certificate Persistence</h3>
@@ -5966,10 +5966,10 @@ sc_stop srvnet</code></pre>
 </ul>
 
 <h4 id="crto-active-directory-certificate-services-persistence-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Certificate enrollment generates Event ID 4887 on the CA and Event ID 4886 for certificate issuance.</li>
-  <li><input type="checkbox"> Mimikatz <code>crypto::certificates /export</code> writes PFX files to disk — download and delete them promptly.</li>
-  <li><input type="checkbox"> Use <code>/enctype:aes256</code> with Rubeus to avoid default RC4 ticket requests.</li>
+<ul>
+  <li>Certificate enrollment generates Event ID 4887 on the CA and Event ID 4886 for certificate issuance.</li>
+  <li>Mimikatz <code>crypto::certificates /export</code> writes PFX files to disk — download and delete them promptly.</li>
+  <li>Use <code>/enctype:aes256</code> with Rubeus to avoid default RC4 ticket requests.</li>
 </ul>
 
 <h3 id="crto-active-directory-certificate-services-dpersist1">17.10 DPERSIST1 — Golden Certificates</h3>
@@ -5995,10 +5995,10 @@ sc_stop srvnet</code></pre>
 </ul>
 
 <h4 id="crto-active-directory-certificate-services-dpersist1-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> The stolen CA key provides indefinite persistence — forged certificates are indistinguishable from legitimately issued ones unless the serial number is cross-referenced against CA logs.</li>
-  <li><input type="checkbox"> The CA private key is the single most sensitive cryptographic asset in the PKI — protect exfiltrated copies accordingly.</li>
-  <li><input type="checkbox"> Longer validity periods on forged certificates extend the persistence window but also increase the risk of detection through certificate audits.</li>
+<ul>
+  <li>The stolen CA key provides indefinite persistence — forged certificates are indistinguishable from legitimately issued ones unless the serial number is cross-referenced against CA logs.</li>
+  <li>The CA private key is the single most sensitive cryptographic asset in the PKI — protect exfiltrated copies accordingly.</li>
+  <li>Longer validity periods on forged certificates extend the persistence window but also increase the risk of detection through certificate audits.</li>
 </ul>
 <h2 id="crto-forest-and-domain-trusts">18. Forest &amp; Domain Trusts</h2>
 
@@ -6105,9 +6105,9 @@ sc_stop srvnet</code></pre>
 </table>
 
 <h4 id="crto-forest-and-domain-trusts-parent-child-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Golden tickets with SID History generate event 4769 with an encryption type that may not match the domain's policy — diamond tickets are harder to detect because they modify a legitimately issued TGT.</li>
-  <li><input type="checkbox"> SID History injection is flagged by rules watching for well-known SIDs (e.g., <code>S-1-5-21-*-519</code>) appearing in non-EA accounts — consider using less conspicuous group SIDs where possible.</li>
+<ul>
+  <li>Golden tickets with SID History generate event 4769 with an encryption type that may not match the domain's policy — diamond tickets are harder to detect because they modify a legitimately issued TGT.</li>
+  <li>SID History injection is flagged by rules watching for well-known SIDs (e.g., <code>S-1-5-21-*-519</code>) appearing in non-EA accounts — consider using less conspicuous group SIDs where possible.</li>
 </ul>
 
 <h3 id="crto-forest-and-domain-trusts-inbound">18.4 Inbound Trusts</h3>
@@ -6158,9 +6158,9 @@ sc_stop srvnet</code></pre>
 </table>
 
 <h4 id="crto-forest-and-domain-trusts-inbound-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Trusts use RC4 encryption by default, so an RC4 inter-realm ticket is normal behavior and does not stand out.</li>
-  <li><input type="checkbox"> When forging tickets offline, ensure the user's group memberships are correct — incorrect RIDs will cause authentication failures or raise suspicion. Use Rubeus <code>/ldap</code> parameter for online forging to auto-populate groups.</li>
+<ul>
+  <li>Trusts use RC4 encryption by default, so an RC4 inter-realm ticket is normal behavior and does not stand out.</li>
+  <li>When forging tickets offline, ensure the user's group memberships are correct — incorrect RIDs will cause authentication failures or raise suspicion. Use Rubeus <code>/ldap</code> parameter for online forging to auto-populate groups.</li>
 </ul>
 
 <h3 id="crto-forest-and-domain-trusts-outbound">18.5 Outbound Trusts</h3>
@@ -6204,10 +6204,10 @@ sc_stop srvnet</code></pre>
 <p>The inter-realm key can also be dumped directly from DC memory using <code>lsadump::trust /patch</code>, but this performs memory patching on the domain controller, which is extremely risky. DCSync via the TDO's GUID is the safer approach.</p>
 
 <h4 id="crto-forest-and-domain-trusts-outbound-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> DCSync of the TDO generates replication traffic (event 4662) from a non-DC source — this is detectable but far less damaging than patching LSASS on a domain controller.</li>
-  <li><input type="checkbox"> The trust account TGT grants only Domain Users access — further escalation depends on finding vulnerabilities (Kerberoast, ADCS, RBCD) in the foreign domain.</li>
-  <li><input type="checkbox"> If credentials for a user in the trusted domain are obtained through other means, <code>make_token</code> with their credentials bypasses the need for trust account abuse entirely.</li>
+<ul>
+  <li>DCSync of the TDO generates replication traffic (event 4662) from a non-DC source — this is detectable but far less damaging than patching LSASS on a domain controller.</li>
+  <li>The trust account TGT grants only Domain Users access — further escalation depends on finding vulnerabilities (Kerberoast, ADCS, RBCD) in the foreign domain.</li>
+  <li>If credentials for a user in the trusted domain are obtained through other means, <code>make_token</code> with their credentials bypasses the need for trust account abuse entirely.</li>
 </ul>
 <h2 id="crto-applocker">19. AppLocker</h2>
 <p><strong>AppLocker</strong> is a Windows application control technology that prevents users from running unapproved executables, scripts, installers, and packaged apps. Policies are defined by administrators and deployed via GPO or Intune, each containing enforcement rules with a permission (allow/deny), a target user or group, and a condition (publisher, path, or file hash).</p>
@@ -6262,9 +6262,9 @@ $policy.RuleCollections</code></pre>
 </ul>
 
 <h4 id="crto-applocker-enumeration-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Registry reads via <code>Get-ChildItem</code> are permitted under Constrained Language Mode and generate minimal telemetry.</li>
-  <li><input type="checkbox"> Remote GPO enumeration uses LDAP and SMB reads against SYSVOL &mdash; standard domain traffic that blends with normal operations.</li>
+<ul>
+  <li>Registry reads via <code>Get-ChildItem</code> are permitted under Constrained Language Mode and generate minimal telemetry.</li>
+  <li>Remote GPO enumeration uses LDAP and SMB reads against SYSVOL &mdash; standard domain traffic that blends with normal operations.</li>
 </ul>
 
 <h3 id="crto-applocker-writable-paths">19.3 Writable Path Bypass</h3>
@@ -6302,9 +6302,9 @@ C:\Windows\Tasks\payload.exe</code></pre>
 </ul>
 
 <h4 id="crto-applocker-writable-paths-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> Dropping files to disk creates forensic artifacts &mdash; prefer in-memory execution where possible.</li>
-  <li><input type="checkbox"> <code>C:\Windows\Temp</code> is a high-visibility location for EDR file-write monitoring; less common paths like <code>spool\drivers\color</code> draw less attention.</li>
+<ul>
+  <li>Dropping files to disk creates forensic artifacts &mdash; prefer in-memory execution where possible.</li>
+  <li><code>C:\Windows\Temp</code> is a high-visibility location for EDR file-write monitoring; less common paths like <code>spool\drivers\color</code> draw less attention.</li>
 </ul>
 
 <h3 id="crto-applocker-lolbas">19.4 LOLBAS Bypass</h3>
@@ -6403,9 +6403,9 @@ CreateThread(IntPtr.Zero, 0, hMemory, IntPtr.Zero, 0, IntPtr.Zero);</code></pre>
 </ul>
 
 <h4 id="crto-applocker-lolbas-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> MSBuild execution from a non-developer workstation is anomalous &mdash; EDR and SIEM rules commonly flag it.</li>
-  <li><input type="checkbox"> The LOLBAS project catalogs hundreds of binaries; check <code>lolbas-project.github.io</code> for alternatives when MSBuild is blocked.</li>
+<ul>
+  <li>MSBuild execution from a non-developer workstation is anomalous &mdash; EDR and SIEM rules commonly flag it.</li>
+  <li>The LOLBAS project catalogs hundreds of binaries; check <code>lolbas-project.github.io</code> for alternatives when MSBuild is blocked.</li>
 </ul>
 
 <h3 id="crto-applocker-dll-bypass">19.5 DLL Execution</h3>
@@ -6422,9 +6422,9 @@ CreateThread(IntPtr.Zero, 0, hMemory, IntPtr.Zero, 0, IntPtr.Zero);</code></pre>
 </ul>
 
 <h4 id="crto-applocker-dll-bypass-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> <code>rundll32</code> loading a DLL from a user-writable path is a well-known detection signal &mdash; pair with a legitimate-looking filename and path.</li>
-  <li><input type="checkbox"> Beacon DLL exports (<code>StartW</code>, <code>DllMain</code>) can be renamed in the Artifact Kit under <code>src-main/dllmain.def</code> to avoid signature matches.</li>
+<ul>
+  <li><code>rundll32</code> loading a DLL from a user-writable path is a well-known detection signal &mdash; pair with a legitimate-looking filename and path.</li>
+  <li>Beacon DLL exports (<code>StartW</code>, <code>DllMain</code>) can be renamed in the Artifact Kit under <code>src-main/dllmain.def</code> to avoid signature matches.</li>
 </ul>
 
 <h3 id="crto-applocker-clm">19.6 Constrained Language Mode</h3>
@@ -6488,10 +6488,10 @@ Remove-Item -Path 'HKCU:Software\Classes\AppLocker.Bypass' -Recurse</code></pre>
 </ul>
 
 <h4 id="crto-applocker-clm-opsec">OPSEC</h4>
-<ul class="methodology-checklist">
-  <li><input type="checkbox"> COM object registration writes to <code>HKCU\Software\Classes\CLSID</code> &mdash; these keys persist and are visible to forensic analysis. Clean up after use.</li>
-  <li><input type="checkbox"> <code>powerpick</code> spawns an unmanaged runspace inside the Beacon process, avoiding <code>powershell.exe</code> entirely &mdash; preferred over MSBuild for stealth.</li>
-  <li><input type="checkbox"> The custom COM DLL must export at least one function; use <code>DllMain</code> with <code>DLL_PROCESS_ATTACH</code> to trigger execution on load.</li>
+<ul>
+  <li>COM object registration writes to <code>HKCU\Software\Classes\CLSID</code> &mdash; these keys persist and are visible to forensic analysis. Clean up after use.</li>
+  <li><code>powerpick</code> spawns an unmanaged runspace inside the Beacon process, avoiding <code>powershell.exe</code> entirely &mdash; preferred over MSBuild for stealth.</li>
+  <li>The custom COM DLL must export at least one function; use <code>DllMain</code> with <code>DLL_PROCESS_ATTACH</code> to trigger execution on load.</li>
 </ul>
 
         </div>
