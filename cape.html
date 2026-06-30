@@ -1469,7 +1469,7 @@ bloodhound-python -c DCOnly -d corp.local -u jdoe -p 'P@ss123' -ns 10.10.10.1 --
 </tbody>
 </table>
 
-<h5 id="cape-how-to-abuse-edges-66f643">How to Abuse Edges</h5>
+<h5 id="cape-how-to-abuse-edges-66f643">Edge Abuse</h5>
 <p>Right-click an edge in BloodHound and select "Help" to see step-by-step abuse instructions. Each edge type has documented abuse primitives. Common patterns:</p>
 <ul>
 <li><strong>GenericAll on User</strong>: reset password, set SPN for Kerberoasting, or write to msDS-KeyCredentialLink (Shadow Credentials)</li>
@@ -3026,7 +3026,7 @@ john --wordlist=/usr/share/wordlists/rockyou.txt asrep_hashes.txt</code></pre>
 <h4 id="cape-kerberoasting-8b93d8">6.2.2 Kerberoasting</h4>
 <p>Kerberoasting extracts service tickets (TGS) for accounts with registered SPNs. Since the service ticket is encrypted with the service account's password hash, it can be cracked offline. Any authenticated domain user can request a service ticket for any SPN, making this a low-privilege attack with potentially high impact.</p>
 
-<h5 id="cape-how-it-works-f47f93">How It Works</h5>
+<h5 id="cape-how-it-works-f47f93">Kerberoasting Mechanics</h5>
 <p>When a domain user sends a TGS-REQ for an SPN, the KDC returns a TGS-REP containing a service ticket encrypted with the target service account's secret key. The encryption type depends on the account's <code>msDS-SupportedEncryptionTypes</code> attribute:</p>
 <ul>
 <li><strong>RC4 (0x17)</strong>: uses the NTLM hash directly. Fast to crack</li>
@@ -3145,7 +3145,7 @@ john --wordlist=/usr/share/wordlists/rockyou.txt tgs_hashes.txt</code></pre>
 
 <figure><img src="./img/cape/unconstrained-delegation-settings.png" alt="Unconstrained delegation settings in AD"></figure>
 
-<h5 id="cape-how-it-works-2529b4">How It Works</h5>
+<h5 id="cape-how-it-works-2529b4">Unconstrained Delegation Mechanics</h5>
 <p>The <code>TRUSTED_FOR_DELEGATION</code> flag (UAC value <code>0x80000</code>) is set on the computer or user account. When a user authenticates via Kerberos to a service on that machine, the KDC includes a copy of the user's TGT inside the service ticket (in the <code>ok-as-delegate</code> field). The service's LSASS process caches these forwarded TGTs.</p>
 <div class="section-insight"><strong>Note</strong>: All Domain Controllers have unconstrained delegation enabled by default.</div>
 
@@ -3202,7 +3202,7 @@ python3 PetitPotam.py YOURSERVER.corp.local DC01.corp.local -u user -p 'Password
 
 <figure><img src="./img/cape/constrained-delegation-properties.png" style="max-width:360px" alt="Constrained delegation properties dialog"></figure>
 
-<h5 id="cape-how-it-works-s4u2self-and-s4u2proxy-da18dd">How It Works (S4U2Self and S4U2Proxy)</h5>
+<h5 id="cape-how-it-works-s4u2self-and-s4u2proxy-da18dd">S4U2Self and S4U2Proxy Flow</h5>
 <p><strong>S4U2Self</strong> allows a service to obtain a service ticket to itself on behalf of any user, even if that user has not authenticated via Kerberos. The resulting ticket is marked as <code>forwardable</code> if the service is trusted for delegation.</p>
 <p><strong>S4U2Proxy</strong> takes the forwardable ticket from S4U2Self and exchanges it for a service ticket to the target service (specified in <code>msDS-AllowedToDelegateTo</code>) on behalf of the impersonated user.</p>
 <p>Combined, these allow the delegating service to obtain a service ticket for any user to any service in its allowed list, without the user ever authenticating.</p>
@@ -3258,7 +3258,7 @@ getST.py -spn cifs/DC01.corp.local -impersonate Administrator -altservice ldap c
 <h4 id="cape-resource-based-constrained-delegation-rb-835322">6.3.4 Resource-Based Constrained Delegation (RBCD)</h4>
 <p>RBCD inverts the delegation model. Instead of the delegating account specifying which services it can delegate to, the <strong>target resource</strong> specifies which accounts can delegate to it via the <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> attribute. This attribute can be modified by anyone with write access to the computer object.</p>
 
-<h5 id="cape-how-it-works-3e259c">How It Works</h5>
+<h5 id="cape-how-it-works-3e259c">RBCD Mechanics</h5>
 <p>RBCD uses the same S4U2Self and S4U2Proxy extensions. The key difference: S4U2Proxy checks the <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> attribute on the target instead of <code>msDS-AllowedToDelegateTo</code> on the source. This means any account with write access to a computer object (such as the machine account's creator or an account with <code>GenericWrite</code>) can configure RBCD.</p>
 
 <h5 id="cape-prerequisites-38b0b8">Prerequisites</h5>
@@ -3344,7 +3344,7 @@ psexec.py -k -no-pass corp.local/Administrator@TARGET.corp.local</code></pre>
 <h4 id="cape-golden-ticket-1aff2e">6.4.1 Golden Ticket</h4>
 <p>A Golden Ticket is a forged TGT created using the <code>krbtgt</code> account's password hash. Since all TGTs in the domain are encrypted with this key, a valid Golden Ticket grants unrestricted access to any resource in the domain. Obtaining the <code>krbtgt</code> hash requires Domain Admin privileges (or equivalent), so this is a persistence and post-compromise technique.</p>
 
-<h5 id="cape-how-it-works-5f29df">How It Works</h5>
+<h5 id="cape-how-it-works-5f29df">Golden Ticket Mechanics</h5>
 <p>The KDC trusts any TGT that can be decrypted with the <code>krbtgt</code> key. A Golden Ticket forges a TGT with arbitrary PAC contents: any username, any group memberships, any SID. The KDC does not validate whether the user actually exists or belongs to the claimed groups.</p>
 <p>Required information:</p>
 <ul>
@@ -3391,7 +3391,7 @@ psexec.py -k -no-pass corp.local/Administrator@DC01.corp.local</code></pre>
 <h4 id="cape-silver-ticket-8028a5">6.4.2 Silver Ticket</h4>
 <p>A Silver Ticket is a forged service ticket (TGS) created using a service account's password hash. Unlike a Golden Ticket, it never touches the KDC for the target service, making it stealthier. However, it only grants access to the specific service whose hash was used.</p>
 
-<h5 id="cape-how-it-works-ac0dbe">How It Works</h5>
+<h5 id="cape-how-it-works-ac0dbe">Silver Ticket Mechanics</h5>
 <p>The service ticket is encrypted with the target service account's secret key. If you know this key (NTLM hash or AES key), you can forge a ticket with arbitrary PAC contents. The target service decrypts the ticket and trusts the PAC without validating it against the KDC (PAC validation is optional and usually disabled).</p>
 
 <h5 id="cape-creating-silver-tickets-65ade5">Creating Silver Tickets</h5>
@@ -4010,7 +4010,7 @@ Set-DomainObject -Identity targetuser -Set @{scriptPath="original_script.bat"}</
 <h4 id="cape-spn-jacking-46fb80">8.2.2 SPN Jacking</h4>
 <p>SPN Jacking is a technique that combines write access over the <code>servicePrincipalName</code> attribute with Kerberoasting. By setting an SPN on a target account that does not already have one, the attacker makes it Kerberoastable and can then crack the service ticket offline to recover the plaintext password.</p>
 
-<h5 id="cape-how-spn-jacking-works-572d3f">How SPN Jacking Works</h5>
+<h5 id="cape-how-spn-jacking-works-572d3f">SPN Jacking Workflow</h5>
 <table class="custom-table">
 <thead><tr><th>Step</th><th>Action</th></tr></thead>
 <tbody>
@@ -6251,7 +6251,7 @@ execute -o dir \\\\DC01.corp.local\\C$</code></pre>
 <h3 id="cape-defender-and-detection-mechanisms-d5b260">13.1 Defender and Detection Mechanisms</h3>
 <p>Microsoft Defender is the built-in antivirus solution on Windows 10 and later. It combines signature-based detection, behavioral monitoring, and cloud-delivered protection to identify malicious activity.</p>
 <figure><img src="./img/cape/windows-defender-ui.png" alt="Windows Defender UI"></figure>
-<h4 id="cape-how-defender-works-e9337f">13.1.1 How Defender Works</h4>
+<h4 id="cape-how-defender-works-e9337f">13.1.1 Defender Detection Model</h4>
 <p>Defender uses three primary detection mechanisms:</p>
 <table class="custom-table">
 <thead><tr><th>Mechanism</th><th>Description</th></tr></thead>
@@ -6545,7 +6545,7 @@ public class Loader
 <h4 id="cape-antimalware-scan-interface-amsi-260e1b">13.3.1 Antimalware Scan Interface (AMSI)</h4>
 <p>AMSI is a Windows interface that allows applications to submit content to the registered antimalware provider for scanning. It intercepts PowerShell scripts, VBA macros, JavaScript, and .NET assembly loads before execution.</p>
 <figure><img src="./img/cape/lsa-runasppl-registry.png" alt="LSA RunAsPPL registry setting"></figure>
-<h5 id="cape-how-amsi-works-fa2bc1">How AMSI Works</h5>
+<h5 id="cape-how-amsi-works-fa2bc1">AMSI Overview</h5>
 <p>When a script host (PowerShell, cscript, etc.) executes content, it calls <code>AmsiScanBuffer</code> or <code>AmsiScanString</code> in <code>amsi.dll</code>. The scan result determines whether execution proceeds or is blocked.</p>
 <table class="custom-table">
 <thead><tr><th>Step</th><th>Action</th></tr></thead>
@@ -7819,7 +7819,7 @@ execute-assembly /opt/tools/SharpSCCM.exe ; exec -p "C:\Windows\Temp\implant.exe
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#cape-how-defender-works-e9337f">13.1.1 How Defender Works</a>
+          <a href="#cape-how-defender-works-e9337f">13.1.1 Defender Detection Model</a>
           <a href="#cape-real-time-protection-97366f">13.1.2 Real-time Protection</a>
           <a href="#cape-cloud-protection-94ae5f">13.1.3 Cloud Protection</a>
           <a href="#cape-tamper-protection-a93352">13.1.4 Tamper Protection</a>

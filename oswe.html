@@ -652,7 +652,7 @@ curl -s "http://[target-ip]/[application-path]/mods/_standard/social/index_publi
 
 <h3 id="oswe-atutor-deeper">2.4 Digging Deeper</h3>
 
-<h4 id="oswe-atutor-addslashes">2.4.1 When addslashes() Falls Short</h4>
+<h4 id="oswe-atutor-addslashes">2.4.1 addslashes() Limitations</h4>
 <p>PHP's <code>addslashes()</code> escapes single quotes by prepending a backslash (<code>\'</code>). However, in multi-byte character sets (e.g., GBK, SJIS), a specially crafted byte sequence can consume the backslash as part of a valid multi-byte character, leaving the single quote unescaped.</p>
 
 <pre><code class="language-php">// addslashes() behavior:
@@ -2761,7 +2761,7 @@ BasicXMLDeserializer.exe "C:\Users\Public\basicXML.txt"</code></pre></li>
 
 <p>The <code>DeSerializeHashtable</code> function performs the critical operations: it looks for every <code>item</code> node under the <code>profile</code> root tag (line 156), extracts the type from the <code>type</code> attribute (line 160), creates a new <code>XmlSerializer</code> with that type (line 161), and deserializes the user-controlled content (line 163).</p>
 
-<h4 id="oswe-dnn-unauth">6.2.3 Why Unauthenticated Access Works</h4>
+<h4 id="oswe-dnn-unauth">6.2.3 Unauthenticated Access Mechanics</h4>
 <p>Requesting a nonexistent page triggers the <code>AdvancedUrlReWriter.Handle404OrException</code> handler. If <code>HttpContext.User</code> is null, it gets assigned <code>Thread.CurrentPrincipal</code> (the IIS APPPOOL identity), causing the request to be treated as authenticated.</p>
 
 <p>This allows the code to reach <code>PortalSettings.UserMode</code> getter (line 922), which checks <code>HttpContext.Current.Request.IsAuthenticated</code>. Since the 404 handler set User to the Windows principal, <code>IsAuthenticated</code> returns <code>true</code>, and the <code>LoadProfile</code> personalization code path executes.</p>
@@ -7993,7 +7993,7 @@ Serving HTTP on 0.0.0.0 port [http-port] (http://0.0.0.0:[http-port]/) ...
 <div class="nested-dropdown">
 <button class="nested-dropdown-btn">2.4 Digging Deeper<i class="bi bi-caret-down-fill"></i></button>
 <div class="nested-dropdown-container">
-<a href="#oswe-atutor-addslashes">2.4.1 When addslashes() Falls Short</a>
+<a href="#oswe-atutor-addslashes">2.4.1 addslashes() Limitations</a>
 <a href="#oswe-atutor-parameterization">2.4.2 Improper Use of Parameterization</a>
 </div>
 </div>
@@ -8142,7 +8142,7 @@ Serving HTTP on 0.0.0.0 port [http-port] (http://0.0.0.0:[http-port]/) ...
 <div class="nested-dropdown-container">
 <a href="#oswe-dnn-vuln-overview">6.2.1 Vulnerability Overview</a>
 <a href="#oswe-dnn-cookie-flow">6.2.2 Cookie Processing Flow</a>
-<a href="#oswe-dnn-unauth">6.2.3 Why Unauthenticated Access Works</a>
+<a href="#oswe-dnn-unauth">6.2.3 Unauthenticated Access Mechanics</a>
 <a href="#oswe-dnn-debugging">6.2.4 Debugging Setup</a>
 </div>
 </div>

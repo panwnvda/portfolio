@@ -423,7 +423,7 @@ while (*name) {
   mask_off();        // XOR + PAGE_EXECUTE_READ
   return result;</code></pre>
 
-          <h4>Why Hook <code>NtWaitForSingleObject</code> and Not <code>Sleep</code></h4>
+          <h4><code>NtWaitForSingleObject</code> Hook Rationale</h4>
           <p>Sliver&rsquo;s Go runtime does <em>not</em> call <code>kernel32!Sleep</code>. Go calls <code>NtWaitForSingleObject</code> / <code>NtDelayExecution</code> via direct syscall. Hooking <code>Sleep</code> would catch nothing. MaskKit hooks the Nt-level function directly, catching every wait Go performs.</p>
 
           <h4>Stack Spoofing</h4>
@@ -714,7 +714,7 @@ char _PICO_[0] __attribute__((section("pico")));</code></pre>
   [num_hooks × {[4]ror13_hash [4]hook_code_offset}]   ← addhook table</code></pre>
           <p>The PICO&rsquo;s <code>__resolve_hook(uint32_t hash)</code> intrinsic walks this table and returns the matching hook pointer, or NULL. Operators wire it to a custom <code>GetProcAddress</code>-style proxy that consults the table before falling through to the real API resolver. The default Sliver loader doesn&rsquo;t need this (Beacon-style IAT hooking is unsafe under the Go runtime &mdash; see below), but the machinery is in place for downstream components that do.</p>
 
-          <h3>4.5.1 Why Three Files Stay Stubbed</h3>
+          <h3>4.5.1 Stubbed File Rationale</h3>
           <p>Three Crystal Kit C files remain stubs for the Sliver loader because the Go runtime makes the original techniques unsafe. The DFR machinery is independent of these &mdash; <code>attach</code>/<code>preserve</code>/<code>addhook</code> all work even with the stubbed files:</p>
           <table class="custom-table">
             <thead><tr><th>File</th><th>CS purpose</th><th>Disabled because</th></tr></thead>
@@ -952,7 +952,7 @@ ExitThread                   0x60E0CEEF</code></pre>
             </tbody>
           </table>
 
-          <h3>5.2 How Staging Works</h3>
+          <h3>5.2 Staging Overview</h3>
           <p>The staging model is identical to LoadKit. On your operator machine, <code>injectkit stage</code> XOR-encrypts the shellcode with a random 32-byte key, writes the encrypted blob to <code>payload.enc</code>, and starts a one-shot HTTPS server. The key is printed as 64 hex characters. You pass it as the <code>key=</code> argument when you invoke the Extension or as <code>-key</code> on the EXE.</p>
           <p>On the target side, whichever binary is running makes an outbound HTTPS request directly to your operator machine to download <code>payload.enc</code>. It does not go through the Sliver C2 channel. This is the same pattern LoadKit uses for delivering Donut shellcode. If your beacon is already calling back, the network path exists and the Extension fetch will work.</p>
           <p>The staging server shuts down 500ms after the first successful download. Anybody who finds the URL in network logs and tries to replay it gets a 404 and nothing else.</p>
@@ -1301,7 +1301,7 @@ cd Inject-Kit/injectkit
 [+] spawned dllhost.exe (pid 7890) with ppid spoofed to svchost.exe — shellcode running</code></pre>
           <p>Second Sliver session calls back from inside <code>dllhost.exe</code>, appearing to be a child of <code>svchost.exe</code> in all process-tree views. You now have two independent sessions; losing one doesn&rsquo;t end the engagement.</p>
 
-          <h3>7.5 What Each Layer Covers</h3>
+          <h3>7.5 Layer Coverage</h3>
           <table class="custom-table">
             <thead><tr><th>Detection Surface</th><th>Kit that covers it</th></tr></thead>
             <tbody>
@@ -1437,7 +1437,7 @@ make all          # operator CLI + injectkit.exe + inject.x64.dll + extension ta
       </button>
       <div class="dropdown-container">
         <a href="#inject-kit">5.1 Three Components</a>
-        <a href="#inject-kit">5.2 How Staging Works</a>
+        <a href="#inject-kit">5.2 Staging Overview</a>
         <a href="#inject-kit">5.3 Architecture</a>
         <a href="#inject-kit">5.4 Injection Modes</a>
         <a href="#inject-kit">5.5 PPID Spoofing</a>

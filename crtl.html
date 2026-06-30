@@ -5066,7 +5066,7 @@ void gox64 ( char * args, int alen ) {
 </table>
 <p><strong>Calling <code>BeaconInjectProcess</code></strong> as a fallback is useful when your custom technique fails or isn't compatible with the current injection (e.g. cross-architecture).</p>
 
-<h3 id="crtl-postex-cleanup">5.8 Cleanup?</h3>
+<h3 id="crtl-postex-cleanup">5.8 Cleanup</h3>
 <p><strong>The postex DLL</strong> is responsible for terminating itself via <code>ExitThread</code> or <code>ExitProcess</code>. The injection BOF only needs to clean up resources it allocated - close the process and thread handles, unmap any local section views, close the section handle. Once execution transfers, the BOF's job is done.</p>
 
 <h3 id="crtl-postex-postex-loader">5.9 Postex Loader</h3>
@@ -7436,7 +7436,7 @@ MIINX[...snip...]CCAA=</code></pre>
 <a class="dropdown-link" href="#crtl-postex-process-inject-spawn">5.5 PROCESS_INJECT_SPAWN</a>
 <a class="dropdown-link" href="#crtl-postex-process-inject-explicit">5.6 PROCESS_INJECT_EXPLICIT</a>
 <a class="dropdown-link" href="#crtl-postex-bof-apis">5.7 BOF APIs</a>
-<a class="dropdown-link" href="#crtl-postex-cleanup">5.8 Cleanup?</a>
+<a class="dropdown-link" href="#crtl-postex-cleanup">5.8 Cleanup</a>
 <a class="dropdown-link" href="#crtl-postex-postex-loader">5.9 Postex Loader</a>
 <a class="dropdown-link" href="#crtl-postex-postex-rdll-generate">5.10 POSTEX_RDLL_GENERATE</a>
 <a class="dropdown-link" href="#crtl-postex-memory-cleanup">5.11 Memory cleanup</a>
