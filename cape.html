@@ -6253,11 +6253,14 @@ execute -o dir \\\\DC01.corp.local\\C$</code></pre>
 <figure><img src="./img/cape/windows-defender-ui.png" alt="Windows Defender UI"></figure>
 <h4 id="cape-how-defender-works-e9337f">13.1.1 How Defender Works</h4>
 <p>Defender uses three primary detection mechanisms:</p>
-<ul>
-<li><strong>Signature-based</strong>: matches files against a database of known malware hashes and byte patterns</li>
-<li><strong>Heuristic/behavioral</strong>: monitors runtime behavior for suspicious API call patterns, memory allocations, and process relationships</li>
-<li><strong>Cloud-based</strong>: submits unknown samples to Microsoft's cloud for detonation and classification</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Mechanism</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Signature-based</td><td>Matches files against a database of known malware hashes and byte patterns</td></tr>
+<tr><td>Heuristic/behavioral</td><td>Monitors runtime behavior for suspicious API call patterns, memory allocations, and process relationships</td></tr>
+<tr><td>Cloud-based</td><td>Submits unknown samples to Microsoft's cloud for detonation and classification</td></tr>
+</tbody>
+</table>
 <h4 id="cape-real-time-protection-97366f">13.1.2 Real-time Protection</h4>
 <p>Real-time protection (RTP) scans files on access, download, and execution. It hooks file system operations and inspects content before allowing processes to execute. RTP also integrates with AMSI for script-based content scanning.</p>
 <h4 id="cape-cloud-protection-94ae5f">13.1.3 Cloud Protection</h4>
@@ -6640,11 +6643,14 @@ sed -i 's/Rubeus/CustomTool/' Rubeus/Rubeus.csproj</code></pre>
 <p>UAC prompts users for consent before allowing high-integrity operations. UAC bypasses elevate from medium to high integrity without triggering the consent dialog.</p>
 <h5 id="cape-uac-overview-35d54a">UAC Overview</h5>
 <p>UAC splits administrator tokens into a filtered (medium integrity) and elevated (high integrity) token. Most applications run with the filtered token. UAC settings are controlled by registry keys under <code>HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System</code>:</p>
-<ul>
-<li><strong>EnableLUA</strong>: enables/disables UAC entirely</li>
-<li><strong>ConsentPromptBehaviorAdmin</strong>: controls prompt behavior (0=no prompt, 1=credentials, 2=consent, 5=default)</li>
-<li><strong>PromptOnSecureDesktop</strong>: renders the prompt on the secure desktop</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Setting</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><code>EnableLUA</code></td><td>Enables or disables UAC entirely</td></tr>
+<tr><td><code>ConsentPromptBehaviorAdmin</code></td><td>Controls prompt behavior: <code>0</code> no prompt, <code>1</code> credentials, <code>2</code> consent, <code>5</code> default</td></tr>
+<tr><td><code>PromptOnSecureDesktop</code></td><td>Renders the prompt on the secure desktop</td></tr>
+</tbody>
+</table>
 <h5 id="cape-fodhelper-868ce3">Fodhelper</h5>
 <pre><code class="language-powershell"># Fodhelper.exe auto-elevates and reads a command from the registry
 # Set the command to execute
@@ -6770,12 +6776,15 @@ $ExecutionContext.SessionState.LanguageMode
 # New-Object System.Net.WebClient - blocked
 # Invoke-Expression with certain constructs - blocked</code></pre>
 <p><strong>Bypasses:</strong></p>
-<ul>
-<li><strong>PowerShell v2</strong>: <code>powershell -version 2</code> uses the old engine without AMSI or CLM (requires .NET Framework 2.0/3.5 installed)</li>
-<li><strong>Custom runspace</strong>: create a C# application that hosts a PowerShell runspace in Full Language Mode</li>
-<li><strong>MSBuild</strong>: embed PowerShell commands in a .csproj file executed via <code>msbuild.exe</code></li>
-<li><strong>InstallUtil</strong>: wrap PowerShell in a .NET assembly and execute via InstallUtil.exe</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Bypass</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>PowerShell v2</td><td><code>powershell -version 2</code> uses the old engine without AMSI or CLM when .NET Framework 2.0 or 3.5 is installed</td></tr>
+<tr><td>Custom runspace</td><td>Create a C# application that hosts a PowerShell runspace in Full Language Mode</td></tr>
+<tr><td>MSBuild</td><td>Embed PowerShell commands in a <code>.csproj</code> file executed via <code>msbuild.exe</code></td></tr>
+<tr><td>InstallUtil</td><td>Wrap PowerShell in a .NET assembly and execute it via <code>InstallUtil.exe</code></td></tr>
+</tbody>
+</table>
 
 
 <h4 id="cape-living-off-the-land-and-clm-47eb3e-methodology">Methodology</h4>
