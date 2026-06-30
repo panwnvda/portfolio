@@ -4762,12 +4762,15 @@ secretsdump.py -k -no-pass dc01.corp.local</code></pre>
 </tbody>
 </table>
 <p>Enterprise CAs are domain-joined and publish templates to Active Directory. When a principal enrolls in a template, the CA issues a certificate based on the template's configuration. The critical EKUs for authentication abuse are:</p>
-<ul>
-<li><strong>Client Authentication</strong> (OID 1.3.6.1.5.5.7.3.2) allows the certificate holder to authenticate to services</li>
-<li><strong>Smart Card Logon</strong> (OID 1.3.6.1.4.1.311.20.2.2) enables certificate-based domain logon via PKINIT</li>
-<li><strong>Any Purpose</strong> (OID 2.5.29.37.0) permits the certificate for any use, including authentication</li>
-<li><strong>No EKU / SubCA</strong> certificates are unrestricted and can be used for any purpose</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>EKU</th><th>OID</th><th>Authentication Impact</th></tr></thead>
+<tbody>
+<tr><td>Client Authentication</td><td><code>1.3.6.1.5.5.7.3.2</code></td><td>Allows the certificate holder to authenticate to services</td></tr>
+<tr><td>Smart Card Logon</td><td><code>1.3.6.1.4.1.311.20.2.2</code></td><td>Enables certificate-based domain logon via PKINIT</td></tr>
+<tr><td>Any Purpose</td><td><code>2.5.29.37.0</code></td><td>Permits the certificate for any use, including authentication</td></tr>
+<tr><td>No EKU / SubCA</td><td>N/A</td><td>Leaves certificate usage unrestricted, allowing any purpose</td></tr>
+</tbody>
+</table>
 
 <h3 id="cape-adcs-enumeration-633f60">10.2 ADCS Enumeration</h3>
 <p>Identifying Enterprise CAs and vulnerable certificate templates is the first step. Several tools automate this process.</p>
