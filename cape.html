@@ -109,9 +109,9 @@
 <h2 id="cape-active-directory-ldap-a7b7fd">1. Active Directory LDAP</h2>
 <p>Active Directory stores its data in a hierarchical database accessed primarily through the Lightweight Directory Access Protocol (LDAP). Understanding LDAP query mechanics is essential for both enumeration and attack path discovery in AD environments.</p>
 
-<h3 id="cape-ldap-protocol-and-search-filters-dc2d96">1.2 LDAP Protocol and Search Filters</h3>
+<h3 id="cape-ldap-protocol-and-search-filters-dc2d96">1.1 LDAP Protocol and Search Filters</h3>
 <p>LDAP (Lightweight Directory Access Protocol) is the primary protocol for querying and modifying AD. It operates on TCP port 389 (cleartext) and port 636 (LDAPS/TLS). Global Catalog queries use ports 3268 and 3269.</p>
-<h4 id="cape-ldap-overview-e85e63">1.2.1 LDAP Overview</h4>
+<h4 id="cape-ldap-overview-e85e63">1.1.1 LDAP Overview</h4>
 <p>LDAP (Lightweight Directory Access Protocol) is the primary protocol for querying and modifying AD. It operates on TCP port 389 (cleartext) and port 636 (LDAPS/TLS). Global Catalog queries use ports 3268 and 3269.</p>
 
 <h5 id="cape-ldap-authentication-fd2418">LDAP Authentication</h5>
@@ -147,7 +147,7 @@ $searcher.PropertiesToLoad.Add("samaccountname") | Out-Null
 $searcher.PropertiesToLoad.Add("memberof") | Out-Null
 $searcher.FindAll()</code></pre>
 
-<h4 id="cape-active-directory-search-filters-powershe-6bfc0d">1.2.2 Active Directory Search Filters (PowerShell)</h4>
+<h4 id="cape-active-directory-search-filters-powershe-6bfc0d">1.1.2 Active Directory Search Filters (PowerShell)</h4>
 <p>The <code>Get-ADUser</code>, <code>Get-ADGroup</code>, and <code>Get-ADComputer</code> cmdlets from the ActiveDirectory module accept <code>-Filter</code> and <code>-LDAPFilter</code> parameters. The <code>-Filter</code> parameter uses PowerShell-style syntax while <code>-LDAPFilter</code> takes standard LDAP filter strings.</p>
 
 <h5 id="cape-powershell-filter-operators-c81920">PowerShell Filter Operators</h5>
@@ -201,7 +201,7 @@ Get-ADGroup -Filter {Name -like "*admin*"}</code></pre>
 <pre><code class="language-powershell"># Searching for a user with parentheses in the CN
 Get-ADUser -LDAPFilter "(cn=John \28IT\29)"</code></pre>
 
-<h4 id="cape-ldap-search-filters-6c9819">1.2.3 LDAP Search Filters</h4>
+<h4 id="cape-ldap-search-filters-6c9819">1.1.3 LDAP Search Filters</h4>
 <p>LDAP search filters follow a prefix notation defined in RFC 4515. Every filter is enclosed in parentheses and can combine simple assertions with boolean operators.</p>
 
 <h5 id="cape-ldap-filter-syntax-and-operators-9d00eb">LDAP Filter Syntax and Operators</h5>
@@ -238,7 +238,7 @@ Get-ADUser -LDAPFilter "(cn=John \28IT\29)"</code></pre>
 
 # Filter by GUID
 "(objectGUID=\a1\b2\c3...)"</code></pre>
-<p>The same character escaping rules from section 2.6.3 apply. Additionally, when querying from Linux with <code>ldapsearch</code>, special shell characters must be quoted or escaped.</p>
+<p>The same character escaping rules above apply. Additionally, when querying from Linux with <code>ldapsearch</code>, special shell characters must be quoted or escaped.</p>
 
 <h5 id="cape-matching-rule-oids-a64e04">Matching Rule OIDs</h5>
 <p>AD extends LDAP with extensible matching rules for bitwise and chain (recursive) operations:</p>
@@ -281,7 +281,7 @@ Get-ADUser -LDAPFilter "(cn=John \28IT\29)"</code></pre>
 # Computers with the TRUSTED_FOR_DELEGATION flag
 "(&amp;(objectCategory=computer)(userAccountControl:1.2.840.113556.1.4.803:=524288))"</code></pre>
 
-<h4 id="cape-recursive-match-and-search-scope-41b997">1.2.4 Recursive Match and Search Scope</h4>
+<h4 id="cape-recursive-match-and-search-scope-41b997">1.1.4 Recursive Match and Search Scope</h4>
 <p>AD frequently uses nested group memberships. A user may belong to "IT Staff," which is a member of "IT Admins," which is a member of "Domain Admins." Standard <code>memberOf</code> queries only return direct memberships. Recursive (transitive) matching resolves the full chain.</p>
 
 <h5 id="cape-recursive-match-nested-group-membership-7d3d7a">Recursive Match (Nested Group Membership)</h5>
@@ -314,10 +314,10 @@ Get-ADUser -Filter * -SearchBase "DC=corp,DC=local"
 # Check attributes of a single object (base scope)
 Get-ADObject -Identity "CN=Administrator,CN=Users,DC=corp,DC=local" -SearchScope Base -Properties *</code></pre>
 
-<h3 id="cape-enumerating-ad-with-built-in-tools-32647e">1.3 Enumerating AD with Built-in Tools</h3>
+<h3 id="cape-enumerating-ad-with-built-in-tools-32647e">1.2 Enumerating AD with Built-in Tools</h3>
 <p>Even without third-party tools, Windows provides several built-in methods for AD enumeration. These approaches generate less suspicious telemetry compared to offensive tooling.</p>
 
-<h4 id="cape-user-account-control-uac-attributes-5d7ac2">1.3.1 User-Account-Control (UAC) Attributes</h4>
+<h4 id="cape-user-account-control-uac-attributes-5d7ac2">1.2.1 User-Account-Control (UAC) Attributes</h4>
 <p>The <code>userAccountControl</code> attribute is a bitmask storing account flags. Key flags relevant to attacks:</p>
 <table class="custom-table">
 <thead><tr><th>Flag</th><th>Hex Value</th><th>Decimal</th><th>Meaning</th></tr></thead>
@@ -332,7 +332,7 @@ Get-ADObject -Identity "CN=Administrator,CN=Users,DC=corp,DC=local" -SearchScope
 </tbody>
 </table>
 
-<h4 id="cape-ds-tools-55d7f6">1.3.2 DS Tools</h4>
+<h4 id="cape-ds-tools-55d7f6">1.2.2 DS Tools</h4>
 <p>The <code>ds*</code> command-line tools are available on any domain-joined Windows machine:</p>
 <pre><code class="language-powershell"># dsquery: query AD for objects matching criteria
 dsquery user -inactive 4       # Users inactive for 4+ weeks
@@ -345,7 +345,7 @@ dsget user "CN=Administrator,CN=Users,DC=corp,DC=local" -memberof -expand
 # dsmod: modify AD objects (requires appropriate permissions)
 dsmod user "CN=TestUser,CN=Users,DC=corp,DC=local" -pwd NewPass123!</code></pre>
 
-<h4 id="cape-ad-powershell-module-c92069">1.3.3 AD PowerShell Module</h4>
+<h4 id="cape-ad-powershell-module-c92069">1.2.3 AD PowerShell Module</h4>
 <pre><code class="language-powershell"># Import the module
 Import-Module ActiveDirectory
 
@@ -361,7 +361,7 @@ Get-ADTrust -Filter *                      # Domain trusts
 Get-ADUser -Identity administrator -Properties *
 Get-ADUser -Filter {AdminCount -eq 1}      # Protected accounts</code></pre>
 
-<h4 id="cape-windows-management-instrumentation-wmi-5c9bec">1.3.4 Windows Management Instrumentation (WMI)</h4>
+<h4 id="cape-windows-management-instrumentation-wmi-5c9bec">1.2.4 Windows Management Instrumentation (WMI)</h4>
 <pre><code class="language-powershell"># WMI queries for system information
 Get-WmiObject -Class Win32_OperatingSystem | Select-Object Caption, Version, BuildNumber
 Get-WmiObject -Class Win32_ComputerSystem | Select-Object Domain, DomainRole
@@ -372,7 +372,7 @@ Get-WmiObject -Class Win32_Service -ComputerName DC01 | Where-Object { $_.StartN
 # CIM (modern replacement for WMI)
 Get-CimInstance -ClassName Win32_UserAccount -ComputerName DC01 | Select-Object Name, Disabled</code></pre>
 
-<h4 id="cape-ad-service-interfaces-adsi-8900f9">1.3.5 AD Service Interfaces (ADSI)</h4>
+<h4 id="cape-ad-service-interfaces-adsi-8900f9">1.2.5 AD Service Interfaces (ADSI)</h4>
 <p>ADSI provides low-level access to AD through COM objects. It works without the AD PowerShell module installed:</p>
 <pre><code class="language-powershell"># Connect to the domain root
 $domain = [ADSI]"LDAP://DC=corp,DC=local"
@@ -435,9 +435,9 @@ $searcher.Filter = "(objectClass=group)"
 $searcher.FindAll()</code></pre>
   </li>
 </ul>
-<h3 id="cape-ldap-enumeration-72f095">1.4 LDAP Enumeration</h3>
+<h3 id="cape-ldap-enumeration-72f095">1.3 LDAP Enumeration</h3>
 <p>LDAP anonymous bind allows unauthenticated queries to the directory. While Windows Server 2003 and later restrict anonymous LDAP by default, misconfigurations or legacy environments may still permit it. An anonymous bind always returns the rootDSE object, which reveals the domain naming context, supported LDAP controls, and domain functional level.</p>
-<h4 id="cape-ldap-anonymous-bind-24dd40">1.4.1 LDAP Anonymous Bind</h4>
+<h4 id="cape-ldap-anonymous-bind-24dd40">1.3.1 LDAP Anonymous Bind</h4>
 <p>LDAP anonymous bind allows unauthenticated queries to the directory. While Windows Server 2003 and later restrict anonymous LDAP by default, misconfigurations or legacy environments may still permit it. An anonymous bind always returns the rootDSE object, which reveals the domain naming context, supported LDAP controls, and domain functional level.</p>
 
 <h5 id="cape-checking-for-anonymous-bind-6c4331">Checking for Anonymous Bind</h5>
@@ -476,7 +476,7 @@ python3 windapsearch.py -d corp.local --dc-ip 10.10.10.10 -C
 python3 ldapsearch-ad.py -l 10.10.10.10 -d corp.local -t info
 python3 ldapsearch-ad.py -l 10.10.10.10 -d corp.local -t search -s "(objectClass=user)" sAMAccountName</code></pre>
 
-<h4 id="cape-credentialed-ldap-enumeration-ab648f">1.4.2 Credentialed LDAP Enumeration</h4>
+<h4 id="cape-credentialed-ldap-enumeration-ab648f">1.3.2 Credentialed LDAP Enumeration</h4>
 <p>With valid domain credentials, LDAP enumeration provides comprehensive access to AD objects. Credentialed queries return all user-readable attributes, enabling thorough attack surface mapping.</p>
 
 <h5 id="cape-credentialed-windapsearch-f5f14b">Credentialed windapsearch</h5>
@@ -7066,35 +7066,35 @@ execute-assembly /opt/tools/SharpSCCM.exe ; exec -p "C:\Windows\Temp\implant.exe
     </button>
     <div class="dropdown-container">
       <div class="nested-dropdown">
-        <button class="nested-dropdown-btn">1.2 LDAP Protocol and Search Filters
+        <button class="nested-dropdown-btn">1.1 LDAP Protocol and Search Filters
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#cape-ldap-overview-e85e63">1.2.1 LDAP Overview</a>
-          <a href="#cape-active-directory-search-filters-powershe-6bfc0d">1.2.2 Active Directory Search Filters (PowerShell)</a>
-          <a href="#cape-ldap-search-filters-6c9819">1.2.3 LDAP Search Filters</a>
-          <a href="#cape-recursive-match-and-search-scope-41b997">1.2.4 Recursive Match and Search Scope</a>
+          <a href="#cape-ldap-overview-e85e63">1.1.1 LDAP Overview</a>
+          <a href="#cape-active-directory-search-filters-powershe-6bfc0d">1.1.2 Active Directory Search Filters (PowerShell)</a>
+          <a href="#cape-ldap-search-filters-6c9819">1.1.3 LDAP Search Filters</a>
+          <a href="#cape-recursive-match-and-search-scope-41b997">1.1.4 Recursive Match and Search Scope</a>
         </div>
       </div>
       <div class="nested-dropdown">
-        <button class="nested-dropdown-btn">1.3 Enumerating AD with Built-in Tools
+        <button class="nested-dropdown-btn">1.2 Enumerating AD with Built-in Tools
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#cape-user-account-control-uac-attributes-5d7ac2">1.3.1 User-Account-Control (UAC) Attributes</a>
-          <a href="#cape-ds-tools-55d7f6">1.3.2 DS Tools</a>
-          <a href="#cape-ad-powershell-module-c92069">1.3.3 AD PowerShell Module</a>
-          <a href="#cape-windows-management-instrumentation-wmi-5c9bec">1.3.4 Windows Management Instrumentation (WMI)</a>
-          <a href="#cape-ad-service-interfaces-adsi-8900f9">1.3.5 AD Service Interfaces (ADSI)</a>
+          <a href="#cape-user-account-control-uac-attributes-5d7ac2">1.2.1 User-Account-Control (UAC) Attributes</a>
+          <a href="#cape-ds-tools-55d7f6">1.2.2 DS Tools</a>
+          <a href="#cape-ad-powershell-module-c92069">1.2.3 AD PowerShell Module</a>
+          <a href="#cape-windows-management-instrumentation-wmi-5c9bec">1.2.4 Windows Management Instrumentation (WMI)</a>
+          <a href="#cape-ad-service-interfaces-adsi-8900f9">1.2.5 AD Service Interfaces (ADSI)</a>
         </div>
       </div>
       <div class="nested-dropdown">
-        <button class="nested-dropdown-btn">1.4 LDAP Enumeration
+        <button class="nested-dropdown-btn">1.3 LDAP Enumeration
           <i class="bi bi-caret-down-fill"></i>
         </button>
         <div class="nested-dropdown-container">
-          <a href="#cape-ldap-anonymous-bind-24dd40">1.4.1 LDAP Anonymous Bind</a>
-          <a href="#cape-credentialed-ldap-enumeration-ab648f">1.4.2 Credentialed LDAP Enumeration</a>
+          <a href="#cape-ldap-anonymous-bind-24dd40">1.3.1 LDAP Anonymous Bind</a>
+          <a href="#cape-credentialed-ldap-enumeration-ab648f">1.3.2 Credentialed LDAP Enumeration</a>
         </div>
       </div>
     </div>
