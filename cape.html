@@ -105,17 +105,15 @@
         <div class="cheatsheet-content">
 
 <figure class="wide-mindmap" style="overflow-x:auto;"><img src="./img/cape/pentest-ad-mindmap.svg" style="width:100%;min-width:1200px;" alt="Orange Cyberdefense Active Directory Pentesting Mindmap (2025.03)"></figure>
-
 <h2 id="cape-active-directory-ldap-a7b7fd">1. Active Directory LDAP</h2>
-<p>Active Directory stores its data in a hierarchical database accessed primarily through the Lightweight Directory Access Protocol (LDAP). Understanding LDAP query mechanics is essential for both enumeration and attack path discovery in AD environments.</p>
+<p>Active Directory stores its data in a hierarchical database accessed through the Lightweight Directory Access Protocol (LDAP). LDAP query mechanics form the basis of AD enumeration and attack path discovery.</p>
 
 <h3 id="cape-ldap-protocol-and-search-filters-dc2d96">1.1 LDAP Protocol and Search Filters</h3>
-<p>LDAP (Lightweight Directory Access Protocol) is the primary protocol for querying and modifying AD. It operates on TCP port 389 (cleartext) and port 636 (LDAPS/TLS). Global Catalog queries use ports 3268 and 3269.</p>
+
 <h4 id="cape-ldap-overview-e85e63">1.1.1 LDAP Overview</h4>
 <p>LDAP (Lightweight Directory Access Protocol) is the primary protocol for querying and modifying AD. It operates on TCP port 389 (cleartext) and port 636 (LDAPS/TLS). Global Catalog queries use ports 3268 and 3269.</p>
 
 <h5 id="cape-ldap-authentication-fd2418">LDAP Authentication</h5>
-<p>LDAP supports several authentication mechanisms:</p>
 <table class="custom-table">
 <thead><tr><th>Method</th><th>Mechanism</th><th>Notes</th></tr></thead>
 <tbody>
@@ -132,13 +130,16 @@ ldapsearch -x -H ldap://dc01.corp.local -D "CN=user,CN=Users,DC=corp,DC=local" -
 ldapsearch -x -H ldaps://dc01.corp.local -D "user@corp.local" -w 'Password123' -b "DC=corp,DC=local"</code></pre>
 
 <h5 id="cape-ldap-queries-56f816">LDAP Queries</h5>
-<p>An LDAP query consists of several components:</p>
-<ul>
-<li><strong>Base DN</strong>: the starting point in the directory tree (e.g., <code>DC=corp,DC=local</code>)</li>
-<li><strong>Scope</strong>: how deep to search (Base, OneLevel, Subtree)</li>
-<li><strong>Filter</strong>: the search criteria (e.g., <code>(objectClass=user)</code>)</li>
-<li><strong>Attributes</strong>: which attributes to return (e.g., <code>sAMAccountName</code>, <code>memberOf</code>)</li>
-</ul>
+<p>Components of an LDAP query:</p>
+<table class="custom-table">
+<thead><tr><th>Component</th><th>Description</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td><strong>Base DN</strong></td><td>Starting point in the directory tree</td><td><code>DC=corp,DC=local</code></td></tr>
+<tr><td><strong>Scope</strong></td><td>How deep to search</td><td>Base, OneLevel, Subtree</td></tr>
+<tr><td><strong>Filter</strong></td><td>Search criteria</td><td><code>(objectClass=user)</code></td></tr>
+<tr><td><strong>Attributes</strong></td><td>Which attributes to return</td><td><code>sAMAccountName</code>, <code>memberOf</code></td></tr>
+</tbody>
+</table>
 <pre><code class="language-powershell"># PowerShell ADSI query
 $searcher = New-Object System.DirectoryServices.DirectorySearcher
 $searcher.SearchRoot = "LDAP://DC=corp,DC=local"
@@ -148,7 +149,7 @@ $searcher.PropertiesToLoad.Add("memberof") | Out-Null
 $searcher.FindAll()</code></pre>
 
 <h4 id="cape-active-directory-search-filters-powershe-6bfc0d">1.1.2 Active Directory Search Filters (PowerShell)</h4>
-<p>The <code>Get-ADUser</code>, <code>Get-ADGroup</code>, and <code>Get-ADComputer</code> cmdlets from the ActiveDirectory module accept <code>-Filter</code> and <code>-LDAPFilter</code> parameters. The <code>-Filter</code> parameter uses PowerShell-style syntax while <code>-LDAPFilter</code> takes standard LDAP filter strings.</p>
+<p>The ActiveDirectory module cmdlets (<code>Get-ADUser</code>, <code>Get-ADGroup</code>, <code>Get-ADComputer</code>) accept <code>-Filter</code> (PowerShell syntax) and <code>-LDAPFilter</code> (standard LDAP filter strings).</p>
 
 <h5 id="cape-powershell-filter-operators-c81920">PowerShell Filter Operators</h5>
 <table class="custom-table">
@@ -187,7 +188,7 @@ Get-ADComputer -Filter {Enabled -eq $false}
 Get-ADGroup -Filter {Name -like "*admin*"}</code></pre>
 
 <h5 id="cape-escaped-characters-in-filters-7b1ca9">Escaped Characters in Filters</h5>
-<p>Certain characters must be escaped in LDAP filter strings using their hex representation:</p>
+<p>Reserved characters in LDAP filters must be hex-escaped:</p>
 <table class="custom-table">
 <thead><tr><th>Character</th><th>Escape Sequence</th></tr></thead>
 <tbody>
@@ -202,10 +203,9 @@ Get-ADGroup -Filter {Name -like "*admin*"}</code></pre>
 Get-ADUser -LDAPFilter "(cn=John \28IT\29)"</code></pre>
 
 <h4 id="cape-ldap-search-filters-6c9819">1.1.3 LDAP Search Filters</h4>
-<p>LDAP search filters follow a prefix notation defined in RFC 4515. Every filter is enclosed in parentheses and can combine simple assertions with boolean operators.</p>
 
 <h5 id="cape-ldap-filter-syntax-and-operators-9d00eb">LDAP Filter Syntax and Operators</h5>
-<p>LDAP filters use prefix (Polish) notation. Operators precede their operands:</p>
+<p>LDAP filters use prefix (Polish) notation per RFC 4515. Operators precede their operands, and every filter is enclosed in parentheses:</p>
 <table class="custom-table">
 <thead><tr><th>Operator</th><th>Syntax</th><th>Example</th></tr></thead>
 <tbody>
@@ -221,7 +221,7 @@ Get-ADUser -LDAPFilter "(cn=John \28IT\29)"</code></pre>
 </table>
 
 <h5 id="cape-search-criteria-and-rules-d946e4">Search Criteria and Rules</h5>
-<p>Filters can be nested to arbitrary depth. Complex queries combine AND, OR, and NOT:</p>
+<p>Filters nest to arbitrary depth by combining AND, OR, and NOT:</p>
 <pre><code class="language-bash"># Find enabled users with an SPN set (Kerberoastable)
 "(&amp;(objectCategory=person)(objectClass=user)(servicePrincipalName=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))"
 
@@ -232,16 +232,16 @@ Get-ADUser -LDAPFilter "(cn=John \28IT\29)"</code></pre>
 "(&amp;(objectClass=user)(|(memberOf=CN=Domain Admins,CN=Users,DC=corp,DC=local)(memberOf=CN=Enterprise Admins,CN=Users,DC=corp,DC=local)))"</code></pre>
 
 <h5 id="cape-filter-types-item-types-and-escaped-char-860044">Filter Types, Item Types, and Escaped Characters</h5>
-<p>Filters operate on attribute types. AD attributes can be string, integer, boolean, DN, octet string, or generalized time. When filtering on binary attributes (like <code>objectSid</code> or <code>objectGUID</code>), values must be hex-escaped byte by byte:</p>
+<p>AD attributes can be string, integer, boolean, DN, octet string, or generalized time. Binary attributes (<code>objectSid</code>, <code>objectGUID</code>) must be hex-escaped byte by byte:</p>
 <pre><code class="language-bash"># Filter by SID (each byte escaped)
 "(objectSid=\01\05\00\00\00\00\00\05\15\00\00\00...)"
 
 # Filter by GUID
 "(objectGUID=\a1\b2\c3...)"</code></pre>
-<p>The same character escaping rules above apply. Additionally, when querying from Linux with <code>ldapsearch</code>, special shell characters must be quoted or escaped.</p>
+<p>When querying from Linux with <code>ldapsearch</code>, special shell characters must be quoted or escaped.</p>
 
 <h5 id="cape-matching-rule-oids-a64e04">Matching Rule OIDs</h5>
-<p>AD extends LDAP with extensible matching rules for bitwise and chain (recursive) operations:</p>
+<p>AD extends standard LDAP with extensible match rules for bitwise and recursive operations:</p>
 <table class="custom-table">
 <thead><tr><th>OID</th><th>Name</th><th>Use</th></tr></thead>
 <tbody>
@@ -282,10 +282,9 @@ Get-ADUser -LDAPFilter "(cn=John \28IT\29)"</code></pre>
 "(&amp;(objectCategory=computer)(userAccountControl:1.2.840.113556.1.4.803:=524288))"</code></pre>
 
 <h4 id="cape-recursive-match-and-search-scope-41b997">1.1.4 Recursive Match and Search Scope</h4>
-<p>AD frequently uses nested group memberships. A user may belong to "IT Staff," which is a member of "IT Admins," which is a member of "Domain Admins." Standard <code>memberOf</code> queries only return direct memberships. Recursive (transitive) matching resolves the full chain.</p>
 
 <h5 id="cape-recursive-match-nested-group-membership-7d3d7a">Recursive Match (Nested Group Membership)</h5>
-<p>The <code>LDAP_MATCHING_RULE_IN_CHAIN</code> OID (<code>1.2.840.113556.1.4.1941</code>) traverses nested group memberships:</p>
+<p>Standard <code>memberOf</code> queries only return direct memberships. The <code>LDAP_MATCHING_RULE_IN_CHAIN</code> OID (<code>1.2.840.113556.1.4.1941</code>) resolves the full transitive chain, so a user in "IT Staff" who inherits "Domain Admins" through nested groups is correctly returned:</p>
 <pre><code class="language-powershell"># PowerShell: find all users who are transitively members of Domain Admins
 Get-ADUser -LDAPFilter "(memberOf:1.2.840.113556.1.4.1941:=CN=Domain Admins,CN=Users,DC=corp,DC=local)"
 
@@ -296,7 +295,7 @@ ldapsearch -x -H ldap://dc01.corp.local -D "user@corp.local" -w 'Pass' -b "DC=co
   "(memberOf:1.2.840.113556.1.4.1941:=CN=Domain Admins,CN=Users,DC=corp,DC=local)" sAMAccountName</code></pre>
 
 <h5 id="cape-searchbase-and-searchscope-parameters-02e2e0">SearchBase and SearchScope Parameters</h5>
-<p>LDAP search scope controls the depth of the query from the base DN:</p>
+<p>Search scope controls how deep the query goes from the base DN:</p>
 <table class="custom-table">
 <thead><tr><th>Scope</th><th>Behavior</th><th>PowerShell Value</th></tr></thead>
 <tbody>
@@ -315,10 +314,10 @@ Get-ADUser -Filter * -SearchBase "DC=corp,DC=local"
 Get-ADObject -Identity "CN=Administrator,CN=Users,DC=corp,DC=local" -SearchScope Base -Properties *</code></pre>
 
 <h3 id="cape-enumerating-ad-with-built-in-tools-32647e">1.2 Enumerating AD with Built-in Tools</h3>
-<p>Even without third-party tools, Windows provides several built-in methods for AD enumeration. These approaches generate less suspicious telemetry compared to offensive tooling.</p>
+<p>Built-in Windows tools can enumerate AD without triggering the same detections as offensive tooling.</p>
 
 <h4 id="cape-user-account-control-uac-attributes-5d7ac2">1.2.1 User-Account-Control (UAC) Attributes</h4>
-<p>The <code>userAccountControl</code> attribute is a bitmask storing account flags. Key flags relevant to attacks:</p>
+<p>The <code>userAccountControl</code> attribute is a bitmask. Key flags for offensive use:</p>
 <table class="custom-table">
 <thead><tr><th>Flag</th><th>Hex Value</th><th>Decimal</th><th>Meaning</th></tr></thead>
 <tbody>
@@ -333,7 +332,7 @@ Get-ADObject -Identity "CN=Administrator,CN=Users,DC=corp,DC=local" -SearchScope
 </table>
 
 <h4 id="cape-ds-tools-55d7f6">1.2.2 DS Tools</h4>
-<p>The <code>ds*</code> command-line tools are available on any domain-joined Windows machine:</p>
+<p>The <code>ds*</code> command-line tools ship with any domain-joined Windows machine:</p>
 <pre><code class="language-powershell"># dsquery: query AD for objects matching criteria
 dsquery user -inactive 4       # Users inactive for 4+ weeks
 dsquery computer -stalepwd 90  # Computers with stale passwords
@@ -373,7 +372,7 @@ Get-WmiObject -Class Win32_Service -ComputerName DC01 | Where-Object { $_.StartN
 Get-CimInstance -ClassName Win32_UserAccount -ComputerName DC01 | Select-Object Name, Disabled</code></pre>
 
 <h4 id="cape-ad-service-interfaces-adsi-8900f9">1.2.5 AD Service Interfaces (ADSI)</h4>
-<p>ADSI provides low-level access to AD through COM objects. It works without the AD PowerShell module installed:</p>
+<p>ADSI provides low-level AD access through COM objects and works without the AD PowerShell module:</p>
 <pre><code class="language-powershell"># Connect to the domain root
 $domain = [ADSI]"LDAP://DC=corp,DC=local"
 $domain.distinguishedName
@@ -401,14 +400,14 @@ $searcher.FindAll()</code></pre>
 
 <h4 id="cape-enumerating-ad-with-built-in-tools-32647e-methodology">Methodology</h4>
 <ul class="methodology-checklist">
-  <li><input type="checkbox" data-id="cape-1-3-0"> Query inactive users and stale computer accounts with dsquery:
+  <li><input type="checkbox" data-id="cape-1-3-0"> Find inactive users and stale computer accounts:
     <pre><code class="language-powershell">dsquery user -inactive 4
 dsquery computer -stalepwd 90</code></pre>
   </li>
-  <li><input type="checkbox" data-id="cape-1-3-1"> Enumerate accounts with SPNs (Kerberoastable) via dsquery:
+  <li><input type="checkbox" data-id="cape-1-3-1"> Find accounts with SPNs (Kerberoastable) via dsquery:
     <pre><code class="language-powershell">dsquery * -filter "(servicePrincipalName=*)" -attr sAMAccountName servicePrincipalName</code></pre>
   </li>
-  <li><input type="checkbox" data-id="cape-1-3-2"> Enumerate domain info, users, groups, trusts, and protected accounts with the AD PowerShell module:
+  <li><input type="checkbox" data-id="cape-1-3-2"> Pull domain info, trusts, and protected accounts via the AD module:
     <pre><code class="language-powershell">Import-Module ActiveDirectory
 Get-ADDomain
 Get-ADForest
@@ -416,11 +415,11 @@ Get-ADUser -Filter {AdminCount -eq 1}
 Get-ADComputer -Filter * -Properties OperatingSystem | Select-Object Name, OperatingSystem
 Get-ADTrust -Filter *</code></pre>
   </li>
-  <li><input type="checkbox" data-id="cape-1-3-3"> Query remote systems via WMI/CIM for services running under privileged accounts:
+  <li><input type="checkbox" data-id="cape-1-3-3"> Check remote services running under privileged accounts via WMI/CIM:
     <pre><code class="language-powershell">Get-WmiObject -Class Win32_Service -ComputerName DC01 | Where-Object { $_.StartName -like "*admin*" }
 Get-CimInstance -ClassName Win32_UserAccount -ComputerName DC01 | Select-Object Name, Disabled</code></pre>
   </li>
-  <li><input type="checkbox" data-id="cape-1-3-4"> Use ADSI DirectorySearcher to enumerate users without the AD module installed:
+  <li><input type="checkbox" data-id="cape-1-3-4"> Enumerate users via ADSI when the AD module is unavailable:
     <pre><code class="language-powershell">$domain = [ADSI]"LDAP://DC=corp,DC=local"
 $searcher = New-Object System.DirectoryServices.DirectorySearcher($domain)
 $searcher.Filter = "(&(objectCategory=person)(objectClass=user))"
@@ -428,7 +427,7 @@ $searcher.PropertiesToLoad.AddRange(@("samaccountname","memberof","description")
 $results = $searcher.FindAll()
 foreach ($r in $results) { $r.Properties["samaccountname"] }</code></pre>
   </li>
-  <li><input type="checkbox" data-id="cape-1-3-5"> Connect via ADSI with alternate credentials for cross-domain or stealth enumeration:
+  <li><input type="checkbox" data-id="cape-1-3-5"> ADSI with alternate credentials for cross-domain queries:
     <pre><code class="language-powershell">$entry = New-Object System.DirectoryServices.DirectoryEntry("LDAP://DC=corp,DC=local", "corp\user", "Password123")
 $searcher = New-Object System.DirectoryServices.DirectorySearcher($entry)
 $searcher.Filter = "(objectClass=group)"
@@ -436,9 +435,9 @@ $searcher.FindAll()</code></pre>
   </li>
 </ul>
 <h3 id="cape-ldap-enumeration-72f095">1.3 LDAP Enumeration</h3>
-<p>LDAP anonymous bind allows unauthenticated queries to the directory. While Windows Server 2003 and later restrict anonymous LDAP by default, misconfigurations or legacy environments may still permit it. An anonymous bind always returns the rootDSE object, which reveals the domain naming context, supported LDAP controls, and domain functional level.</p>
+
 <h4 id="cape-ldap-anonymous-bind-24dd40">1.3.1 LDAP Anonymous Bind</h4>
-<p>LDAP anonymous bind allows unauthenticated queries to the directory. While Windows Server 2003 and later restrict anonymous LDAP by default, misconfigurations or legacy environments may still permit it. An anonymous bind always returns the rootDSE object, which reveals the domain naming context, supported LDAP controls, and domain functional level.</p>
+<p>Windows Server 2003+ restricts anonymous LDAP by default, but misconfigurations or legacy environments may still permit it. An anonymous bind always returns the rootDSE, which reveals the domain naming context, supported controls, and functional level.</p>
 
 <h5 id="cape-checking-for-anonymous-bind-6c4331">Checking for Anonymous Bind</h5>
 <pre><code class="language-bash"># Quick check: query rootDSE anonymously (always works)
@@ -477,7 +476,7 @@ python3 ldapsearch-ad.py -l 10.10.10.10 -d corp.local -t info
 python3 ldapsearch-ad.py -l 10.10.10.10 -d corp.local -t search -s "(objectClass=user)" sAMAccountName</code></pre>
 
 <h4 id="cape-credentialed-ldap-enumeration-ab648f">1.3.2 Credentialed LDAP Enumeration</h4>
-<p>With valid domain credentials, LDAP enumeration provides comprehensive access to AD objects. Credentialed queries return all user-readable attributes, enabling thorough attack surface mapping.</p>
+<p>With valid domain credentials, LDAP queries return all user-readable attributes across the domain.</p>
 
 <h5 id="cape-credentialed-windapsearch-f5f14b">Credentialed windapsearch</h5>
 <pre><code class="language-bash"># Enumerate all domain users
@@ -524,31 +523,60 @@ ldapsearch -x -H ldap://10.10.10.10 -D "user@corp.local" -w 'Password123' -b "DC
 
 <h4 id="cape-ldap-enumeration-72f095-methodology">Methodology</h4>
 <ul class="methodology-checklist">
-  <li><input type="checkbox" data-id="cape-1-4-0"> Probe rootDSE for naming contexts and domain functional level (always works anonymously):
+  <li><input type="checkbox" data-id="cape-1-4-0"> Query rootDSE for naming contexts and functional level (always works anonymously):
     <pre><code class="language-bash">ldapsearch -x -H ldap://dc01.corp.local -s base -b "" "(objectClass=*)" namingContexts defaultNamingContext
 ldapsearch -x -H ldap://10.10.10.10 -s base -b "" domainFunctionality</code></pre>
   </li>
-  <li><input type="checkbox" data-id="cape-1-4-1"> Test for anonymous bind misconfiguration by querying domain users and groups:
+  <li><input type="checkbox" data-id="cape-1-4-1"> Test anonymous bind by querying users and groups:
     <pre><code class="language-bash">ldapsearch -x -H ldap://10.10.10.10 -b "DC=corp,DC=local" "(&(objectClass=user)(objectCategory=person))" sAMAccountName description memberOf
 ldapsearch -x -H ldap://10.10.10.10 -b "DC=corp,DC=local" "(objectClass=group)" cn member</code></pre>
   </li>
-  <li><input type="checkbox" data-id="cape-1-4-2"> Run windapsearch anonymous enumeration for users, groups, and computers:
+  <li><input type="checkbox" data-id="cape-1-4-2"> windapsearch anonymous enumeration:
     <pre><code class="language-bash">python3 windapsearch.py -d corp.local --dc-ip 10.10.10.10 -U
 python3 windapsearch.py -d corp.local --dc-ip 10.10.10.10 -G
 python3 windapsearch.py -d corp.local --dc-ip 10.10.10.10 -C</code></pre>
   </li>
-  <li><input type="checkbox" data-id="cape-1-4-3"> With valid credentials, enumerate domain admins, Kerberoastable accounts, and unconstrained delegation:
+  <li><input type="checkbox" data-id="cape-1-4-3"> Credentialed windapsearch for DAs, Kerberoastable accounts, and unconstrained delegation:
     <pre><code class="language-bash">python3 windapsearch.py -d corp.local --dc-ip 10.10.10.10 -u "user@corp.local" -p "Password123" --da
 python3 windapsearch.py -d corp.local --dc-ip 10.10.10.10 -u "user@corp.local" -p "Password123" -U --attrs sAMAccountName,servicePrincipalName --filter "(servicePrincipalName=*)"
 python3 windapsearch.py -d corp.local --dc-ip 10.10.10.10 -u "user@corp.local" -p "Password123" --unconstrained-users
 python3 windapsearch.py -d corp.local --dc-ip 10.10.10.10 -u "user@corp.local" -p "Password123" --unconstrained-computers</code></pre>
   </li>
-  <li><input type="checkbox" data-id="cape-1-4-4"> Use ldapsearch-ad.py to dump password policy, Kerberoastable accounts, and AS-REP Roastable accounts:
+  <li><input type="checkbox" data-id="cape-1-4-4"> ldapsearch-ad.py for password policy, Kerberoastable, and AS-REP Roastable accounts:
     <pre><code class="language-bash">python3 ldapsearch-ad.py -l 10.10.10.10 -d corp.local -u user -p Password123 -t pass-pol
 python3 ldapsearch-ad.py -l 10.10.10.10 -d corp.local -u user -p Password123 -t kerberoast
 python3 ldapsearch-ad.py -l 10.10.10.10 -d corp.local -u user -p Password123 -t asreproast</code></pre>
   </li>
-  <li><input type="checkbox" data-id="cape-1-4-5"> Perform a full credentialed LDAP dump of key user attributes:
+  <li><input type="checkbox" data-id="cape-1-4-5"> Raw LDAP filter for Kerberoastable accounts (enabled users with SPN):
+    <pre><code class="language-bash">ldapsearch -x -H ldap://10.10.10.10 -D "user@corp.local" -w 'Password123' -b "DC=corp,DC=local" \
+  "(&(objectCategory=person)(objectClass=user)(servicePrincipalName=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))" \
+  sAMAccountName servicePrincipalName memberOf</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-1-4-6"> Raw LDAP filter for AS-REP Roastable accounts (DONT_REQ_PREAUTH 0x400000):
+    <pre><code class="language-bash">ldapsearch -x -H ldap://10.10.10.10 -D "user@corp.local" -w 'Password123' -b "DC=corp,DC=local" \
+  "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=4194304))" \
+  sAMAccountName userAccountControl</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-1-4-7"> Raw LDAP filter for unconstrained delegation (excluding DCs):
+    <pre><code class="language-bash">ldapsearch -x -H ldap://10.10.10.10 -D "user@corp.local" -w 'Password123' -b "DC=corp,DC=local" \
+  "(&(userAccountControl:1.2.840.113556.1.4.803:=524288)(!(userAccountControl:1.2.840.113556.1.4.803:=8192)))" \
+  sAMAccountName dNSHostName</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-1-4-8"> Raw LDAP filter for constrained delegation targets:
+    <pre><code class="language-bash">ldapsearch -x -H ldap://10.10.10.10 -D "user@corp.local" -w 'Password123' -b "DC=corp,DC=local" \
+  "(&(objectClass=user)(msDS-AllowedToDelegateTo=*))" \
+  sAMAccountName msDS-AllowedToDelegateTo</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-1-4-9"> Raw LDAP filter for PASSWD_NOTREQD and adminCount=1 accounts:
+    <pre><code class="language-bash">ldapsearch -x -H ldap://10.10.10.10 -D "user@corp.local" -w 'Password123' -b "DC=corp,DC=local" \
+  "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=32))" \
+  sAMAccountName userAccountControl
+
+ldapsearch -x -H ldap://10.10.10.10 -D "user@corp.local" -w 'Password123' -b "DC=corp,DC=local" \
+  "(&(objectCategory=person)(objectClass=user)(adminCount=1))" \
+  sAMAccountName memberOf</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-1-4-10"> Full credentialed LDAP dump of user attributes:
     <pre><code class="language-bash">ldapsearch -x -H ldap://10.10.10.10 -D "user@corp.local" -w 'Password123' -b "DC=corp,DC=local" \
   "(&(objectCategory=person)(objectClass=user))" sAMAccountName userAccountControl memberOf \
   servicePrincipalName pwdLastSet description adminCount</code></pre>
