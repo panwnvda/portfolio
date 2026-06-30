@@ -434,10 +434,13 @@ while (*name) {
 
           <h4>The Two-Layer Strategy</h4>
           <p>Sliver&rsquo;s Go runtime sleeps via two paths:</p>
-          <ul>
-            <li><strong>Path 1</strong>: User code <code>time.Sleep(30*time.Second)</code> &rarr; <code>runtime.usleep</code> &rarr; <code>kernel32!Sleep</code></li>
-            <li><strong>Path 2</strong>: Go scheduler internal timer &rarr; <code>NtWaitForSingleObject</code> directly</li>
-          </ul>
+          <table class="custom-table">
+            <thead><tr><th>Path</th><th>Execution Flow</th></tr></thead>
+            <tbody>
+              <tr><td>Path 1</td><td>User code <code>time.Sleep(30*time.Second)</code> &rarr; <code>runtime.usleep</code> &rarr; <code>kernel32!Sleep</code></td></tr>
+              <tr><td>Path 2</td><td>Go scheduler internal timer &rarr; <code>NtWaitForSingleObject</code> directly</td></tr>
+            </tbody>
+          </table>
           <p>SleepKit installs a 12-byte JMP hook on <code>kernel32!Sleep</code> to catch Path 1, and runs a timer goroutine that masks on a fixed schedule to catch Path 2.</p>
 
           <h4>Timer Goroutine</h4>

