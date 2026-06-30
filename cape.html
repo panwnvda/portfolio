@@ -6822,12 +6822,15 @@ C:\Windows\Microsoft.NET\Framework64\v4.0.30319\InstallUtil.exe /logfile= /LogTo
 <p>Microsoft SQL Server integrates tightly with Active Directory. SQL instances run under service accounts (often domain accounts) and support Windows Authentication via Kerberos. Key concepts:</p>
 <h4 id="cape-introduction-to-mssql-server-948e4a">14.1.1 Introduction to MSSQL Server</h4>
 <p>Microsoft SQL Server integrates tightly with Active Directory. SQL instances run under service accounts (often domain accounts) and support Windows Authentication via Kerberos. Key concepts:</p>
-<ul>
-<li><strong>Windows Authentication</strong>: uses the caller's Kerberos/NTLM identity; no separate SQL credentials</li>
-<li><strong>Mixed Mode</strong>: supports both Windows and SQL authentication (sa account)</li>
-<li><strong>Server roles</strong>: sysadmin (full control), securityadmin, serveradmin, dbcreator, etc.</li>
-<li><strong>Database roles</strong>: db_owner, db_datareader, db_datawriter per database</li>
-</ul>
+<table class="custom-table">
+<thead><tr><th>Concept</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Windows Authentication</td><td>Uses the caller's Kerberos or NTLM identity without separate SQL credentials</td></tr>
+<tr><td>Mixed Mode</td><td>Supports both Windows authentication and SQL authentication, including the <code>sa</code> account</td></tr>
+<tr><td>Server roles</td><td>Instance-level roles such as <code>sysadmin</code> for full control, <code>securityadmin</code>, <code>serveradmin</code>, and <code>dbcreator</code></td></tr>
+<tr><td>Database roles</td><td>Per-database roles such as <code>db_owner</code>, <code>db_datareader</code>, and <code>db_datawriter</code></td></tr>
+</tbody>
+</table>
 <pre><code class="language-bash"># Discover MSSQL instances on the network
 proxychains -q impacket-mssqlclient -windows-auth CORP/user:password@10.10.10.20
 # Or scan for port 1433
