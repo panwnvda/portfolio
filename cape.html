@@ -109,7 +109,7 @@
 <p>Active Directory stores its data in a hierarchical database accessed through the Lightweight Directory Access Protocol (LDAP). LDAP query mechanics form the basis of AD enumeration and attack path discovery.</p>
 
 <h3 id="cape-ldap-protocol-and-search-filters-dc2d96">1.1 LDAP Protocol and Search Filters</h3>
-<p>This section covers how LDAP binds, query scopes, filters, matching rules, and escaping work in Active Directory. These mechanics are the foundation for precise user, group, computer, delegation, and privilege-path enumeration.</p>
+<p>LDAP binds, query scopes, filters, matching rules, and escaping define how Active Directory queries behave. These mechanics are the foundation for precise user, group, computer, delegation, and privilege-path enumeration.</p>
 
 <h4 id="cape-ldap-overview-e85e63">1.1.1 LDAP Overview</h4>
 <p>LDAP (Lightweight Directory Access Protocol) is the primary protocol for querying and modifying AD. It operates on TCP port 389 (cleartext) and port 636 (LDAPS/TLS). Global Catalog queries use ports 3268 and 3269.</p>
@@ -3541,7 +3541,7 @@ kerbrute bruteuser --dc DC01.corp.local -d corp.local passwords.txt jsmith</code
   </li>
 </ul>
 <h2 id="cape-dacl-attacks-i-4a73c6">7. DACL Attacks I</h2>
-<p>Discretionary Access Control Lists (DACLs) define who can access Active Directory objects and what operations they can perform. Misconfigured DACLs are a common source of privilege escalation paths in AD environments. This module covers the fundamentals of ACL-based attacks, enumeration, and exploitation.</p>
+<p>Discretionary Access Control Lists (DACLs) define who can access Active Directory objects and what operations they can perform. Misconfigured DACLs are a common source of privilege escalation paths in AD environments. ACL-based attacks rely on understanding object permissions, enumerating exploitable rights, and converting those rights into privilege escalation paths.</p>
 
 <h3 id="cape-dacl-fundamentals-c3a50d">7.1 DACL Fundamentals</h3>
 <p>Every securable object in Active Directory (users, groups, computers, OUs, GPOs) has a <strong>Security Descriptor</strong> containing:</p>
@@ -4286,7 +4286,7 @@ python3 pygpoabuse.py corp.local/attacker:'Password123' -gpo-id "AB12CD34-EF56-7
 </ul>
 
 <h2 id="cape-ntlm-relay-attacks-daff51">9. NTLM Relay Attacks</h2>
-<p>NTLM relay attacks intercept an NTLM authentication attempt and forward it to a different service, allowing the attacker to act as the victim on that service. Unlike hash capture (where the attacker cracks the hash offline), relay attacks use the live authentication session and do not require knowing the victim's password. This module covers the NTLM protocol, relay mechanics, poisoning techniques, and advanced relay scenarios including cross-protocol attacks.</p>
+<p>NTLM relay attacks intercept an NTLM authentication attempt and forward it to a different service, allowing the attacker to act as the victim on that service. Unlike hash capture, where the attacker cracks the hash offline, relay attacks use the live authentication session and do not require knowing the victim's password. Effective relay operations depend on NTLM protocol behavior, relay mechanics, poisoning techniques, and cross-protocol attack paths.</p>
 
 <h3 id="cape-ntlm-authentication-protocol-39322f">9.1 NTLM Authentication Protocol</h3>
 <p>NTLM (NT LAN Manager) is a challenge-response authentication protocol used when Kerberos is unavailable (e.g., when the target is specified by IP address rather than hostname, or when no Active Directory trust path exists). NTLM operates in three message exchanges:</p>
@@ -5630,7 +5630,7 @@ Get-ADObject -SearchBase "CN=Shadow Principal Configuration,CN=Services,CN=Confi
 </table>
 
 <h2 id="cape-c2-operations-with-sliver-c2efe7">12. C2 Operations with Sliver</h2>
-<p>Command and Control (C2) frameworks provide the infrastructure for managing implants on compromised hosts. This module covers Sliver, an open-source C2 framework developed by BishopFox, purpose-built for adversary simulation and red team operations.</p>
+<p>Command and Control (C2) frameworks provide the infrastructure for managing implants on compromised hosts. Sliver is an open-source C2 framework developed by BishopFox and purpose-built for adversary simulation and red team operations.</p>
 
 <h3 id="cape-sliver-overview-and-setup-dae508">12.1 Sliver Overview and Setup</h3>
 <p>A C2 framework coordinates post-exploitation activity across compromised hosts. It provides encrypted communications, task management, and operational tooling from a central server. Sliver is written in Go and generates cross-platform implants with support for multiple communication protocols.</p>
@@ -6246,7 +6246,7 @@ execute -o dir \\\\DC01.corp.local\\C$</code></pre>
 </table>
 
 <h2 id="cape-windows-evasion-techniques-62c0f3">13. Windows Evasion Techniques</h2>
-<p>Modern Windows environments deploy multiple layers of security controls. This module covers techniques for evading antivirus, application whitelisting, and other endpoint protections during Active Directory engagements.</p>
+<p>Modern Windows environments deploy multiple layers of security controls. Evasion work focuses on antivirus detection, application whitelisting, and other endpoint protections encountered during Active Directory engagements.</p>
 
 <h3 id="cape-defender-and-detection-mechanisms-d5b260">13.1 Defender and Detection Mechanisms</h3>
 <p>Microsoft Defender is the built-in antivirus solution on Windows 10 and later. It combines signature-based detection, behavioral monitoring, and cloud-delivered protection to identify malicious activity.</p>

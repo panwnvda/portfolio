@@ -1649,7 +1649,7 @@ crackmapexec smb [target-ip] -u [user] -p [password] -d [domain]</code></pre>
 
 <h2 id="client-side-jscript">5. Client-Side Code Execution with JScript</h2>
 
-<p>JScript is Microsoft's dialect of JavaScript executed outside the browser through the Windows Script Host (WSH). Because it runs outside the browser sandbox, it bypasses all browser security restrictions and can interact with ActiveX and Win32 APIs — making it a highly effective client-side phishing vector. Real-world malware families including TrickBot and Emotet have used JScript-based droppers. This section covers building JScript droppers from basic execution through fully in-memory shellcode runners backed by C# and Sliver C2.</p>
+<p>JScript is Microsoft's dialect of JavaScript executed outside the browser through the Windows Script Host (WSH). Because it runs outside the browser sandbox, it bypasses all browser security restrictions and can interact with ActiveX and Win32 APIs — making it a highly effective client-side phishing vector. Real-world malware families including TrickBot and Emotet have used JScript-based droppers. JScript droppers can progress from basic execution to fully in-memory shellcode runners backed by C# and Sliver C2.</p>
 
 <h3 id="jscript-windows-execution">5.1 JScript Execution on Windows</h3>
 
@@ -7817,7 +7817,7 @@ klist</code></pre>
 
 <h2 id="mssql-attacks">18. Microsoft SQL Attacks</h2>
 
-<p>Microsoft SQL Server (MSSQL) is pervasive across enterprise environments and deeply integrated with Active Directory. Because SQL servers frequently run as privileged service accounts and link to one another, a single foothold at the public role can escalate to OS-level code execution on multiple hosts. This section covers the full attack chain: AD enumeration, authentication, UNC path injection, hash relay, privilege escalation through impersonation, code execution via stored procedures and custom CLR assemblies, and lateral movement through linked SQL servers — all driven by Sliver C2 tooling.</p>
+<p>Microsoft SQL Server (MSSQL) is pervasive across enterprise environments and deeply integrated with Active Directory. Because SQL servers frequently run as privileged service accounts and link to one another, a single foothold at the public role can escalate to OS-level code execution on multiple hosts. The attack chain includes AD enumeration, authentication, UNC path injection, hash relay, privilege escalation through impersonation, code execution via stored procedures and custom CLR assemblies, and lateral movement through linked SQL servers — all driven by Sliver C2 tooling.</p>
 
 <h3 id="mssql-ad-enumeration">18.1 MSSQL in Active Directory — Enumeration</h3>
 
