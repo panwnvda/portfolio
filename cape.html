@@ -309,7 +309,6 @@ rpcclient $&gt; querydispinfo</code></pre>
 <h2 id="cape-powerview-2">2. Active Directory PowerView</h2>
 <p>PowerView is the PowerShell recon module bundled with PowerSploit. It has been formally deprecated for a few years now, but nothing in the wider tooling stack covers the same ground as cleanly: LDAP-backed queries, ACL analysis, and delegation checks in one script that runs anywhere a domain user has a shell. Reading its cmdlets is also one of the fastest ways to internalise what raw LDAP filters look like under the hood.</p>
 <p>Two properties keep it useful on real engagements. Loaded through <code>IEX</code>, it never touches disk. And every cmdlet returns objects rather than strings, which means results feed straight into <code>Select</code>, <code>Where</code>, and <code>Export-Csv</code> without any parsing gymnastics.</p>
-<p style="text-align:center;"><img src="./img/cape/pentest-ad-mindmap.svg" alt="Active Directory penetration testing mindmap" style="max-width:85%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-powerview-importing">2.1 Importing PowerView</h3>
 <p>Import the module locally after transferring it to disk:</p>
