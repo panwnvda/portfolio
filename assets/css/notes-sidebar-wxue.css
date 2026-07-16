@@ -1,0 +1,77 @@
+/* ============================================================
+   notes-sidebar-wxue.css
+   Overrides for the notes page:
+   - Cancels the 300px left offset notes-style.css reserved
+     for a sidebar (page has no sidebar).
+   - Hides the top grey breadcrumb bar.
+   - Paints wxue.com's live "ancient Chinese" theme in equal
+     gutters on the left AND right of the notes — same width as
+     the old sidebar footprint, mirrored on the right side.
+   Load AFTER notes-style.css so these rules win the cascade.
+   ============================================================ */
+
+/* ---------- Sidebar-driven offsets (page has no sidebar) ---------- */
+#main {
+  margin-left: 0 !important;
+  margin-top: 0 !important;
+}
+#hero {
+  margin-left: 0 !important;
+  width: 100% !important;
+}
+
+/* Belt-and-braces: no visible sidebar chrome */
+#header,
+.menu-trigger,
+.menu-backdrop { display: none !important; }
+
+/* ---------- Kill the top grey breadcrumb bar ---------- */
+#breadcrumbs,
+.breadcrumbs { display: none !important; }
+
+/* ---------- Site-theme side gutters ---------- */
+/* wxue.com's live palette: deep ink brown (#1a1210) with subtle
+   cinnabar + imperial gold radial glows. Paints the empty
+   gutters on both sides of the notes. */
+html {
+  background-color: #1a1210;
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(139, 32, 32, 0.08), transparent 42%),
+    radial-gradient(circle at 82% 78%, rgba(212, 164, 65, 0.06), transparent 46%);
+  background-attachment: fixed, fixed;
+  background-size: cover, cover;
+}
+body { background: transparent !important; }
+
+/* Notes section transparent so the html theme paints the gutters. */
+.cheatsheet-section {
+  background: transparent !important;
+}
+
+/* Notes container: equal ~300px gutters on both sides (matches
+   the old sidebar footprint on the left, mirrored on the right).
+   Nothing in the gutters — just site background. */
+.cheatsheet-container,
+.container.cheatsheet-container {
+  max-width: none !important;
+  margin-left: 300px !important;
+  margin-right: 300px !important;
+  width: auto !important;
+}
+
+/* Responsive: shrink the gutters on narrower viewports so the
+   notes stay readable. */
+@media (max-width: 1200px) {
+  .cheatsheet-container,
+  .container.cheatsheet-container {
+    margin-left: 40px !important;
+    margin-right: 40px !important;
+  }
+}
+@media (max-width: 768px) {
+  .cheatsheet-container,
+  .container.cheatsheet-container {
+    margin-left: 16px !important;
+    margin-right: 16px !important;
+  }
+}

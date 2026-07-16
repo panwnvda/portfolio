@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" rx="8" fill="#a02020"/>
+  <rect x="4" y="4" width="92" height="92" rx="6" fill="none" stroke="#d4af37" stroke-width="2.5"/>
+  <text x="50" y="72" text-anchor="middle"
+        font-family="Ma Shan Zheng, STKaiti, KaiTi, 'Noto Serif SC', serif"
+        font-size="66" font-weight="700" fill="#f0c060">成</text>
+</svg>

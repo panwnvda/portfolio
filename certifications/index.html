@@ -1,0 +1,488 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.19.2 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Certifications - Wencheng Xue</title>
+<meta name="description" content="Red Team Operations, Adversary Simulation &amp; Offensive Security Research. ">
+
+
+  <meta name="author" content="Wencheng Xue">
+
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Wencheng Xue">
+<meta property="og:title" content="Certifications">
+<meta property="og:url" content="https://zeyadazima.com/certifications/">
+
+
+  <meta property="og:description" content="Red Team Operations, Adversary Simulation &amp; Offensive Security Research. ">
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="https://zeyadazima.com/certifications/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Wencheng Xue",
+      "url": "https://zeyadazima.com/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Wencheng Xue Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/wxue-theme.css?v=37">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- end custom head snippets -->
+
+<!-- favicon -->
+<link rel="icon" type="image/svg+xml" href="/assets/images/site_data/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/site_data/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/images/site_data/favicon-16x16.png">
+<meta name="theme-color" content="#0e0a1f">
+
+    <style>
+    /* Two-icon action row on cert cards — carries the draft's cert-notes pattern. */
+    .cert-card__actions {
+      margin-top: auto;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 14px;
+      padding-top: 0.4rem;
+    }
+    .cert-card__actions a {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 30px; height: 30px; border-radius: 6px;
+      color: #ffffff; text-decoration: none;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    }
+    .cert-card__actions a i { font-size: 1.02rem; }
+    .cert-card__actions a:hover:not([aria-disabled="true"]) {
+      background: rgba(212, 175, 55, 0.22); color: #f5d46f; transform: translateY(-1px);
+    }
+    .cert-card__actions a[aria-disabled="true"] {
+      opacity: 0.32; cursor: not-allowed; pointer-events: none;
+    }
+    .cert-card__verify { display: none !important; }
+  </style>
+</head>
+
+  <body class="layout--archive">
+<div class="cny-lanterns" aria-hidden="true">
+  <img class="cny-lantern cny-lantern--left" src="/assets/images/site_data/chinese-lantern.svg" alt="">
+  <img class="cny-lantern cny-lantern--right" src="/assets/images/site_data/chinese-lantern.svg" alt="">
+</div>
+<nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    <canvas id="arcade-bg-canvas"></canvas>
+<div id="arcade-scanlines"></div>
+<div id="arcade-cursor" aria-hidden="true"></div>
+<div id="arcade-cursor-dot" aria-hidden="true"></div>
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+          <a class="site-logo" href="/"><span class="site-logo-cn" lang="zh-Hans" role="img" aria-label="Wencheng (文成)">文成</span></a>
+        
+        <a class="site-title" href="/">
+          Wencheng Xue
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/certifications/">Certifications</a>
+            </li><li class="masthead__menu-item">
+              <a href="/disclosures/">Disclosures</a>
+            </li><li class="masthead__menu-item">
+              <a href="/projects/">Projects</a>
+            </li><li class="masthead__menu-item">
+              <a href="/writeups/">Writeups</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/site_data/avatar.jpg" alt="Wencheng Xue" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Wencheng Xue</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p><span class="typed" data-typed-items="Student, Red Team Operator, Vulnerability Researcher"></span></p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="mailto:xuewencheng156@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+            <li><a href="https://www.linkedin.com/in/wencheng-xue-5aa52631b/" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span class="label">LinkedIn</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/panwnvda?tab=repositories" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <div class="archive">
+    <h1 id="page-title" class="page__title">Certifications</h1>
+    <div class="cert-grid">
+        <div class="cert-card"><div class="cert-card__badge"><img src="/assets/images/certs/cert-osce3.png" alt="OffSec Certified Expert 3" loading="lazy"></div><div class="cert-card__body"><h2 class="cert-card__title">OffSec Certified Expert 3</h2><div class="cert-card__meta"><span class="cert-issuer">OffSec</span><span class="cert-sep">/</span><span class="cert-code">OSCE3</span></div><div class="cert-card__actions"><a href="#" aria-disabled="true" title="Certification notes unavailable" aria-label="Notes unavailable"><i class="fas fa-book-open" aria-hidden="true"></i></a><a href="https://credentials.offsec.com/ce217051-4afa-440b-8c36-b88d8dc13496#acc.pqCj1UrP" target="_blank" rel="nofollow noopener noreferrer" title="Verify credential" aria-label="Verify credential"><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div></div></div>
+        <div class="cert-card"><div class="cert-card__badge"><img src="/assets/images/certs/cert-oswe.png" alt="OffSec Web Expert" loading="lazy"></div><div class="cert-card__body"><h2 class="cert-card__title">OffSec Web Expert</h2><div class="cert-card__meta"><span class="cert-issuer">OffSec</span><span class="cert-sep">/</span><span class="cert-code">OSWE</span></div><div class="cert-card__actions"><a href="#" aria-disabled="true" title="Certification notes unavailable" aria-label="Notes unavailable"><i class="fas fa-book-open" aria-hidden="true"></i></a><a href="https://credentials.offsec.com/af14a274-6fd7-4df2-8472-3f7e3a5a65c1#acc.8XsOo9m0" target="_blank" rel="nofollow noopener noreferrer" title="Verify credential" aria-label="Verify credential"><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div></div></div>
+        <div class="cert-card"><div class="cert-card__badge"><img src="/assets/images/certs/cert-osep.png" alt="OffSec Experienced Penetration Tester" loading="lazy"></div><div class="cert-card__body"><h2 class="cert-card__title">OffSec Experienced Penetration Tester</h2><div class="cert-card__meta"><span class="cert-issuer">OffSec</span><span class="cert-sep">/</span><span class="cert-code">OSEP</span></div><div class="cert-card__actions"><a href="/certifications/osep/" title="Open certification notes" aria-label="Open notes"><i class="fas fa-book-open" aria-hidden="true"></i></a><a href="https://credentials.offsec.com/e8692b43-24e8-4caf-9c84-7284082b50f4#acc.Dv9h0qxG" target="_blank" rel="nofollow noopener noreferrer" title="Verify credential" aria-label="Verify credential"><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div></div></div>
+        <div class="cert-card"><div class="cert-card__badge"><img src="/assets/images/certs/cert-osed.png" alt="OffSec Exploit Developer" loading="lazy"></div><div class="cert-card__body"><h2 class="cert-card__title">OffSec Exploit Developer</h2><div class="cert-card__meta"><span class="cert-issuer">OffSec</span><span class="cert-sep">/</span><span class="cert-code">OSED</span></div><div class="cert-card__actions"><a href="#" aria-disabled="true" title="Certification notes unavailable" aria-label="Notes unavailable"><i class="fas fa-book-open" aria-hidden="true"></i></a><a href="https://credentials.offsec.com/18b9fedb-6db3-4cd7-831f-59028e123333#acc.Ju1SVh4s" target="_blank" rel="nofollow noopener noreferrer" title="Verify credential" aria-label="Verify credential"><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div></div></div>
+        <div class="cert-card"><div class="cert-card__badge"><img src="/assets/images/certs/crtl_icon.png" alt="Certified Red Team Lead" loading="lazy"></div><div class="cert-card__body"><h2 class="cert-card__title">Certified Red Team Lead</h2><div class="cert-card__meta"><span class="cert-issuer">Zero-Point Security</span><span class="cert-sep">/</span><span class="cert-code">CRTL</span></div><div class="cert-card__actions"><a href="/certifications/crtl/" title="Open certification notes" aria-label="Open notes"><i class="fas fa-book-open" aria-hidden="true"></i></a><a href="#" aria-disabled="true" title="Credential verification unavailable" aria-label="Verify unavailable"><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div></div></div>
+        <div class="cert-card"><div class="cert-card__badge"><img src="/assets/images/certs/crto_icon.png" alt="Certified Red Team Operator" loading="lazy"></div><div class="cert-card__body"><h2 class="cert-card__title">Certified Red Team Operator</h2><div class="cert-card__meta"><span class="cert-issuer">Zero-Point Security</span><span class="cert-sep">/</span><span class="cert-code">CRTO</span></div><div class="cert-card__actions"><a href="/certifications/crto/" title="Open certification notes" aria-label="Open notes"><i class="fas fa-book-open" aria-hidden="true"></i></a><a href="#" aria-disabled="true" title="Credential verification unavailable" aria-label="Verify unavailable"><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div></div></div>
+        <div class="cert-card"><div class="cert-card__badge"><img src="/assets/images/certs/cape_icon.png" alt="Certified Active Directory Pentesting Expert" loading="lazy"></div><div class="cert-card__body"><h2 class="cert-card__title">Certified Active Directory Pentesting Expert</h2><div class="cert-card__meta"><span class="cert-issuer">HackTheBox</span><span class="cert-sep">/</span><span class="cert-code">CAPE</span></div><div class="cert-card__actions"><a href="/certifications/cape/" title="Open certification notes" aria-label="Open notes"><i class="fas fa-book-open" aria-hidden="true"></i></a><a href="#" aria-disabled="true" title="Credential verification unavailable" aria-label="Verify unavailable"><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div></div></div>
+        <div class="cert-card"><div class="cert-card__badge"><img src="/assets/images/certs/cert-pentest.png" alt="CompTIA PenTest+" loading="lazy"></div><div class="cert-card__body"><h2 class="cert-card__title">CompTIA PenTest+</h2><div class="cert-card__meta"><span class="cert-issuer">CompTIA</span><span class="cert-sep">/</span><span class="cert-code">PenTest+ ce</span></div><div class="cert-card__actions"><a href="#" aria-disabled="true" title="Certification notes unavailable" aria-label="Notes unavailable"><i class="fas fa-book-open" aria-hidden="true"></i></a><a href="https://www.credly.com/badges/5a3addf7-de65-4494-aada-cd5e5ae6ed14/linked_in_profile" target="_blank" rel="nofollow noopener noreferrer" title="Verify credential" aria-label="Verify credential"><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div></div></div>
+        <div class="cert-card"><div class="cert-card__badge"><img src="/assets/images/certs/ejpt.png" alt="eLearnSecurity Junior Penetration Tester" loading="lazy"></div><div class="cert-card__body"><h2 class="cert-card__title">eLearnSecurity Junior Penetration Tester</h2><div class="cert-card__meta"><span class="cert-issuer">INE</span><span class="cert-sep">/</span><span class="cert-code">eJPT</span></div><div class="cert-card__actions"><a href="#" aria-disabled="true" title="Certification notes unavailable" aria-label="Notes unavailable"><i class="fas fa-book-open" aria-hidden="true"></i></a><a href="https://certs.ine.com/6167dc65-f665-41b6-90ab-2cb043d9c422" target="_blank" rel="nofollow noopener noreferrer" title="Verify credential" aria-label="Verify credential"><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div></div></div>
+        <div class="cert-card"><div class="cert-card__badge"><img src="/assets/images/certs/icca.png" alt="INE Certified Cloud Associate" loading="lazy"></div><div class="cert-card__body"><h2 class="cert-card__title">INE Certified Cloud Associate</h2><div class="cert-card__meta"><span class="cert-issuer">INE</span><span class="cert-sep">/</span><span class="cert-code">ICCA</span></div><div class="cert-card__actions"><a href="#" aria-disabled="true" title="Certification notes unavailable" aria-label="Notes unavailable"><i class="fas fa-book-open" aria-hidden="true"></i></a><a href="https://certs.ine.com/f5a4df03-c350-45cd-a3dc-3d90aada21e2#acc.63ZU8eoD" target="_blank" rel="nofollow noopener noreferrer" title="Verify credential" aria-label="Verify credential"><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div></div></div>
+    </div>
+
+  </div>
+</div>
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2026 Wencheng Xue. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GTFQL31395"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GTFQL31395', { 'anonymize_ip': false});
+</script>
+
+
+
+
+
+
+<script src="/assets/js/arcade-fx.js"></script>
+
+<script>
+(function () {
+  function addCopyButtons() {
+    /* Outer wrappers only — Rouge nests .highlight inside .highlighter-rouge,
+       and figure.highlight is its own outer wrapper. We pick the outermost so
+       there's exactly one button per code block. */
+    var blocks = document.querySelectorAll(
+      '.page__content div.highlighter-rouge, ' +
+      '.page__content figure.highlight'
+    );
+    blocks.forEach(function (block) {
+      if (block.dataset.copyAttached === '1') return;
+      var pre = block.querySelector('pre');
+      if (!pre) return;
+      block.dataset.copyAttached = '1';
+
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'code-copy-btn';
+      btn.setAttribute('aria-label', 'Copy code to clipboard');
+      btn.textContent = 'Copy';
+
+      btn.addEventListener('click', function () {
+        var codeEl = pre.querySelector('code') || pre;
+        var text = codeEl.innerText.replace(/\n$/, '');
+
+        var done = function () {
+          btn.textContent = 'Copied';
+          btn.classList.add('copied');
+          setTimeout(function () {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+          }, 1600);
+        };
+        var fail = function () {
+          btn.textContent = 'Error';
+          setTimeout(function () { btn.textContent = 'Copy'; }, 1600);
+        };
+
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(done, fail);
+        } else {
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); done(); } catch (e) { fail(); }
+          document.body.removeChild(ta);
+        }
+      });
+
+      block.appendChild(btn);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', addCopyButtons);
+  } else {
+    addCopyButtons();
+  }
+})();
+</script>
+
+
+
+
+
+  </body>
+</html>

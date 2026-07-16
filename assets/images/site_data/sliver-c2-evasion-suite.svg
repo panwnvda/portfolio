@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Sliver C2 Evasion Suite">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a0f2e"/>
+      <stop offset="1" stop-color="#0a0616"/>
+    </linearGradient>
+    <linearGradient id="bezel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b2036"/>
+      <stop offset="1" stop-color="#1a1223"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0e0716"/>
+      <stop offset="1" stop-color="#1a0a22"/>
+    </linearGradient>
+    <linearGradient id="stand" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a2b48"/>
+      <stop offset="1" stop-color="#1e1428"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0" stop-color="#ff4444" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#ff4444" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Card background -->
+  <rect x="4" y="4" width="112" height="112" rx="18" fill="url(#bg)"/>
+
+  <!-- Grid lattice for arcade depth -->
+  <g stroke="#e02424" stroke-opacity="0.08" stroke-width="0.5">
+    <path d="M4 30 L116 30 M4 60 L116 60 M4 90 L116 90"/>
+    <path d="M30 4 L30 116 M60 4 L60 116 M90 4 L90 116"/>
+  </g>
+
+  <!-- Ambient red glow behind the monitor -->
+  <circle cx="60" cy="56" r="42" fill="url(#glow)"/>
+
+  <!-- Monitor bezel (widescreen) -->
+  <g>
+    <rect x="14" y="20" width="92" height="62" rx="4"
+          fill="url(#bezel)" stroke="#e02424" stroke-width="1.4"/>
+    <!-- Screen -->
+    <rect x="18" y="24" width="84" height="54" rx="2" fill="url(#screen)"/>
+    <!-- Faint scanline overlay for CRT feel -->
+    <g stroke="#ff5252" stroke-opacity="0.06" stroke-width="0.5">
+      <path d="M18 30 L102 30 M18 36 L102 36 M18 42 L102 42 M18 48 L102 48 M18 54 L102 54 M18 60 L102 60 M18 66 L102 66 M18 72 L102 72"/>
+    </g>
+
+    <!-- Terminal traffic-light chrome -->
+    <circle cx="23" cy="28" r="1.4" fill="#ff5f57"/>
+    <circle cx="27.5" cy="28" r="1.4" fill="#febc2e"/>
+    <circle cx="32" cy="28" r="1.4" fill="#28c840"/>
+
+    <!-- Terminal contents -->
+    <g font-family="'Fira Code', 'Menlo', 'Consolas', monospace" font-size="4">
+      <text x="21" y="37" fill="#ff5252">$</text>
+      <text x="25" y="37" fill="#f0e0b0">sliver implant generate</text>
+
+      <text x="21" y="43" fill="#8fa6c1">[*] Generating new implant binary</text>
+      <text x="21" y="49" fill="#8fa6c1">[*] Symbol obfuscation enabled</text>
+      <text x="21" y="55" fill="#28c840">[+] Beacon check-in OK</text>
+
+      <text x="21" y="64" fill="#ff5252">$</text>
+      <text x="25" y="64" fill="#f0e0b0">./loader.exe</text>
+      <rect x="46" y="60.5" width="3" height="4.5" fill="#f5d46f">
+        <animate attributeName="opacity" values="1;0;1" dur="1.1s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+
+    <!-- Power indicator LED on bezel -->
+    <circle cx="60" cy="80" r="0.9" fill="#28c840"/>
+  </g>
+
+  <!-- Monitor neck -->
+  <path d="M52 82 L68 82 L66 90 L54 90 Z"
+        fill="url(#stand)" stroke="#e02424" stroke-width="1.2" stroke-linejoin="round"/>
+
+  <!-- Monitor base (foot) -->
+  <path d="M38 96 Q60 92 82 96 L84 100 Q60 96 36 100 Z"
+        fill="url(#stand)" stroke="#e02424" stroke-width="1.2" stroke-linejoin="round"/>
+
+  <!-- Card border -->
+  <rect x="4" y="4" width="112" height="112" rx="18"
+        fill="none" stroke="#e02424" stroke-width="2"/>
+
+  <!-- Corner accents -->
+  <g stroke="#ff5252" stroke-width="1.4" stroke-linecap="round" fill="none">
+    <path d="M14 22 L14 14 L22 14"/>
+    <path d="M98 14 L106 14 L106 22"/>
+    <path d="M14 98 L14 106 L22 106"/>
+    <path d="M106 98 L106 106 L98 106"/>
+  </g>
+</svg>

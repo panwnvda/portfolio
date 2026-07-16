@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 110" width="60" height="110">
+  <!-- Hanging string -->
+  <line x1="30" y1="0" x2="30" y2="10" stroke="#d4af37" stroke-width="1.5"/>
+  <!-- Top cap -->
+  <rect x="22" y="10" width="16" height="3" fill="#d4af37"/>
+  <rect x="17" y="13" width="26" height="5" fill="#d4af37" rx="1"/>
+  <!-- Main lantern body -->
+  <ellipse cx="30" cy="48" rx="26" ry="27" fill="#a02020" stroke="#d4af37" stroke-width="2"/>
+  <!-- Vertical rib highlights on body -->
+  <path d="M 12 42 Q 30 40 48 42 M 12 48 Q 30 46 48 48 M 12 55 Q 30 53 48 55"
+        fill="none" stroke="#d4af37" stroke-width="0.8" opacity="0.35"/>
+  <!-- Central character indication (simple rounded rect, no font dependency) -->
+  <rect x="24" y="40" width="12" height="16" fill="none" stroke="#f0c860" stroke-width="1.2" rx="1" opacity="0.5"/>
+  <!-- Bottom cap -->
+  <rect x="17" y="76" width="26" height="5" fill="#d4af37" rx="1"/>
+  <rect x="22" y="81" width="16" height="3" fill="#d4af37"/>
+  <!-- Tassel top ring -->
+  <line x1="30" y1="84" x2="30" y2="90" stroke="#d4af37" stroke-width="1.5"/>
+  <!-- Tassel strands -->
+  <line x1="30" y1="90" x2="24" y2="106" stroke="#f0c860" stroke-width="1.2"/>
+  <line x1="30" y1="90" x2="28" y2="108" stroke="#f0c860" stroke-width="1.2"/>
+  <line x1="30" y1="90" x2="30" y2="109" stroke="#f0c860" stroke-width="1.2"/>
+  <line x1="30" y1="90" x2="32" y2="108" stroke="#f0c860" stroke-width="1.2"/>
+  <line x1="30" y1="90" x2="36" y2="106" stroke="#f0c860" stroke-width="1.2"/>
+</svg>

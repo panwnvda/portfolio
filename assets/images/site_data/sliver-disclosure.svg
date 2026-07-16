@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="PNG Decoder Memory Exhaustion">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a0f2e"/>
+      <stop offset="1" stop-color="#0a0616"/>
+    </linearGradient>
+    <linearGradient id="frame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b2036"/>
+      <stop offset="1" stop-color="#1a1223"/>
+    </linearGradient>
+    <linearGradient id="canvas" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0e0716"/>
+      <stop offset="1" stop-color="#1a0a22"/>
+    </linearGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6b3050"/>
+      <stop offset="1" stop-color="#2a1024"/>
+    </linearGradient>
+    <linearGradient id="overflow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff5252"/>
+      <stop offset="1" stop-color="#7a0a10"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.55" r="0.65">
+      <stop offset="0" stop-color="#ff4444" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#ff4444" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.2"/>
+    </filter>
+  </defs>
+
+  <!-- Card background -->
+  <rect x="4" y="4" width="112" height="112" rx="18" fill="url(#bg)"/>
+
+  <!-- Grid lattice -->
+  <g stroke="#e02424" stroke-opacity="0.08" stroke-width="0.5">
+    <path d="M4 30 L116 30 M4 60 L116 60 M4 90 L116 90"/>
+    <path d="M30 4 L30 116 M60 4 L60 116 M90 4 L90 116"/>
+  </g>
+
+  <!-- Ambient red glow -->
+  <circle cx="60" cy="60" r="42" fill="url(#glow)"/>
+
+  <!-- Picture-frame body (the classic "image file" icon) -->
+  <rect x="22" y="26" width="76" height="58" rx="4"
+        fill="url(#frame)" stroke="#e02424" stroke-width="1.6"/>
+
+  <!-- Canvas (inner image area) -->
+  <rect x="26" y="30" width="68" height="50" rx="2" fill="url(#canvas)"/>
+
+  <!-- Sky wash inside the canvas -->
+  <rect x="26" y="30" width="68" height="34" rx="2" fill="url(#sky)" opacity="0.65"/>
+
+  <!-- Sun -->
+  <circle cx="82" cy="42" r="4.5" fill="#ffd066" opacity="0.9"/>
+
+  <!-- Mountain silhouettes — the universal "image" glyph -->
+  <path d="M26 80 L26 64 L38 50 L50 62 L60 54 L74 70 L94 56 L94 80 Z"
+        fill="#3a1230" stroke="#5a1a4a" stroke-width="0.6" stroke-linejoin="round"/>
+
+  <!-- Overflow bytes bursting UP and OUT of the top-right corner -->
+  <g fill="url(#overflow)" filter="url(#softGlow)" opacity="0.95">
+    <!-- vertical memory bars overflowing above the frame -->
+    <rect x="70"  y="10" width="3" height="16"/>
+    <rect x="76"  y="6"  width="3" height="20"/>
+    <rect x="82"  y="12" width="3" height="14"/>
+    <rect x="88"  y="4"  width="3" height="22"/>
+    <rect x="94"  y="10" width="3" height="16"/>
+    <rect x="100" y="16" width="3" height="10"/>
+  </g>
+  <!-- Sharper foreground bars (no blur) for definition -->
+  <g fill="#ff3b3b">
+    <rect x="76"  y="8"  width="3" height="18"/>
+    <rect x="88"  y="6"  width="3" height="20"/>
+  </g>
+
+  <!-- Overflow bytes bursting DOWN and OUT of the bottom-right corner -->
+  <g fill="url(#overflow)" filter="url(#softGlow)" opacity="0.95">
+    <rect x="70"  y="84" width="3" height="14"/>
+    <rect x="76"  y="84" width="3" height="20"/>
+    <rect x="82"  y="84" width="3" height="10"/>
+    <rect x="88"  y="84" width="3" height="24"/>
+    <rect x="94"  y="84" width="3" height="14"/>
+    <rect x="100" y="84" width="3" height="18"/>
+  </g>
+  <g fill="#ff3b3b">
+    <rect x="76"  y="84" width="3" height="18"/>
+    <rect x="88"  y="84" width="3" height="22"/>
+  </g>
+
+  <!-- Diagonal crack across the frame — the visual "break" -->
+  <path d="M26 30 L44 46 L36 52 L64 78"
+        stroke="#ffe89e" stroke-width="1.4" stroke-linecap="round"
+        stroke-linejoin="round" fill="none" opacity="0.85"/>
+
+  <!-- PNG label — a small tag anchoring the vulnerability to the file format -->
+  <g transform="translate(26 66)">
+    <rect x="0" y="0" width="20" height="12" rx="2.5" fill="#e02424"
+          stroke="#ff8b8b" stroke-width="0.7"/>
+    <text x="10" y="8.4" text-anchor="middle"
+          font-family="'Fira Code', 'Menlo', 'Consolas', monospace"
+          font-size="6" font-weight="700" fill="#fff2b8"
+          letter-spacing="0.6">PNG</text>
+  </g>
+
+  <!-- Card border -->
+  <rect x="4" y="4" width="112" height="112" rx="18"
+        fill="none" stroke="#e02424" stroke-width="2"/>
+
+  <!-- Corner accents -->
+  <g stroke="#ff5252" stroke-width="1.4" stroke-linecap="round" fill="none">
+    <path d="M14 22 L14 14 L22 14"/>
+    <path d="M98 14 L106 14 L106 22"/>
+    <path d="M14 98 L14 106 L22 106"/>
+    <path d="M106 98 L106 106 L98 106"/>
+  </g>
+</svg>

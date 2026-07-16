@@ -1,0 +1,1361 @@
+/* Chinese brush-calligraphy face for the logo mark (文成). */
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');
+
+html {
+  background-color: #080a1a;
+  background-image:
+    /* neon grid: red horizontals + blue verticals */
+    linear-gradient(rgba(255, 42, 74, 0.11) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(61, 125, 255, 0.13) 1px, transparent 1px),
+    /* ambient neon glow: blue up-left, red down-right */
+    radial-gradient(circle at 12% 6%, rgba(61, 125, 255, 0.18), transparent 44%),
+    radial-gradient(circle at 88% 96%, rgba(255, 42, 74, 0.16), transparent 46%);
+  background-size: 48px 48px, 48px 48px, cover, cover;
+  background-repeat: repeat, repeat, no-repeat, no-repeat;
+  background-attachment: scroll, scroll, fixed, fixed;
+}
+
+a,
+.page__content a,
+.site-subtitle,
+.greedy-nav a:hover,
+.greedy-nav a:focus {
+  color: #38d9c7 !important;
+}
+
+html,
+body {
+  cursor: default !important;
+}
+
+a,
+button,
+input,
+textarea,
+select,
+.post-blog-card,
+.author__urls a,
+.pagination li a,
+.code-copy-btn,
+.search__toggle,
+.greedy-nav__toggle {
+  cursor: pointer !important;
+}
+
+#arcade-cursor,
+#arcade-cursor-dot {
+  display: none !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.page__title,
+.archive__subtitle,
+.author__name,
+.site-title {
+  color: #f5d46f !important;
+  text-shadow: 2px 2px 0 #b91c1c, 5px 5px 0 rgba(0, 0, 0, 0.35) !important;
+}
+
+/* ============================================================
+   Site-wide typeface: Raleway everywhere, replacing the theme's
+   Courier New monospace UI font. Code stays monospace (this list
+   deliberately omits code/pre/.highlight, which keep the theme's
+   own mono rules); the 文成 calligraphy logo (.site-logo-cn) and
+   Font Awesome icon fonts are also intentionally left untouched.
+   ============================================================ */
+body,
+h1, h2, h3, h4, h5, h6,
+.page__title, .archive__subtitle,
+.site-title,
+.masthead, .masthead__inner-wrap,
+.greedy-nav, .greedy-nav a,
+.nav__title, .nav__sub-title, .breadcrumbs,
+.sidebar, .sidebar.sticky,
+.sidebar h2, .sidebar h3, .sidebar h4, .sidebar h5, .sidebar h6,
+.sidebar p, .sidebar li,
+.author__urls-wrapper, .author__urls-wrapper button,
+.btn, button, input, select, textarea,
+.search-input, .results__found, #results .archive__item-title,
+.pagination, .pagination li a, .pagination--pager,
+.page__lead, .page__meta, .comment__date,
+.page__content, .page__content dt, .page__content dd,
+.page__hero-caption, figcaption,
+.notice, .notice--primary, .notice--info, .notice--warning, .notice--success, .notice--danger,
+.toc, .toc .nav__title,
+.page__footer, .page__footer-copyright, .page__footer-follow li,
+.post-blog-card,
+.archive__item-title, .archive__item-caption,
+table, th, td {
+  font-family: "Raleway", sans-serif !important;
+}
+
+.masthead {
+  /* Navy-tinted and translucent so the neon grid/glow reads through it and
+     the bar sits in the background instead of over it as a grey slab. */
+  background: rgba(8, 10, 26, 0.62) !important;
+  /* Thin red->blue neon underline in place of the chunky solid red bar. */
+  border-bottom: 2px solid transparent !important;
+  border-image: linear-gradient(90deg, #ff2a4a, #3d7dff) 1 !important;
+  box-shadow: 0 2px 14px rgba(2, 6, 23, 0.42) !important;
+  backdrop-filter: blur(7px) saturate(1.15) !important;
+  -webkit-backdrop-filter: blur(7px) saturate(1.15) !important;
+}
+
+/* Slimmer bar: trim the vertical padding that sets the masthead height. */
+.masthead__inner-wrap {
+  padding-top: 7px !important;
+  padding-bottom: 7px !important;
+}
+
+.sidebar,
+.sidebar.sticky,
+.post-blog-card,
+.page__content blockquote,
+p > code,
+li > code,
+a > code {
+  background-color: #172033 !important;
+}
+
+.sidebar,
+.sidebar.sticky {
+  border-color: #38d9c7 !important;
+  box-shadow: 4px 4px 0 0 #c93a3a, 8px 8px 0 0 rgba(2, 6, 23, 0.28) !important;
+}
+
+.author__avatar {
+  position: relative;
+  overflow: visible;
+}
+
+/* Keep the avatar centred in the card, overriding the theme's
+   responsive .author__avatar rules (one switches it to table-cell). */
+.sidebar .author__avatar {
+  display: flex;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* Scoped to .sidebar to out-specify main.css's `.sidebar .author__name`
+   (which otherwise pins font-size to 1em and the font to monospace). */
+.sidebar .author__content {
+  container-type: inline-size;                     /* measure the profile card width */
+}
+.sidebar .author__name {
+  font-family: "Raleway", sans-serif;              /* match the cert card title */
+  text-transform: none;                            /* not all-caps, like the cert card titles */
+  letter-spacing: normal;
+  white-space: nowrap;                             /* keep "Wencheng Xue" on a single line */
+  text-align: center;
+  /* As large as fits the card on one line: ~13% of the card's width,
+     capped so it never gets oversized on wide/mobile card layouts. */
+  font-size: min(1.7rem, 9.1cqi);
+}
+
+.author__avatar img,
+.site-logo img {
+  background-color: #233044 !important;
+  border-color: #f8df84 !important;
+  box-shadow: 0 0 0 2px #020617, 0 0 16px rgba(56, 217, 199, 0.38) !important;
+}
+
+/* Calligraphy logo mark — replaces the missing logo.png. Mirrors the
+   old frame (dark fill, gold border, teal glow) and the site's
+   gold-on-red heading treatment so the brush characters sit in-theme. */
+/* Top bar shows only the 文成 calligraphy mark — hide the text site title. */
+.masthead .site-title {
+  display: none !important;
+}
+
+.site-logo-cn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  padding: 0 0.42rem;
+  font-family: "Ma Shan Zheng", "STKaiti", "KaiTi", "SimSun", serif;
+  font-size: 1.5rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  color: #f5d46f;
+  text-shadow: 1.5px 1.5px 0 #b91c1c, 3px 3px 0 rgba(0, 0, 0, 0.35);
+  background-color: #233044;
+  border: 2px solid #f8df84;
+  border-radius: 3px;
+  box-shadow: 0 0 0 2px #020617, 0 0 16px rgba(56, 217, 199, 0.38);
+}
+
+.author__urls a {
+  background: #0b1014 !important;
+  border-color: #b91c1c !important;
+  color: #f5d46f !important;
+}
+
+.author__urls a:hover,
+.author__urls a:focus {
+  background: #b91c1c !important;
+  border-color: #f5d46f !important;
+  color: #fff !important;
+}
+
+.post-blog-card {
+  border-color: #172033 !important;
+  box-shadow: 0 0 0 1px #263248, 4px 4px 0 0 rgba(185, 28, 28, 0.75) !important;
+}
+
+.post-blog-card:hover {
+  box-shadow: 0 0 0 1px #263248, 7px 7px 0 0 rgba(185, 28, 28, 0.9), 7px 7px 0 5px rgba(56, 217, 199, 0.24) !important;
+}
+
+.post-blog-card--featured {
+  overflow: visible !important;
+  /* Lift this card (and its parrot) above the other post cards so the
+     parrot flies over them, not behind them. */
+  position: relative;
+  z-index: 8;
+}
+
+.post-blog-card--featured .parrot-mascot {
+  position: absolute;
+  top: -42px;
+  right: 16px;
+  width: 46px;
+  height: 58px;
+  pointer-events: auto;
+  z-index: 4;
+  cursor: pointer;
+  outline: none;
+  transform-origin: 50% 100%;
+  transition: transform 1.5s cubic-bezier(0.34, 0.02, 0.24, 1);
+  will-change: transform;
+}
+
+.post-blog-card--featured .parrot-frame {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  object-fit: contain;
+  padding: 0 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  /* Full-brightness, slightly punchy — the parrot shouldn't gray out. */
+  filter: saturate(1.1);
+  image-rendering: auto;
+  /* Facing flip lives on the frames (independent of the flight
+     translate on the mascot), so it turns quickly without banking. */
+  transition: transform 0.25s ease;
+}
+
+/* The flight frames (up/down) face RIGHT in the source art, opposite the
+   left-facing idle frame. Flip them so every frame's default facing is
+   LEFT, consistent with idle. */
+.post-blog-card--featured .parrot-frame-up,
+.post-blog-card--featured .parrot-frame-down {
+  transform: scaleX(-1);
+}
+
+/* .face-right = face right: mirror the idle frame, and let the flight
+   frames fall back to their natural (already right-facing) orientation. */
+.post-blog-card--featured .parrot-mascot.face-right .parrot-frame-idle {
+  transform: scaleX(-1);
+}
+.post-blog-card--featured .parrot-mascot.face-right .parrot-frame-up,
+.post-blog-card--featured .parrot-mascot.face-right .parrot-frame-down {
+  transform: scaleX(1);
+}
+
+.post-blog-card--featured .parrot-frame-idle {
+  opacity: 1;
+}
+
+.post-blog-card--featured .parrot-frame-up,
+.post-blog-card--featured .parrot-frame-down {
+  opacity: 0;
+}
+
+.post-blog-card--featured .parrot-mascot.is-flying .parrot-frame-idle {
+  opacity: 0;
+}
+
+.post-blog-card--featured .parrot-mascot.is-flying .parrot-frame-up {
+  opacity: 1;
+}
+
+.post-blog-card--featured .parrot-mascot.is-flying .parrot-frame-down {
+  opacity: 1;
+}
+
+.post-blog-card--featured .parrot-mascot.is-flying {
+  pointer-events: none;
+}
+
+
+.page__content h1::before,
+.page__content h2::before,
+.page__content h3::before,
+.page__title:not(:empty)::before,
+.archive__subtitle::before {
+  color: #b91c1c !important;
+}
+
+.parrot-mascot {
+  animation: none;
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parrot-mascot,
+  .parrot-frame {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .parrot-frame-idle {
+    opacity: 1;
+  }
+
+  .parrot-frame-up,
+  .parrot-frame-down {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 620px) {
+  .post-blog-card--featured .parrot-mascot {
+    top: -34px;
+    right: 16px;
+    width: 40px;
+    height: 50px;
+  }
+}
+
+#arcade-bg-canvas {
+  z-index: 0 !important;
+  opacity: 0.72;
+}
+
+#main,
+.page__footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Masthead sits above the content so the expanded section menu
+   overlays the recent-posts cards (and the parrot) instead of
+   being painted under them. */
+.masthead {
+  position: relative;
+  z-index: 20;
+}
+
+/* Remove the site footer (the "Follow: Feed" row + copyright line) and
+   the vertical space it occupied. */
+.page__footer {
+  display: none !important;
+}
+
+/* ============================================================
+   Section menu — the three-bars button expands into the site's
+   main sections. Injected by arcade-fx.js on every page.
+   ============================================================ */
+
+/* With our menu active, retire the theme's inline links + overflow toggle. */
+.greedy-nav.has-section-menu {
+  position: relative;
+}
+.greedy-nav.has-section-menu .visible-links,
+.greedy-nav.has-section-menu .hidden-links,
+.greedy-nav.has-section-menu .greedy-nav__toggle {
+  display: none !important;
+}
+/* visible-links normally provides the flex spacer; push buttons right instead. */
+.greedy-nav.has-section-menu .search__toggle {
+  margin-left: auto;
+}
+/* Match the slimmer bar — shrink the search button from the theme's 44px. */
+.search__toggle {
+  width: 36px !important;
+  height: 36px !important;
+}
+
+/* Hamburger button */
+.section-menu__toggle {
+  margin-left: 0.55rem;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: #172033;
+  border: 2px solid #f8df84;
+  border-radius: 4px;
+  box-shadow: 0 0 0 2px #020617, 0 0 14px rgba(56, 217, 199, 0.30);
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.1s ease;
+}
+.section-menu__toggle:hover,
+.section-menu__toggle:focus-visible {
+  box-shadow: 0 0 0 2px #020617, 0 0 18px rgba(56, 217, 199, 0.55);
+  outline: none;
+}
+.section-menu__toggle:active {
+  transform: translateY(1px);
+}
+
+.section-menu__bars {
+  position: relative;
+  display: block;
+  width: 20px;
+  height: 14px;
+}
+.section-menu__bars span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2.5px;
+  background: #f5d46f;
+  box-shadow: 1px 1px 0 #b91c1c;
+  border-radius: 1px;
+  transition: transform 0.22s ease, opacity 0.16s ease, top 0.22s ease;
+}
+.section-menu__bars span:nth-child(1) { top: 0; }
+.section-menu__bars span:nth-child(2) { top: 6px; }
+.section-menu__bars span:nth-child(3) { top: 12px; }
+
+/* Bars morph into an X while open */
+.section-menu-open .section-menu__bars span:nth-child(1) { top: 6px; transform: rotate(45deg); }
+.section-menu-open .section-menu__bars span:nth-child(2) { opacity: 0; }
+.section-menu-open .section-menu__bars span:nth-child(3) { top: 6px; transform: rotate(-45deg); }
+
+/* Dropdown panel */
+.section-menu__panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin: 0.5rem 0 0;
+  padding: 0.35rem;
+  min-width: 230px;
+  list-style: none;
+  background: #172033;
+  border: 2px solid #f8df84;
+  box-shadow: 6px 6px 0 0 rgba(185, 28, 28, 0.85), 0 0 22px rgba(56, 217, 199, 0.28);
+  z-index: 30;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity 0.16s ease, transform 0.16s ease, visibility 0s linear 0.16s;
+}
+.section-menu-open .section-menu__panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: opacity 0.16s ease, transform 0.16s ease, visibility 0s;
+}
+
+.section-menu__panel li {
+  margin: 0;
+}
+.section-menu__panel a {
+  display: block;
+  padding: 0.55rem 0.85rem;
+  color: #f5d46f !important;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+.section-menu__panel a:hover,
+.section-menu__panel a:focus {
+  background: #172033;
+  border-color: #38d9c7;
+  color: #7ff3e6 !important;
+  outline: none;
+}
+.section-menu__panel a.is-current {
+  background: #b91c1c;
+  color: #fff !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-menu__bars span,
+  .section-menu__panel {
+    transition: none !important;
+  }
+}
+
+/* ============================================================
+   Certifications page — ported from Wxue-Website-v2. Keeps v2's
+   fonts (Raleway titles, Open Sans meta) but colours the text
+   white so it reads on this site's dark cards.
+   ============================================================ */
+.cert-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1.1rem;
+  margin-top: 1.2rem;
+}
+.cert-card {
+  display: flex;
+  flex-direction: column;
+  background: #172033;
+  border: 1px solid #263248;
+  box-shadow: 0 0 0 1px #263248, 4px 4px 0 0 rgba(185, 28, 28, 0.75), 0 0 16px rgba(56, 217, 199, 0.38);  /* teal glow, like the profile avatar */
+  text-decoration: none !important;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+a.cert-card:hover,
+a.cert-card:focus {
+  transform: translateY(-3px);
+  box-shadow: 0 0 0 1px #263248, 7px 7px 0 0 rgba(185, 28, 28, 0.9), 7px 7px 0 5px rgba(61, 125, 255, 0.30), 0 0 16px rgba(56, 217, 199, 0.38);  /* keep the teal glow on hover */
+  outline: none;
+}
+.cert-card__badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 168px;
+  padding: 22px 14px;
+  background: #0b1014;
+  border-bottom: 2px solid #f8df84;
+  overflow: hidden;                 /* badge grows within its frame on hover */
+}
+.cert-card__badge img {
+  height: 128px;
+  width: auto;
+  max-width: 86%;
+  object-fit: contain;
+  transition: transform 0.6s ease;  /* v2's hover-grow */
+}
+.cert-card:hover .cert-card__badge img,
+.cert-card:focus .cert-card__badge img {
+  transform: scale(1.3);
+}
+.cert-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+  padding: 0.85rem 0.95rem 1rem;
+}
+.cert-card__title {
+  margin: 0 !important;
+  font-family: "Raleway", sans-serif !important;   /* v2 heading font */
+  font-size: 1.12rem !important;
+  font-weight: 700 !important;
+  line-height: 1.25;
+  color: #f5d46f !important;                        /* gold, like the name */
+  text-shadow: 2px 2px 0 #b91c1c, 5px 5px 0 rgba(0, 0, 0, 0.35) !important;  /* red highlight */
+  /* Undo the theme's monospace-uppercase heading treatment so the
+     names read like v2 (mixed case, Raleway). */
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+.cert-card__meta {
+  font-family: "Raleway", sans-serif;              /* unified site font */
+  font-size: 0.82rem;
+  color: #f5d46f;
+  text-shadow: 2px 2px 0 #b91c1c, 5px 5px 0 rgba(0, 0, 0, 0.35);  /* red highlight, like the name */
+}
+.cert-card__meta .cert-issuer { color: #f5d46f; font-weight: 400; }
+.cert-card__meta .cert-code { color: #f5d46f; font-weight: 400; }
+.cert-card__meta .cert-sep { color: #f5d46f; margin: 0 0.45em; opacity: 0.7; }
+.cert-card__verify {
+  margin-top: auto;
+  padding-top: 0.2rem;
+  font-family: "Raleway", sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+.cert-card__verify i {
+  margin-left: 0.3em;
+  font-size: 1.15em;   /* larger than the (smaller) text */
+  font-weight: 900;    /* keep the solid external-link glyph, independent of the text weight */
+}
+
+/* ============================================================
+   Sidebar bio typewriter — a .typed span whose text is
+   swapped in/out by initTypedRoles() in arcade-fx.js.
+   ============================================================ */
+.author__bio .typed {
+  color: #f5d46f;                       /* match the "Wencheng Xue" name color */
+  font-family: "Raleway", sans-serif;  /* unified site font (matches the name) */
+  font-weight: 400;
+  font-size: 0.54rem;
+  letter-spacing: 0.04em;
+  text-shadow: 2px 2px 0 #b91c1c, 5px 5px 0 rgba(0, 0, 0, 0.35);  /* red highlight, like the name */
+}
+.typed-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  color: #f5d46f;
+  font-family: "Raleway", sans-serif;
+  font-weight: 700;
+  animation: typedCaretBlink 1s steps(1) infinite;
+}
+@keyframes typedCaretBlink {
+  50% { opacity: 0; }
+}
+
+/* ============================================================
+   Long-form article (project pages) — macOS-window code blocks,
+   cleaner tables, tidier section headings inside .page__content.
+   ============================================================ */
+
+/* --- Real code blocks: macOS-style window chrome with traffic-light dots.
+       ASCII-art blocks (marked .ascii-art) opt out via the :not() below. --- */
+.page__content pre:not(.ascii-art) {
+  position: relative;
+  padding: 2.4rem 1rem 1rem !important;   /* room for the title bar */
+  border-radius: 8px;
+  background: #1a1b26 !important;
+  border: 1px solid #2a2f45 !important;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.35), 0 0 0 1px rgba(56, 217, 199, 0.06);
+  overflow-x: auto;
+}
+.page__content pre:not(.ascii-art)::before {
+  content: '';
+  position: absolute;
+  top: 0.72rem;
+  left: 0.95rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff5f57;                              /* red (close) */
+  box-shadow:
+    20px 0 0 #febc2e,                               /* yellow (minimise) */
+    40px 0 0 #28c840;                               /* green (maximise) */
+}
+.page__content pre:not(.ascii-art)::after {
+  /* subtle divider under the "title bar" area */
+  content: '';
+  position: absolute;
+  top: 2.05rem;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  pointer-events: none;
+}
+
+/* --- ASCII-art blocks: no chrome, just a subtle framed monospace area
+       so diagrams read as diagrams, not commands. --- */
+.page__content pre.ascii-art {
+  background: #10121b !important;
+  border: 1px dashed rgba(56, 217, 199, 0.28) !important;
+  border-radius: 3px;
+  padding: 1rem 1.1rem !important;
+  overflow-x: auto;
+  line-height: 1.35;
+}
+.page__content pre.ascii-art::before,
+.page__content pre.ascii-art::after { content: none !important; }
+.page__content pre.ascii-art code {
+  background: transparent !important;
+  text-shadow: none !important;
+  color: #cad3f5;
+}
+
+/* Keep the copy button clear of the traffic-light dots. */
+.page__content pre:not(.ascii-art) + .code-copy-btn,
+.page__content pre .code-copy-btn { right: 0.6rem; top: 0.55rem; }
+
+/* --- Tables: bring the old .custom-table (and any plain <table>) into
+       the arcade look — dark surface, distinct header, subtle row lines. --- */
+.page__content table,
+.page__content .custom-table {
+  width: auto;
+  border-collapse: collapse;
+  margin: 1.2rem 0 1.6rem;
+  background: #141826;
+  border: 1px solid #2a2f45;
+  border-radius: 4px;
+  overflow: hidden;
+  font-family: "Raleway", sans-serif;
+  font-size: 1em;
+  color: #e6ecff;
+}
+.page__content table thead th,
+.page__content .custom-table thead th {
+  background: linear-gradient(180deg, #1e2440 0%, #171b30 100%);
+  color: #f5d46f;
+  font-weight: 700;
+  text-align: left;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 2px solid #b91c1c;
+  letter-spacing: 0.02em;
+}
+.page__content table tbody td,
+.page__content .custom-table tbody td {
+  padding: 0.7rem 0.9rem;
+  border-top: 1px solid #232842;
+  vertical-align: top;
+  line-height: 1.55;
+}
+.page__content table tbody tr:nth-child(even) td,
+.page__content .custom-table tbody tr:nth-child(even) td {
+  background: rgba(255,255,255,0.015);
+}
+.page__content table code,
+.page__content .custom-table code {
+  background: rgba(56, 217, 199, 0.10);
+  padding: 0.05em 0.35em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+/* --- Section headings inside long-form pages: keep the gold + red-shadow
+       treatment, but tone down the loud "▶" prefix and dashed underlines
+       the theme applies for archive-style pages. --- */
+.page__content h2,
+.page__content h3,
+.page__content h4 {
+  font-family: "Raleway", sans-serif !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  border: 0 !important;
+  padding: 0 !important;
+  margin-top: 1.6em;
+  margin-bottom: 0.55em;
+}
+.page__content h2::before,
+.page__content h3::before,
+.page__content h4::before { content: none !important; }
+.page__content h2 {
+  font-size: 1.55rem;
+  padding-bottom: 0.35em !important;
+  border-bottom: 1px solid rgba(245, 212, 111, 0.28) !important;   /* thin gold rule */
+}
+.page__content h3 { font-size: 1.2rem; }
+.page__content h4 { font-size: 1.02rem; color: #f8df84 !important; }
+
+/* Also tone down the page__title's own dashed underline for these pages. */
+.layout--single .page__title,
+.layout--single .archive__subtitle {
+  border-bottom: 1px solid rgba(245, 212, 111, 0.35) !important;
+}
+
+/* ============================================================
+   Article/project long-form: title in ALL CAPS, section titles
+   NOT all-caps, and the floating side "Index" drawer ported from
+   the old cheatsheet pages (dark-navy palette + teal/gold accents).
+   ============================================================ */
+
+
+/* Extra insurance: section titles inside the article stay mixed case
+   even against the theme's site-wide uppercase h2/h3 rules. */
+.layout--single .page__content h2,
+.layout--single .page__content h3,
+.layout--single .page__content h4,
+.layout--single .page__content h5,
+.layout--single .page__content h6 {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+
+/* Notes pages: remove list bullets from checkbox items (li > input[type=checkbox]),
+   and kill any lingering purple accent boxes from the ported theme. */
+.page__content ul li:has(> input[type="checkbox"]),
+.page__content ol li:has(> input[type="checkbox"]) {
+  list-style: none;
+  margin-left: -1.2em;
+}
+.page__content input[type="checkbox"] {
+  margin-right: 0.5em;
+  accent-color: #38d9c7;
+  vertical-align: middle;
+}
+/* Neutralise any purple wrapper/background around headings inside notes. */
+.page__content h1, .page__content h2, .page__content h3,
+.page__content h4, .page__content h5, .page__content h6,
+.page__content h4 + p, .page__content h4 + div {
+  background: transparent !important;
+}
+.page__content *[style*="background-color:#9b6dd4"],
+.page__content *[style*="background:#9b6dd4"],
+.page__content *[style*="background-color: #9b6dd4"],
+.page__content *[style*="background: #9b6dd4"] {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* ============================================================
+   CLEAN OVERRIDES: strip the "fancy" stuff from notes pages.
+   No purple boxes. No underlined headers. Index = old palette
+   with white text. Match the old site's content 1:1.
+   ============================================================ */
+
+/* Kill every possible source of borders/backgrounds/boxes on headings. */
+.page__content h1,
+.page__content h2,
+.page__content h3,
+.page__content h4,
+.page__content h5,
+.page__content h6 {
+  background: none !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-bottom: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+}
+
+/* Strip any lingering purple/lavender box around random content. */
+.page__content div,
+.page__content p,
+.page__content section,
+.page__content article {
+  background-color: transparent !important;
+}
+.page__content blockquote {
+  background: rgba(56, 217, 199, 0.06) !important;
+  border-left: 3px solid #38d9c7 !important;
+  color: #e6ecff !important;
+  padding: 0.6em 1em !important;
+  margin: 0.9em 0 !important;
+}
+
+/* --- Index drawer: literally the OLD palette, just white text. --- */
+.index-btn {
+  position: fixed; top: 50%; right: 0; transform: translateY(-50%);
+  z-index: 60;
+  background: #3d3d3d !important;
+  color: #ffffff !important;
+  padding: 10px !important;
+  cursor: pointer;
+  border-radius: 5px 0 0 5px;
+  font-family: "Open Sans", sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+}
+.index-btn:hover { background: #3d3d3d !important; color: #ffffff !important; }
+
+.index {
+  position: fixed; top: 50%; right: -300px; transform: translateY(-50%);
+  width: 260px; max-height: 80vh; overflow-y: auto;
+  background: #9b6dd4 !important;
+  color: #ffffff !important;
+  box-shadow: -4px 4px 16px rgba(0, 0, 0, 0.3) !important;
+  z-index: 59;
+  border-radius: 6px 0 0 6px;
+  font-family: "Open Sans", sans-serif !important;
+  border: 0 !important;
+  transition: right 0.3s ease;
+}
+.index.open { right: 36px !important; }
+
+.index a {
+  display: block !important;
+  padding: 8px 20px !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  font-family: "Open Sans", sans-serif !important;
+  font-size: 13px !important;
+  transition: padding-left 0.15s ease;
+  border: 0 !important;
+  border-left: 0 !important;
+  background: transparent !important;
+}
+.index a:hover {
+  padding-left: 28px !important;
+  background: rgba(0,0,0,0.10) !important;
+  color: #ffffff !important;
+}
+
+.dropdown-btn {
+  display: block !important;
+  padding: 10px 16px !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  border: 0 !important;
+  width: 100% !important;
+  text-align: left !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  cursor: pointer;
+  font-family: "Open Sans", sans-serif !important;
+  transition: padding-left 0.15s ease;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+}
+.dropdown-btn:hover,
+.dropdown-btn.active {
+  padding-left: 22px !important;
+  background: rgba(0,0,0,0.10) !important;
+  color: #ffffff !important;
+}
+
+.dropdown-container {
+  display: none;
+  padding-left: 15px !important;
+  background: transparent !important;
+}
+
+/* Also: kill any figure background boxes from main.css (blue frames on figures). */
+.page__content figure,
+.page__content figure.highlight {
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  margin: 1em 0 !important;
+  padding: 0 !important;
+}
+.page__content figure img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+
+
+/* Image lightbox — click any notes-page image to enlarge; click again / Esc to close. */
+.page__content img { cursor: zoom-in; }
+body.lightbox-lock { overflow: hidden; }
+.img-lightbox {
+  position: fixed; inset: 0;
+  display: none;
+  align-items: center; justify-content: center;
+  background: rgba(2, 6, 23, 0.92);
+  z-index: 999;
+  padding: 2vh 2vw;
+  cursor: zoom-out;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.img-lightbox.is-open { display: flex; }
+.img-lightbox img {
+  max-width: 96vw;
+  max-height: 96vh;
+  width: auto;
+  height: auto;
+  background: #fff;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  cursor: zoom-out;
+}
+
+/* Index drawer: strip every visible divider between items so it's seamless
+   like the old site, then apply per-page background colours. */
+.dropdown-btn,
+.dropdown-btn:hover,
+.dropdown-btn.active,
+.nested-dropdown-btn,
+.index a {
+  border: 0 !important;
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  box-shadow: none !important;
+}
+.dropdown-container { border: 0 !important; }
+
+/* Per-page drawer colour. Tab stays the neutral dark grey from the old site. */
+.notes-crto .index { background: #dc2626 !important; }   /* red   */
+.notes-crtl .index { background: #84cc16 !important; }   /* lime green */
+.notes-crtp .index { background: #0ea5e9 !important; }   /* sky blue */
+
+/* Nuclear headings-not-uppercase override for notes/project pages.
+   Highest specificity so no theme rule can beat it. */
+html body .page__content h2,
+html body .page__content h3,
+html body .page__content h4,
+html body .page__content h5,
+html body .page__content h6 {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+/* Make nested sub-section dropdowns look IDENTICAL to their parent buttons.
+   Only the click-to-expand behaviour differs; visually they're the same. */
+.dropdown-btn,
+.nested-dropdown-btn {
+  display: block !important;
+  width: 100% !important;
+  padding: 10px 16px !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  border: 0 !important;
+  text-align: left !important;
+  font-family: "Open Sans", sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+.dropdown-btn:hover,
+.dropdown-btn.active,
+.nested-dropdown-btn:hover,
+.nested-dropdown-btn.active {
+  padding-left: 22px !important;
+  background: rgba(0, 0, 0, 0.10) !important;
+  color: #ffffff !important;
+}
+.nested-dropdown-container {
+  display: none;
+  padding-left: 15px !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* Cert cards: show ONLY the icon on the "Verify credential" / "View notes"
+   pill — hide the text like the old site. Also give the icon a title-tooltip
+   feel via a subtle circle background so it reads as a button. */
+.cert-card__verify {
+  font-size: 0 !important;         /* hide the text */
+  color: transparent !important;
+  padding: 0 !important;
+  margin-top: auto;
+  display: inline-flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0;
+}
+.cert-card__verify i {
+  font-size: 1.15rem !important;   /* re-show the icon at a readable size */
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0.85;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.cert-card:hover .cert-card__verify i {
+  opacity: 1;
+  transform: translate(2px, -2px);
+}
+
+/* CRTO / CRTL / CRTP: article title stays mixed case (not uppercase).
+   Sliver keeps the uppercase treatment. */
+.notes-crto .page__title,
+.notes-crtl .page__title,
+.notes-crtp .page__title {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+/* All article titles now mixed case (kills the earlier uppercase rule for Sliver too). */
+.layout--single .page__title {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+/* Hide the search toggle button in the top nav bar. */
+.masthead .search__toggle { display: none !important; }
+
+
+
+/* Hamburger toggle (three-bar button) → right end of the nav row.
+   This is the JS-created .section-menu__toggle from arcade-fx.js
+   (which replaces the theme's .greedy-nav__toggle via .has-section-menu). */
+.section-menu__toggle {
+  margin-left: auto !important;
+}
+
+/* Page headers (Recent posts, Certifications, Notes, Projects, Writeups)
+   and the section-menu nav links — all mixed case, not uppercase. */
+.page__title,
+.archive__subtitle,
+.masthead .greedy-nav a,
+.section-menu__panel a {
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+/* Uniform code-block formatting — consistent font, tabs, line-height, and
+   comment token styling across all long-form pages regardless of content. */
+.page__content pre code,
+.page__content pre code[class*="language-"] {
+  tab-size: 2 !important;
+  -moz-tab-size: 2 !important;
+  line-height: 1.55 !important;
+  font-family: "Fira Code", Consolas, "Liberation Mono", Menlo, "Courier New", monospace !important;
+  font-size: 0.78rem !important;
+  text-shadow: none !important;
+}
+.page__content pre .token.comment,
+.page__content pre .token.prolog,
+.page__content pre .token.doctype,
+.page__content pre .token.cdata {
+  color: #7f848e !important;
+  font-style: italic !important;
+}
+
+/* ============================================================
+   Code blocks — Notion/Obsidian style: clean, rounded, subtle
+   background, uniform padding. No macOS chrome, no dots, no
+   heavy top bar. Comments and spacing render consistently.
+   ============================================================ */
+.page__content pre:not(.ascii-art) {
+  padding: 0.9rem 1rem !important;
+  border-radius: 6px !important;
+  background: #1e1e2e !important;
+  border: 1px solid #313244 !important;
+  box-shadow: none !important;
+  overflow-x: auto;
+  margin: 0.9em 0 !important;
+}
+.page__content pre:not(.ascii-art)::before,
+.page__content pre:not(.ascii-art)::after {
+  content: none !important;
+  display: none !important;
+}
+.page__content pre:not(.ascii-art) code {
+  background: transparent !important;
+  padding: 0 !important;
+  color: #cdd6f4 !important;
+  font-family: "JetBrains Mono", "Fira Code", Consolas, "Liberation Mono", Menlo, monospace !important;
+  font-size: 0.78rem !important;
+  line-height: 1.55 !important;
+  text-shadow: none !important;
+}
+
+/* Consistent Prism comment token — muted, italic — for ALL languages. */
+.page__content pre .token.comment,
+.page__content pre .token.prolog,
+.page__content pre .token.doctype,
+.page__content pre .token.cdata {
+  color: #7f849c !important;
+  font-style: italic !important;
+  font-weight: normal !important;
+}
+
+/* Tables: natural width, capped at the content column. Cells wrap long
+   content so the table doesn't push past the page. Background only under
+   the actual data — page background shows through any leftover space. */
+.page__content table,
+.page__content .custom-table {
+  width: auto !important;
+  max-width: 100% !important;
+  table-layout: auto;
+}
+.page__content table td,
+.page__content table th,
+.page__content .custom-table td,
+.page__content .custom-table th {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ============================================================
+   Final code-block look: Notion/Obsidian aesthetic + macOS
+   traffic-light dots in the top-left corner. Overrides the
+   earlier "no chrome" version.
+   ============================================================ */
+.page__content pre:not(.ascii-art) {
+  padding: 2rem 1rem 0.9rem !important;   /* room for the top bar */
+  border-radius: 6px !important;
+  background: #1e1e2e !important;
+  border: 1px solid #313244 !important;
+  box-shadow: none !important;
+  overflow-x: auto;
+  margin: 0.9em 0 !important;
+  position: relative;
+}
+.page__content pre:not(.ascii-art)::before {
+  content: '' !important;
+  display: block !important;
+  position: absolute;
+  top: 0.7rem;
+  left: 0.9rem;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #ff5f57;
+  box-shadow:
+    18px 0 0 #febc2e,        /* yellow */
+    36px 0 0 #28c840;        /* green  */
+  pointer-events: none;
+}
+.page__content pre:not(.ascii-art)::after {
+  /* thin divider under the top bar area */
+  content: '' !important;
+  display: block !important;
+  position: absolute;
+  top: 1.85rem;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+/* keep the copy button clear of the traffic lights */
+.page__content pre:not(.ascii-art) .code-copy-btn {
+  right: 0.55rem;
+  top: 0.45rem;
+}
+
+
+/* Long unbreakable inline <code> (e.g. ldapsearch --attributes ...): let it
+   wrap in-place instead of pushing the whole paragraph past the right edge.
+   The white-space: pre-wrap is the key — without it, browsers keep code on
+   one line even when word-break says otherwise (this is how the old site
+   handled it too). Only affects inline code, not <pre> blocks. */
+.page__content :not(pre) > code,
+.page__content li code,
+.page__content p code,
+.page__content td code {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Inline <code> in prose — one size smaller than surrounding text. */
+html body .page__content :not(pre) > code,
+html body .page__content li code,
+html body .page__content p code,
+html body .page__content h1 code,
+html body .page__content h2 code,
+html body .page__content h3 code,
+html body .page__content h4 code,
+html body .page__content h5 code,
+html body .page__content h6 code,
+html body .page__content td code,
+html body .page__content th code {
+  font-size: 0.82em !important;
+}
+
+
+
+/* ============================================================
+   Notes/Projects images — single authoritative rule.
+   Overrides main.css's default purple border + dark #1a1a2e
+   background. White plate makes dark screenshot text legible;
+   generous padding gives a clear visual frame against the dark
+   page bg; subtle brightness lift helps hard-to-read UI dumps.
+   ============================================================ */
+.page__content img {
+  box-sizing: border-box !important;
+  background: #ffffff !important;
+  border: 0 !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  padding: 10px !important;
+  max-width: 100% !important;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;
+  filter: brightness(1.04) contrast(1.02);
+  cursor: zoom-in;
+}
+.page__content figure img {
+  background: #ffffff !important;
+  border: 0 !important;
+  padding: 10px !important;
+}
+
+}
+
+}
+
+/* ============================================================
+   Site background — pure black with a scanning light beam.
+   Two fixed layers:
+     ::before  = dim lime-green cyber symbols, always visible
+     ::after   = a soft light beam that translates top → bottom
+                 → top, brightening symbols where it passes
+   Uses translate-based animation (GPU-friendly). No JS.
+   ============================================================ */
+
+/* True black background — override the theme's neon grid/glow. */
+html {
+  background: #000 !important;
+  background-image: none !important;
+}
+body {
+  background: transparent !important;
+}
+/* Hide the arcade canvas + scanlines so nothing competes with the beam. */
+#arcade-bg-canvas,
+#arcade-scanlines {
+  display: none !important;
+}
+
+/* Layer 1 — the always-visible dim symbol grid. */
+body::before {
+  content:
+    "◈  ⬢  ▲  ∞  ⚛  ★  ◇  ⌘  ⧉  ⨀  ⊛  ⟁  ⟠  ⟢  ⨁\A"
+    "//→   ~   [ + ]   ·   [ ! ]   0x1F   0xDE   0xA5\A"
+    "◇  ⌘  ◈  ⬢  ▲  ∞  ⚛  ★  ⧉  ⨀  ⊛  ⟁  ⟠  ⟢  ⨁\A"
+    "→   ⨀   //   ~   [ + ]   ·   [ ! ]   ⨁   0xF3\A"
+    "◈  ⬢  ▲  ∞  ⚛  ★  ◇  ⌘  ⧉  ⨀  ⊛  ⟁  ⟠  ⟢  ⨁\A"
+    "//→   ~   [ + ]   ·   [ ! ]   0x1F   0xDE   0xA5\A"
+    "◇  ⌘  ◈  ⬢  ▲  ∞  ⚛  ★  ⧉  ⨀  ⊛  ⟁  ⟠  ⟢  ⨁\A"
+    "→   ⨀   //   ~   [ + ]   ·   [ ! ]   ⨁   0xF3\A"
+    "◈  ⬢  ▲  ∞  ⚛  ★  ◇  ⌘  ⧉  ⨀  ⊛  ⟁  ⟠  ⟢  ⨁\A"
+    "//→   ~   [ + ]   ·   [ ! ]   0x1F   0xDE   0xA5\A"
+    "◇  ⌘  ◈  ⬢  ▲  ∞  ⚛  ★  ⧉  ⨀  ⊛  ⟁  ⟠  ⟢  ⨁\A"
+    "→   ⨀   //   ~   [ + ]   ·   [ ! ]   ⨁   0xF3";
+  white-space: pre-line;
+  position: fixed;
+  inset: 0;
+  padding: 44px 36px;
+  font-family: "Fira Code", "JetBrains Mono", Consolas, monospace;
+  font-size: 18px;
+  line-height: 2.55em;
+  letter-spacing: 0.28em;
+  color: rgba(163, 230, 53, 0.20);  /* dim base — always visible */
+  text-shadow: 0 0 6px rgba(163, 230, 53, 0.12);
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Layer 2 — the translating light beam.
+   Height: 40vh soft-edged band. Slides top → bottom → top forever. */
+body::after {
+  content: '';
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: -40vh;
+  height: 40vh;
+  background: linear-gradient(
+    to bottom,
+    rgba(163, 230, 53, 0)      0%,
+    rgba(163, 230, 53, 0.18)   30%,
+    rgba(210, 255, 140, 0.55)  50%,
+    rgba(163, 230, 53, 0.18)   70%,
+    rgba(163, 230, 53, 0)      100%
+  );
+  filter: blur(4px);
+  pointer-events: none;
+  z-index: 3;
+  will-change: transform;
+  animation: bg-beam 13s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+
+@keyframes bg-beam {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(140vh); }
+  100% { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after { animation: none; opacity: 0; }
+  body::before { opacity: 0.35; }
+}
