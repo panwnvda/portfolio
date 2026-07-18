@@ -243,8 +243,26 @@
       <div class="container cheatsheet-container">
         <div class="cheatsheet-content">
 <h2 id="cape-ldap-1">1. Active Directory LDAP</h2>
-<p>LDAP is Active Directory's query protocol. Every request begins with a bind, and any authenticated domain user has read access to almost the entire tree without additional privileges. That tree carries users, groups, computers, OUs, GPO links, certificate templates, and delegation flags. It is the single richest information source available from any credentialed host, and one bind unlocks it.</p>
-<p>Bind mode determines the visibility of the query. Anonymous binds against a modern DC are constrained to the root DSE, but that response still lists naming contexts, supported controls, and the schema location, which is usually enough to shape the next query. Authenticated binds remove the constraint. Base and object-class filter then set the scope of the response, and choosing them carelessly returns the entire tree.</p>
+<p>LDAP is Active Directory's query protocol. Every request begins with a bind, and any authenticated domain user has read access to almost the entire tree without additional privileges. The tree carries:</p>
+<ul>
+  <li>Users</li>
+  <li>Groups</li>
+  <li>Computers</li>
+  <li>OUs</li>
+  <li>GPO links</li>
+  <li>Certificate templates</li>
+  <li>Delegation flags</li>
+</ul>
+<p>That makes LDAP the single richest information source available from any credentialed host.</p>
+
+<p>Bind mode determines the visibility of the query:</p>
+<table class="custom-table">
+<thead><tr><th>Bind mode</th><th>What the DC returns</th><th>Typical use</th></tr></thead>
+<tbody>
+<tr><td><strong>Anonymous</strong></td><td>Root DSE only: naming contexts, supported controls, schema location</td><td>Zero-credential recon; enough metadata to shape the authenticated query that follows</td></tr>
+<tr><td><strong>Authenticated</strong></td><td>The full tree, scoped by base and object-class filter</td><td>Every real enumeration pass; sloppy base or filter returns the entire directory</td></tr>
+</tbody>
+</table>
 
 <h3 id="cape-ldap-naming-contexts">1.1 Naming Contexts</h3>
 <p>Every LDAP server exposes a set of naming contexts (also called root DSE entries) describing the partitions it hosts. Querying with an empty base and <code>-s base</code> returns the metadata needed to build subsequent searches:</p>
