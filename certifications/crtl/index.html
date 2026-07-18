@@ -236,9 +236,13 @@
 <h2 id="crtl-c2-infrastructure">1. C2 Infrastructure</h2>
 
 <h3 id="crtl-c2-infrastructure-introduction">1.1 Introduction</h3>
-<p>A single team server exposed directly to the target environment is a single point of failure. Once a defender identifies the C2 domain or IP address, every active Beacon session is at immediate risk of loss and the operation cannot recover without rebuilding from scratch. Purpose-built C2 infrastructure exists to provide resilience against defensive mitigations and to limit the information disclosed by any single detection.</p>
+<p>Running a single team server against the target is fragile. Once the defender flags its domain or IP, every active Beacon dies with it and the only way back is a full rebuild. Splitting the operation across multiple team servers behind redirectors keeps a single detection from ending the engagement.</p>
 
-<p>Two design principles support this goal. The first is to distribute activity across multiple team servers, each running a distinct Malleable C2 profile. The second is to position a redirector in front of every team server so that no team server is directly exposed to the Internet.</p>
+<p>Two design principles apply:</p>
+<ul>
+  <li><strong>Distribute activity</strong> across multiple team servers, each running a distinct Malleable C2 (Command and Control) profile.</li>
+  <li><strong>Front every team server with a redirector</strong> so no team server is directly reachable from the Internet.</li>
+</ul>
 
 <figure><img src="/assets/images/crtl/59da0180c2a252ed9b03387180c890ec.png" alt="Distributed team servers behind redirectors, per operational phase"></figure>
 
@@ -254,10 +258,14 @@
 </tbody>
 </table>
 
-<p>The tiered model provides recovery paths after detection events. If the initial access payload is reported and investigated, a defender identifies and blocks the associated C2 domain and payload indicators. The initial access channel is lost. That access, however, was previously used to establish long-haul persistence to a separate team server that uses a distinct domain and Malleable C2 profile. The long-haul channel remains operational and can be used to spawn new Beacon sessions against the post-exploitation team server. The same principle applies in reverse: if post-exploitation activity is detected and blocked, the persistence tier is unaffected and only the post-exploitation infrastructure requires rebuilding.</p>
+<p>The tiered model gives the operator recovery paths after a detection event:</p>
+<ul>
+  <li><strong>Initial access burned.</strong> The defender blocks the initial access domain and payload indicators. That channel is dead, but the long-haul persistence that was installed through it earlier runs on a separate team server with its own domain and profile. Use it to spawn new Beacons back into the post-exploitation tier.</li>
+  <li><strong>Post-exploitation burned.</strong> The defender blocks the post-exploitation domain. The persistence tier is untouched. Only the post-exploitation team server has to be rebuilt.</li>
+</ul>
 
 <h4 id="crtl-c2-infrastructure-introduction-redirectors">1.1.2 Redirector Types</h4>
-<p>A redirector is a host positioned in front of the team server that receives and forwards inbound C2 traffic. From the target's perspective, the redirector is the C2 endpoint. The team server itself does not appear in DNS records, WHOIS registrations, TLS certificate transparency logs, or reverse IP scan data. Three categories of redirector are commonly deployed, differentiated by the depth of inspection performed on incoming requests.</p>
+<p>A redirector is a host positioned in front of the team server that receives and forwards inbound C2 traffic. From the target's perspective, the redirector is the C2 endpoint. The team server itself does not appear in DNS records, WHOIS registrations, TLS (Transport Layer Security) certificate transparency logs, or reverse IP scan data. Three categories of redirector are commonly deployed, differentiated by the depth of inspection performed on incoming requests.</p>
 
 <table class="custom-table">
 <thead><tr><th>Type</th><th>Tools</th><th>Behaviour</th><th>Trade-off</th></tr></thead>
@@ -559,7 +567,7 @@ location / { return 301 https://www.example-decoy.com; }</code></pre>
 <h2 id="crtl-edr-telemetry">2. EDR Telemetry</h2>
 
 <h3 id="crtl-edr-telemetry-introduction">2.1 Introduction</h3>
-<p>Endpoint Detection and Response (EDR) products collect telemetry from multiple layers of the Windows operating system in order to identify malicious activity. Effective evasion requires an understanding of where each telemetry source originates and how it can be circumvented. The Windows API is layered, and each layer represents a different opportunity for a sensor to observe activity.</p>
+<p>EDR (Endpoint Detection and Response) products collect telemetry from several layers of Windows to spot malicious activity. Getting past them means knowing where each telemetry source lives and how it can be avoided. The Windows API is layered, and every layer gives a sensor a different place to watch.</p>
 
 <h4 id="crtl-edr-telemetry-introduction-layers">2.1.1 Windows API Layers</h4>
 <p>The core capabilities of Beacon — process injection, token manipulation, memory allocation, and network I/O — are implemented on top of the Win32 API. Each Win32 function is layered above the native API, which in turn transitions to the kernel through a syscall.</p>
@@ -602,7 +610,7 @@ location / { return 301 https://www.example-decoy.com; }</code></pre>
 </ul>
 
 <h3 id="crtl-edr-telemetry-api-hooking">2.2 API Hooking</h3>
-<p>Two hooking techniques account for the majority of user-mode EDR instrumentation. <strong>IAT hooking</strong> replaces the resolved function pointer in a target PE's Import Address Table. <strong>Inline hooking</strong> overwrites the first instructions of the target function with an unconditional jump to a detour. Inline hooking is the more common approach in modern EDR products because it applies to every process that loads <code>ntdll</code>.</p>
+<p>Two hooking techniques cover most of what an EDR does in user mode. <strong>IAT hooking</strong> swaps the resolved function pointer in a target PE's Import Address Table. <strong>Inline hooking</strong> overwrites the first instructions of the target function with an unconditional jump to a detour. Most current EDRs prefer inline hooking because a single hook on an <code>ntdll</code> function catches every process that loads the DLL.</p>
 
 <h4 id="crtl-edr-telemetry-api-hooking-iat">2.2.1 IAT Hooking</h4>
 <p>Every PE has an <strong>Import Directory</strong> listing the DLLs and functions it depends on. At load time the Windows loader walks that table, resolves each function pointer with <code>LoadLibrary</code> + <code>GetProcAddress</code>, and writes the pointer into the <strong>Import Address Table (IAT)</strong>. Calls compile to an indirect <code>jmp</code> through the IAT slot.</p>
@@ -680,7 +688,7 @@ end</code></pre>
 <p>A variant of this technique jumps to the <code>syscall</code> instruction inside a different <code>Nt*</code> function than the one whose system service number was loaded into <code>EAX</code>. The kernel dispatches based on the value in <code>EAX</code>, while the call stack references the unrelated function name. This defeats naive stack-based detections that correlate the stack frame with the operation being performed.</p>
 
 <h4 id="crtl-edr-telemetry-api-hooking-gates">2.2.5 SSN Resolution (Hell's, Halo's, and Tartarus' Gate)</h4>
-<p>Hard-coding system service numbers and syscall addresses is not portable. System service numbers change between Windows builds, and ASLR relocates <code>ntdll</code> on each boot. Both values must be resolved at runtime by walking the <code>ntdll</code> Export Address Table and inspecting each <code>Nt*</code> function body.</p>
+<p>Hard-coding SSNs (System Service Numbers) and syscall addresses is not portable. SSNs change between Windows builds, and ASLR (Address Space Layout Randomization) relocates <code>ntdll</code> on each boot. Both values must be resolved at runtime by walking the <code>ntdll</code> EAT (Export Address Table) and inspecting each <code>Nt*</code> function body.</p>
 
 <table class="custom-table">
 <thead><tr><th>Gate</th><th>Approach</th><th>Failure Mode</th></tr></thead>
@@ -693,7 +701,7 @@ end</code></pre>
 
 <h4 id="crtl-edr-telemetry-api-hooking-methodology">Methodology</h4>
 <ul class="methodology-checklist">
-  <li><input type="checkbox" data-id="crtl-2-2-0"> Author a direct syscall stub in MASM, one per target <code>Nt*</code>. Declare the C prototype in a matching header:
+  <li><input type="checkbox" data-id="crtl-2-2-0"> Author a direct syscall stub in MASM (Microsoft Macro Assembler), one per target <code>Nt*</code>. Declare the C prototype in a matching header:
     <pre><code class="language-nasm">.code
 NtOpenProcess proc
     mov r10, rcx
@@ -810,7 +818,7 @@ Typical epilogue:
 <table class="custom-table">
 <thead><tr><th>Structure</th><th>Role</th></tr></thead>
 <tbody>
-<tr><td><code>RUNTIME_FUNCTION</code></td><td>A per-function entry in the exception directory containing the function's start RVA, end RVA, and a pointer to its <code>UNWIND_INFO</code>.</td></tr>
+<tr><td><code>RUNTIME_FUNCTION</code></td><td>A per-function entry in the exception directory containing the function's start RVA (Relative Virtual Address), end RVA, and a pointer to its <code>UNWIND_INFO</code>.</td></tr>
 <tr><td><code>UNWIND_INFO</code></td><td>Describes the function prologue: the number of bytes pushed, whether a frame pointer is used, and the location of the shadow space.</td></tr>
 <tr><td><code>UNWIND_CODE[]</code></td><td>An ordered sequence of unwind operations replayed by the unwinder to reconstruct the caller's stack pointer.</td></tr>
 </tbody>
@@ -1027,7 +1035,7 @@ lkd&gt; dt nt!_TRACE_ENABLE_INFO &lt;provider-enable-info-addr&gt;
 </table>
 
 <h4 id="crtl-load-time-evasion-introduction-frameworks">3.1.2 PIC Frameworks</h4>
-<p>Reflective loaders must be implemented as position-independent code (PIC) so that they execute correctly at any memory address. Writing PIC directly in assembly is possible but does not scale to non-trivial loaders. Several frameworks provide higher-level abstractions for string handling, embedded resources, and Windows API resolution.</p>
+<p>Reflective loaders must be implemented as Position-Independent Code (PIC) so that they execute correctly at any memory address. Writing PIC directly in assembly is possible but does not scale to non-trivial loaders. Several frameworks provide higher-level abstractions for string handling, embedded resources, and Windows API resolution.</p>
 
 <table class="custom-table">
 <thead><tr><th>Framework</th><th>Notes</th></tr></thead>
@@ -2040,7 +2048,7 @@ entry_point((HINSTANCE)(char *)go, 0x4, loader_arguments);</code></pre>
 </ul>
 
 <h3 id="crtl-post-exploitation-evasion-postex-image-loads">5.6 Postex Image Loads</h3>
-<p>The <code>powerpick</code>, <code>psinject</code>, and <code>execute-assembly</code> commands all load the .NET Common Language Runtime, which in turn loads <code>mscoree.dll</code>, then <code>mscoreei.dll</code>, then <code>clr.dll</code>. Because the loader that issues the initial <code>LoadLibraryW</code> executes from unbacked memory, the resulting CLR image loads inherit an unbacked call stack. EDR products commonly alert on <code>clr.dll</code> being loaded from an unexpected origin.</p>
+<p>The <code>powerpick</code>, <code>psinject</code>, and <code>execute-assembly</code> commands all load the .NET Common Language Runtime (CLR), which in turn loads <code>mscoree.dll</code>, then <code>mscoreei.dll</code>, then <code>clr.dll</code>. Because the loader that issues the initial <code>LoadLibraryW</code> executes from unbacked memory, the resulting CLR image loads inherit an unbacked call stack. EDR products commonly alert on <code>clr.dll</code> being loaded from an unexpected origin.</p>
 
 <h4 id="crtl-post-exploitation-evasion-postex-image-loads-hook">5.6.1 Hooking LoadLibraryExW in the Postex Loader</h4>
 <p>The custom loader only intercepts the initial <code>LoadLibraryW("mscoree.dll")</code>. The subsequent loads of <code>mscoreei.dll</code> and <code>clr.dll</code> are issued from within <code>mscoree.dll</code> and <code>mscoreei.dll</code> respectively. To intercept them as well, the loader hooks <code>LoadLibraryExW</code> and, when a target CLR module is returned, installs an IAT hook on that module's <code>LoadLibraryExW</code> import before returning the handle to the caller.</p>
@@ -2312,7 +2320,7 @@ spawnto x64 %windir%\sysnative\msiexec.exe /i foo.msi /quiet</code></pre>
 <h2 id="crtl-user-impersonation-lateral-movement">6. User Impersonation &amp; Lateral Movement</h2>
 
 <h3 id="crtl-user-impersonation-lateral-movement-user-impersonation">6.1 User Impersonation</h3>
-<p>User impersonation allows Beacon to perform actions in the security context of another user, either by supplying alternate credentials or by duplicating an existing access token. In an environment protected by modern EDR products, some of these techniques remain effective while others are readily detected. The viability of each is summarised below.</p>
+<p>User impersonation lets Beacon act in another user's security context, either by supplying fresh credentials or by duplicating an existing access token. Against modern EDR some of the techniques still work well and others get caught almost immediately.</p>
 
 <h4 id="crtl-user-impersonation-lateral-movement-user-impersonation-summary">6.1.1 Technique Viability</h4>
 <table class="custom-table">
@@ -2321,8 +2329,8 @@ spawnto x64 %windir%\sysnative\msiexec.exe /i foo.msi /quiet</code></pre>
 <tr><td><code>make_token</code></td><td><code>LogonUserA</code> with <code>LOGON32_LOGON_NEW_CREDENTIALS</code></td><td>Viable if Beacon is hosted in a plausible process. The logon event records the parent process.</td></tr>
 <tr><td>Rubeus <code>createnetonly</code></td><td><code>CreateProcessWithLogonW</code> with <code>LOGON_NETCREDENTIALS_ONLY</code></td><td>Preferable to <code>make_token</code>. The <code>/process</code> argument allows control over the spawned process.</td></tr>
 <tr><td><code>steal_token</code></td><td><code>OpenProcess</code>, <code>OpenProcessToken</code>, <code>DuplicateToken</code>, <code>ImpersonateLoggedOnUser</code></td><td>Viable when the API chain is routed through call stack spoofing or indirect syscalls.</td></tr>
-<tr><td>Rubeus <code>asktgt</code>, <code>asktgs</code>, S4U</td><td>Raw Kerberos over port 88</td><td>Not viable against any EDR that inspects network traffic. On a domain-joined host, only <code>lsass.exe</code> normally generates outbound Kerberos.</td></tr>
-<tr><td>Rubeus <code>asktgs</code> with <code>/luid</code></td><td>LSA authentication package RPC</td><td>Viable. Traffic originates from LSASS as expected.</td></tr>
+<tr><td>Rubeus <code>asktgt</code>, <code>asktgs</code>, S4U (Service-for-User)</td><td>Raw Kerberos over port 88</td><td>Not viable against any EDR that inspects network traffic. On a domain-joined host, only <code>lsass.exe</code> normally generates outbound Kerberos.</td></tr>
+<tr><td>Rubeus <code>asktgs</code> with <code>/luid</code></td><td>LSA (Local Security Authority) authentication package RPC</td><td>Viable. Traffic originates from LSASS as expected.</td></tr>
 </tbody>
 </table>
 
@@ -2351,7 +2359,7 @@ addhook "ADVAPI32$ImpersonateLoggedOnUser" "_ImpersonateLoggedOnUser"</code></pr
 </ul>
 
 <h3 id="crtl-user-impersonation-lateral-movement-lateral-movement">6.2 Lateral Movement</h3>
-<p>Cobalt Strike exposes several lateral movement primitives — <code>remote-exec wmi</code>, <code>psexec</code>, <code>jump winrm64</code>, <code>jump ssh</code>, and others. The mechanics of each are well established. The relevant question for modern engagements is what an EDR product observes when each primitive executes and how those observable side-effects can be reduced.</p>
+<p>Cobalt Strike ships several lateral movement primitives: <code>remote-exec wmi</code>, <code>psexec</code>, <code>jump winrm64</code>, <code>jump ssh</code>, and others. The mechanics are all well documented. What matters on an engagement with EDR in path is what the sensor actually sees when each one fires, and how much of that noise can be dampened.</p>
 
 <h4 id="crtl-user-impersonation-lateral-movement-lateral-movement-wmi">6.2.1 WMI (remote-exec wmi)</h4>
 <p>The <code>remote-exec wmi</code> command is implemented as a BOF that calls <code>combase.dll!CoCreateInstance</code> to instantiate the WMI COM object on the remote host. This call triggers an internal <code>LoadLibraryExW</code> for <code>wbemprox.dll</code>. Because the BOF executes from unbacked memory, the resulting load event's call stack contains unbacked frames.</p>
@@ -2386,7 +2394,7 @@ combase.dll!CoReleaseServerProcess+0x9b0
 <ul>
   <li><strong>Standard directory placement.</strong> Upload the binary to a directory such as <code>System32</code> or <code>Program Files</code> where binaries are expected to reside.</li>
   <li><strong>Delayed execution.</strong> Wait between the upload and the execution so that the file is no longer classified as recent. The specific threshold varies by product.</li>
-  <li><strong>LOLBAS wrapping.</strong> Invoke the payload through a trusted signed binary: <code>remote-exec wmi lon-dc-1 cmd /c C:\Windows\System32\smb.exe</code>.</li>
+  <li><strong>LOLBAS (Living Off the Land Binaries and Scripts) wrapping.</strong> Invoke the payload through a trusted signed binary: <code>remote-exec wmi lon-dc-1 cmd /c C:\Windows\System32\smb.exe</code>.</li>
 </ul>
 
 <h4 id="crtl-user-impersonation-lateral-movement-lateral-movement-psexec">6.2.3 PsExec</h4>
@@ -2466,7 +2474,7 @@ beacon&gt; ps</code></pre>
 <h2 id="crtl-vulnerable-drivers">7. Vulnerable Drivers</h2>
 
 <h3 id="crtl-vulnerable-drivers-introduction">7.1 Introduction</h3>
-<p>Disabling kernel callbacks (§2.4) and ETW-TI (§2.5) requires the ability to write to kernel memory. Because Driver Signature Enforcement prevents unsigned drivers from being loaded, the practical mechanism for obtaining this capability is <strong>Bring Your Own Vulnerable Driver (BYOVD)</strong>: loading a legitimately signed driver whose exposed IOCTLs allow user mode to read from and write to arbitrary kernel addresses.</p>
+<p>Disabling kernel callbacks (§2.4) and ETW-TI (§2.5) requires the ability to write to kernel memory. Because Driver Signature Enforcement prevents unsigned drivers from being loaded, the practical mechanism for obtaining this capability is <strong>Bring Your Own Vulnerable Driver (BYOVD)</strong>: loading a legitimately signed driver whose exposed IOCTLs (Input/Output Control codes) allow user mode to read from and write to arbitrary kernel addresses.</p>
 
 <h4 id="crtl-vulnerable-drivers-introduction-selection">7.1.1 Driver Selection</h4>
 <table class="custom-table">
@@ -2474,7 +2482,7 @@ beacon&gt; ps</code></pre>
 <tbody>
 <tr><td>Signed by Microsoft's Hardware Developer Program</td><td>Required for the driver to load. Unsigned drivers are rejected by Driver Signature Enforcement.</td></tr>
 <tr><td>Exposes read and write IOCTLs</td><td>Two IOCTLs providing arbitrary kernel-address read and write are sufficient to implement any of the techniques that follow.</td></tr>
-<tr><td>Presence on the Microsoft Vulnerable Driver Block List</td><td>Windows refuses to load the driver when HVCI or MDE has the block list active. Drivers that have not yet been added to the block list, or targets on which HVCI is not enforced, should be preferred.</td></tr>
+<tr><td>Presence on the Microsoft Vulnerable Driver Block List</td><td>Windows refuses to load the driver when HVCI (Hypervisor-Protected Code Integrity) or MDE (Microsoft Defender for Endpoint) has the block list active. Drivers that have not yet been added to the block list, or targets on which HVCI is not enforced, should be preferred.</td></tr>
 <tr><td>Not currently installed on the target</td><td>The driver must be delivered and loaded by the operator. Driver installation requires local administrator privileges.</td></tr>
 </tbody>
 </table>
@@ -2673,7 +2681,7 @@ beacon&gt; pppatch 1008 2       # restore PsProtectedSignerLsa</code></pre>
 <tr><td><strong>Path</strong></td><td><code>%WINDIR%\regedit.exe</code>, <code>%OSDRIVE%\Program Files\7-Zip\*</code></td></tr>
 <tr><td><strong>File attributes</strong></td><td><code>OriginalFilename</code>, <code>ProductName</code>, <code>Version</code>, <code>FileHash</code></td></tr>
 <tr><td><strong>ISG reputation</strong></td><td>Microsoft Intelligent Security Graph cloud reputation lookup.</td></tr>
-<tr><td><strong>Code-signing certificate</strong></td><td>Publisher identified by the certificate issuer TBS hash, with an optional <code>CertPublisher</code> restriction on the certificate common name.</td></tr>
+<tr><td><strong>Code-signing certificate</strong></td><td>Publisher identified by the certificate issuer TBS (To-Be-Signed) hash, with an optional <code>CertPublisher</code> restriction on the certificate common name.</td></tr>
 </tbody>
 </table>
 
@@ -2681,7 +2689,7 @@ beacon&gt; pppatch 1008 2       # restore PsProtectedSignerLsa</code></pre>
 <p>Raw policies are authored in XML using the <code>New-CIPolicy</code> cmdlet or the App Control for Business Wizard. The XML is compiled into a binary Code Integrity Policy (<code>.cip</code>) file for deployment and copied to <code>C:\Windows\System32\CodeIntegrity\CIPolicies\Active</code>. Since Windows 10 1903 and Windows Server 2022, multiple policies coexist on a system — one base policy and any number of supplemental policies, all of which are evaluated together.</p>
 
 <h4 id="crtl-app-control-for-business-introduction-reverse">8.1.3 Reversing CIP Files</h4>
-<p>App Control forces PowerShell into Constrained Language Mode, so policy analysis is typically performed offline. Matt Graeber's <strong>WDACTools</strong> module converts binary CIP files back to XML for inspection.</p>
+<p>App Control forces PowerShell into Constrained Language Mode (CLM), so policy analysis is typically performed offline. Matt Graeber's <strong>WDACTools</strong> module converts binary CIP files back to XML for inspection.</p>
 
 <pre><code class="language-powershell">PS&gt; ipmo C:\Tools\WDACTools\WDACTools.psd1
 PS&gt; ConvertTo-WDACCodeIntegrityPolicy `
@@ -2724,7 +2732,12 @@ PS&gt; ConvertTo-WDACCodeIntegrityPolicy `
 <p>Direct bypasses in App Control are addressed by Microsoft through the security response process. The reliable attack surface consists of configuration weaknesses: policies deployed in audit mode, weak file-attribute rules, wildcard path rules referencing user-writable directories, LOLBAS execution paths, and permissive certificate authority trust.</p>
 
 <h4 id="crtl-app-control-for-business-policy-misconfigurations-audit">8.2.1 Audit-Only Policies</h4>
-<p>Microsoft recommends that policies be deployed in audit mode first in order to assess business impact before enforcement is enabled. Some organisations never transition their policies to enforcement mode. Policies authored using the official Microsoft tools also default to audit mode, and the switch to enforcement mode is easily overlooked. Every deployed policy should be inspected for the following:</p>
+<p>Microsoft recommends deploying policies in audit mode first to assess business impact before enforcement is enabled. Two conditions cause audit mode to persist longer than intended:</p>
+<ul>
+  <li>Some organisations never transition their policies to enforcement mode after the assessment period ends.</li>
+  <li>Policies authored using the official Microsoft tools default to audit mode, and the switch to enforcement is easily overlooked at deployment.</li>
+</ul>
+<p>Every deployed policy should be inspected for the following:</p>
 
 <pre><code class="language-xml">&lt;Rules&gt;
     &lt;Rule&gt;
@@ -2814,7 +2827,7 @@ Hello World</code></pre>
 <h4 id="crtl-app-control-for-business-policy-misconfigurations-electron">8.2.5 Electron App Hijacking</h4>
 <p>Electron applications such as Teams, Visual Studio Code, GitHub Desktop, and Slack execute JavaScript at runtime through Node.js. When ASAR integrity checks are not enabled, the accompanying JavaScript files can be modified. This allows code execution through a signed trusted application. Bobby Cooke's <a href="https://github.com/boku7/Loki" target="_blank" rel="noopener">Loki</a> framework implements a command-and-control platform built on this technique.</p>
 
-<h4 id="crtl-app-control-for-business-policy-misconfigurations-cert">8.2.6 Trusted CA Abuse</h4>
+<h4 id="crtl-app-control-for-business-policy-misconfigurations-cert">8.2.6 Trusted CA (Certificate Authority) Abuse</h4>
 <p>Rules that trust an entire certificate authority are identifiable by the combination of <code>CertRoot</code> and <code>CertPublisher</code> elements:</p>
 
 <pre><code class="language-xml">&lt;Signer Name="Signer 1" ID="ID_SIGNER_S_0001"&gt;
@@ -2938,7 +2951,7 @@ beacon&gt; run shutdown /r /t 0</code></pre>
 <h2 id="crtl-credential-guard">9. Credential Guard</h2>
 
 <h3 id="crtl-credential-guard-introduction">9.1 Introduction</h3>
-<p>Credential Guard uses <strong>Virtualization-Based Security (VBS)</strong>, backed by the Windows hypervisor and hardware virtualisation, to isolate authentication secrets in a separate virtual container. NTLM hashes, Kerberos Ticket Granting Tickets, and other long-term secrets are stored in <code>LSAIso.exe</code> rather than in <code>lsass.exe</code>. LSAIso is designated by Microsoft as an official security boundary; access to its contents from outside the enclave is treated as a security vulnerability.</p>
+<p>Credential Guard uses <strong>Virtualization-Based Security (VBS)</strong>, backed by the Windows hypervisor and hardware virtualisation, to isolate authentication secrets in a separate virtual container. NTLM hashes, Kerberos Ticket Granting Tickets, and other long-term secrets are stored in <code>LSAIso.exe</code> (the LSA Isolated process) rather than in <code>lsass.exe</code>. LSAIso is designated by Microsoft as an official security boundary; access to its contents from outside the enclave is treated as a security vulnerability.</p>
 
 <h4 id="crtl-credential-guard-introduction-arch">9.1.1 Architecture</h4>
 <table class="custom-table">
@@ -2953,11 +2966,11 @@ beacon&gt; run shutdown /r /t 0</code></pre>
 
 <h4 id="crtl-credential-guard-introduction-flow">9.1.2 Session Key Flow</h4>
 <ol>
-  <li>The user authenticates. LSA issues an AS-REQ to the Key Distribution Center.</li>
-  <li>The AS-REP returns a TGT together with a logon session key encrypted with the user's long-term key. LSA forwards both to LSAIso.</li>
+  <li>The user authenticates. LSA issues an AS-REQ (Authentication Service Request) to the KDC (Key Distribution Center).</li>
+  <li>The AS-REP (Authentication Service Reply) returns a TGT (Ticket Granting Ticket) together with a logon session key encrypted with the user's long-term key. LSA forwards both to LSAIso.</li>
   <li>LSAIso decrypts the logon session key using the long-term key it holds. It re-encrypts the session key with a key that only LSAIso possesses and returns the re-encrypted blob to LSA.</li>
-  <li>When a service ticket is required, LSA passes the TGS-REQ authenticator to LSAIso for encryption. LSA does not have access to the plaintext session key at any point.</li>
-  <li>The TGS-REP returns the service ticket and service session key, encrypted with the logon session key. LSA passes the response to LSAIso for decryption.</li>
+  <li>When a service ticket is required, LSA passes the TGS-REQ (Ticket Granting Service Request) authenticator to LSAIso for encryption. LSA does not have access to the plaintext session key at any point.</li>
+  <li>The TGS-REP (Ticket Granting Service Reply) returns the service ticket and service session key, encrypted with the logon session key. LSA passes the response to LSAIso for decryption.</li>
 </ol>
 
 <h4 id="crtl-credential-guard-introduction-blocked">9.1.3 Techniques Blocked by Credential Guard</h4>
@@ -3011,7 +3024,7 @@ beacon&gt; run shutdown /r /t 0</code></pre>
 <tbody>
 <tr><td>Kerberos service tickets</td><td>Stored in LSA rather than LSAIso; fully extractable.</td></tr>
 <tr><td>Keylogger output</td><td>Captured before secrets reach LSA.</td></tr>
-<tr><td>Local SAM accounts</td><td>Not covered by Credential Guard.</td></tr>
+<tr><td>Local SAM (Security Account Manager) accounts</td><td>Not covered by Credential Guard.</td></tr>
 <tr><td>Domain cached credentials (MSCache v2)</td><td>Not covered by Credential Guard.</td></tr>
 <tr><td>Third-party credential stores</td><td>Not covered by Credential Guard.</td></tr>
 <tr><td>DPAPI-protected client authentication certificates</td><td>Not covered by Credential Guard; extractable with SharpDPAPI.</td></tr>

