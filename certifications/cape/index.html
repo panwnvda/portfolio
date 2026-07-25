@@ -472,6 +472,13 @@ Get-NetDomain</code></pre>
 Get-NetSession</code></pre>
 
 
+<p>Read the domain functional level before deciding which attacks are architecturally available. Level 5 (Windows Server 2012 R2) or above is required for Protected Users; level 7 (Server 2016) unlocks Shadow Credentials / Key Trust; older levels leave the door open to SID-history and legacy Kerberos primitives:</p>
+<pre><code class="language-powershell"># Full domain object — DomainMode + DomainModeLevel show functional level
+Get-Domain
+
+# Just the integer level
+(Get-Domain).DomainModeLevel</code></pre>
+
 <h4 id="cape-powerview-domain-info-methodology">Methodology</h4>
 <ul class="methodology-checklist">
   <li><input type="checkbox" data-id="cape-powerview-domain-info-wf-0"> Snapshot the current domain, forest, and every DC in one pass:
@@ -483,6 +490,10 @@ Get-NetDomainController</code></pre>
     <pre><code class="language-powershell">Get-NetLoggedon -ComputerName &lt;target&gt;
 Get-NetSession -ComputerName &lt;target&gt;</code></pre>
   </li>
+  <li><input type="checkbox" data-id="cape-powerview-domain-info-wf-2"> Read the domain functional level to gate post-2016 attacks (Shadow Credentials, Protected Users):
+    <pre><code class="language-powershell">Get-Domain
+(Get-Domain).DomainModeLevel</code></pre>
+  </li>
 </ul>
 
 <h3 id="cape-powerview-domain-extras">2.2.1 More Domain and DC Cmdlets</h3>
@@ -490,9 +501,28 @@ Get-NetSession -ComputerName &lt;target&gt;</code></pre>
 <pre><code class="language-powershell">Get-DomainSID                      # Just the domain SID
 Get-DomainPolicy                   # Password policy, lockout thresholds, ticket lifetimes
 Get-DomainController               # Every DC with hostname, IP, and roles</code></pre>
-<p>Translate a SID into a name (or a name into a SID) when a query returns raw SIDs:</p>
-<pre><code class="language-powershell">ConvertFrom-SID S-1-5-21-...-500   # SID → account name
+<p><code>Get-DomainPolicy</code> returns password and Kerberos policy in one object. Read <code>PasswordHistorySize</code> (spray-resistance), <code>LockoutBadCount</code> (spray-detection threshold), <code>MaxTicketAge</code> (TGT lifetime), and <code>MaxRenewAge</code> (TGT renewal ceiling) before any brute-force or ticket-forgery work:</p>
+<pre><code class="language-powershell"># Password policy alone
+(Get-DomainPolicy).SystemAccess
+
+# Kerberos policy alone (ticket lifetimes)
+(Get-DomainPolicy).KerberosPolicy</code></pre>
+<p>SID and name pivot both ways. A large fraction of PowerView work is round-tripping between the two: a query returns a raw SID and you need the owner, or you have a username and need the SID to search for it inside <code>member</code> or <code>foreignSecurityPrincipal</code> entries elsewhere. <code>Convert-NameToSid</code> forward, <code>Convert-SidToName</code> / <code>ConvertFrom-SID</code> reverse:</p>
+<pre><code class="language-powershell"># Forward: name -> SID
+Convert-NameToSid &lt;user&gt;
+
+# Reverse: SID -> name (both forms work; Convert-SidToName is the older PowerView helper)
+Convert-SidToName S-1-5-21-...-1705
+ConvertFrom-SID   S-1-5-21-...-1705
+
+# Grab a specific account's SID directly
 Get-DomainUser -Identity administrator | Select-Object objectsid</code></pre>
+<p>Two other identity pivots come up constantly. <code>objectGUID</code> is the immutable per-object identifier that survives renames, moves, and re-parents — worth grabbing when you plan to reference the object across a long engagement window. <code>distinguishedName</code> is the LDAP path and is what almost every <code>SearchBase</code>-style query needs as input:</p>
+<pre><code class="language-powershell"># objectGUID (rename-survivable)
+Get-DomainComputer -Identity &lt;host&gt; -Properties * | Select-Object objectguid
+
+# distinguishedName (SearchBase / ACL target input)
+(Get-DomainUser -Identity &lt;user&gt;).distinguishedname</code></pre>
 <p>Enumerate DNS zones and records, often the fastest way to inventory hosts by name rather than by IP:</p>
 <pre><code class="language-powershell">Get-DomainDNSZone
 Get-DomainDNSRecord -ZoneName '&lt;domain.local&gt;' | Select-Object name, recordtype, data</code></pre>
@@ -507,12 +537,22 @@ Get-DomainDNSRecord -ZoneName '&lt;domain.local&gt;' | Select-Object name, recor
 Get-DomainPolicy
 Get-DomainController</code></pre>
   </li>
-  <li><input type="checkbox" data-id="cape-powerview-domain-extras-wf-1"> Translate SIDs and enumerate DNS zones for a name-based host inventory:
-    <pre><code class="language-powershell">ConvertFrom-SID S-1-5-21-...-500
-Get-DomainDNSZone
+  <li><input type="checkbox" data-id="cape-powerview-domain-extras-wf-1"> Round-trip between SID and friendly name; grab objectGUID and distinguishedName for pivoting:
+    <pre><code class="language-powershell">Convert-NameToSid &lt;user&gt;
+Convert-SidToName S-1-5-21-...-1705
+ConvertFrom-SID   S-1-5-21-...-1705
+Get-DomainComputer -Identity &lt;host&gt; -Properties * | Select-Object objectguid
+(Get-DomainUser -Identity &lt;user&gt;).distinguishedname</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-domain-extras-wf-2"> Read password and Kerberos policy before any spray or ticket-forgery work:
+    <pre><code class="language-powershell">(Get-DomainPolicy).SystemAccess
+(Get-DomainPolicy).KerberosPolicy</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-domain-extras-wf-3"> Enumerate DNS zones for a name-based host inventory:
+    <pre><code class="language-powershell">Get-DomainDNSZone
 Get-DomainDNSRecord -ZoneName '&lt;domain.local&gt;'</code></pre>
   </li>
-  <li><input type="checkbox" data-id="cape-powerview-domain-extras-wf-2"> List file servers, common credential-material targets:
+  <li><input type="checkbox" data-id="cape-powerview-domain-extras-wf-4"> List file servers, common credential-material targets:
     <pre><code class="language-powershell">Get-DomainFileServer</code></pre>
   </li>
 </ul>
@@ -524,6 +564,16 @@ Find-ForeignUser                           # Users from a trusted domain with me
 <p><code>Find-InterestingDomainAcl</code> is PowerView's shortcut for hunting abusable ACEs (Access Control Entries) inside DACLs (Discretionary Access Control Lists) domain-wide. Filters out inherited noise and returns only ACEs likely to escalate:</p>
 <pre><code class="language-powershell">Find-InterestingDomainAcl -ResolveGUIDs
 Find-InterestingDomainAcl -ResolveGUIDs | Where-Object { $_.IdentityReferenceName -eq '&lt;controlled-user&gt;' }</code></pre>
+<p>The Find-Foreign* cmdlets surface principals by inspecting <code>foreignSecurityPrincipal</code> objects. The complementary approach is to dump membership of well-known privileged groups directly and look for entries that are foreign SIDs (start with a domain SID other than the current one). Foreign entries render as <code>CN=Sxxx,CN=ForeignSecurityPrincipals</code> — the classic case is <code>Administrators</code> on a child domain containing an EA from the parent:</p>
+<pre><code class="language-powershell"># Raw member list — foreign SIDs show up as CN=Sxxx,CN=ForeignSecurityPrincipals
+Get-DomainGroup -Identity administrators | Select-Object -ExpandProperty member
+
+# Resolve each foreign SID to its friendly name
+Get-DomainGroup -Identity administrators |
+    Select-Object -ExpandProperty member |
+    ForEach-Object {
+        if ($_ -match 'CN=(S-1-5-\d[\d-]+)') { ConvertFrom-SID $matches[1] } else { $_ }
+    }</code></pre>
 
 
 <h4 id="cape-powerview-hunting-methodology">Methodology</h4>
@@ -532,7 +582,11 @@ Find-InterestingDomainAcl -ResolveGUIDs | Where-Object { $_.IdentityReferenceNam
     <pre><code class="language-powershell">Find-ForeignGroup
 Find-ForeignUser</code></pre>
   </li>
-  <li><input type="checkbox" data-id="cape-powerview-hunting-wf-1"> Hunt abusable ACEs domain-wide, filtered to the interesting rights:
+  <li><input type="checkbox" data-id="cape-powerview-hunting-wf-1"> Dump membership of a privileged group and resolve foreign SIDs to friendly names:
+    <pre><code class="language-powershell">Get-DomainGroup -Identity administrators | Select-Object -ExpandProperty member |
+  ForEach-Object { if ($_ -match 'CN=(S-1-5-\d[\d-]+)') { ConvertFrom-SID $matches[1] } else { $_ } }</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-hunting-wf-2"> Hunt abusable ACEs domain-wide, filtered to the interesting rights:
     <pre><code class="language-powershell">Find-InterestingDomainAcl -ResolveGUIDs
 Find-InterestingDomainAcl -ResolveGUIDs | Where-Object { $_.IdentityReferenceName -eq '&lt;controlled-user&gt;' }</code></pre>
   </li>
@@ -563,6 +617,39 @@ Get-ADUser -Filter * -SearchBase "CN=Users,DC=victim,DC=COM"</code></pre>
 <pre><code class="language-powershell">Get-ADComputer -filter * -properties whencreated | Select Name,@{n="Owner";e={(Get-acl "ad:\$($_.distinguishedname)").owner}},whencreated</code></pre>
 <p>List computers pulled through PowerView instead of the AD module:</p>
 <pre><code class="language-powershell">Get-NetComputer | select name</code></pre>
+<p>Scope-check the whole domain with a raw count before iterating. Piping any <code>Get-Domain*</code> query into <code>.count</code> returns a single integer — tells you how big the domain is before you scope a spray or a mass enumeration:</p>
+<pre><code class="language-powershell">(Get-DomainComputer).count
+(Get-DomainUser).count
+(Get-DomainGroup).count</code></pre>
+<p>Fingerprint a single host at the object level. <code>Get-DomainComputer -Identity</code> without any <code>Select</code> dumps the default attributes (SID, sAMAccountName, OS, DN, lastLogonTimestamp). Add <code>-Properties *</code> to pull every attribute including the identity ones you pivot on frequently (<code>objectguid</code>, <code>useraccountcontrol</code>, <code>servicePrincipalName</code>):</p>
+<pre><code class="language-powershell">Get-DomainComputer -Identity &lt;host&gt;
+Get-DomainComputer -Identity &lt;host&gt; -Properties * | Select-Object objectguid,operatingsystem,distinguishedname,useraccountcontrol</code></pre>
+<p>The <code>description</code> attribute is a free-text field on both user and computer objects, and one of the highest-yield credential-discovery vectors on any engagement. Sysadmins routinely park passwords, service-account credentials, or jump-host bootstrap notes there because it is trivially editable and shows in the AD Users and Computers GUI. Pull the pair and drop null entries so only human-populated lines remain:</p>
+<pre><code class="language-powershell"># Every user with a non-null description
+Get-DomainUser -Properties samaccountname,description | Where-Object { $_.description -ne $null }
+Get-ADUser -Filter * -Properties Description | Where-Object { $_.Description -ne $null } |
+    Select-Object SamAccountName, Description
+
+# Every computer with a non-null description — jump-host creds land here
+Get-DomainComputer -Properties dnshostname,description | Where-Object { $_.description -ne $null }
+
+# Widen the grep across description, info, and comment
+Get-DomainUser -Properties samaccountname,description,info,comment |
+    Where-Object { $_.description -match 'pass|pwd|cred' -or $_.info -match 'pass|pwd|cred' -or $_.comment -match 'pass|pwd|cred' }</code></pre>
+<p>Group membership lookups by name — the answer is often a specific person you now need to target (kerberoast their SPN, phish their password, hunt their session). <code>Select member</code> off any <code>Get-DomainGroup</code> result returns the DNs of every member without the noise of the full group object:</p>
+<pre><code class="language-powershell"># Members of any named group — swap the -Identity value per lookup
+Get-DomainGroup -Identity '&lt;group-name&gt;' | Select-Object member
+
+# Common variants
+Get-DomainGroup -Identity 'Records Management' | Select-Object member
+Get-DomainGroup -Identity 'IT Support'          | Select-Object member
+Get-DomainGroup -Identity 'Domain Admins'       | Select-Object member</code></pre>
+<p>The <code>managedBy</code> attribute points at a designated manager, and by default the manager holds a WriteProperty on <code>member</code> that acts exactly like GenericWrite for exploitation purposes. Enumerating it surfaces owners who probably do not realise they hold a privileged write:</p>
+<pre><code class="language-powershell"># Manager of a specific group
+Get-DomainGroup -Properties * -Identity '&lt;group&gt;' | Select-Object cn,managedby
+
+# Every group in the domain with its manager
+Get-DomainGroup -Properties cn,managedby | Where-Object { $_.managedby } | Select-Object cn,managedby</code></pre>
 
 
 <h4 id="cape-powerview-users-groups-methodology">Methodology</h4>
@@ -575,6 +662,26 @@ Get-ADUser -Filter {((Enabled -eq $True) -and (Created -gt "Monday, April 10, 20
   <li><input type="checkbox" data-id="cape-powerview-users-groups-wf-1"> Enumerate computers with the owner attribute for provenance:
     <pre><code class="language-powershell">Get-ADComputer -filter * -properties whencreated | Select Name,@{n="Owner";e={(Get-acl "ad:\$($_.distinguishedname)").owner}},whencreated
 Get-NetComputer | select name</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-users-groups-wf-2"> Scope-check the domain size with count queries before iterating:
+    <pre><code class="language-powershell">(Get-DomainComputer).count
+(Get-DomainUser).count
+(Get-DomainGroup).count</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-users-groups-wf-3"> Fingerprint a single host and pull any identity attribute:
+    <pre><code class="language-powershell">Get-DomainComputer -Identity &lt;host&gt;
+Get-DomainComputer -Identity &lt;host&gt; -Properties * | Select-Object objectguid,operatingsystem,distinguishedname</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-users-groups-wf-4"> Grep description on users AND computers (classic credential-leak vector):
+    <pre><code class="language-powershell">Get-DomainUser     -Properties samaccountname,description | Where-Object { $_.description -ne $null }
+Get-DomainComputer -Properties dnshostname,description   | Where-Object { $_.description -ne $null }</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-users-groups-wf-5"> Enumerate members of any named group by identity:
+    <pre><code class="language-powershell">Get-DomainGroup -Identity '&lt;group-name&gt;' | Select-Object member</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-users-groups-wf-6"> Locate group managers (managedBy = implicit membership-write right):
+    <pre><code class="language-powershell">Get-DomainGroup -Properties * -Identity '&lt;group&gt;' | Select-Object cn,managedby
+Get-DomainGroup -Properties cn,managedby | Where-Object { $_.managedby } | Select-Object cn,managedby</code></pre>
   </li>
 </ul>
 
@@ -595,6 +702,31 @@ Get-NetSession -ComputerName &lt;target&gt;
 
 # Interactive logon users on the target: matches console/RDP sessions
 Get-NetLoggedon -ComputerName &lt;target&gt;</code></pre>
+<p>Share enumeration on a specific host — drop the standard names (<code>ADMIN$</code>, <code>C$</code>, <code>IPC$</code>, <code>NETLOGON</code>, <code>SYSVOL</code>) to isolate anything a human explicitly stood up. Non-standard shares on a DC or file server (Payroll, Client_Invoices, Old_reports) are frequently the whole point of the assessment. Omit <code>-ComputerName</code> for the current host:</p>
+<pre><code class="language-powershell">Get-NetShare -ComputerName &lt;host&gt;
+Get-NetShare -ComputerName &lt;host&gt; | Where-Object { $_.Name -notin 'ADMIN$','C$','IPC$','NETLOGON','SYSVOL' }
+Get-NetShare</code></pre>
+<p>Once a non-standard share is identified, read files off it directly over UNC instead of opening File Explorer. <code>Get-Content</code> against <code>\\host\share\file</code> returns the raw text and is scriptable — chain it into <code>Select-String</code>, redirect it, or pipe to <code>Out-File</code>:</p>
+<pre><code class="language-powershell"># Read a specific file off a discovered share
+Get-Content -Path "\\&lt;host&gt;\&lt;share&gt;\&lt;file&gt;"
+Get-Content -Path "\\ENUM2-DC01\Payroll\share.txt"
+
+# List everything on the share first when the filename is unknown
+Get-ChildItem "\\&lt;host&gt;\&lt;share&gt;\" -Recurse -File | Select-Object FullName,Length,LastWriteTime
+
+# Grep the whole share for credential-shaped strings
+Get-ChildItem "\\&lt;host&gt;\&lt;share&gt;\" -Recurse -File |
+    Select-String -Pattern 'password|pwd|secret|api[_-]?key' -List</code></pre>
+<p>Local group membership on a remote host — orthogonal to <code>Find-LocalAdminAccess</code> because you may not be the target account. <em>Remote Management Users</em> is the WinRM group; <em>Remote Desktop Users</em> is the RDP group; <em>Backup Operators</em> and <em>Server Operators</em> often carry latent DC-adjacent access:</p>
+<pre><code class="language-powershell"># WinRM-authorised principals on the target
+Find-DomainLocalGroupMember -ComputerName &lt;host&gt; -GroupName "Remote Management Users"
+
+# RDP-authorised principals
+Find-DomainLocalGroupMember -ComputerName &lt;host&gt; -GroupName "Remote Desktop Users"
+
+# Latent DC-adjacent groups
+Find-DomainLocalGroupMember -ComputerName &lt;host&gt; -GroupName "Backup Operators"
+Find-DomainLocalGroupMember -ComputerName &lt;host&gt; -GroupName "Server Operators"</code></pre>
 
 
 <h4 id="cape-powerview-sessions-methodology">Methodology</h4>
@@ -609,6 +741,20 @@ Find-DomainUserLocation -UserGroupIdentity 'Domain Admins'</code></pre>
   <li><input type="checkbox" data-id="cape-powerview-sessions-wf-2"> Direct session and logon queries against a single host:
     <pre><code class="language-powershell">Get-NetSession -ComputerName &lt;target&gt;
 Get-NetLoggedon -ComputerName &lt;target&gt;</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-sessions-wf-3"> Enumerate shares on a specific host (or the current host) and isolate non-default ones:
+    <pre><code class="language-powershell">Get-NetShare -ComputerName &lt;host&gt; | Where-Object { $_.Name -notin 'ADMIN$','C$','IPC$','NETLOGON','SYSVOL' }
+Get-NetShare</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-sessions-wf-4"> Read files off a discovered share over UNC — no File Explorer needed:
+    <pre><code class="language-powershell">Get-Content -Path "\\&lt;host&gt;\&lt;share&gt;\&lt;file&gt;"
+Get-ChildItem "\\&lt;host&gt;\&lt;share&gt;\" -Recurse -File | Select-Object FullName,Length,LastWriteTime
+Get-ChildItem "\\&lt;host&gt;\&lt;share&gt;\" -Recurse -File | Select-String -Pattern 'password|pwd|secret|api[_-]?key' -List</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-sessions-wf-5"> Enumerate WinRM / RDP / latent-privilege local group membership on the target:
+    <pre><code class="language-powershell">Find-DomainLocalGroupMember -ComputerName &lt;host&gt; -GroupName "Remote Management Users"
+Find-DomainLocalGroupMember -ComputerName &lt;host&gt; -GroupName "Remote Desktop Users"
+Find-DomainLocalGroupMember -ComputerName &lt;host&gt; -GroupName "Backup Operators"</code></pre>
   </li>
 </ul>
 
@@ -704,6 +850,31 @@ Get-DomainObjectAcl -ResolveGUIDs |
 <pre><code class="language-powershell"># ForceChangePassword = reset the target's password without knowing the current one
 Get-DomainObjectAcl -Identity &lt;target-user&gt; -ResolveGUIDs |
     Where-Object { $_.ObjectAceType -eq 'User-Force-Change-Password' }</code></pre>
+<p>Complementary approach via the AD PSDrive: PowerShell's built-in <code>Get-ACL</code> reads the security descriptor of any object by its distinguished name, returning a native <code>ActiveDirectorySecurity</code> object whose <code>.access</code> collection is every ACE. Pair with a filter for the rights that matter for user-object takeover (<code>WriteProperty</code> and <code>GenericAll</code>), pipe through <code>-unique</code>, and get a clean deduplicated list of every principal that can rewrite the target. Often the fastest way to answer "who can reset this user's password":</p>
+<pre><code class="language-powershell"># Every principal with WriteProperty or GenericAll on a target user, deduplicated
+(Get-ACL "AD:$((Get-ADUser &lt;user&gt;).distinguishedname)").access |
+    Where-Object { $_.ActiveDirectoryRights -match "WriteProperty" -or $_.ActiveDirectoryRights -match "GenericAll" } |
+    Select-Object IdentityReference,ActiveDirectoryRights -unique | Format-Table -Wrap
+
+# Same pattern against a computer object
+(Get-ACL "AD:$((Get-ADComputer &lt;host&gt;).distinguishedname)").access |
+    Where-Object { $_.ActiveDirectoryRights -match "WriteProperty" -or $_.ActiveDirectoryRights -match "GenericAll" } |
+    Select-Object IdentityReference,ActiveDirectoryRights -unique | Format-Table -Wrap
+
+# Widen the filter to include WriteDacl and WriteOwner (also exploitable to full control)
+(Get-ACL "AD:$((Get-ADUser &lt;user&gt;).distinguishedname)").access |
+    Where-Object { $_.ActiveDirectoryRights -match "WriteProperty|GenericAll|WriteDacl|WriteOwner" } |
+    Select-Object IdentityReference,ActiveDirectoryRights -unique</code></pre>
+<p>Ignore <code>NT AUTHORITY\SYSTEM</code>, <code>BUILTIN\Administrators</code>, <code>Domain Admins</code>, <code>Enterprise Admins</code>, the Exchange trusted groups, and <code>NT AUTHORITY\SELF</code>. Anything left over is a promotion path.</p>
+<p>DCSync rights hunt — filter every ACE on the domain object to two rights: <code>GenericAll</code> (full control) and the extended right <code>Replication-Get</code> (DS-Replication-Get-Changes and DS-Replication-Get-Changes-All, which together permit replication traffic and therefore hash extraction). Any account in the result that is not <code>Domain Controllers</code>, <code>Enterprise Domain Controllers</code>, or a legitimate replication service is a DCSync candidate from a non-DC host:</p>
+<pre><code class="language-powershell"># SIDs of every principal holding GenericAll or Replication-Get on the domain root
+$dcsync = Get-ObjectACL "DC=&lt;domain&gt;,DC=&lt;tld&gt;" -ResolveGUIDs |
+    Where-Object { ($_.ActiveDirectoryRights -match 'GenericAll') -or ($_.ObjectAceType -match 'Replication-Get') } |
+    Select-Object -ExpandProperty SecurityIdentifier |
+    Select-Object -ExpandProperty value
+
+# Resolve each SID to a friendly name
+Convert-SidToName $dcsync</code></pre>
 
 
 <h4 id="cape-powerview-acls-methodology">Methodology</h4>
@@ -719,6 +890,17 @@ Get-DomainObjectAcl -Identity &lt;target-user&gt; -ResolveGUIDs |
   </li>
   <li><input type="checkbox" data-id="cape-powerview-acls-wf-3"> Locate principals that can write <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> (RBCD attack surface):
     <pre><code class="language-powershell">Get-DomainObjectAcl -ResolveGUIDs | Where-Object { $_.ObjectAceType -eq 'msDS-AllowedToActOnBehalfOfOtherIdentity' }</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-acls-wf-4"> Deduplicated list of every principal that can write or fully control a target user via AD PSDrive Get-ACL:
+    <pre><code class="language-powershell">(Get-ACL "AD:$((Get-ADUser &lt;user&gt;).distinguishedname)").access |
+    Where-Object { $_.ActiveDirectoryRights -match "WriteProperty|GenericAll|WriteDacl|WriteOwner" } |
+    Select-Object IdentityReference,ActiveDirectoryRights -unique | Format-Table -Wrap</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-acls-wf-5"> Hunt every principal with GenericAll or Replication-Get on the domain root (DCSync candidates):
+    <pre><code class="language-powershell">$dcsync = Get-ObjectACL "DC=&lt;domain&gt;,DC=&lt;tld&gt;" -ResolveGUIDs |
+    Where-Object { ($_.ActiveDirectoryRights -match 'GenericAll') -or ($_.ObjectAceType -match 'Replication-Get') } |
+    Select-Object -ExpandProperty SecurityIdentifier | Select-Object -ExpandProperty value
+Convert-SidToName $dcsync</code></pre>
   </li>
 </ul>
 
@@ -768,6 +950,12 @@ Get-DomainOU -GPLink &lt;gpo-guid&gt; | Get-DomainComputer</code></pre>
 <p>Find GPOs that assign local admin rights (Restricted Groups policy):</p>
 <pre><code class="language-powershell"># Surfaces GPOs that push local group membership (Administrators, Remote Desktop Users, etc.)
 Get-DomainGPOLocalGroup -Properties GroupName, GPODisplayName</code></pre>
+<p>Reverse the "which computers does this GPO apply to" question and ask "which GPOs apply to this specific host?" — after OU inheritance + link + WMI filter processing. If you can identify a GPO that runs SYSTEM scripts on the target and you can write to its SYSVOL path, you have SYSTEM on the host at the next Group Policy refresh:</p>
+<pre><code class="language-powershell"># Every GPO that resolves onto the target host
+Get-DomainGPO -ComputerIdentity &lt;host&gt; | Select-Object displayname
+
+# Bridge a friendly GPO name to its GUID (SYSVOL path uses the GUID)
+Get-DomainGPO -Identity '&lt;gpo-name&gt;' | Select-Object displayname,objectguid</code></pre>
 
 
 <h4 id="cape-powerview-ou-gpo-methodology">Methodology</h4>
@@ -784,6 +972,10 @@ Get-DomainOU -Identity &lt;ou-name&gt; | Select-Object -ExpandProperty gplink</c
   </li>
   <li><input type="checkbox" data-id="cape-powerview-ou-gpo-wf-3"> Surface GPOs that assign local admin rights (Restricted Groups policy):
     <pre><code class="language-powershell">Get-DomainGPOLocalGroup -Properties GroupName, GPODisplayName</code></pre>
+  </li>
+  <li><input type="checkbox" data-id="cape-powerview-ou-gpo-wf-4"> List every GPO that resolves onto a specific host, then bridge friendly name to GUID:
+    <pre><code class="language-powershell">Get-DomainGPO -ComputerIdentity &lt;host&gt; | Select-Object displayname
+Get-DomainGPO -Identity '&lt;gpo-name&gt;' | Select-Object displayname,objectguid</code></pre>
   </li>
 </ul>
 
